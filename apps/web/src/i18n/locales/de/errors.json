@@ -1,0 +1,34 @@
+{
+  "notFoundTitle": "Seite nicht gefunden",
+  "notFoundText": "Die gesuchte Seite existiert nicht.",
+  "api": {
+    "BAD_REQUEST": "Die Anfrage konnte nicht verarbeitet werden.",
+    "VALIDATION_FAILED": "Einige Ihrer Angaben sind ungültig.",
+    "UNAUTHENTICATED": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+    "FORBIDDEN": "Dazu haben Sie keine Berechtigung.",
+    "NOT_FOUND": "Das Gesuchte wurde nicht gefunden.",
+    "CONFLICT": "Das steht im Widerspruch zu bestehenden Daten.",
+    "INVALID_CREDENTIALS": "E-Mail oder Passwort ist falsch.",
+    "ACCOUNT_DISABLED": "Dieses Konto wurde deaktiviert. Wenden Sie sich an Ihre Administration.",
+    "TENANT_SELECTION_REQUIRED": "Dieses Konto existiert in mehreren Arbeitsbereichen. Bitte wählen Sie einen aus.",
+    "TOKEN_INVALID": "Dieser Link ist ungültig, abgelaufen oder wurde bereits verwendet.",
+    "PAYLOAD_TOO_LARGE": "Die gesendeten Daten sind zu groß.",
+    "RATE_LIMITED": "Zu viele Versuche. Bitte warten Sie einige Minuten und versuchen Sie es erneut.",
+    "INTERNAL_ERROR": "Auf unserer Seite ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "SERVICE_UNAVAILABLE": "Der Dienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es in Kürze erneut.",
+    "NETWORK": "Server nicht erreichbar. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "TIMEOUT": "Der Server hat zu lange nicht geantwortet. Bitte versuchen Sie es erneut.",
+    "UNKNOWN": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+  },
+  "validation": {
+    "required": "Dieses Feld ist erforderlich.",
+    "email": "Geben Sie eine gültige E-Mail-Adresse ein.",
+    "tooLong": "Das ist zu lang.",
+    "passwordMin": "Verwenden Sie mindestens {{min}} Zeichen.",
+    "passwordMax": "Verwenden Sie höchstens {{max}} Zeichen.",
+    "passwordsDontMatch": "Die Passwörter stimmen nicht überein.",
+    "password_contains_email": "Das Passwort darf Ihren E-Mail-Namen nicht enthalten.",
+    "password_too_repetitive": "Das Passwort ist zu eintönig.",
+    "invalid_workspace": "Verwenden Sie nur Buchstaben, Ziffern und Bindestriche."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "appName": "InTime",
+  "more": "More",
+  "mainNavigation": "Main navigation",
+  "mobileNavigation": "Mobile navigation",
+  "moreNavigation": "More navigation",
+  "language": "Language",
+  "comingSoon": "This module is coming soon.",
+  "backToDashboard": "Back to dashboard",
+  "theme": {
+    "label": "Theme: {{current}}. Switch to {{next}}",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "days_one": "{{count}} day",
+  "days_other": "{{count}} days",
+  "signOut": "Sign out",
+  "signedInAs": "Signed in as {{email}}",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "serverWaking": "The server is waking up. This can take up to a minute after a period of inactivity.",
+  "connectionProblemTitle": "Can't reach the server",
+  "connectionProblemText": "Check your internet connection and try again."
+}
