@@ -49,6 +49,17 @@ Seeded system roles: **Admin**, **HR**, **Manager**, **Employee**. Future roles 
 | **Projects** | `project.view` | assigned projects | team projects | all | all |
 | | `project.manage` | — | own projects | all | all |
 | | `assignment.manage` | — | own projects | all | all |
+| | `client.view` | — | all | all | all |
+| | `client.manage` | — | — | all | all |
+| | `task.view` | assigned / own projects | team projects | all | all |
+| | `task.manage` | own tasks (status only) | own projects | all | all |
+| **Time Tracker** | `time.log` (timer + manual entries) | own | own | own | own |
+| | `time.view` | own | team | all | all |
+| | `timesheet.submit` | own | own | own | own |
+| | `timesheet.approve` | — | reports | all | all |
+| | `timesheet.reopen` | — | — | all | all |
+| | `time.report_project` (hours/budget vs actual) | — | own projects | all | all |
+| | `time.export` (approved hours CSV) | — | own projects | all | all |
 | **Capacity** | `capacity.view` | own | team | all | all |
 | **Analytics** | `analytics.view_team` | — | team | all | all |
 | | `analytics.view_company` | — | — | all | all |

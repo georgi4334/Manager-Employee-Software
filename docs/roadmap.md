@@ -34,20 +34,32 @@ Solo developer + Claude, ~3–4 focused hours/day. Estimates are in **working da
 |---|---|---|
 | Employees | CRUD, directory, profile, invite flow, avatar upload | 4–5 d |
 | Organization | departments, teams, reporting lines, org chart, cycle prevention | 3–4 d |
-| Leave | types/policies, balances, request → approve flow, holidays (BG/DE), notifications | 6–7 d |
+| Leave | types/policies, balances, request → approve flow, holidays (BG/DE), notifications (project-conflict warnings arrive in Phase 2) | 6–7 d |
 | Attendance | manual check-in/out, office/remote, history, manager team view | 3–4 d |
 | Calendar (basic) | month/week/day/agenda, events, leave + holiday layers, mobile agenda | 5–6 d |
 | Notifications UI | bell, preferences, email templates (3 languages) | 2–3 d |
 | Hardening | E2E happy paths, a11y pass, GDPR export/erase for employee data | 2–3 d |
 
-## Phase 2 — People growth (~20 days)
+## Phase 2 — Projects & Time (~30–35 days)
+| Module | Scope | Est. |
+|---|---|---|
+| Clients & Projects | clients, projects, milestones, staffing with allocation %, project dashboard (timeline, health) | 6–7 d |
+| Tasks (lean) | functional / non-functional tasks, assignee, estimate, due date, status, list + simple board | 5–6 d |
+| Time Tracker | start/stop timer, manual entries, billable flag, weekly timesheet, submit/approve/lock | 8–9 d |
+| Time reports | hours per project/person/client, budget vs actual, daily targets, CSV export of approved hours | 4–5 d |
+| Integrations | leave-conflict warnings on approval, attendance vs logged hours, missed check-out/timer reminders | 3–4 d |
+| Capacity | planned vs actual load, availability view | 4–5 d |
+
+Out of scope: payroll calculation, screenshots/activity monitoring, sprints/sub-tasks.
+
+## Phase 3 — People growth (~20 days)
 Goals (personal/team/company, key results), 1:1 meetings (+ action items), Feedback, Skills Matrix.
 
-## Phase 3 — Planning & insight (~20 days)
-Performance reviews (cycles, self/manager review, ratings), Projects & assignments, Capacity, Analytics dashboards.
+## Phase 4 — Insight & performance (~15–20 days)
+Performance reviews (cycles, self/manager review, ratings), Analytics dashboards (management view across HR + projects + time).
 
-## Phase 4 — Advanced (~20+ days)
-AI assistant (BYOK, tool-calling, read-only), calendar advanced (recurrence, sharing, invitations/RSVP, find-a-time), role editor UI, compensation (HR/Admin), polish.
+## Phase 5 — Advanced (~20+ days)
+AI assistant (BYOK, tool-calling, read-only), calendar advanced (recurrence, sharing, invitations/RSVP, find-a-time), role editor UI, compensation / hourly rates (HR + Admin), polish.
 
 ## Free-tier stack (EU) — to verify at setup time
 | Need | Choice (primary) | Fallback |

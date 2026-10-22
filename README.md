@@ -1,6 +1,6 @@
 # InTime — Employee Management System
 
-Web-based employee management for small and mid-size companies: employees, organization, attendance, leave, goals, performance, 1:1s, feedback, skills, projects, capacity, analytics, calendar, notifications and an AI assistant.
+Web-based employee management for small and mid-size companies: employees, organization, attendance, leave, goals, performance, 1:1s, feedback, skills, clients, projects, tasks, time tracking, capacity, analytics, calendar, notifications and an AI assistant.
 
 ## Stack
 - **Frontend:** React 19, TypeScript, Vite, React Router v7, Zustand + TanStack Query, Tailwind CSS (design tokens)

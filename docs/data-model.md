@@ -170,8 +170,37 @@ erDiagram
 | `project_assignment` | project_id, employee_id, role, allocation_pct, from_date, to_date |
 | `project_skill_requirement` | project_id, skill_id, min_level, headcount |
 
+### 6b. Clients, tasks, time tracking
+
+```mermaid
+erDiagram
+  CLIENT ||--o{ PROJECT : owns
+  PROJECT ||--o{ MILESTONE : has
+  PROJECT ||--o{ TASK : contains
+  TASK }o--o| EMPLOYEE : "assigned to"
+  EMPLOYEE ||--o{ TIME_ENTRY : logs
+  PROJECT ||--o{ TIME_ENTRY : "charged to"
+  TASK ||--o{ TIME_ENTRY : "charged to"
+  EMPLOYEE ||--o{ TIMESHEET : submits
+  TIMESHEET ||--o{ TIME_ENTRY : groups
+```
+
+| Table | Key columns |
+|---|---|
+| `client` | name, contact_name, contact_email, status, notes |
+| `project` (extends §6) | client_id, budget_hours, is_billable, priority, health (`on_track/at_risk/off_track`, computed) |
+| `milestone` | project_id, title, due_date, status |
+| `task` | project_id, milestone_id, title, description, type (`functional/non_functional`), status (`todo/in_progress/review/done`), assignee_id, estimate_hours, due_date, priority |
+| `time_entry` | employee_id, project_id, task_id (nullable), work_date, started_at, ended_at, minutes, is_billable, note, source (`timer/manual`), timesheet_id — a running timer = `ended_at is null` (max one per employee) |
+| `timesheet` | employee_id, period_start, period_end, status (`open/submitted/approved/rejected/locked`), submitted_at, approved_by, approved_at |
+| `daily_target` | employee_id, project_id, work_date, target_minutes |
+
+- Approved timesheets are locked (edits need HR/Manager reopen + audit log entry).
+- Reports (hours per project/person/client, budget vs actual, planned vs actual) are queries/views over `time_entry`; export approved hours as CSV. No payroll calculation, no screenshots or activity monitoring (self-reported only).
+- Leave-conflict check: approving a `leave_request` queries `project_assignment`, `task.due_date` and `milestone.due_date` in the range and returns warnings.
+
 **Capacity (computed, not stored):** for an employee and a date range =
-`schedule hours − public holidays − approved leave − Σ(allocation_pct × hours)`. Exposed through a SQL view / service query; cached per week if needed.
+`schedule hours − public holidays − approved leave − Σ(allocation_pct × hours)`; actual load compares this plan with logged `time_entry` hours. Exposed through a SQL view / service query; cached per week if needed.
 
 ## 7. AI assistant
 
