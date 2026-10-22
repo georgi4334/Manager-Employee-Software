@@ -1,5 +1,6 @@
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import type { Env } from './config/env.js';
 import { TenantContext } from './infrastructure/tenancy/tenant-context.js';
@@ -11,7 +12,8 @@ const UNPREFIXED_ROUTES = ['health/live', 'health/ready'];
 export function configureApp(app: NestExpressApplication, env: Env): void {
   // The interactive docs page needs inline scripts; the API itself only serves JSON.
   app.use(helmet({ contentSecurityPolicy: env.SWAGGER_ENABLED ? false : undefined }));
-  if (env.IS_PRODUCTION) app.set('trust proxy', 1);
+  if (env.TRUST_PROXY) app.set('trust proxy', 1);
+  app.use(cookieParser());
 
   // Every request gets its own tenant context; authentication sets the tenant inside it.
   const tenantContext = app.get(TenantContext);

@@ -28,11 +28,67 @@ const envSchema = z
       .default('info'),
     /** Interactive OpenAPI docs at /api/docs. Defaults to on, except in production. */
     SWAGGER_ENABLED: booleanString.optional(),
+
+    /** Base URL of the web app: used for links in emails, redirects after Google sign-in, and CSRF checks. */
+    WEB_APP_URL: z.url({ protocol: /^https?$/, message: 'must be an http(s) URL' }),
+    /** Signs access tokens. Generate with: openssl rand -base64 48 */
+    JWT_ACCESS_SECRET: z.string().min(32, 'must be at least 32 characters'),
+    ACCESS_TOKEN_TTL_SECONDS: z.coerce.number().int().min(60).max(3600).default(900),
+    REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().min(1).max(90).default(14),
+    SESSION_MAX_DAYS: z.coerce.number().int().min(1).max(365).default(30),
+    /**
+     * Trust the X-Forwarded-For header of one proxy hop (the hosting platform's load balancer), so rate
+     * limits see the real client IP. Defaults to on in production.
+     */
+    TRUST_PROXY: booleanString.optional(),
+    /** Secure cookies (HTTPS only). Defaults to on in production. */
+    COOKIE_SECURE: booleanString.optional(),
+    /**
+     * "log" prints emails including their links (development only), "memory" keeps them (tests),
+     * "disabled" drops them with a content-free warning. A delivering provider arrives in step 8.
+     */
+    MAIL_TRANSPORT: z.enum(['log', 'memory', 'disabled']).default('log'),
+    GOOGLE_CLIENT_ID: z.string().min(1).optional(),
+    GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+    GOOGLE_REDIRECT_URL: z.url().optional(),
+  })
+  .superRefine((env, ctx) => {
+    const google = [env.GOOGLE_CLIENT_ID, env.GOOGLE_CLIENT_SECRET, env.GOOGLE_REDIRECT_URL];
+    if (google.some(Boolean) && !google.every(Boolean)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['GOOGLE_CLIENT_ID'],
+        message:
+          'set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and GOOGLE_REDIRECT_URL together, or none',
+      });
+    }
+    // "log" would write one-time sign-in links into production logs.
+    if (
+      env.NODE_ENV === 'production' &&
+      (env.MAIL_TRANSPORT === 'log' || env.MAIL_TRANSPORT === 'memory')
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['MAIL_TRANSPORT'],
+        message: 'must not be "log" or "memory" in production',
+      });
+    }
   })
   .transform((env) => ({
     ...env,
     SWAGGER_ENABLED: env.SWAGGER_ENABLED ?? env.NODE_ENV !== 'production',
     IS_PRODUCTION: env.NODE_ENV === 'production',
+    COOKIE_SECURE: env.COOKIE_SECURE ?? env.NODE_ENV === 'production',
+    TRUST_PROXY: env.TRUST_PROXY ?? env.NODE_ENV === 'production',
+    WEB_APP_ORIGIN: new URL(env.WEB_APP_URL).origin,
+    GOOGLE:
+      env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET && env.GOOGLE_REDIRECT_URL
+        ? {
+            clientId: env.GOOGLE_CLIENT_ID,
+            clientSecret: env.GOOGLE_CLIENT_SECRET,
+            redirectUrl: env.GOOGLE_REDIRECT_URL,
+          }
+        : null,
   }));
 
 export type Env = z.output<typeof envSchema>;

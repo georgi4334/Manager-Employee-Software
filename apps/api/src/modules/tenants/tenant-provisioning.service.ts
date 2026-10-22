@@ -1,0 +1,62 @@
+import { Injectable } from '@nestjs/common';
+import { emailSchema, workspaceSlugSchema } from '@intime/contracts';
+import { z } from 'zod';
+import { AppException } from '../../common/errors/app-exception.js';
+import { zodIssuesToDetails } from '../../common/errors/map-exception.js';
+import { SystemPrismaService } from '../../infrastructure/prisma/system-prisma.service.js';
+import { TenantContext } from '../../infrastructure/tenancy/tenant-context.js';
+import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
+import { InvitationService } from '../auth/invitation.service.js';
+
+export const createTenantInputSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  slug: workspaceSlugSchema,
+  adminEmail: emailSchema,
+  locale: z.enum(['en', 'de', 'bg']).default('en'),
+  timezone: z.string().min(1).default('Europe/Sofia'),
+});
+export type CreateTenantInput = z.input<typeof createTenantInputSchema>;
+
+/** Platform-operator task: a new workspace plus an invitation for its first admin. */
+@Injectable()
+export class TenantProvisioningService {
+  constructor(
+    private readonly system: SystemPrismaService,
+    private readonly context: TenantContext,
+    private readonly db: TenantDb,
+    private readonly invitations: InvitationService,
+  ) {}
+
+  async create(
+    raw: CreateTenantInput,
+  ): Promise<{ tenantId: string; adminUserId: string; invitationLink: string }> {
+    const parsed = createTenantInputSchema.safeParse(raw);
+    if (!parsed.success) {
+      throw new AppException('VALIDATION_FAILED', { details: zodIssuesToDetails(parsed.error) });
+    }
+    const input = parsed.data;
+
+    if (
+      await this.system.tenant.findUnique({ where: { slug: input.slug }, select: { id: true } })
+    ) {
+      throw new AppException('CONFLICT', {
+        message: 'Workspace slug is taken',
+        params: { field: 'slug' },
+      });
+    }
+    const tenant = await this.system.tenant.create({
+      data: {
+        name: input.name,
+        slug: input.slug,
+        defaultLocale: input.locale,
+        defaultTimezone: input.timezone,
+      },
+      select: { id: true },
+    });
+    // Role assignment (admin) is added with RBAC in step 7.
+    const { userId, link } = await this.context.run(tenant.id, () =>
+      this.db.tx((tx) => this.invitations.invite(tx, input.adminEmail)),
+    );
+    return { tenantId: tenant.id, adminUserId: userId, invitationLink: link };
+  }
+}

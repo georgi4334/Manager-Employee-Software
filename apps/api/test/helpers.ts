@@ -14,6 +14,9 @@ export function testEnv(overrides: Record<string, string | undefined> = {}): Env
     LOG_LEVEL: 'silent',
     DATABASE_URL: 'postgresql://intime_app:pass@localhost:5432/intime_test',
     SYSTEM_DATABASE_URL: 'postgresql://intime_system:pass@localhost:5432/intime_test',
+    WEB_APP_URL: 'http://localhost:5173',
+    JWT_ACCESS_SECRET: 'test-secret-that-is-at-least-32-characters-long',
+    MAIL_TRANSPORT: 'memory',
     // Undefined overrides keep the default (e.g. when TEST_DATABASE_URL is not set).
     ...Object.fromEntries(Object.entries(overrides).filter(([, value]) => value !== undefined)),
   });
@@ -24,16 +27,22 @@ interface CreateTestAppOptions {
   /** Replaces the real database client; omit to use a real PrismaService. */
   prisma?: Partial<Record<keyof PrismaService, unknown>>;
   controllers?: Type[];
+  /** Replaces any provider by its injection token, e.g. the Google client. */
+  providers?: { provide: unknown; useValue: unknown }[];
 }
 
 export async function createTestApp({
   env = testEnv(),
   prisma,
   controllers = [],
+  providers = [],
 }: CreateTestAppOptions = {}): Promise<NestExpressApplication> {
   let builder = Test.createTestingModule({ imports: [AppModule], controllers })
     .overrideProvider(APP_CONFIG)
     .useValue(env);
+  for (const override of providers) {
+    builder = builder.overrideProvider(override.provide as Type).useValue(override.useValue);
+  }
   if (prisma) {
     builder = builder
       .overrideProvider(PrismaService)

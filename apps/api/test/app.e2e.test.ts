@@ -4,6 +4,7 @@ import { apiErrorBodySchema } from '@intime/contracts';
 import request from 'supertest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
+import { Public } from '../src/common/auth/decorators.js';
 import { AppException } from '../src/common/errors/app-exception.js';
 import { ZodValidationPipe } from '../src/common/pipes/zod-validation.pipe.js';
 import { TenantContext } from '../src/infrastructure/tenancy/tenant-context.js';
@@ -12,6 +13,7 @@ import { createTestApp, testEnv } from './helpers.js';
 
 const TENANT = '0192f5a0-0000-7000-8000-00000000000a';
 
+@Public()
 @Controller('test')
 class TestController {
   constructor(
@@ -244,7 +246,9 @@ describe('OpenAPI docs', () => {
   });
 
   it('is not served when disabled (production default)', async () => {
-    const http = await start({ env: testEnv({ NODE_ENV: 'production' }) });
+    const http = await start({
+      env: testEnv({ NODE_ENV: 'production', MAIL_TRANSPORT: 'disabled' }),
+    });
     expect((await http.get('/api/docs-json')).status).toBe(404);
     expect((await http.get('/api/docs')).status).toBe(404);
   });

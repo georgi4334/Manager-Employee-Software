@@ -36,7 +36,7 @@ Isolation is enforced **inside PostgreSQL** with Row Level Security, and the app
 - Every tenant-scoped table is enabled with one call in its migration: `SELECT public.enable_tenant_rls('<table>');` which does `ENABLE` + **`FORCE`** RLS and creates:
   - `tenant_isolation` for `intime_app`: `USING` and `WITH CHECK` `tenant_id = app_current_tenant()` — cannot read, update, delete **or insert** rows of another tenant.
   - `system_access` for `intime_system`: all rows.
-- New tables should declare `tenant_id uuid NOT NULL DEFAULT public.app_current_tenant()` (Prisma: `@default(dbgenerated("public.app_current_tenant()"))`), so inserts are stamped automatically.
+- New tables should declare `tenant_id uuid NOT NULL DEFAULT public.app_current_tenant()` (Prisma: `@default(dbgenerated("app_current_tenant()"))`), so inserts are stamped automatically.
 - `tenant` table: `intime_app` may only SELECT/UPDATE its own row; creating/deleting tenants is `intime_system` only.
 - **Fail closed**: no tenant set → no rows visible, inserts rejected.
 

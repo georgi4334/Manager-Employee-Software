@@ -17,5 +17,105 @@ model Tenant {
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
+  users User[]
+
   @@map("tenant")
+}
+
+// ---------------------------------------------------------------------------------------------
+// Authentication (docs/adr/0002-authentication.md). Every table is tenant-scoped with RLS.
+
+model User {
+  id              String    @id @default(uuid(7)) @db.Uuid
+  tenantId        String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// Lower-cased and trimmed; unique per tenant.
+  email           String
+  status          String    @default("invited")
+  locale          String?
+  timezone        String?
+  emailVerifiedAt DateTime? @map("email_verified_at") @db.Timestamptz(6)
+  lastLoginAt     DateTime? @map("last_login_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant     Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  identities AuthIdentity[]
+  sessions   Session[]
+  tokens     AuthToken[]
+
+  @@unique([tenantId, email])
+  @@unique([tenantId, id])
+  @@index([email])
+  @@map("app_user")
+}
+
+model AuthIdentity {
+  id              String   @id @default(uuid(7)) @db.Uuid
+  tenantId        String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  /// "password" or "google"
+  provider        String
+  /// Google "sub"; the user id for password identities.
+  providerSubject String   @map("provider_subject")
+  passwordHash    String?  @map("password_hash")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, provider, providerSubject])
+  @@unique([userId, provider])
+  @@map("auth_identity")
+}
+
+model Session {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  tenantId  String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  /// "password" or "google"
+  method    String
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user          User           @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Cascade)
+  refreshTokens RefreshToken[]
+
+  @@unique([tenantId, id])
+  @@index([userId])
+  @@map("session")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  tenantId  String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  sessionId String    @map("session_id") @db.Uuid
+  /// SHA-256 of the raw token (hex); the raw token exists only in the browser cookie.
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  session Session @relation(fields: [tenantId, sessionId], references: [tenantId, id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("refresh_token")
+}
+
+/// One-time links: invitations and password resets.
+model AuthToken {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  tenantId  String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  /// "invite" or "password_reset"
+  purpose   String
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Cascade)
+
+  @@index([userId, purpose])
+  @@map("auth_token")
 }

@@ -1,13 +1,20 @@
 import { randomUUID } from 'node:crypto';
 import { Module } from '@nestjs/common';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { AuthGuard } from './common/auth/auth.guard.js';
+import { OriginGuard } from './common/auth/origin.guard.js';
 import { LoggerModule } from 'nestjs-pino';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
+import { redactUrl } from './common/logging/redact-url.js';
 import { APP_CONFIG, AppConfigModule } from './config/config.module.js';
 import type { Env } from './config/env.js';
+import { MailModule } from './infrastructure/mail/mail.module.js';
 import { PrismaModule } from './infrastructure/prisma/prisma.module.js';
 import { TenancyModule } from './infrastructure/tenancy/tenancy.module.js';
+import { AuthModule } from './modules/auth/auth.module.js';
 import { HealthModule } from './modules/health/health.module.js';
+import { TenantsModule } from './modules/tenants/tenants.module.js';
 
 const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
 
@@ -30,6 +37,14 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
             res.setHeader('x-request-id', id);
             return id;
           },
+          // One-time links and OAuth codes travel in query strings; mask them in logged URLs.
+          serializers: {
+            // The parsed query would repeat the URL's values unredacted, so it is left out.
+            req: ({ query, ...req }: { url?: string; query?: unknown }) => ({
+              ...req,
+              url: req.url ? redactUrl(req.url) : req.url,
+            }),
+          },
           // GDPR: never log credentials or cookies.
           redact: {
             paths: [
@@ -45,8 +60,18 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     }),
     PrismaModule,
     TenancyModule,
+    MailModule,
+    // Per-route limits are set with @Throttle on the auth endpoints; in memory (one instance).
+    ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 100 }]),
     HealthModule,
+    AuthModule,
+    TenantsModule,
   ],
-  providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
+  providers: [
+    { provide: APP_FILTER, useClass: AllExceptionsFilter },
+    // Order matters: reject foreign-origin writes before doing any authentication work.
+    { provide: APP_GUARD, useClass: OriginGuard },
+    { provide: APP_GUARD, useClass: AuthGuard },
+  ],
 })
 export class AppModule {}

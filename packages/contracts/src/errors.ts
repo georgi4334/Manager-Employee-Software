@@ -11,6 +11,10 @@ export const ERROR_CODES = [
   'FORBIDDEN',
   'NOT_FOUND',
   'CONFLICT',
+  'INVALID_CREDENTIALS',
+  'ACCOUNT_DISABLED',
+  'TENANT_SELECTION_REQUIRED',
+  'TOKEN_INVALID',
   'PAYLOAD_TOO_LARGE',
   'RATE_LIMITED',
   'INTERNAL_ERROR',
@@ -25,6 +29,12 @@ export const ERROR_STATUS: Record<ErrorCode, number> = {
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   CONFLICT: 409,
+  INVALID_CREDENTIALS: 401,
+  ACCOUNT_DISABLED: 403,
+  /** The credentials match several workspaces; params.workspaces lists them. */
+  TENANT_SELECTION_REQUIRED: 409,
+  /** An invitation or password-reset link is unknown, expired or already used. */
+  TOKEN_INVALID: 400,
   PAYLOAD_TOO_LARGE: 413,
   RATE_LIMITED: 429,
   INTERNAL_ERROR: 500,
