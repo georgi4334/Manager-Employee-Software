@@ -6,6 +6,7 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
 import { APP_CONFIG, AppConfigModule } from './config/config.module.js';
 import type { Env } from './config/env.js';
 import { PrismaModule } from './infrastructure/prisma/prisma.module.js';
+import { TenancyModule } from './infrastructure/tenancy/tenancy.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 
 const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
@@ -43,6 +44,7 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
       }),
     }),
     PrismaModule,
+    TenancyModule,
     HealthModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],

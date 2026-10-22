@@ -29,6 +29,29 @@ export default tseslint.config(
     },
   },
   {
+    // The system connection sees every tenant; only provisioning, auth and infrastructure may use it.
+    files: ['apps/api/src/**/*.ts'],
+    ignores: [
+      'apps/api/src/infrastructure/**',
+      'apps/api/src/modules/tenants/**',
+      'apps/api/src/modules/auth/**',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/system-prisma.service*'],
+              message:
+                'SystemPrismaService bypasses tenant isolation. Use TenantDb (docs/adr/0001-multi-tenancy-rls.md).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['apps/web/src/**/*.{ts,tsx}'],
     plugins: { 'react-hooks': reactHooks },
     rules: { ...reactHooks.configs.recommended.rules },

@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { EnvValidationError, parseEnv } from './env.js';
 
-const valid = { DATABASE_URL: 'postgresql://user:pass@localhost:5432/intime' };
+const valid = {
+  DATABASE_URL: 'postgresql://intime_app:pass@localhost:5432/intime',
+  SYSTEM_DATABASE_URL: 'postgresql://intime_system:pass@localhost:5432/intime',
+};
 
 describe('parseEnv', () => {
   it('applies defaults for optional values', () => {
@@ -17,7 +20,7 @@ describe('parseEnv', () => {
   });
 
   it('coerces PORT from a string and accepts postgres:// URLs', () => {
-    const env = parseEnv({ DATABASE_URL: 'postgres://u:p@h/db', PORT: '8080' });
+    const env = parseEnv({ ...valid, DATABASE_URL: 'postgres://u:p@h/db', PORT: '8080' });
     expect(env.PORT).toBe(8080);
   });
 
@@ -46,8 +49,10 @@ describe('parseEnv', () => {
   });
 
   it.each([
-    ['a non-postgres URL', { DATABASE_URL: 'mysql://u:p@h/db' }],
-    ['garbage', { DATABASE_URL: 'not a url' }],
+    ['a non-postgres URL', { ...valid, DATABASE_URL: 'mysql://u:p@h/db' }],
+    ['garbage', { ...valid, DATABASE_URL: 'not a url' }],
+    ['a missing SYSTEM_DATABASE_URL', { DATABASE_URL: valid.DATABASE_URL }],
+    ['a non-postgres SYSTEM_DATABASE_URL', { ...valid, SYSTEM_DATABASE_URL: 'http://x' }],
     ['an out-of-range PORT', { ...valid, PORT: '70000' }],
     ['a non-numeric PORT', { ...valid, PORT: 'abc' }],
     ['an unknown NODE_ENV', { ...valid, NODE_ENV: 'staging' }],
@@ -60,7 +65,7 @@ describe('parseEnv', () => {
 
   it('lists every problem in one readable error without echoing secret values', () => {
     try {
-      parseEnv({ DATABASE_URL: 'mysql://user:supersecret@h/db', PORT: 'abc' });
+      parseEnv({ ...valid, DATABASE_URL: 'mysql://user:supersecret@h/db', PORT: 'abc' });
       expect.unreachable();
     } catch (error) {
       const message = (error as Error).message;

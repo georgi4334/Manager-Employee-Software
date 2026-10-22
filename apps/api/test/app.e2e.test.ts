@@ -6,10 +6,33 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 import { AppException } from '../src/common/errors/app-exception.js';
 import { ZodValidationPipe } from '../src/common/pipes/zod-validation.pipe.js';
+import { TenantContext } from '../src/infrastructure/tenancy/tenant-context.js';
+import { TenantDb } from '../src/infrastructure/tenancy/tenant-db.service.js';
 import { createTestApp, testEnv } from './helpers.js';
+
+const TENANT = '0192f5a0-0000-7000-8000-00000000000a';
 
 @Controller('test')
 class TestController {
+  constructor(
+    private readonly tenantContext: TenantContext,
+    private readonly tenantDb: TenantDb,
+  ) {}
+
+  @Get('tenant')
+  async tenant() {
+    const before = this.tenantContext.getTenantId() ?? null;
+    // Simulates authentication setting the tenant, then async work later in the same request.
+    this.tenantContext.setTenantId(TENANT);
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    return { before, after: this.tenantContext.getTenantId() };
+  }
+
+  @Get('tenant-data')
+  tenantData() {
+    return this.tenantDb.tx(async () => 'should never run');
+  }
+
   @Get('app-error')
   appError(): never {
     throw new AppException('CONFLICT', { message: 'Email taken', params: { field: 'email' } });
@@ -167,6 +190,26 @@ describe('request id', () => {
       expect(res.headers['x-request-id']).not.toBe(bad);
     },
   );
+});
+
+describe('tenant context per request', () => {
+  it('starts every request without a tenant and keeps the one set by auth for the whole request', async () => {
+    const http = await start();
+    const first = await http.get('/api/v1/test/tenant');
+    expect(first.body).toEqual({ before: null, after: TENANT });
+    // The next request must not inherit the previous request's tenant.
+    const second = await http.get('/api/v1/test/tenant');
+    expect(second.body).toEqual({ before: null, after: TENANT });
+  });
+
+  it('fails closed with a generic 500 when tenant data is accessed without a tenant', async () => {
+    const res = await (await start()).get('/api/v1/test/tenant-data');
+    expect(res.status).toBe(500);
+    expect(res.body.error).toMatchObject({
+      code: 'INTERNAL_ERROR',
+      message: 'Internal server error',
+    });
+  });
 });
 
 describe('http hardening', () => {

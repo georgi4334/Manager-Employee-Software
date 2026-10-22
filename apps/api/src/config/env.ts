@@ -2,11 +2,16 @@ import { z } from 'zod';
 
 const booleanString = z.enum(['true', 'false']).transform((value) => value === 'true');
 
+const postgresUrl = z.url({ protocol: /^postgres(ql)?$/, message: 'must be a postgres:// URL' });
+
 const envSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     PORT: z.coerce.number().int().min(1).max(65535).default(3000),
-    DATABASE_URL: z.url({ protocol: /^postgres(ql)?$/, message: 'must be a postgres:// URL' }),
+    /** Runtime connection as intime_app: RLS limits it to the current tenant (docs/adr/0001). */
+    DATABASE_URL: postgresUrl,
+    /** Connection as intime_system for the few cross-tenant operations (provisioning, login, jobs). */
+    SYSTEM_DATABASE_URL: postgresUrl,
     /** Comma-separated list of allowed browser origins, e.g. "http://localhost:5173". Empty = CORS off. */
     CORS_ORIGINS: z
       .string()

@@ -3,7 +3,7 @@
 PostgreSQL, EU region. Conventions apply to **every** table unless stated:
 
 - `id uuid` primary key (UUIDv7 where possible, sortable).
-- `tenant_id uuid not null` + Row Level Security policy `tenant_id = current_setting('app.tenant_id')::uuid`.
+- `tenant_id uuid NOT NULL DEFAULT public.app_current_tenant()` + Row Level Security enabled in the table's migration with `SELECT public.enable_tenant_rls('<table>');` (see [ADR 0001](adr/0001-multi-tenancy-rls.md)).
 - `created_at`, `updated_at timestamptz`, `created_by`, `updated_by` (user id).
 - Soft delete (`deleted_at`) for people-related data; hard purge by the retention job (GDPR).
 - Unique constraints are always composite with `tenant_id`.
