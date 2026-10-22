@@ -12,7 +12,7 @@ export const routes: RouteObject[] = [
       { index: true, element: <DashboardPage /> },
       ...NAV_ITEMS.filter((item) => item.path !== '/').map((item) => ({
         path: item.path.slice(1),
-        element: <ModulePlaceholderPage title={item.label} />,
+        element: <ModulePlaceholderPage labelKey={item.labelKey} />,
       })),
       { path: '*', element: <NotFoundPage /> },
     ],

@@ -1,10 +1,12 @@
 import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 import { cn } from '@/shared/lib/cn';
 import { NAV_ITEMS } from '../nav';
 
 export function BottomNav() {
+  const { t } = useTranslation(['common', 'nav']);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -25,13 +27,13 @@ export function BottomNav() {
   return (
     <div className="md:hidden">
       <nav
-        aria-label="Mobile navigation"
+        aria-label={t('common:mobileNavigation')}
         className="fixed inset-x-0 bottom-0 z-30 flex border-t border-border bg-surface pb-[env(safe-area-inset-bottom)]"
       >
-        {NAV_ITEMS.filter((item) => item.primary).map(({ path, label, icon: Icon }) => (
+        {NAV_ITEMS.filter((item) => item.primary).map(({ path, labelKey, icon: Icon }) => (
           <NavLink key={path} to={path} end={path === '/'} className={linkClass}>
             <Icon className="size-5" aria-hidden="true" />
-            <span className="max-w-full truncate px-1">{label}</span>
+            <span className="max-w-full truncate px-1">{t(`nav:${labelKey}`)}</span>
           </NavLink>
         ))}
         <button
@@ -46,7 +48,7 @@ export function BottomNav() {
           ) : (
             <Menu className="size-5" aria-hidden="true" />
           )}
-          <span>More</span>
+          <span>{t('common:more')}</span>
         </button>
       </nav>
 
@@ -55,11 +57,11 @@ export function BottomNav() {
           id="more-menu"
           role="dialog"
           aria-modal="true"
-          aria-label="More navigation"
+          aria-label={t('common:moreNavigation')}
           className="fixed inset-x-0 bottom-14 z-20 border-t border-border bg-surface p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-card"
         >
           <ul className="grid gap-1">
-            {NAV_ITEMS.filter((item) => !item.primary).map(({ path, label, icon: Icon }) => (
+            {NAV_ITEMS.filter((item) => !item.primary).map(({ path, labelKey, icon: Icon }) => (
               <li key={path}>
                 <NavLink
                   to={path}
@@ -67,7 +69,7 @@ export function BottomNav() {
                   className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium hover:bg-surface-muted"
                 >
                   <Icon className="size-5" aria-hidden="true" />
-                  {label}
+                  {t(`nav:${labelKey}`)}
                 </NavLink>
               </li>
             ))}

@@ -24,6 +24,13 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 5. Personal data minimal; GDPR export/erase considered; sick-leave reason is never stored.
 6. `pnpm lint && pnpm typecheck && pnpm test` pass before committing.
 
+## i18n rules
+
+- Strings live in `apps/web/src/i18n/locales/{en,de,bg}/<namespace>.json`; add every key to all three languages (English is the reference). `pnpm test` fails on missing, extra, empty or placeholder-mismatched keys.
+- Use `useTranslation('<ns>')` with typed keys; plurals use `_one` / `_other`. Never hard-code UI text, never build sentences by concatenation.
+- Dates and numbers go through `shared/lib/format.ts` (Intl), never manual formatting.
+- New namespace: add it to `NAMESPACES` in `i18n/languages.ts` and `i18n/types.d.ts`.
+
 ## Code conventions
 
 - TypeScript strict, no `any` without a comment. Validate all input with Zod (schemas live in `@intime/contracts`).

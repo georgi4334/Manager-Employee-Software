@@ -2,6 +2,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { renderApp } from '@/tests/utils';
+import navEn from '@/i18n/locales/en/nav.json';
 import { NAV_ITEMS } from './nav';
 
 describe('AppShell navigation', () => {
@@ -9,7 +10,7 @@ describe('AppShell navigation', () => {
     renderApp('/');
     const sidebar = screen.getByRole('navigation', { name: 'Main navigation' });
     for (const item of NAV_ITEMS) {
-      expect(within(sidebar).getByRole('link', { name: item.label })).toBeInTheDocument();
+      expect(within(sidebar).getByRole('link', { name: navEn[item.labelKey] })).toBeInTheDocument();
     }
   });
 
@@ -70,16 +71,16 @@ describe('theme toggle', () => {
   it('cycles system -> light -> dark -> system and updates the document theme', async () => {
     renderApp('/');
     const toggle = () => screen.getByRole('button', { name: /^Theme:/ });
-    expect(toggle()).toHaveAccessibleName('Theme: system. Switch to light');
+    expect(toggle()).toHaveAccessibleName('Theme: System. Switch to Light');
 
     await userEvent.click(toggle());
     expect(document.documentElement.dataset.theme).toBe('light');
-    expect(toggle()).toHaveAccessibleName('Theme: light. Switch to dark');
+    expect(toggle()).toHaveAccessibleName('Theme: Light. Switch to Dark');
 
     await userEvent.click(toggle());
     expect(document.documentElement.dataset.theme).toBe('dark');
 
     await userEvent.click(toggle());
-    expect(toggle()).toHaveAccessibleName('Theme: system. Switch to light');
+    expect(toggle()).toHaveAccessibleName('Theme: System. Switch to Light');
   });
 });

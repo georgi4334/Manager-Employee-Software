@@ -1,0 +1,18 @@
+{
+  "appName": "InTime",
+  "more": "Още",
+  "mainNavigation": "Основна навигация",
+  "mobileNavigation": "Мобилна навигация",
+  "moreNavigation": "Още навигация",
+  "language": "Език",
+  "comingSoon": "Този модул ще бъде наличен скоро.",
+  "backToDashboard": "Обратно към таблото",
+  "theme": {
+    "label": "Тема: {{current}}. Превключване към {{next}}",
+    "light": "Светла",
+    "dark": "Тъмна",
+    "system": "Системна"
+  },
+  "days_one": "{{count}} ден",
+  "days_other": "{{count}} дни"
+}

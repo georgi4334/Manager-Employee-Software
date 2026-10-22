@@ -1,0 +1,18 @@
+{
+  "appName": "InTime",
+  "more": "More",
+  "mainNavigation": "Main navigation",
+  "mobileNavigation": "Mobile navigation",
+  "moreNavigation": "More navigation",
+  "language": "Language",
+  "comingSoon": "This module is coming soon.",
+  "backToDashboard": "Back to dashboard",
+  "theme": {
+    "label": "Theme: {{current}}. Switch to {{next}}",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "days_one": "{{count}} day",
+  "days_other": "{{count}} days"
+}
