@@ -4,7 +4,7 @@ Web-based employee management for small and mid-size companies: employees, organ
 
 ## Stack
 
-- **Frontend:** React 19, TypeScript, Vite, React Router v7, Zustand + TanStack Query, Tailwind CSS (design tokens)
+- **Frontend:** React 19, TypeScript, Vite, React Router, Zustand + TanStack Query, Tailwind CSS (design tokens)
 - **Backend:** NestJS (TypeScript), PostgreSQL (RLS multi-tenancy), Prisma, pg-boss
 - **i18n:** English, German, Bulgarian
 - **Hosting:** free EU-region services; GDPR by design

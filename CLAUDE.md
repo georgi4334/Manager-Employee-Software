@@ -6,7 +6,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 ## Stack
 
 - Monorepo: pnpm + Turborepo. Packages: `@intime/web` (apps/web), `@intime/api` (apps/api), `@intime/contracts` (packages/contracts: Zod schemas, permission codes, shared types).
-- Web: React 19, TypeScript, Vite, React Router v7 (library mode), Zustand (UI state) + TanStack Query (server state), Tailwind with CSS-variable tokens, react-i18next (en, de, bg).
+- Web: React 19, TypeScript, Vite, React Router (library mode), Zustand (UI state) + TanStack Query (server state), Tailwind with CSS-variable tokens, react-i18next (en, de, bg).
 - API: NestJS, PostgreSQL + Prisma, Row Level Security per tenant, pg-boss jobs, Passport (email/password argon2id + Google).
 
 ## Workflow
