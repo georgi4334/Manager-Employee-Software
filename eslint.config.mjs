@@ -3,13 +3,29 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/coverage/**', '**/node_modules/**', '**/.turbo/**'] },
+  {
+    ignores: [
+      '**/generated/**',
+      '**/dist/**',
+      '**/coverage/**',
+      '**/node_modules/**',
+      '**/.turbo/**',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
+    },
+  },
+  {
+    // NestJS injects by constructor parameter type, so those imports must stay value imports.
+    // With project info the type-imports rule understands emitDecoratorMetadata and leaves them alone.
+    files: ['apps/api/**/*.ts'],
+    languageOptions: {
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
     },
   },
   {

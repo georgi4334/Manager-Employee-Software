@@ -3,3 +3,4 @@ dist
 coverage
 pnpm-lock.yaml
 .turbo
+apps/api/src/generated

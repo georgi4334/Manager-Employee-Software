@@ -13,6 +13,22 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: intime
+          POSTGRES_PASSWORD: intime
+          POSTGRES_DB: intime_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U intime -d intime_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://intime:intime@localhost:5432/intime_test
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

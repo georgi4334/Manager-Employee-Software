@@ -1,0 +1,21 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Tenant {
+  id              String   @id @default(uuid(7)) @db.Uuid
+  name            String
+  slug            String   @unique
+  defaultLocale   String   @default("en") @map("default_locale")
+  defaultTimezone String   @default("Europe/Sofia") @map("default_timezone")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("tenant")
+}

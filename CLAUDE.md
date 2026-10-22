@@ -7,7 +7,14 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 
 - Monorepo: pnpm + Turborepo. Packages: `@intime/web` (apps/web), `@intime/api` (apps/api), `@intime/contracts` (packages/contracts: Zod schemas, permission codes, shared types).
 - Web: React 19, TypeScript, Vite, React Router (library mode), Zustand (UI state) + TanStack Query (server state), Tailwind with CSS-variable tokens, react-i18next (en, de, bg).
-- API: NestJS, PostgreSQL + Prisma, Row Level Security per tenant, pg-boss jobs, Passport (email/password argon2id + Google).
+- API: NestJS 12 (ESM), PostgreSQL + Prisma 7 (pg driver adapter), Row Level Security per tenant, pg-boss jobs, Passport (email/password argon2id + Google).
+
+## Commands
+
+- Local DB: `docker compose up -d`; copy `apps/api/.env.example` to `apps/api/.env`; `pnpm --filter @intime/api db:deploy` applies migrations.
+- `pnpm dev` runs from each app (`apps/web` Vite on :5173, `apps/api` Nest watch on :3000, docs at `/api/docs`).
+- Checks: `pnpm lint && pnpm typecheck && pnpm test` (API database tests run when `TEST_DATABASE_URL` is set; CI always sets it).
+- Schema change: edit `apps/api/prisma/schema.prisma`, then `pnpm --filter @intime/api db:migrate -- --name <what>`; commit the migration.
 
 ## Workflow
 
@@ -23,6 +30,15 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 4. Every user-facing string translated in en, de, bg. Backend returns error codes, never display text.
 5. Personal data minimal; GDPR export/erase considered; sick-leave reason is never stored.
 6. `pnpm lint && pnpm typecheck && pnpm test` pass before committing.
+
+## API conventions (apps/api)
+
+- ESM + NodeNext: relative imports end in `.js`. Nest needs decorator metadata, so tests use Vitest with SWC (not esbuild/tsx) and constructor-injected classes stay normal (value) imports.
+- Throw `AppException(code, { message, details, params })` for expected failures; codes and the response body shape live in `@intime/contracts` (`ERROR_CODES`, `apiErrorBodySchema`). The client translates the code; `message` is developer-facing English. Never put secrets or internals in a message.
+- Validate request bodies/queries with `ZodValidationPipe(schema)` using schemas from `@intime/contracts`.
+- Services needing field-specific conflicts catch/check themselves and throw `AppException('CONFLICT', { params: { field } })`; the generic Prisma P2002 mapping carries no field info.
+- Health probes are `/health/live` and `/health/ready` (outside `/api/v1`). Config is validated at startup (`config/env.ts`); add new env vars there and in `.env.example`.
+- Logs are structured JSON (pino) with request ids; credentials/cookies are redacted. Log ids, never personal data.
 
 ## i18n rules
 

@@ -1,9 +1,22 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
-    "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
-    "lint": {},
-    "typecheck": { "dependsOn": ["^build"] },
-    "test": { "dependsOn": ["^build"] }
-  }
+    "build": {
+      "dependsOn": ["^build", "generate"],
+      "outputs": ["dist/**"]
+    },
+    "lint": {
+      "dependsOn": ["^build", "generate"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build", "generate"]
+    },
+    "test": {
+      "dependsOn": ["^build", "generate"]
+    },
+    "generate": {
+      "outputs": ["src/generated/**"]
+    }
+  },
+  "globalPassThroughEnv": ["TEST_DATABASE_URL", "DATABASE_URL"]
 }
