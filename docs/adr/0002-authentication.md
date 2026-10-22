@@ -72,6 +72,9 @@ immediately (disabled employee, password reset) and survive the free-tier cold s
 - Google never creates accounts: it signs in an **existing** user (invited) whose email equals Google's
   **verified** email, linking the Google identity on first use.
 - Optional: enabled only when `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `GOOGLE_REDIRECT_URL` are set.
+  `GET /auth/providers` tells the web app whether to show the button.
+- The redirect URL points at the **web** origin (`https://app.example.eu/api/v1/auth/google/callback`), which
+  proxies `/api` to the API, so the session cookies are set for the site the user is on.
 
 ### Abuse protection
 
@@ -104,7 +107,22 @@ immediately (disabled employee, password reset) and survive the free-tier cold s
   tenant is known runs through `TenantDb`.
 - One small session query per authenticated request (fine at this scale; cacheable later).
 - New env vars: `JWT_ACCESS_SECRET`, `WEB_APP_URL`, `MAIL_TRANSPORT`, optional `GOOGLE_*`, TTL overrides.
-- The web login screens come next (step 6b), using these endpoints.
+- Web screens (step 6b) use these endpoints; see "Web client" below.
+
+## Web client (step 6b)
+
+- The browser always calls the API on its own origin (`/api/v1`): Vite dev/preview proxies `/api` to the API
+  (`VITE_DEV_API_TARGET`), production hosting must do the same (same-site cookies).
+- `shared/api/client.ts` is the only code that calls `fetch`: JSON + cookies, standard error body → `ApiError`,
+  one shared refresh attempt on `401 UNAUTHENTICATED` (rotating refresh tokens must not race), 65 s timeout,
+  and a "server is waking up" notice after 4 s (free-tier cold start).
+- Who is signed in lives in TanStack Query (`['auth','me']`). `clearSession` drops all cached user data on
+  sign-out/expiry; queries under the `auth` key (sign-in methods) are kept.
+- Routes: public pages under `AuthLayout` (`PublicOnly` for login/forgot), everything else under `RequireAuth`.
+  The page a visitor wanted is kept in router state and restored after sign-in (`safeRedirectPath` blocks open redirects).
+- Error messages are translations keyed by the API error code (`errors:api.<CODE>`; the compiler fails if a code
+  has no translation); form validation messages are keys of `errors:validation`.
+- One-time links carry the token in the URL, so the page sets `Referrer-Policy: no-referrer`.
 
 ## Endpoints (`/api/v1/auth`)
 

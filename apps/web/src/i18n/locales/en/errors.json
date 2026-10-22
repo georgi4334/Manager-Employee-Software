@@ -1,4 +1,34 @@
 {
   "notFoundTitle": "Page not found",
-  "notFoundText": "The page you are looking for does not exist."
+  "notFoundText": "The page you are looking for does not exist.",
+  "api": {
+    "BAD_REQUEST": "The request could not be processed.",
+    "VALIDATION_FAILED": "Some of the information you entered is not valid.",
+    "UNAUTHENTICATED": "Your session has expired. Please sign in again.",
+    "FORBIDDEN": "You are not allowed to do this.",
+    "NOT_FOUND": "We could not find what you were looking for.",
+    "CONFLICT": "This conflicts with existing data.",
+    "INVALID_CREDENTIALS": "Incorrect email or password.",
+    "ACCOUNT_DISABLED": "This account has been disabled. Contact your administrator.",
+    "TENANT_SELECTION_REQUIRED": "This account exists in several workspaces. Please choose one.",
+    "TOKEN_INVALID": "This link is invalid, expired or has already been used.",
+    "PAYLOAD_TOO_LARGE": "The data you sent is too large.",
+    "RATE_LIMITED": "Too many attempts. Please wait a few minutes and try again.",
+    "INTERNAL_ERROR": "Something went wrong on our side. Please try again.",
+    "SERVICE_UNAVAILABLE": "The service is temporarily unavailable. Please try again shortly.",
+    "NETWORK": "Can't reach the server. Check your connection and try again.",
+    "TIMEOUT": "The server took too long to answer. Please try again.",
+    "UNKNOWN": "Something went wrong. Please try again."
+  },
+  "validation": {
+    "required": "This field is required.",
+    "email": "Enter a valid email address.",
+    "tooLong": "This is too long.",
+    "passwordMin": "Use at least {{min}} characters.",
+    "passwordMax": "Use at most {{max}} characters.",
+    "passwordsDontMatch": "The passwords do not match.",
+    "password_contains_email": "The password must not contain your email name.",
+    "password_too_repetitive": "The password is too repetitive.",
+    "invalid_workspace": "Use only letters, numbers and hyphens."
+  }
 }

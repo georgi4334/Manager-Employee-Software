@@ -6,16 +6,16 @@ import navEn from '@/i18n/locales/en/nav.json';
 import { NAV_ITEMS } from './nav';
 
 describe('AppShell navigation', () => {
-  it('renders every module in the desktop sidebar', () => {
-    renderApp('/');
+  it('renders every module in the desktop sidebar', async () => {
+    await renderApp('/');
     const sidebar = screen.getByRole('navigation', { name: 'Main navigation' });
     for (const item of NAV_ITEMS) {
       expect(within(sidebar).getByRole('link', { name: navEn[item.labelKey] })).toBeInTheDocument();
     }
   });
 
-  it('marks the current page as active', () => {
-    renderApp('/leave');
+  it('marks the current page as active', async () => {
+    await renderApp('/leave');
     const sidebar = screen.getByRole('navigation', { name: 'Main navigation' });
     expect(within(sidebar).getByRole('link', { name: 'Leave' })).toHaveAttribute(
       'aria-current',
@@ -27,14 +27,14 @@ describe('AppShell navigation', () => {
   });
 
   it('navigates between modules', async () => {
-    renderApp('/');
+    await renderApp('/');
     const sidebar = screen.getByRole('navigation', { name: 'Main navigation' });
     await userEvent.click(within(sidebar).getByRole('link', { name: 'Employees' }));
     expect(screen.getByRole('heading', { level: 1, name: 'Employees' })).toBeInTheDocument();
   });
 
   it('shows a not-found page with a way back for unknown routes', async () => {
-    renderApp('/does-not-exist');
+    await renderApp('/does-not-exist');
     expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('link', { name: 'Back to dashboard' }));
     expect(screen.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeInTheDocument();
@@ -42,15 +42,15 @@ describe('AppShell navigation', () => {
 });
 
 describe('mobile navigation', () => {
-  it('shows only primary modules in the bottom bar', () => {
-    renderApp('/');
+  it('shows only primary modules in the bottom bar', async () => {
+    await renderApp('/');
     const bar = screen.getByRole('navigation', { name: 'Mobile navigation' });
     expect(within(bar).getByRole('link', { name: 'Attendance' })).toBeInTheDocument();
     expect(within(bar).queryByRole('link', { name: 'Employees' })).not.toBeInTheDocument();
   });
 
   it('opens the More menu, navigates and closes it', async () => {
-    renderApp('/');
+    await renderApp('/');
     await userEvent.click(screen.getByRole('button', { name: 'More' }));
     const menu = screen.getByRole('dialog', { name: 'More navigation' });
     await userEvent.click(within(menu).getByRole('link', { name: 'Organization' }));
@@ -59,7 +59,7 @@ describe('mobile navigation', () => {
   });
 
   it('closes the More menu with Escape', async () => {
-    renderApp('/');
+    await renderApp('/');
     await userEvent.click(screen.getByRole('button', { name: 'More' }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     await userEvent.keyboard('{Escape}');
@@ -69,7 +69,7 @@ describe('mobile navigation', () => {
 
 describe('theme toggle', () => {
   it('cycles system -> light -> dark -> system and updates the document theme', async () => {
-    renderApp('/');
+    await renderApp('/');
     const toggle = () => screen.getByRole('button', { name: /^Theme:/ });
     expect(toggle()).toHaveAccessibleName('Theme: System. Switch to Light');
 

@@ -14,5 +14,14 @@
     "system": "Системна"
   },
   "days_one": "{{count}} ден",
-  "days_other": "{{count}} дни"
+  "days_other": "{{count}} дни",
+  "signOut": "Изход",
+  "signedInAs": "Влезли сте като {{email}}",
+  "loading": "Зареждане…",
+  "retry": "Опитайте отново",
+  "showPassword": "Показване на паролата",
+  "hidePassword": "Скриване на паролата",
+  "serverWaking": "Сървърът се стартира. След период на неактивност това може да отнеме до минута.",
+  "connectionProblemTitle": "Няма връзка със сървъра",
+  "connectionProblemText": "Проверете интернет връзката си и опитайте отново."
 }

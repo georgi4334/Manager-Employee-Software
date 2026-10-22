@@ -1,13 +1,19 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach, beforeEach, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 import { initTestI18n } from './i18n';
+import { server, signedInHandlers } from './server';
+
+beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
+afterAll(() => server.close());
 
 beforeEach(async () => {
+  server.use(...signedInHandlers());
   await initTestI18n('en');
 });
 
 afterEach(() => {
+  server.resetHandlers();
   cleanup();
   window.localStorage.clear();
   delete document.documentElement.dataset.theme;

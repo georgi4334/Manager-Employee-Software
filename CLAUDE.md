@@ -56,6 +56,15 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - New error codes go in `@intime/contracts` `ERROR_CODES` (the web app translates them).
 - First workspace: `pnpm --filter @intime/api build && pnpm --filter @intime/api tenant:create --name "Acme" --slug acme --admin-email a@acme.eu`.
 
+## Web conventions (apps/web)
+
+- Call the API only through `apiRequest` (`shared/api/client.ts`); never `fetch` directly, never store tokens in JS/localStorage. Server data goes through TanStack Query; who is signed in is `useCurrentUser()`.
+- API errors are shown with `useMessages().apiError(error)` (keys `errors:api.<CODE>`). A new `ErrorCode` in `@intime/contracts` fails typecheck until it is translated in en/de/bg.
+- Forms: react-hook-form + `zodResolver` with schemas in `features/*/forms.ts` whose messages are keys of `errors:validation` (not text). Keep them in line with the API schemas; add a parity test.
+- Reusable UI: `shared/ui` (Button, Card, Input, Field, Alert, PasswordInput). Inputs use a 16px font on mobile; every control is at least 44px high.
+- Component tests use the shared MSW server in `tests/server.ts` (signed in by default; `signedOutHandlers()` for visitors) and `renderApp(path)` from `tests/utils.tsx`, which waits for the first requests. Use `findBy…` for anything that happens after navigation.
+- Dev: run the API (`apps/api`, :3000) and `pnpm dev` in `apps/web` (:5173, proxies `/api`). Set `WEB_APP_URL=http://localhost:5173` in the API `.env`.
+
 ## i18n rules
 
 - Strings live in `apps/web/src/i18n/locales/{en,de,bg}/<namespace>.json`; add every key to all three languages (English is the reference). `pnpm test` fails on missing, extra, empty or placeholder-mismatched keys.

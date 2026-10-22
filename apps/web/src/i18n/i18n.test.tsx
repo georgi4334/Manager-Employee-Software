@@ -8,8 +8,8 @@ import { changeLanguage, i18n } from '.';
 import { LANGUAGE_STORAGE_KEY } from './languages';
 
 describe('language switcher', () => {
-  it('lists the three languages by their native names', () => {
-    renderApp('/');
+  it('lists the three languages by their native names', async () => {
+    await renderApp('/');
     const select = screen.getByRole('combobox', { name: 'Language' });
     const names = within(select)
       .getAllByRole('option')
@@ -18,7 +18,7 @@ describe('language switcher', () => {
   });
 
   it('switches the UI to German and updates <html lang>, persisting the choice', async () => {
-    renderApp('/');
+    await renderApp('/');
     await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Language' }), 'de');
     expect(await screen.findByRole('heading', { level: 1, name: 'Übersicht' })).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Sprache' })).toHaveValue('de');
@@ -27,7 +27,7 @@ describe('language switcher', () => {
   });
 
   it('switches the UI to Bulgarian including navigation labels', async () => {
-    renderApp('/');
+    await renderApp('/');
     await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Language' }), 'bg');
     const sidebar = await screen.findByRole('navigation', { name: 'Основна навигация' });
     expect(within(sidebar).getByRole('link', { name: 'Присъствие' })).toBeInTheDocument();
@@ -35,13 +35,13 @@ describe('language switcher', () => {
 
   it('translates the not-found page', async () => {
     await initTestI18n('de');
-    renderApp('/gibt-es-nicht');
+    await renderApp('/gibt-es-nicht');
     expect(screen.getByRole('heading', { name: 'Seite nicht gefunden' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Zurück zur Übersicht' })).toBeInTheDocument();
   });
 
   it('ignores an unsupported language instead of breaking the UI', async () => {
-    renderApp('/');
+    await renderApp('/');
     await changeLanguage('fr' as never);
     expect(i18n.resolvedLanguage).toBe('en');
     expect(screen.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeInTheDocument();

@@ -610,6 +610,10 @@ describe.skipIf(!urls)('authentication (HTTP, real database)', () => {
       return { start, callback, browser };
     }
 
+    it('is advertised to the login page only when configured', async () => {
+      expect((await http().get('/api/v1/auth/providers')).body).toEqual({ google: true });
+    });
+
     it('redirects to Google with a short-lived flow cookie', async () => {
       const { start } = await googleSignIn();
       expect(start.status).toBe(302);

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from '@/shared/components/LanguageSwitcher';
 import { ThemeToggle } from '@/shared/components/ThemeToggle';
+import { UserMenu } from './UserMenu';
 
 export function Topbar() {
   const { t } = useTranslation('common');
@@ -10,6 +11,7 @@ export function Topbar() {
       <div className="ml-auto flex items-center gap-1">
         <LanguageSwitcher />
         <ThemeToggle />
+        <UserMenu />
       </div>
     </header>
   );

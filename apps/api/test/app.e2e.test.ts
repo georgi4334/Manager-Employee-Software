@@ -194,6 +194,14 @@ describe('request id', () => {
   );
 });
 
+describe('auth providers', () => {
+  it('is public and reports Google as unavailable when it is not configured', async () => {
+    const res = await (await start()).get('/api/v1/auth/providers');
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ google: false });
+  });
+});
+
 describe('tenant context per request', () => {
   it('starts every request without a tenant and keeps the one set by auth for the whole request', async () => {
     const http = await start();

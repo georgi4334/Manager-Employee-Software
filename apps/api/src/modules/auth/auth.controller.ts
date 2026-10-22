@@ -77,6 +77,15 @@ export class AuthController {
   ) {}
 
   @Public()
+  @Get('providers')
+  @ApiOperation({
+    summary: 'Which sign-in methods are available (the login page shows only these)',
+  })
+  providers(): { google: boolean } {
+    return { google: this.google.enabled };
+  }
+
+  @Public()
   @Post('login')
   @HttpCode(200)
   @Throttle({ default: { limit: 60, ttl: MINUTE } })
