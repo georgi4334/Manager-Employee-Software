@@ -31,7 +31,12 @@
     "passwordsDontMatch": "Die Passwörter stimmen nicht überein.",
     "password_contains_email": "Das Passwort darf Ihren E-Mail-Namen nicht enthalten.",
     "password_too_repetitive": "Das Passwort ist zu eintönig.",
-    "invalid_workspace": "Verwenden Sie nur Buchstaben, Ziffern und Bindestriche."
+    "invalid_workspace": "Verwenden Sie nur Buchstaben, Ziffern und Bindestriche.",
+    "invalidDate": "Geben Sie ein gültiges Datum als Jahr-Monat-Tag ein.",
+    "futureDate": "Das Datum darf nicht in der Zukunft liegen.",
+    "invalidPhone": "Geben Sie eine gültige Telefonnummer ein.",
+    "invalidCountry": "Verwenden Sie einen zweistelligen Ländercode.",
+    "terminationBeforeHire": "Das Austrittsdatum darf nicht vor dem Eintrittsdatum liegen."
   },
   "forbiddenTitle": "Kein Zugriff",
   "forbiddenText": "Sie haben keine Berechtigung, diese Seite zu öffnen. Wenden Sie sich an Ihre Administration, falls das ein Irrtum ist."

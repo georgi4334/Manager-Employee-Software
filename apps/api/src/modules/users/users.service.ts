@@ -144,54 +144,64 @@ export class UsersService {
 
   disable(actor: RequestAuth, userId: string): Promise<UserSummary> {
     return this.db.tx(async (tx) => {
-      if (userId === actor.userId) {
-        throw new AppException('CANNOT_DISABLE_SELF', {
-          message: 'You cannot disable your own account',
-        });
-      }
-      await this.begin(tx, actor, { lock: true });
-      const user = await this.findUser(tx, userId);
-      await this.assertMayManageAdministrator(tx, actor, userId);
-      if (user.status === 'disabled') return toSummary(user);
-
-      if (user.status === 'active' && (await this.holdsAdminPower(tx, userId))) {
-        await this.assertAnotherAdministrator(tx, userId);
-      }
-      await tx.user.update({ where: { id: userId }, data: { status: 'disabled' } });
-      // Signed in right now? Not for long: every session ends immediately.
-      await this.sessions.revokeAllForUser(tx, userId);
-      await this.audit.record(tx, {
-        actorUserId: actor.userId,
-        action: 'user.disabled',
-        entity: 'user',
-        entityId: userId,
-        before: { status: user.status },
-        after: { status: 'disabled' },
-      });
+      await this.disableInTx(tx, actor, userId);
       return this.summary(tx, userId);
     });
   }
 
   enable(actor: RequestAuth, userId: string): Promise<UserSummary> {
     return this.db.tx(async (tx) => {
-      await this.begin(tx, actor, { lock: false });
-      const user = await this.findUser(tx, userId);
-      await this.assertMayManageAdministrator(tx, actor, userId);
-      if (user.status !== 'disabled') return toSummary(user);
-
-      // Someone who never finished their invitation goes back to "invited"; everyone else to "active".
-      const identities = await tx.authIdentity.count({ where: { userId } });
-      const status = identities > 0 ? 'active' : 'invited';
-      await tx.user.update({ where: { id: userId }, data: { status } });
-      await this.audit.record(tx, {
-        actorUserId: actor.userId,
-        action: 'user.enabled',
-        entity: 'user',
-        entityId: userId,
-        before: { status: 'disabled' },
-        after: { status },
-      });
+      await this.enableInTx(tx, actor, userId);
       return this.summary(tx, userId);
+    });
+  }
+
+  /** Disables an account inside the caller's transaction (also used when an employee is deactivated). */
+  async disableInTx(tx: TenantTx, actor: RequestAuth, userId: string): Promise<void> {
+    if (userId === actor.userId) {
+      throw new AppException('CANNOT_DISABLE_SELF', {
+        message: 'You cannot disable your own account',
+      });
+    }
+    await this.begin(tx, actor, { lock: true });
+    const user = await this.findUser(tx, userId);
+    await this.assertMayManageAdministrator(tx, actor, userId);
+    if (user.status === 'disabled') return;
+
+    if (user.status === 'active' && (await this.holdsAdminPower(tx, userId))) {
+      await this.assertAnotherAdministrator(tx, userId);
+    }
+    await tx.user.update({ where: { id: userId }, data: { status: 'disabled' } });
+    // Signed in right now? Not for long: every session ends immediately.
+    await this.sessions.revokeAllForUser(tx, userId);
+    await this.audit.record(tx, {
+      actorUserId: actor.userId,
+      action: 'user.disabled',
+      entity: 'user',
+      entityId: userId,
+      before: { status: user.status },
+      after: { status: 'disabled' },
+    });
+  }
+
+  /** Re-enables an account inside the caller's transaction (also used when an employee is reactivated). */
+  async enableInTx(tx: TenantTx, actor: RequestAuth, userId: string): Promise<void> {
+    await this.begin(tx, actor, { lock: false });
+    const user = await this.findUser(tx, userId);
+    await this.assertMayManageAdministrator(tx, actor, userId);
+    if (user.status !== 'disabled') return;
+
+    // Someone who never finished their invitation goes back to "invited"; everyone else to "active".
+    const identities = await tx.authIdentity.count({ where: { userId } });
+    const status = identities > 0 ? 'active' : 'invited';
+    await tx.user.update({ where: { id: userId }, data: { status } });
+    await this.audit.record(tx, {
+      actorUserId: actor.userId,
+      action: 'user.enabled',
+      entity: 'user',
+      entityId: userId,
+      before: { status: 'disabled' },
+      after: { status },
     });
   }
 

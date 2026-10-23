@@ -23,6 +23,7 @@ model Tenant {
   outboxEvents            OutboxEvent[]
   notifications           Notification[]
   notificationPreferences NotificationPreference[]
+  employees               Employee[]
 
   @@map("tenant")
 }
@@ -50,6 +51,7 @@ model User {
   roles                   UserRole[]
   notifications           Notification[]
   notificationPreferences NotificationPreference[]
+  employee                Employee?
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -268,4 +270,40 @@ model NotificationPreference {
 
   @@id([userId, type, channel])
   @@map("notification_preference")
+}
+
+/// A person who works at the company (docs/adr/0006-employees.md). Separate from the login account: the
+/// account may not exist yet or may be disabled while this record is kept.
+model Employee {
+  id              String    @id @default(uuid(7)) @db.Uuid
+  tenantId        String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  userId          String?   @map("user_id") @db.Uuid
+  employeeNo      String?   @map("employee_no")
+  firstName       String    @map("first_name")
+  lastName        String    @map("last_name")
+  jobTitle        String?   @map("job_title")
+  location        String?
+  /// full_time | part_time | contractor | outsourced
+  employmentType  String    @default("full_time") @map("employment_type")
+  /// intern | junior | mid | senior | lead | principal
+  seniority       String?
+  hireDate        DateTime? @map("hire_date") @db.Date
+  terminationDate DateTime? @map("termination_date") @db.Date
+  birthDate       DateTime? @map("birth_date") @db.Date
+  phone           String?
+  /// ISO 3166-1 alpha-2
+  country         String?
+  /// active | inactive
+  status          String    @default("active")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, userId])
+  @@unique([tenantId, employeeNo])
+  @@index([tenantId, lastName, firstName])
+  @@map("employee")
 }

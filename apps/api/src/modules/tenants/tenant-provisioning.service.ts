@@ -14,6 +14,8 @@ export const createTenantInputSchema = z.object({
   name: z.string().trim().min(2).max(100),
   slug: workspaceSlugSchema,
   adminEmail: emailSchema,
+  adminFirstName: z.string().trim().min(1).max(100).default('Workspace'),
+  adminLastName: z.string().trim().min(1).max(100).default('Administrator'),
   locale: z.enum(['en', 'de', 'bg']).default('en'),
   timezone: z.string().min(1).default('Europe/Sofia'),
 });
@@ -61,6 +63,14 @@ export class TenantProvisioningService {
       this.db.tx(async (tx) => {
         const { roleIds } = await this.systemRoles.ensureSystemRoles(tx);
         const invited = await this.invitations.invite(tx, input.adminEmail, [roleIds.admin]);
+        // The administrator is an employee too (the directory, leave and the calendar start from there).
+        await tx.employee.create({
+          data: {
+            userId: invited.userId,
+            firstName: input.adminFirstName,
+            lastName: input.adminLastName,
+          },
+        });
         await this.audit.record(tx, {
           actorUserId: null,
           action: 'tenant.created',

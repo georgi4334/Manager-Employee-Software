@@ -31,7 +31,12 @@
     "passwordsDontMatch": "The passwords do not match.",
     "password_contains_email": "The password must not contain your email name.",
     "password_too_repetitive": "The password is too repetitive.",
-    "invalid_workspace": "Use only letters, numbers and hyphens."
+    "invalid_workspace": "Use only letters, numbers and hyphens.",
+    "invalidDate": "Enter a valid date as year-month-day.",
+    "futureDate": "The date cannot be in the future.",
+    "invalidPhone": "Enter a valid phone number.",
+    "invalidCountry": "Use a two-letter country code.",
+    "terminationBeforeHire": "The termination date cannot be before the hire date."
   },
   "forbiddenTitle": "No access",
   "forbiddenText": "You do not have permission to open this page. Ask your administrator if you think this is a mistake."

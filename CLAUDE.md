@@ -73,6 +73,13 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - The queue is the `outbox_event` table (no pg-boss). The worker runs after commit, at startup and in sweeps only while the API is active; `WORKER_ENABLED=false` disables it (tests). Time-based features will need an external pinger.
 - Inbox routes are `@Authenticated()` and scoped to the caller; every notification type needs an en/de/bg text in `notifications.json`.
 
+## Employees (docs/adr/0006-employees.md)
+
+- `employee` is the person, `app_user` the login: an employee may have no account yet, an account may be disabled while the record stays. Email lives on the account only.
+- Scope checks on an employee record go through `EmployeesService.canScoped`: a record without an account is reachable only at scope `all` (a missing owner must never read as "anyone"). Profile data (phone, birth date, dates, employee no.) is `null` in responses unless `employee.view_profile_full` covers that record.
+- Audit entries for employee changes carry field names only, never values. Deactivation disables the account through `UsersService.disableInTx` (self, last-administrator and "only Admin manages an administrator" rules apply). Application roles cannot delete employees.
+- Manager, department, team, position and avatar arrive with Organization / file storage; until then `reports`/`team`/`department` scopes still fail closed.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

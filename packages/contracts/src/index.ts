@@ -1,4 +1,5 @@
 export * from './auth.js';
+export * from './employees.js';
 export * from './errors.js';
 export * from './notifications.js';
 export * from './permissions.js';

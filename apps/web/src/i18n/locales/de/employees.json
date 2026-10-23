@@ -1,0 +1,123 @@
+{
+  "title": "Mitarbeitende",
+  "searchLabel": "Mitarbeitende suchen",
+  "searchPlaceholder": "Name, Position oder E-Mail",
+  "statusLabel": "Anzeigen",
+  "status": {
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "all": "Alle"
+  },
+  "add": "Mitarbeiter:in hinzufügen",
+  "total_one": "{{count}} Mitarbeiter:in",
+  "total_other": "{{count}} Mitarbeitende",
+  "empty": "Keine Mitarbeitenden gefunden.",
+  "page": "Seite {{page}} von {{pages}}",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "pagination": "Seiten",
+  "list": "Mitarbeitendenliste",
+  "badge": {
+    "inactive": "Inaktiv",
+    "invited": "Eingeladen",
+    "you": "Sie"
+  },
+  "back": "Zurück zu den Mitarbeitenden",
+  "notFoundTitle": "Mitarbeiter:in nicht gefunden",
+  "notFoundText": "Diese Person existiert nicht oder Sie dürfen sie nicht sehen.",
+  "limitedView": "Sie sehen die Verzeichnisangaben dieser Person.",
+  "notProvided": "Nicht angegeben",
+  "sections": {
+    "directory": "Verzeichnis",
+    "employment": "Beschäftigung",
+    "personal": "Persönliches",
+    "account": "Konto"
+  },
+  "fields": {
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail",
+    "jobTitle": "Position",
+    "location": "Standort",
+    "employeeNo": "Personalnummer",
+    "employmentType": "Beschäftigungsart",
+    "seniority": "Erfahrungsstufe",
+    "hireDate": "Eintrittsdatum",
+    "terminationDate": "Austrittsdatum",
+    "birthDate": "Geburtsdatum",
+    "phone": "Telefon",
+    "country": "Land"
+  },
+  "employmentType": {
+    "full_time": "Vollzeit",
+    "part_time": "Teilzeit",
+    "contractor": "Freiberuflich",
+    "outsourced": "Extern"
+  },
+  "seniority": {
+    "intern": "Praktikum",
+    "junior": "Junior",
+    "mid": "Mittelstufe",
+    "senior": "Senior",
+    "lead": "Lead",
+    "principal": "Principal"
+  },
+  "accountStatus": {
+    "none": "Kein Konto",
+    "invited": "Einladung gesendet",
+    "active": "Aktiv",
+    "disabled": "Deaktiviert"
+  },
+  "actions": {
+    "edit": "Bearbeiten",
+    "invite": "Zur Anmeldung einladen",
+    "resendInvite": "Einladung erneut senden",
+    "deactivate": "Deaktivieren",
+    "reactivate": "Reaktivieren",
+    "cancel": "Abbrechen"
+  },
+  "invite": {
+    "title": "{{name}} einladen",
+    "email": "E-Mail-Adresse",
+    "hint": "Die Person erhält eine E-Mail mit einem Link zum Festlegen eines Passworts.",
+    "send": "Einladung senden",
+    "sending": "Wird gesendet…",
+    "sent": "Einladung gesendet."
+  },
+  "deactivate": {
+    "title": "{{name}} deaktivieren?",
+    "text": "Das Konto wird deaktiviert und die Person sofort abgemeldet. Der Datensatz bleibt erhalten.",
+    "date": "Austrittsdatum",
+    "dateHint": "Leer lassen für heute.",
+    "confirm": "Deaktivieren",
+    "working": "Wird deaktiviert…"
+  },
+  "reactivated": "Mitarbeiter:in reaktiviert.",
+  "form": {
+    "createTitle": "Mitarbeiter:in hinzufügen",
+    "editTitle": "{{name}} bearbeiten",
+    "emailHint": "Die Person erhält eine Einladung zur Anmeldung. Leer lassen, um sie ohne Konto anzulegen.",
+    "countryHint": "Zwei Buchstaben, zum Beispiel BG oder DE.",
+    "notSpecified": "Nicht angegeben",
+    "create": "Mitarbeiter:in anlegen",
+    "creating": "Wird angelegt…",
+    "save": "Änderungen speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen",
+    "limited": "Sie können nur Personen bearbeiten, deren vollständiges Profil Sie sehen dürfen."
+  },
+  "profile": {
+    "title": "Mein Profil",
+    "noRecord": "Für Ihr Konto gibt es noch keinen Mitarbeiterdatensatz. Bitten Sie die Personalabteilung, Sie anzulegen.",
+    "phoneTitle": "Telefonnummer",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "saved": "Gespeichert."
+  },
+  "conflict": {
+    "employeeNo": "Diese Personalnummer wird bereits verwendet.",
+    "email": "Diese E-Mail-Adresse wird bereits verwendet.",
+    "account": "Diese Person hat bereits ein aktives Konto.",
+    "status": "Diese Person ist nicht aktiv."
+  }
+}
