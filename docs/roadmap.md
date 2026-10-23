@@ -30,7 +30,7 @@ Solo developer + Claude, ~3–4 focused hours/day. Estimates are in **working da
 6. Auth: email/password (argon2id), Google OAuth, refresh rotation, invitations, password reset, throttling. _(3 d)_
 7. RBAC: roles/permissions seed from `packages/contracts`, guard, policies, matrix test. _(2 d)_
 8. Notification skeleton (outbox → in-app + email, ADR 0004) — **done**.
-9. Deploy pipeline to free EU hosting + "API waking up" UI state. _(1–2 d)_
+9. Deploy pipeline to free EU hosting + "API waking up" UI state (ADR 0005, `docs/deployment.md`) — **done** (accounts and secrets are set up by following the runbook).
 
 ## Phase 1 — First release (~25–30 days)
 

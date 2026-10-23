@@ -73,6 +73,12 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - The queue is the `outbox_event` table (no pg-boss). The worker runs after commit, at startup and in sweeps only while the API is active; `WORKER_ENABLED=false` disables it (tests). Time-based features will need an external pinger.
 - Inbox routes are `@Authenticated()` and scoped to the caller; every notification type needs an en/de/bg text in `notifications.json`.
 
+## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
+
+- Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).
+- Migrations run before the new code: keep every migration compatible with the previous release (expand, then contract). Never edit a deployed migration.
+- Production env: `MAIL_TRANSPORT=resend`, `TRUST_PROXY_HOPS=2` (Render + proxy function). New env vars go in `config/env.ts`, `.env.example`, `render.yaml` and the runbook.
+
 ## Web conventions (apps/web)
 
 - Call the API only through `apiRequest` (`shared/api/client.ts`); never `fetch` directly, never store tokens in JS/localStorage. Server data goes through TanStack Query; who is signed in is `useCurrentUser()`.

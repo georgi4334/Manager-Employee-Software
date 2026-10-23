@@ -14,6 +14,7 @@ Web-based employee management for small and mid-size companies: employees, organ
 - [Data model (ERD)](docs/data-model.md)
 - [Roles & permission matrix](docs/permission-matrix.md)
 - [Roadmap & working agreement](docs/roadmap.md)
+- [Deployment runbook](docs/deployment.md)
 
 ## Branches
 

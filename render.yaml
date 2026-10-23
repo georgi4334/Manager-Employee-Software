@@ -1,0 +1,47 @@
+# Render Blueprint: the API on the free web service in Frankfurt (docs/adr/0005-deployment.md).
+# Deploys are triggered by .github/workflows/deploy.yml (after CI and database migrations), not by pushes.
+services:
+  - type: web
+    name: intime-api
+    runtime: node
+    region: frankfurt
+    plan: free
+    autoDeploy: false
+    healthCheckPath: /health/live
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm turbo run build --filter=@intime/api
+    # Syncs the system roles' permissions with the catalog on every start (idempotent), then serves.
+    startCommand: WORKER_ENABLED=false node apps/api/dist/cli/sync-roles.js && node apps/api/dist/main.js
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: HUSKY
+        value: '0'
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Cloudflare Pages Function + Render's load balancer = two trusted hops.
+      - key: TRUST_PROXY_HOPS
+        value: 2
+      - key: MAIL_TRANSPORT
+        value: resend
+      # Set in the Render dashboard (sync: false keeps them out of git):
+      - key: DATABASE_URL
+        sync: false
+      - key: SYSTEM_DATABASE_URL
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: WEB_APP_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      # Optional Google sign-in (all three or none):
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URL
+        sync: false

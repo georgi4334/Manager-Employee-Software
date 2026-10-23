@@ -1,0 +1,67 @@
+name: Deploy
+
+# Runs after CI succeeded on main. Does nothing until the repository variable DEPLOY_ENABLED is "true"
+# (see docs/deployment.md for the one-time setup of accounts, secrets and variables).
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: vars.DEPLOY_ENABLED == 'true' && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      API_ORIGIN: ${{ vars.API_ORIGIN }}
+      WEB_ORIGIN: ${{ vars.WEB_ORIGIN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      # 1. Database first. Migrations must stay compatible with the version still running (expand, then contract).
+      - name: Apply database migrations
+        run: pnpm --filter @intime/api db:deploy
+        env:
+          MIGRATION_DATABASE_URL: ${{ secrets.MIGRATION_DATABASE_URL }}
+
+      # 2. API: Render builds and starts the new version (roles are synced on start).
+      - name: Trigger API deploy
+        run: curl --fail --silent --show-error -X POST "$RENDER_DEPLOY_HOOK_URL" > /dev/null
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+      # 3. Web: static files plus the /api proxy function. API_ORIGIN is a Pages runtime variable.
+      - name: Deploy web to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: apps/web
+          command: pages deploy dist --project-name=${{ vars.CF_PAGES_PROJECT }} --branch=main --commit-dirty=true
+
+      # 4. Smoke tests. The first request may wake a sleeping API, so allow several minutes.
+      - name: API is ready
+        run: curl --fail --silent --show-error --retry 20 --retry-delay 15 --retry-all-errors --max-time 60 "$API_ORIGIN/health/ready"
+      - name: Web is served and proxies to the API
+        run: |
+          curl --fail --silent --show-error --retry 5 --retry-delay 10 --max-time 60 "$WEB_ORIGIN/" > /dev/null
+          status=$(curl --silent --output /dev/null --write-out '%{http_code}' --retry 5 --retry-delay 10 --max-time 60 "$WEB_ORIGIN/api/v1/auth/me")
+          test "$status" = "401" || { echo "expected 401 from /api/v1/auth/me through the proxy, got $status"; exit 1; }
