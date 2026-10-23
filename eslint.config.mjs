@@ -42,6 +42,7 @@ export default tseslint.config(
       'apps/api/src/infrastructure/**',
       'apps/api/src/modules/tenants/**',
       'apps/api/src/modules/auth/**',
+      'apps/api/src/modules/notifications/delivery/**',
     ],
     rules: {
       'no-restricted-imports': [

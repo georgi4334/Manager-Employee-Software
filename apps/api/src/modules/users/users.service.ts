@@ -7,6 +7,7 @@ import { TenantContext, type TenantTx } from '../../infrastructure/tenancy/tenan
 import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
 import { AuditService } from '../audit/audit.service.js';
 import { InvitationService } from '../auth/invitation.service.js';
+import { OutboxService } from '../notifications/outbox.service.js';
 import { SessionService } from '../auth/session.service.js';
 import { PermissionsService } from '../roles/permissions.service.js';
 import { UserRolesService } from '../roles/user-roles.service.js';
@@ -58,6 +59,7 @@ export class UsersService {
     private readonly permissions: PermissionsService,
     private readonly sessions: SessionService,
     private readonly audit: AuditService,
+    private readonly outbox: OutboxService,
   ) {}
 
   listRoles(): Promise<RoleListItem[]> {
@@ -124,6 +126,18 @@ export class UsersService {
         before: { roleIds: before },
         after: { roleIds: after },
       });
+      if (before.join() !== after.join()) {
+        // Tell the person, in the same transaction as the change (they get it only if the change is kept).
+        const roles = await tx.role.findMany({
+          where: { id: { in: after } },
+          select: { name: true },
+          orderBy: { name: 'asc' },
+        });
+        await this.outbox.publish(tx, 'user.roles_changed', {
+          userId,
+          roleNames: roles.map((role) => role.name),
+        });
+      }
       return this.summary(tx, userId);
     });
   }

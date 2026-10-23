@@ -7,7 +7,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 
 - Monorepo: pnpm + Turborepo. Packages: `@intime/web` (apps/web), `@intime/api` (apps/api), `@intime/contracts` (packages/contracts: Zod schemas, permission codes, shared types).
 - Web: React 19, TypeScript, Vite, React Router (library mode), Zustand (UI state) + TanStack Query (server state), Tailwind with CSS-variable tokens, react-i18next (en, de, bg).
-- API: NestJS 12 (ESM), PostgreSQL + Prisma 7 (pg driver adapter), Row Level Security per tenant, pg-boss jobs, own auth module with `jose` (JWT, Google OIDC) and argon2id (`@node-rs/argon2`).
+- API: NestJS 12 (ESM), PostgreSQL + Prisma 7 (pg driver adapter), Row Level Security per tenant, a transactional outbox for notifications (ADR 0004; no pg-boss), own auth module with `jose` (JWT, Google OIDC) and argon2id (`@node-rs/argon2`).
 
 ## Commands
 
@@ -67,6 +67,12 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Web: `usePermission`, `<Can>`, `<RequirePermission>` are cosmetic. Add new nav entries with a `permission` in `app/nav.ts`.
 - Test fixtures: `userWithRole('admin')` / `userWithPermissions({...})` in `apps/web/src/tests/server.ts`.
 
+## Notifications (docs/adr/0004-notifications.md)
+
+- A feature notifies by adding a type to `packages/contracts/src/notifications.ts` (params schema, defaults, locked channels) + web/email translations, and calling `OutboxService.publish(tx, type, params)` inside the same transaction as its change. Params: ids and non-sensitive labels only; emails never carry details.
+- The queue is the `outbox_event` table (no pg-boss). The worker runs after commit, at startup and in sweeps only while the API is active; `WORKER_ENABLED=false` disables it (tests). Time-based features will need an external pinger.
+- Inbox routes are `@Authenticated()` and scoped to the caller; every notification type needs an en/de/bg text in `notifications.json`.
+
 ## Web conventions (apps/web)
 
 - Call the API only through `apiRequest` (`shared/api/client.ts`); never `fetch` directly, never store tokens in JS/localStorage. Server data goes through TanStack Query; who is signed in is `useCurrentUser()`.
@@ -81,7 +87,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Strings live in `apps/web/src/i18n/locales/{en,de,bg}/<namespace>.json`; add every key to all three languages (English is the reference). `pnpm test` fails on missing, extra, empty or placeholder-mismatched keys.
 - Use `useTranslation('<ns>')` with typed keys; plurals use `_one` / `_other`. Never hard-code UI text, never build sentences by concatenation.
 - Dates and numbers go through `shared/lib/format.ts` (Intl), never manual formatting.
-- New namespace: add it to `NAMESPACES` in `i18n/languages.ts` and `i18n/types.d.ts`.
+- New namespace (also touch `src/tests/i18n.ts` if tests do not see the new files, the Vite glob is cached): add it to `NAMESPACES` in `i18n/languages.ts` and `i18n/types.d.ts`.
 
 ## Code conventions
 

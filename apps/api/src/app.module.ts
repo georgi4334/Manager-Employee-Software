@@ -11,12 +11,14 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
 import { redactUrl } from './common/logging/redact-url.js';
 import { APP_CONFIG, AppConfigModule } from './config/config.module.js';
 import type { Env } from './config/env.js';
+import { ActivityModule } from './infrastructure/activity/activity.module.js';
 import { MailModule } from './infrastructure/mail/mail.module.js';
 import { PrismaModule } from './infrastructure/prisma/prisma.module.js';
 import { TenancyModule } from './infrastructure/tenancy/tenancy.module.js';
 import { AuditModule } from './modules/audit/audit.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { HealthModule } from './modules/health/health.module.js';
+import { NotificationsModule } from './modules/notifications/notifications.module.js';
 import { RolesModule } from './modules/roles/roles.module.js';
 import { TenantsModule } from './modules/tenants/tenants.module.js';
 import { UsersModule } from './modules/users/users.module.js';
@@ -66,11 +68,13 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     PrismaModule,
     TenancyModule,
     MailModule,
+    ActivityModule,
     // Per-route limits are set with @Throttle on the auth endpoints; in memory (one instance).
     ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 100 }]),
     HealthModule,
     RolesModule,
     AuditModule,
+    NotificationsModule,
     AuthorizationModule,
     AuthModule,
     TenantsModule,

@@ -85,3 +85,68 @@ describe('TenantDb.tx', () => {
     ).rejects.toThrow('fail');
   });
 });
+
+describe('TenantDb.afterCommit', () => {
+  it('runs callbacks after the transaction committed, once, in order', async () => {
+    const { db, context } = setup();
+    const order: string[] = [];
+    await context.run(A, () =>
+      db.tx(async () => {
+        db.afterCommit(() => order.push('first'));
+        db.afterCommit(() => order.push('second'));
+        order.push('work');
+      }),
+    );
+    expect(order).toEqual(['work', 'first', 'second']);
+  });
+
+  it('never runs them when the transaction fails (rolled back)', async () => {
+    const { db, context } = setup();
+    const callback = vi.fn();
+    await expect(
+      context.run(A, () =>
+        db.tx(async () => {
+          db.afterCommit(callback);
+          throw new Error('rolled back');
+        }),
+      ),
+    ).rejects.toThrow('rolled back');
+    expect(callback).not.toHaveBeenCalled();
+  });
+
+  it('nested calls share the outermost transaction’s callbacks', async () => {
+    const { db, context } = setup();
+    const callback = vi.fn();
+    await context.run(A, () =>
+      db.tx(async () => {
+        await db.tx(async () => db.afterCommit(callback));
+        expect(callback).not.toHaveBeenCalled();
+      }),
+    );
+    expect(callback).toHaveBeenCalledOnce();
+  });
+
+  it('runs immediately when there is no transaction', () => {
+    const { db } = setup();
+    const callback = vi.fn();
+    db.afterCommit(callback);
+    expect(callback).toHaveBeenCalledOnce();
+  });
+
+  it('a throwing callback does not fail the request or stop the others', async () => {
+    const { db, context } = setup();
+    const second = vi.fn();
+    await expect(
+      context.run(A, () =>
+        db.tx(async () => {
+          db.afterCommit(() => {
+            throw new Error('boom');
+          });
+          db.afterCommit(second);
+          return 'ok';
+        }),
+      ),
+    ).resolves.toBe('ok');
+    expect(second).toHaveBeenCalledOnce();
+  });
+});

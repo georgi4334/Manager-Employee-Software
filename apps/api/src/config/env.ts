@@ -41,6 +41,8 @@ const envSchema = z
      * limits see the real client IP. Defaults to on in production.
      */
     TRUST_PROXY: booleanString.optional(),
+    /** Background delivery of notifications and emails. Turn off for tests and one-off commands. */
+    WORKER_ENABLED: booleanString.default(true),
     /** Secure cookies (HTTPS only). Defaults to on in production. */
     COOKIE_SECURE: booleanString.optional(),
     /**

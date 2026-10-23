@@ -23,3 +23,10 @@ export function formatNumber(
   if (!Number.isFinite(value)) return '';
   return new Intl.NumberFormat(intlLocale(language), options).format(value);
 }
+
+/** "HR, Manager and Employee" / "HR, Manager und Employee": a list in the language's own style. */
+export function formatList(items: readonly string[], language: string): string {
+  return new Intl.ListFormat(intlLocale(language), { style: 'long', type: 'conjunction' }).format(
+    items,
+  );
+}

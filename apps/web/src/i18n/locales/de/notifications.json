@@ -1,0 +1,33 @@
+{
+  "title": "Benachrichtigungen",
+  "bell_one": "Benachrichtigungen, {{count}} ungelesen",
+  "bell_other": "Benachrichtigungen, {{count}} ungelesen",
+  "markAllRead": "Alle als gelesen markieren",
+  "settings": "Benachrichtigungseinstellungen",
+  "empty": "Sie haben noch keine Benachrichtigungen.",
+  "loadMore": "Ältere anzeigen",
+  "unread": "Ungelesen",
+  "settingsTitle": "Benachrichtigungseinstellungen",
+  "settingsIntro": "Legen Sie fest, wie Sie informiert werden möchten. Manche Hinweise sind verpflichtend und lassen sich nicht abschalten.",
+  "backToInbox": "Zurück zu den Benachrichtigungen",
+  "required": "Erforderlich",
+  "switchLabel": "{{channel}}: {{type}}",
+  "channels": {
+    "in_app": "In der App",
+    "email": "Per E-Mail"
+  },
+  "types": {
+    "account": {
+      "roles_changed": {
+        "title": "Ihre Rollen wurden geändert",
+        "text": "Ihre Rollen sind jetzt: {{roles}}.",
+        "settingsTitle": "Änderungen an Ihren Rollen",
+        "settingsHelp": "Wenn eine Administration Ihre Rollen oder Berechtigungen ändert."
+      }
+    }
+  },
+  "unknown": {
+    "title": "Neue Benachrichtigung",
+    "text": "Öffnen Sie die App, um die Details zu sehen."
+  }
+}

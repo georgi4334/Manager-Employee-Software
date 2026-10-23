@@ -116,9 +116,9 @@ erDiagram
 | `event_exception`         | event_id, original_start, is_cancelled, override fields jsonb                                                                                                                                                                    |
 | `event_attendee`          | event_id, user_id, rsvp (`pending/yes/no/maybe`), is_optional                                                                                                                                                                    |
 | `event_reminder`          | event_id, user_id, minutes_before, channel (`in_app/email`)                                                                                                                                                                      |
-| `notification`            | recipient_user_id, type, payload jsonb, link, read_at, created_at                                                                                                                                                                |
-| `notification_preference` | user_id, type, channel (`in_app/email`), enabled, digest (`instant/daily`)                                                                                                                                                       |
-| `outbox_event`            | type, payload, status, attempts — transactional outbox feeding `pg-boss` jobs/notifications                                                                                                                                      |
+| `notification`            | recipient_user_id, type, params jsonb (ids/non-sensitive labels), link, in_app, read_at, email_status (`none/pending/sending/sent/failed/skipped`), attempts, next attempt, sent_at                                              |
+| `notification_preference` | user_id, type, channel (`in_app/email`), enabled (digest later)                                                                                                                                                                  |
+| `outbox_event`            | type, params jsonb, status (`pending/processing/done/dead`), attempts, available_at, locked_until, last_error — queue + event log; app role can only INSERT (ADR 0004)                                                           |
 
 ## 5. Goals, performance, 1:1s, feedback
 

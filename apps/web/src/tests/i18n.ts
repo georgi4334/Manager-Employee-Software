@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { DEFAULT_LANGUAGE, LANGUAGES, NAMESPACES } from '@/i18n/languages';
 
+// All translation files, loaded eagerly so tests render synchronously.
 const files = import.meta.glob<{ default: Record<string, unknown> }>('../i18n/locales/*/*.json', {
   eager: true,
 });

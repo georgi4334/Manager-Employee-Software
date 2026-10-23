@@ -9,6 +9,8 @@ import { RequireAuth } from '@/features/auth/RequireAuth';
 import { ResetPasswordPage } from '@/features/auth/ResetPasswordPage';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
 import { NotFoundPage } from '@/features/not-found/NotFoundPage';
+import { NotificationSettingsPage } from '@/features/notifications/NotificationSettingsPage';
+import { NotificationsPage } from '@/features/notifications/NotificationsPage';
 import { ModulePlaceholderPage } from '@/features/placeholder/ModulePlaceholderPage';
 import { NAV_ITEMS } from './nav';
 import { AppShell } from './layout/AppShell';
@@ -49,6 +51,11 @@ export const routes: RouteObject[] = [
               },
             ],
           })),
+          { path: 'notifications', element: <NotificationsPage /> },
+          {
+            element: <RequirePermission permission="notification.manage_own_prefs" />,
+            children: [{ path: 'notifications/settings', element: <NotificationSettingsPage /> }],
+          },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

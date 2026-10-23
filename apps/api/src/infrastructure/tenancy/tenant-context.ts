@@ -7,6 +7,8 @@ export type TenantTx = Prisma.TransactionClient;
 interface TenantStore {
   tenantId?: string;
   tx?: TenantTx;
+  /** Callbacks to run once the outermost transaction has committed. */
+  afterCommit?: (() => void)[];
 }
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -72,7 +74,12 @@ export class TenantContext {
   }
 
   /** Runs fn with tx as the active transaction; nested TenantDb.tx calls reuse it. */
-  runWithTx<T>(tx: TenantTx, fn: () => T): T {
-    return this.storage.run({ ...this.storage.getStore(), tx }, fn);
+  runWithTx<T>(tx: TenantTx, fn: () => T, afterCommit?: (() => void)[]): T {
+    return this.storage.run({ ...this.storage.getStore(), tx, afterCommit }, fn);
+  }
+
+  /** Callbacks waiting for the active transaction to commit; undefined outside a transaction. */
+  getAfterCommit(): (() => void)[] | undefined {
+    return this.storage.getStore()?.afterCommit;
   }
 }

@@ -50,6 +50,7 @@ export function signedInHandlers(user: CurrentUser = testUser) {
   return [
     http.get(`${API}/auth/me`, () => HttpResponse.json(user)),
     http.get(`${API}/auth/providers`, () => HttpResponse.json({ google: false })),
+    http.get(`${API}/notifications/unread-count`, () => HttpResponse.json({ unreadCount: 0 })),
   ];
 }
 
