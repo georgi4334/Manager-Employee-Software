@@ -15,6 +15,8 @@ export const ERROR_CODES = [
   'ACCOUNT_DISABLED',
   'TENANT_SELECTION_REQUIRED',
   'TOKEN_INVALID',
+  'LAST_ADMIN',
+  'CANNOT_DISABLE_SELF',
   'PAYLOAD_TOO_LARGE',
   'RATE_LIMITED',
   'INTERNAL_ERROR',
@@ -35,6 +37,10 @@ export const ERROR_STATUS: Record<ErrorCode, number> = {
   TENANT_SELECTION_REQUIRED: 409,
   /** An invitation or password-reset link is unknown, expired or already used. */
   TOKEN_INVALID: 400,
+  /** The change would leave the workspace without an active administrator. */
+  LAST_ADMIN: 409,
+  /** Users cannot disable their own account. */
+  CANNOT_DISABLE_SELF: 409,
   PAYLOAD_TOO_LARGE: 413,
   RATE_LIMITED: 429,
   INTERNAL_ERROR: 500,

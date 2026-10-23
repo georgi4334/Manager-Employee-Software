@@ -1,84 +1,104 @@
 # InTime — Roles & Permission Matrix
 
-Roles are **data** (`role`, `permission`, `role_permission`). Permission codes are defined once in `packages/contracts` and seeded into the database.
+Roles are **data** (`role`, `role_permission`, `user_role`). The permission catalog (codes, allowed scopes, default grants of the four system roles) is defined once in `packages/contracts`; the database stores roles, grants and assignments per workspace.
 
-**Scope legend** (how much data the permission applies to):
-`own` = only my records · `reports` = my direct reports · `team` = my reporting subtree / team · `all` = whole tenant · `—` = no access.
+**Scope legend** (how much data the permission applies to; each scope includes the narrower ones):
+`own` = only my records · `reports` = me and my direct reports · `team` = me and everyone below me in the reporting tree · `department` = … plus my department · `all` = whole workspace · `—` = no access.
 
 Seeded system roles: **Admin**, **HR**, **Manager**, **Employee**. Future roles (e.g. _Outsourced_) are new rows with a subset of permissions — no code change.
 
 ## Matrix (Employee / Manager / HR / Admin)
 
-| Module             | Permission code                                                     | Employee                  | Manager                                | HR                           | Admin  |
-| ------------------ | ------------------------------------------------------------------- | ------------------------- | -------------------------------------- | ---------------------------- | ------ |
-| **Employees**      | `employee.view_directory` (name, photo, position, team, work email) | all                       | all                                    | all                          | all    |
-|                    | `employee.view_profile_full` (contact, birth date, contract)        | own                       | team                                   | all                          | all    |
-|                    | `employee.create` / `employee.update` / `employee.deactivate`       | —                         | —                                      | all                          | all    |
-|                    | `employee.update_self_basic` (phone, avatar, preferences)           | own                       | own                                    | own                          | own    |
-|                    | `compensation.view` / `compensation.manage` _(later)_               | —                         | —                                      | all                          | all    |
-| **Organization**   | `org.view` (chart, departments, teams)                              | all                       | all                                    | all                          | all    |
-|                    | `org.manage` (departments, teams, reporting lines)                  | —                         | —                                      | all                          | all    |
-| **Attendance**     | `attendance.record` (manual check-in/out)                           | own                       | own                                    | own                          | own    |
-|                    | `attendance.view`                                                   | own                       | team                                   | all                          | all    |
-|                    | `attendance.correct` (edit someone's record)                        | —                         | team                                   | all                          | all    |
-|                    | `attendance.export`                                                 | —                         | team                                   | all                          | all    |
-| **Leave**          | `leave.request`                                                     | own                       | own                                    | own                          | own    |
-|                    | `leave.view`                                                        | own                       | team (calendar view: who is off)       | all                          | all    |
-|                    | `leave.view_balance`                                                | own                       | team                                   | all                          | all    |
-|                    | `leave.approve`                                                     | —                         | reports                                | all                          | all    |
-|                    | `leave.manage_types_policies`                                       | —                         | —                                      | all                          | all    |
-|                    | `leave.adjust_balance`                                              | —                         | —                                      | all                          | all    |
-|                    | `holiday.manage`                                                    | —                         | —                                      | all                          | all    |
-| **Goals**          | `goal.manage_personal`                                              | own                       | own + reports                          | all                          | all    |
-|                    | `goal.manage_team`                                                  | —                         | team                                   | all                          | all    |
-|                    | `goal.manage_company`                                               | —                         | —                                      | all                          | all    |
-|                    | `goal.view`                                                         | own + team/company shared | team                                   | all                          | all    |
-| **Performance**    | `review.write_self`                                                 | own                       | own                                    | own                          | own    |
-|                    | `review.write_for_report`                                           | —                         | reports                                | all                          | all    |
-|                    | `review.view`                                                       | own (after release)       | reports                                | all                          | all    |
-|                    | `review.manage_cycles`                                              | —                         | —                                      | all                          | all    |
-|                    | `review.calibrate`                                                  | —                         | —                                      | all                          | all    |
-| **1:1 Meetings**   | `one_on_one.manage`                                                 | own (as participant)      | reports                                | —                            | —      |
-|                    | `one_on_one.view_all`                                               | —                         | —                                      | **no** (privacy)             | **no** |
-| **Feedback**       | `feedback.give`                                                     | all colleagues            | all colleagues                         | all                          | all    |
-|                    | `feedback.view_received`                                            | own                       | own + reports (if shared with manager) | all (if shared with manager) | —      |
-|                    | `feedback.moderate`                                                 | —                         | —                                      | all                          | all    |
-| **Skills Matrix**  | `skill.view`                                                        | own + directory           | team                                   | all                          | all    |
-|                    | `skill.update`                                                      | own                       | team                                   | all                          | all    |
-|                    | `skill.manage_catalog`                                              | —                         | —                                      | all                          | all    |
-| **Projects**       | `project.view`                                                      | assigned projects         | team projects                          | all                          | all    |
-|                    | `project.manage`                                                    | —                         | own projects                           | all                          | all    |
-|                    | `assignment.manage`                                                 | —                         | own projects                           | all                          | all    |
-|                    | `client.view`                                                       | —                         | all                                    | all                          | all    |
-|                    | `client.manage`                                                     | —                         | —                                      | all                          | all    |
-|                    | `task.view`                                                         | assigned / own projects   | team projects                          | all                          | all    |
-|                    | `task.manage`                                                       | own tasks (status only)   | own projects                           | all                          | all    |
-| **Time Tracker**   | `time.log` (timer + manual entries)                                 | own                       | own                                    | own                          | own    |
-|                    | `time.view`                                                         | own                       | team                                   | all                          | all    |
-|                    | `timesheet.submit`                                                  | own                       | own                                    | own                          | own    |
-|                    | `timesheet.approve`                                                 | —                         | reports                                | all                          | all    |
-|                    | `timesheet.reopen`                                                  | —                         | —                                      | all                          | all    |
-|                    | `time.report_project` (hours/budget vs actual)                      | —                         | own projects                           | all                          | all    |
-|                    | `time.export` (approved hours CSV)                                  | —                         | own projects                           | all                          | all    |
-| **Capacity**       | `capacity.view`                                                     | own                       | team                                   | all                          | all    |
-| **Analytics**      | `analytics.view_team`                                               | —                         | team                                   | all                          | all    |
-|                    | `analytics.view_company`                                            | —                         | —                                      | all                          | all    |
-| **Calendar**       | `calendar.manage_own`                                               | own                       | own                                    | own                          | own    |
-|                    | `calendar.manage_team_calendars`                                    | —                         | team                                   | all                          | all    |
-|                    | `calendar.manage_company_calendar`                                  | —                         | —                                      | all                          | all    |
-|                    | `calendar.view_free_busy`                                           | all                       | all                                    | all                          | all    |
-| **Notifications**  | `notification.manage_own_prefs`                                     | own                       | own                                    | own                          | own    |
-|                    | `notification.manage_tenant_defaults`                               | —                         | —                                      | —                            | all    |
-| **AI**             | `ai.use`                                                            | own                       | own                                    | own                          | own    |
-|                    | `ai.manage_own_key`                                                 | own                       | own                                    | own                          | own    |
-|                    | `ai.manage_tenant_key` / `ai.toggle_tenant`                         | —                         | —                                      | —                            | all    |
-| **Administration** | `admin.user.invite/disable`                                         | —                         | —                                      | all                          | all    |
-|                    | `admin.role.assign`                                                 | —                         | —                                      | —                            | all    |
-|                    | `admin.role.manage` (create/edit roles) _(later UI)_                | —                         | —                                      | —                            | all    |
-|                    | `admin.tenant.settings`                                             | —                         | —                                      | —                            | all    |
-|                    | `admin.audit_log.view`                                              | —                         | —                                      | read-only (HR events)        | all    |
-| **GDPR**           | `gdpr.export_own`                                                   | own                       | own                                    | own                          | own    |
-|                    | `gdpr.erase_employee` / `gdpr.manage_retention`                     | —                         | —                                      | all                          | all    |
+This table is **generated** from the permission catalog in `packages/contracts/src/permissions.ts` (see
+[ADR 0003](adr/0003-roles-and-permissions.md)); edit the catalog, then run
+`pnpm --filter @intime/contracts docs:permissions`. A test fails if the file is out of date.
+
+<!-- prettier-ignore-start -->
+<!-- permissions:start (generated by `pnpm --filter @intime/contracts docs:permissions`; do not edit) -->
+
+| Module | Permission | What it allows | Employee | Manager | HR | Admin |
+| --- | --- | --- | --- | --- | --- | --- |
+| **Employees** | `employee.view_directory` | Company directory: name, photo, position, team, work email | all | all | all | all |
+|  | `employee.view_profile_full` | Full profile: contact details, birth date, contract | own | team | all | all |
+|  | `employee.create` | Create employees | — | — | all | all |
+|  | `employee.update` | Edit employees | — | — | all | all |
+|  | `employee.deactivate` | Deactivate employees | — | — | all | all |
+|  | `employee.update_self_basic` | Edit own phone, avatar and preferences | own | own | own | own |
+|  | `compensation.view` | View salary and compensation (module comes later) | — | — | all | all |
+|  | `compensation.manage` | Manage salary and compensation (module comes later) | — | — | all | all |
+| **Organization** | `org.view` | Organization chart, departments, teams | all | all | all | all |
+|  | `org.manage` | Manage departments, teams and reporting lines | — | — | all | all |
+| **Attendance** | `attendance.record` | Manual check-in and check-out | own | own | own | own |
+|  | `attendance.view` | View attendance records | own | team | all | all |
+|  | `attendance.correct` | Correct someone's attendance record | — | team | all | all |
+|  | `attendance.export` | Export attendance | — | team | all | all |
+| **Leave** | `leave.request` | Request leave | own | own | own | own |
+|  | `leave.view` | View leave and who is off (managers: team calendar) | own | team | all | all |
+|  | `leave.view_balance` | View leave balances | own | team | all | all |
+|  | `leave.approve` | Approve or reject leave requests | — | reports | all | all |
+|  | `leave.manage_types_policies` | Manage leave types and policies | — | — | all | all |
+|  | `leave.adjust_balance` | Adjust leave balances | — | — | all | all |
+|  | `holiday.manage` | Manage public holidays | — | — | all | all |
+| **Goals** | `goal.manage_personal` | Manage personal goals (managers: also their reports) | own | reports | all | all |
+|  | `goal.manage_team` | Manage team goals | — | team | all | all |
+|  | `goal.manage_company` | Manage company goals | — | — | all | all |
+|  | `goal.view` | View goals (team and company goals shared with everyone are always visible) | own | team | all | all |
+| **Performance** | `review.write_self` | Write own self-review | own | own | own | own |
+|  | `review.write_for_report` | Write reviews for reports | — | reports | all | all |
+|  | `review.view` | View reviews (employees: own, after release) | own | reports | all | all |
+|  | `review.manage_cycles` | Manage review cycles | — | — | all | all |
+|  | `review.calibrate` | Calibrate ratings | — | — | all | all |
+| **1:1 Meetings** | `one_on_one.manage` | Run 1:1 meetings as a participant (private notes stay between the two) | own | reports | — | — |
+| **Feedback** | `feedback.give` | Give feedback to any colleague | all | all | all | all |
+|  | `feedback.view_received` | View received feedback (managers and HR: only what was shared with the manager) | own | reports | all | — |
+|  | `feedback.moderate` | Moderate feedback | — | — | all | all |
+| **Skills Matrix** | `skill.view` | View skills | own | team | all | all |
+|  | `skill.update` | Update skill levels | own | team | all | all |
+|  | `skill.manage_catalog` | Manage the skill catalog | — | — | all | all |
+| **Projects & Tasks** | `project.view` | View projects (own = projects I am assigned to) | own | team | all | all |
+|  | `project.manage` | Manage projects (own = projects I lead) | — | own | all | all |
+|  | `assignment.manage` | Assign people to projects (own = projects I lead) | — | own | all | all |
+|  | `client.view` | View clients | — | all | all | all |
+|  | `client.manage` | Manage clients | — | — | all | all |
+|  | `task.view` | View tasks (own = tasks assigned to me or on my projects) | own | team | all | all |
+|  | `task.manage` | Manage tasks (employees: only the status of their own tasks) | own | own | all | all |
+| **Time Tracker** | `time.log` | Log time with the timer or manual entries | own | own | own | own |
+|  | `time.view` | View logged time | own | team | all | all |
+|  | `timesheet.submit` | Submit own timesheet | own | own | own | own |
+|  | `timesheet.approve` | Approve timesheets | — | reports | all | all |
+|  | `timesheet.reopen` | Reopen approved timesheets | — | — | all | all |
+|  | `time.report_project` | Project hours and budget reports (own = projects I lead) | — | own | all | all |
+|  | `time.export` | Export approved hours as CSV (own = projects I lead) | — | own | all | all |
+| **Capacity** | `capacity.view` | View workload and availability | own | team | all | all |
+| **Analytics** | `analytics.view_team` | Team analytics | — | team | all | all |
+|  | `analytics.view_company` | Company-wide analytics | — | — | all | all |
+| **Calendar** | `calendar.manage_own` | Manage own calendars and events | own | own | own | own |
+|  | `calendar.manage_team_calendars` | Manage team calendars | — | team | all | all |
+|  | `calendar.manage_company_calendar` | Manage the company calendar | — | — | all | all |
+|  | `calendar.view_free_busy` | See when colleagues are free or busy | all | all | all | all |
+| **Notifications** | `notification.manage_own_prefs` | Manage own notification preferences | own | own | own | own |
+|  | `notification.manage_tenant_defaults` | Set workspace notification defaults | — | — | — | all |
+| **AI** | `ai.use` | Use the AI assistant | own | own | own | own |
+|  | `ai.manage_own_key` | Manage own AI provider key | own | own | own | own |
+|  | `ai.manage_tenant_key` | Manage the workspace AI provider key | — | — | — | all |
+|  | `ai.toggle_tenant` | Switch AI on or off for the workspace | — | — | — | all |
+| **Administration** | `admin.user.view` | List user accounts and their roles | — | — | all | all |
+|  | `admin.user.invite` | Invite users (roles beyond Employee also need admin.role.assign) | — | — | all | all |
+|  | `admin.user.disable` | Disable and re-enable user accounts | — | — | all | all |
+|  | `admin.role.view` | List roles | — | — | all | all |
+|  | `admin.role.assign` | Assign roles to users | — | — | — | all |
+|  | `admin.role.manage` | Create and edit roles (editor comes later) | — | — | — | all |
+|  | `admin.tenant.settings` | Workspace settings | — | — | — | all |
+|  | `admin.audit_log.view` | View the audit log (HR sees HR-related events only) | — | — | all | all |
+| **GDPR** | `gdpr.export_own` | Export own data | own | own | own | own |
+|  | `gdpr.erase_employee` | Erase or anonymize an employee | — | — | all | all |
+|  | `gdpr.manage_retention` | Manage data retention | — | — | all | all |
+
+<!-- permissions:end -->
+<!-- prettier-ignore-end -->
+
+Notes on scopes that are not about people: `own` on projects/tasks means the projects or tasks _I am assigned to or lead_;
+the owning module enforces the exact meaning and adds the restrictions written in the description.
 
 ## Hard rules (enforced in policies, covered by tests)
 
@@ -92,13 +112,20 @@ Seeded system roles: **Admin**, **HR**, **Manager**, **Employee**. Future roles 
 8. **Last-admin protection**: the last active Admin cannot be demoted or disabled.
 9. **Every denied path has a test** (see test pattern below).
 
-## Test pattern (applies to every permission)
+## How it is tested
 
-For each row: one test per role that is **allowed** (positive) and one per role that is **denied** (negative), plus scope tests: _own vs other's record_, _report vs non-report_, _other tenant_. A generated test (`permissions.matrix.spec.ts`) iterates over the matrix definition in `packages/contracts` so the table and the tests cannot drift apart.
+- **Catalog** (`packages/contracts/src/permissions.test.ts`): integrity (unique codes, allowed scopes only), the rules above as assertions (e.g. compensation is HR + Admin only, nobody gets a 1:1 override, assigning roles is Admin-only), and that this file is up to date.
+- **Matrix** (`apps/api/src/modules/roles/permissions.matrix.test.ts`): generated from the catalog — every permission × every role × every kind of record owner (`self`, `direct_report`, `subordinate`, `same_department`, `other`), allowed and denied.
+- **Database** (`apps/api/test/roles.int.test.ts`): the seeded roles equal the catalog, drift is healed by `roles:sync`, corrupted rows grant nothing, other workspaces' roles are unreachable, the audit log is append-only.
+- **HTTP** (`apps/api/test/users.int.test.ts`): account administration per role (allowed and denied), immediate effect of role changes, last-administrator protection incl. concurrency, workspace isolation.
+- **Route inventory** (`apps/api/test/routes.inventory.test.ts`): every route of the application declares `@Public()`, `@Authenticated()` or `@RequirePermission(...)`.
+
+Every feature adds `@RequirePermission` to its routes, calls `AuthorizationService.assert(actor, permission, record)` for the concrete record, and brings allowed/denied tests for the roles in the table.
 
 ## Implementation notes
 
-- Guard: `@RequirePermission('leave.approve')` → resolves the user's roles → permission + scope.
-- Policy function per resource: `canApproveLeave(actor, request)` combines permission, scope and relationship checks (manager chain from recursive CTE), unit-testable without DB.
-- Frontend: `<Can permission="leave.approve" resource={request}>` hides UI, but **the server is the only authority**.
+- Route: `@RequirePermission('leave.approve')` — the global `PermissionGuard` checks the user holds it (any scope). A route without any declaration is refused.
+- Record: `await authz.assert(actor, 'leave.approve', { ownerUserId })` applies the scope (own/reports/team/department/all) using the `OrgRelations` provider. Until the Organization module exists it only knows "self" and "other", so reports/team/department grants never reach beyond the user themself.
+- Frontend: `usePermission('leave.approve')`, `<Can permission="leave.approve">` and `<RequirePermission>` hide UI, but **the server is the only authority**; `/auth/me` returns the effective permissions.
 - AI assistant tools execute through the same services as the user, so the matrix automatically limits what the assistant can answer.
+- Operations: `pnpm --filter @intime/api roles:sync` after deploys that change the catalog; `roles:grant --workspace acme --email a@acme.eu --role admin` for accounts that predate roles or to recover a locked-out workspace.

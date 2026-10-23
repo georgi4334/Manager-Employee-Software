@@ -17,7 +17,12 @@ model Tenant {
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  users User[]
+  users                   User[]
+  roles                   Role[]
+  auditLogs               AuditLog[]
+  outboxEvents            OutboxEvent[]
+  notifications           Notification[]
+  notificationPreferences NotificationPreference[]
 
   @@map("tenant")
 }
@@ -38,10 +43,13 @@ model User {
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  tenant     Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  identities AuthIdentity[]
-  sessions   Session[]
-  tokens     AuthToken[]
+  tenant                  Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  identities              AuthIdentity[]
+  sessions                Session[]
+  tokens                  AuthToken[]
+  roles                   UserRole[]
+  notifications           Notification[]
+  notificationPreferences NotificationPreference[]
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -118,4 +126,146 @@ model AuthToken {
 
   @@index([userId, purpose])
   @@map("auth_token")
+}
+
+// ---------------------------------------------------------------------------------------------
+// Roles and permissions (docs/adr/0003-roles-and-permissions.md). The permission catalog lives in
+// @intime/contracts; these tables store roles, their grants and who holds them.
+
+model Role {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  tenantId    String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// admin | hr | manager | employee for system roles; null for custom roles.
+  key         String?
+  name        String
+  description String?
+  isSystem    Boolean  @default(false) @map("is_system")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant      Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  permissions RolePermission[]
+  users       UserRole[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, key])
+  @@unique([tenantId, name])
+  @@map("role")
+}
+
+model RolePermission {
+  tenantId       String @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  roleId         String @map("role_id") @db.Uuid
+  /// A code from the catalog in @intime/contracts; validated when written and when read.
+  permissionCode String @map("permission_code")
+  /// own | reports | team | department | all
+  scope          String
+
+  role Role @relation(fields: [tenantId, roleId], references: [tenantId, id], onDelete: Cascade)
+
+  @@id([roleId, permissionCode])
+  @@map("role_permission")
+}
+
+model UserRole {
+  tenantId  String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  roleId    String   @map("role_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Cascade)
+  role Role @relation(fields: [tenantId, roleId], references: [tenantId, id], onDelete: NoAction)
+
+  @@id([userId, roleId])
+  @@index([roleId])
+  @@map("user_role")
+}
+
+/// Append-only (UPDATE is revoked from both runtime roles): who did what, when.
+model AuditLog {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  tenantId    String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// Pseudonymous reference without a foreign key, so erasing a user never rewrites history.
+  actorUserId String?  @map("actor_user_id") @db.Uuid
+  action      String
+  entity      String
+  entityId    String?  @map("entity_id") @db.Uuid
+  before      Json?
+  after       Json?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, createdAt])
+  @@map("audit_log")
+}
+
+// ---------------------------------------------------------------------------------------------
+// Notifications (docs/adr/0004-notifications.md)
+
+/// Event log and job queue in one: written in the same transaction as the change, processed by the worker.
+model OutboxEvent {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  tenantId    String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  type        String
+  /// Ids and short non-sensitive labels only.
+  params      Json      @default("{}")
+  /// pending | processing | done | dead
+  status      String    @default("pending")
+  attempts    Int       @default(0)
+  availableAt DateTime  @default(now()) @map("available_at") @db.Timestamptz(6)
+  lockedUntil DateTime? @map("locked_until") @db.Timestamptz(6)
+  lastError   String?   @map("last_error")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  processedAt DateTime? @map("processed_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([status, availableAt])
+  @@map("outbox_event")
+}
+
+/// One row per person per event: the in-app inbox entry and, at the same time, the email queue.
+model Notification {
+  id              String    @id @default(uuid(7)) @db.Uuid
+  tenantId        String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  recipientUserId String    @map("recipient_user_id") @db.Uuid
+  /// The outbox event that produced it; with the recipient it makes processing idempotent.
+  eventId         String?   @map("event_id") @db.Uuid
+  type            String
+  params          Json      @default("{}")
+  link            String
+  /// Shown in the inbox? (false when the person only wants the email)
+  inApp           Boolean   @default(true) @map("in_app")
+  readAt          DateTime? @map("read_at") @db.Timestamptz(6)
+  /// none | pending | sending | sent | failed | skipped
+  emailStatus     String    @default("none") @map("email_status")
+  emailAttempts   Int       @default(0) @map("email_attempts")
+  emailNextAt     DateTime? @map("email_next_at") @db.Timestamptz(6)
+  emailSentAt     DateTime? @map("email_sent_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  tenant    Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  recipient User   @relation(fields: [tenantId, recipientUserId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([eventId, recipientUserId])
+  @@index([recipientUserId, id])
+  @@index([emailStatus, emailNextAt])
+  @@map("notification")
+}
+
+model NotificationPreference {
+  tenantId  String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  type      String
+  /// in_app | email
+  channel   String
+  enabled   Boolean
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Cascade)
+
+  @@id([userId, type, channel])
+  @@map("notification_preference")
 }

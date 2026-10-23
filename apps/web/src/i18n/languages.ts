@@ -18,7 +18,14 @@ export const INTL_LOCALES: Record<Language, string> = {
   bg: 'bg-BG',
 };
 
-export const NAMESPACES = ['common', 'nav', 'dashboard', 'errors', 'auth'] as const;
+export const NAMESPACES = [
+  'common',
+  'nav',
+  'dashboard',
+  'errors',
+  'auth',
+  'notifications',
+] as const;
 export type Namespace = (typeof NAMESPACES)[number];
 
 export function isLanguage(value: unknown): value is Language {

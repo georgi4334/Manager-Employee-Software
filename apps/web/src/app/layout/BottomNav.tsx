@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 import { cn } from '@/shared/lib/cn';
-import { NAV_ITEMS } from '../nav';
+import { useNavItems } from '../useNavItems';
 
 export function BottomNav() {
   const { t } = useTranslation(['common', 'nav']);
+  const items = useNavItems();
+  const moreItems = items.filter((item) => !item.primary);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -30,29 +32,33 @@ export function BottomNav() {
         aria-label={t('common:mobileNavigation')}
         className="fixed inset-x-0 bottom-0 z-30 flex border-t border-border bg-surface pb-[env(safe-area-inset-bottom)]"
       >
-        {NAV_ITEMS.filter((item) => item.primary).map(({ path, labelKey, icon: Icon }) => (
-          <NavLink key={path} to={path} end={path === '/'} className={linkClass}>
-            <Icon className="size-5" aria-hidden="true" />
-            <span className="max-w-full truncate px-1">{t(`nav:${labelKey}`)}</span>
-          </NavLink>
-        ))}
-        <button
-          type="button"
-          aria-expanded={menuOpen}
-          aria-controls="more-menu"
-          onClick={() => setMenuOpen((open) => !open)}
-          className="flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium text-muted-foreground"
-        >
-          {menuOpen ? (
-            <X className="size-5" aria-hidden="true" />
-          ) : (
-            <Menu className="size-5" aria-hidden="true" />
-          )}
-          <span>{t('common:more')}</span>
-        </button>
+        {items
+          .filter((item) => item.primary)
+          .map(({ path, labelKey, icon: Icon }) => (
+            <NavLink key={path} to={path} end={path === '/'} className={linkClass}>
+              <Icon className="size-5" aria-hidden="true" />
+              <span className="max-w-full truncate px-1">{t(`nav:${labelKey}`)}</span>
+            </NavLink>
+          ))}
+        {moreItems.length > 0 && (
+          <button
+            type="button"
+            aria-expanded={menuOpen}
+            aria-controls="more-menu"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium text-muted-foreground"
+          >
+            {menuOpen ? (
+              <X className="size-5" aria-hidden="true" />
+            ) : (
+              <Menu className="size-5" aria-hidden="true" />
+            )}
+            <span>{t('common:more')}</span>
+          </button>
+        )}
       </nav>
 
-      {menuOpen && (
+      {menuOpen && moreItems.length > 0 && (
         <div
           id="more-menu"
           role="dialog"
@@ -61,7 +67,7 @@ export function BottomNav() {
           className="fixed inset-x-0 bottom-14 z-20 border-t border-border bg-surface p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-card"
         >
           <ul className="grid gap-1">
-            {NAV_ITEMS.filter((item) => !item.primary).map(({ path, labelKey, icon: Icon }) => (
+            {moreItems.map(({ path, labelKey, icon: Icon }) => (
               <li key={path}>
                 <NavLink
                   to={path}

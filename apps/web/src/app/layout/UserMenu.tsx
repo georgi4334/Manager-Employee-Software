@@ -13,7 +13,11 @@ export function UserMenu() {
     <div className="flex items-center gap-1">
       <div className="hidden min-w-0 text-right leading-tight md:block">
         <p className="truncate text-sm font-medium">{user.email}</p>
-        <p className="truncate text-xs text-muted-foreground">{user.workspace.name}</p>
+        <p className="truncate text-xs text-muted-foreground">
+          {[user.workspace.name, user.roles.map((role) => role.name).join(', ')]
+            .filter(Boolean)
+            .join(' · ')}
+        </p>
       </div>
       <Button
         variant="ghost"

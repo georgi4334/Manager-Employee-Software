@@ -1,0 +1,33 @@
+{
+  "title": "Notifications",
+  "bell_one": "Notifications, {{count}} unread",
+  "bell_other": "Notifications, {{count}} unread",
+  "markAllRead": "Mark all as read",
+  "settings": "Notification settings",
+  "empty": "You have no notifications yet.",
+  "loadMore": "Show older",
+  "unread": "Unread",
+  "settingsTitle": "Notification settings",
+  "settingsIntro": "Choose how you want to hear about things. Some notices are required and cannot be switched off.",
+  "backToInbox": "Back to notifications",
+  "required": "Required",
+  "switchLabel": "{{channel}}: {{type}}",
+  "channels": {
+    "in_app": "In the app",
+    "email": "By email"
+  },
+  "types": {
+    "account": {
+      "roles_changed": {
+        "title": "Your roles were changed",
+        "text": "Your roles are now: {{roles}}.",
+        "settingsTitle": "Changes to your roles",
+        "settingsHelp": "When an administrator changes your roles or permissions."
+      }
+    }
+  },
+  "unknown": {
+    "title": "New notification",
+    "text": "Open the app to see the details."
+  }
+}

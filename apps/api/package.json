@@ -14,7 +14,9 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
-    "tenant:create": "node --env-file-if-exists=.env dist/cli/create-tenant.js"
+    "tenant:create": "node --env-file-if-exists=.env dist/cli/create-tenant.js",
+    "roles:sync": "node --env-file-if-exists=.env dist/cli/sync-roles.js",
+    "roles:grant": "node --env-file-if-exists=.env dist/cli/grant-role.js"
   },
   "dependencies": {
     "@intime/contracts": "workspace:*",

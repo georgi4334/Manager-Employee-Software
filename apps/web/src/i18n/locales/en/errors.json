@@ -18,7 +18,9 @@
     "SERVICE_UNAVAILABLE": "The service is temporarily unavailable. Please try again shortly.",
     "NETWORK": "Can't reach the server. Check your connection and try again.",
     "TIMEOUT": "The server took too long to answer. Please try again.",
-    "UNKNOWN": "Something went wrong. Please try again."
+    "UNKNOWN": "Something went wrong. Please try again.",
+    "LAST_ADMIN": "There must always be at least one active administrator.",
+    "CANNOT_DISABLE_SELF": "You cannot disable your own account."
   },
   "validation": {
     "required": "This field is required.",
@@ -30,5 +32,7 @@
     "password_contains_email": "The password must not contain your email name.",
     "password_too_repetitive": "The password is too repetitive.",
     "invalid_workspace": "Use only letters, numbers and hyphens."
-  }
+  },
+  "forbiddenTitle": "No access",
+  "forbiddenText": "You do not have permission to open this page. Ask your administrator if you think this is a mistake."
 }

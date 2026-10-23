@@ -4,10 +4,13 @@ import { AuthLayout } from '@/features/auth/AuthLayout';
 import { ForgotPasswordPage } from '@/features/auth/ForgotPasswordPage';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { PublicOnly } from '@/features/auth/PublicOnly';
+import { RequirePermission } from '@/features/auth/RequirePermission';
 import { RequireAuth } from '@/features/auth/RequireAuth';
 import { ResetPasswordPage } from '@/features/auth/ResetPasswordPage';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
 import { NotFoundPage } from '@/features/not-found/NotFoundPage';
+import { NotificationSettingsPage } from '@/features/notifications/NotificationSettingsPage';
+import { NotificationsPage } from '@/features/notifications/NotificationsPage';
 import { ModulePlaceholderPage } from '@/features/placeholder/ModulePlaceholderPage';
 import { NAV_ITEMS } from './nav';
 import { AppShell } from './layout/AppShell';
@@ -37,9 +40,22 @@ export const routes: RouteObject[] = [
         children: [
           { index: true, element: <DashboardPage /> },
           ...NAV_ITEMS.filter((item) => item.path !== '/').map((item) => ({
-            path: item.path.slice(1),
-            element: <ModulePlaceholderPage labelKey={item.labelKey} />,
+            // Users without the item's permission see "no access" instead of the screen.
+            element: item.permission ? (
+              <RequirePermission permission={item.permission} />
+            ) : undefined,
+            children: [
+              {
+                path: item.path.slice(1),
+                element: <ModulePlaceholderPage labelKey={item.labelKey} />,
+              },
+            ],
           })),
+          { path: 'notifications', element: <NotificationsPage /> },
+          {
+            element: <RequirePermission permission="notification.manage_own_prefs" />,
+            children: [{ path: 'notifications/settings', element: <NotificationSettingsPage /> }],
+          },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

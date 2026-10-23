@@ -2,6 +2,7 @@ import { type CanActivate, type ExecutionContext, Injectable } from '@nestjs/com
 import { Reflector } from '@nestjs/core';
 import { TenantContext } from '../../infrastructure/tenancy/tenant-context.js';
 import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
+import { PermissionsService } from '../../modules/roles/permissions.service.js';
 import { AccessTokenService } from '../../modules/auth/access-token.service.js';
 import { ACCESS_COOKIE } from '../../modules/auth/cookies.js';
 import { SessionService } from '../../modules/auth/session.service.js';
@@ -21,6 +22,7 @@ export class AuthGuard implements CanActivate {
     private readonly sessions: SessionService,
     private readonly tenantContext: TenantContext,
     private readonly db: TenantDb,
+    private readonly permissions: PermissionsService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -36,13 +38,16 @@ export class AuthGuard implements CanActivate {
     if (!claims) throw new AppException('UNAUTHENTICATED', { message: 'Authentication required' });
 
     this.tenantContext.setTenantId(claims.tenantId);
-    const active = await this.db.tx((tx) =>
-      this.sessions.isActive(tx, claims.userId, claims.sessionId),
+    // One transaction: is the session still alive, and what may this user do right now?
+    const access = await this.db.tx(async (tx) =>
+      (await this.sessions.isActive(tx, claims.userId, claims.sessionId))
+        ? this.permissions.forUser(tx, claims.userId)
+        : null,
     );
-    if (!active)
+    if (!access)
       throw new AppException('UNAUTHENTICATED', { message: 'Session expired or revoked' });
 
-    request.auth = claims;
+    request.auth = { ...claims, roles: access.roles, permissions: access.permissions };
     return true;
   }
 }

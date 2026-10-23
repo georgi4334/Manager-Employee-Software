@@ -17,6 +17,7 @@ export function testEnv(overrides: Record<string, string | undefined> = {}): Env
     WEB_APP_URL: 'http://localhost:5173',
     JWT_ACCESS_SECRET: 'test-secret-that-is-at-least-32-characters-long',
     MAIL_TRANSPORT: 'memory',
+    WORKER_ENABLED: 'false',
     // Undefined overrides keep the default (e.g. when TEST_DATABASE_URL is not set).
     ...Object.fromEntries(Object.entries(overrides).filter(([, value]) => value !== undefined)),
   });

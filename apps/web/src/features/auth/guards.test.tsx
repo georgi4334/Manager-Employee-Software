@@ -124,7 +124,7 @@ describe('signing out', () => {
     await renderApp('/');
     const header = screen.getByRole('banner');
     expect(within(header).getByText('maria@acme.eu')).toBeInTheDocument();
-    expect(within(header).getByText('Acme GmbH')).toBeInTheDocument();
+    expect(within(header).getByText('Acme GmbH · Employee')).toBeInTheDocument();
   });
 });
 

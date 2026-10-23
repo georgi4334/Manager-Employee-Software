@@ -21,18 +21,38 @@ export class TenantDb {
     private readonly context: TenantContext,
   ) {}
 
+  /**
+   * Runs the callback after the current transaction has committed (never when it rolled back); immediately
+   * when there is no transaction. For nudges such as "new outbox event, wake the worker".
+   */
+  afterCommit(callback: () => void): void {
+    const hooks = this.context.getAfterCommit();
+    if (hooks) hooks.push(callback);
+    else callback();
+  }
+
   async tx<T>(fn: (tx: TenantTx) => Promise<T>, options: TenantTxOptions = {}): Promise<T> {
     const tenantId = this.context.requireTenantId();
 
     const active = this.context.getTx();
     if (active) return fn(active);
 
-    return this.prisma.$transaction(
+    const afterCommit: (() => void)[] = [];
+    const result = await this.prisma.$transaction(
       async (tx) => {
         await tx.$executeRaw`SELECT set_config('app.tenant_id', ${tenantId}, true)`;
-        return this.context.runWithTx(tx, () => fn(tx));
+        return this.context.runWithTx(tx, () => fn(tx), afterCommit);
       },
       { maxWait: options.maxWait ?? 5_000, timeout: options.timeout ?? 10_000 },
     );
+    // Only reached when the transaction committed. A failing callback must never fail the request.
+    for (const callback of afterCommit) {
+      try {
+        callback();
+      } catch {
+        // Callbacks are best-effort nudges (e.g. waking the worker); the sweep catches up anyway.
+      }
+    }
+    return result;
   }
 }

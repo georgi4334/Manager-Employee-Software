@@ -26,7 +26,7 @@ import {
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import type { RequestAuth } from '../../common/auth/auth.types.js';
-import { CurrentAuth, Public } from '../../common/auth/decorators.js';
+import { Authenticated, CurrentAuth, Public } from '../../common/auth/decorators.js';
 import { AppException } from '../../common/errors/app-exception.js';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
 import { APP_CONFIG } from '../../config/config.module.js';
@@ -123,6 +123,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @Authenticated()
   @ApiOperation({ summary: 'The signed-in user' })
   me(@CurrentAuth() auth: RequestAuth): Promise<CurrentUser> {
     return this.auth.me(auth.userId);

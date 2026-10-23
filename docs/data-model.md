@@ -25,19 +25,19 @@ erDiagram
   USER ||--o{ AUDIT_LOG : "acts in"
 ```
 
-| Table             | Key columns                                                                                                                 |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `tenant`          | name, slug, default_locale, default_timezone, country, ai_enabled, settings jsonb                                           |
-| `user`            | email (unique per tenant), status (`invited/active/disabled`), locale, timezone, email_verified_at, last_login_at           |
-| `auth_identity`   | user_id, provider (`password/google`), provider_subject, password_hash (argon2id, only for `password`)                      |
-| `refresh_token`   | user_id, token_hash, family_id, expires_at, revoked_at, replaced_by (reuse detection)                                       |
-| `invitation`      | email, role_id, token_hash, expires_at, accepted_at, invited_by                                                             |
-| `role`            | name, is_system, description (system roles: admin, hr, manager, employee)                                                   |
-| `permission`      | code (e.g. `leave.approve`), module, description — global, seeded from `packages/contracts`                                 |
-| `role_permission` | role_id, permission_id, **scope** (`own/direct_reports/team/department/all`)                                                |
-| `user_role`       | user_id, role_id                                                                                                            |
-| `audit_log`       | actor_user_id, action, entity, entity_id, before jsonb, after jsonb, ip, at — append-only                                   |
-| `ai_credential`   | owner_type (`user/tenant`), owner_id, provider, model, key_ciphertext, key_iv, key_tag, key_last4, created_at (AES-256-GCM) |
+| Table                     | Key columns                                                                                                                                                                                |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `tenant`                  | name, slug, default_locale, default_timezone, country, ai_enabled, settings jsonb                                                                                                          |
+| `user`                    | email (unique per tenant), status (`invited/active/disabled`), locale, timezone, email_verified_at, last_login_at                                                                          |
+| `auth_identity`           | user_id, provider (`password/google`), provider_subject, password_hash (argon2id, only for `password`)                                                                                     |
+| `refresh_token`           | user_id, token_hash, family_id, expires_at, revoked_at, replaced_by (reuse detection)                                                                                                      |
+| `invitation`              | _(not a table: invitations are `auth_token` rows with purpose `invite`, see ADR 0002)_                                                                                                     |
+| `role`                    | key (admin/hr/manager/employee for system roles, null for custom), name, description, is_system — unique (tenant, name) and (tenant, key)                                                  |
+| _(no `permission` table)_ | The permission catalog lives in code (`@intime/contracts`); the database only stores grants. See [ADR 0003](adr/0003-roles-and-permissions.md)                                             |
+| `role_permission`         | role_id, permission_code (validated against the catalog), **scope** (`own/reports/team/department/all`) — primary key (role, code)                                                         |
+| `user_role`               | user_id, role_id (composite tenant-safe FKs; a role in use cannot be deleted)                                                                                                              |
+| `audit_log`               | actor_user_id (no FK, pseudonymous), action, entity, entity_id, before jsonb, after jsonb, created_at — **append-only by privilege** (UPDATE revoked from all runtime roles; no IP stored) |
+| `ai_credential`           | owner_type (`user/tenant`), owner_id, provider, model, key_ciphertext, key_iv, key_tag, key_last4, created_at (AES-256-GCM)                                                                |
 
 ## 2. Employees & organization
 
@@ -116,9 +116,9 @@ erDiagram
 | `event_exception`         | event_id, original_start, is_cancelled, override fields jsonb                                                                                                                                                                    |
 | `event_attendee`          | event_id, user_id, rsvp (`pending/yes/no/maybe`), is_optional                                                                                                                                                                    |
 | `event_reminder`          | event_id, user_id, minutes_before, channel (`in_app/email`)                                                                                                                                                                      |
-| `notification`            | recipient_user_id, type, payload jsonb, link, read_at, created_at                                                                                                                                                                |
-| `notification_preference` | user_id, type, channel (`in_app/email`), enabled, digest (`instant/daily`)                                                                                                                                                       |
-| `outbox_event`            | type, payload, status, attempts — transactional outbox feeding `pg-boss` jobs/notifications                                                                                                                                      |
+| `notification`            | recipient_user_id, type, params jsonb (ids/non-sensitive labels), link, in_app, read_at, email_status (`none/pending/sending/sent/failed/skipped`), attempts, next attempt, sent_at                                              |
+| `notification_preference` | user_id, type, channel (`in_app/email`), enabled (digest later)                                                                                                                                                                  |
+| `outbox_event`            | type, params jsonb, status (`pending/processing/done/dead`), attempts, available_at, locked_until, last_error — queue + event log; app role can only INSERT (ADR 0004)                                                           |
 
 ## 5. Goals, performance, 1:1s, feedback
 
