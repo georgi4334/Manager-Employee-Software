@@ -18,7 +18,9 @@
     "SERVICE_UNAVAILABLE": "Der Dienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es in Kürze erneut.",
     "NETWORK": "Server nicht erreichbar. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
     "TIMEOUT": "Der Server hat zu lange nicht geantwortet. Bitte versuchen Sie es erneut.",
-    "UNKNOWN": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    "UNKNOWN": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "LAST_ADMIN": "Es muss immer mindestens eine aktive Administration geben.",
+    "CANNOT_DISABLE_SELF": "Sie können Ihr eigenes Konto nicht deaktivieren."
   },
   "validation": {
     "required": "Dieses Feld ist erforderlich.",
@@ -30,5 +32,7 @@
     "password_contains_email": "Das Passwort darf Ihren E-Mail-Namen nicht enthalten.",
     "password_too_repetitive": "Das Passwort ist zu eintönig.",
     "invalid_workspace": "Verwenden Sie nur Buchstaben, Ziffern und Bindestriche."
-  }
+  },
+  "forbiddenTitle": "Kein Zugriff",
+  "forbiddenText": "Sie haben keine Berechtigung, diese Seite zu öffnen. Wenden Sie sich an Ihre Administration, falls das ein Irrtum ist."
 }

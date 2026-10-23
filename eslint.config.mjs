@@ -23,6 +23,11 @@ export default tseslint.config(
     },
   },
   {
+    // Plain Node scripts (no TypeScript): they run in Node, so its globals exist.
+    files: ['**/scripts/**/*.mjs'],
+    languageOptions: { globals: { console: 'readonly', process: 'readonly', URL: 'readonly' } },
+  },
+  {
     // NestJS injects by constructor parameter type, so those imports must stay value imports.
     // With project info the type-imports rule understands emitDecoratorMetadata and leaves them alone.
     files: ['apps/api/**/*.ts'],

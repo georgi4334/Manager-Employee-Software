@@ -6,7 +6,9 @@ import { zodIssuesToDetails } from '../../common/errors/map-exception.js';
 import { SystemPrismaService } from '../../infrastructure/prisma/system-prisma.service.js';
 import { TenantContext } from '../../infrastructure/tenancy/tenant-context.js';
 import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
+import { AuditService } from '../audit/audit.service.js';
 import { InvitationService } from '../auth/invitation.service.js';
+import { SystemRolesService } from '../roles/system-roles.service.js';
 
 export const createTenantInputSchema = z.object({
   name: z.string().trim().min(2).max(100),
@@ -25,6 +27,8 @@ export class TenantProvisioningService {
     private readonly context: TenantContext,
     private readonly db: TenantDb,
     private readonly invitations: InvitationService,
+    private readonly systemRoles: SystemRolesService,
+    private readonly audit: AuditService,
   ) {}
 
   async create(
@@ -53,9 +57,19 @@ export class TenantProvisioningService {
       },
       select: { id: true },
     });
-    // Role assignment (admin) is added with RBAC in step 7.
     const { userId, link } = await this.context.run(tenant.id, () =>
-      this.db.tx((tx) => this.invitations.invite(tx, input.adminEmail)),
+      this.db.tx(async (tx) => {
+        const { roleIds } = await this.systemRoles.ensureSystemRoles(tx);
+        const invited = await this.invitations.invite(tx, input.adminEmail, [roleIds.admin]);
+        await this.audit.record(tx, {
+          actorUserId: null,
+          action: 'tenant.created',
+          entity: 'tenant',
+          entityId: tenant.id,
+          after: { slug: input.slug, adminUserId: invited.userId },
+        });
+        return invited;
+      }),
     );
     return { tenantId: tenant.id, adminUserId: userId, invitationLink: link };
   }

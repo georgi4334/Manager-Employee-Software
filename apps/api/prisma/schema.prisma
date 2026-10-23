@@ -17,7 +17,9 @@ model Tenant {
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  users User[]
+  users     User[]
+  roles     Role[]
+  auditLogs AuditLog[]
 
   @@map("tenant")
 }
@@ -42,6 +44,7 @@ model User {
   identities AuthIdentity[]
   sessions   Session[]
   tokens     AuthToken[]
+  roles      UserRole[]
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -118,4 +121,76 @@ model AuthToken {
 
   @@index([userId, purpose])
   @@map("auth_token")
+}
+
+// ---------------------------------------------------------------------------------------------
+// Roles and permissions (docs/adr/0003-roles-and-permissions.md). The permission catalog lives in
+// @intime/contracts; these tables store roles, their grants and who holds them.
+
+model Role {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  tenantId    String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// admin | hr | manager | employee for system roles; null for custom roles.
+  key         String?
+  name        String
+  description String?
+  isSystem    Boolean  @default(false) @map("is_system")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant      Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  permissions RolePermission[]
+  users       UserRole[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, key])
+  @@unique([tenantId, name])
+  @@map("role")
+}
+
+model RolePermission {
+  tenantId       String @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  roleId         String @map("role_id") @db.Uuid
+  /// A code from the catalog in @intime/contracts; validated when written and when read.
+  permissionCode String @map("permission_code")
+  /// own | reports | team | department | all
+  scope          String
+
+  role Role @relation(fields: [tenantId, roleId], references: [tenantId, id], onDelete: Cascade)
+
+  @@id([roleId, permissionCode])
+  @@map("role_permission")
+}
+
+model UserRole {
+  tenantId  String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  roleId    String   @map("role_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Cascade)
+  role Role @relation(fields: [tenantId, roleId], references: [tenantId, id], onDelete: NoAction)
+
+  @@id([userId, roleId])
+  @@index([roleId])
+  @@map("user_role")
+}
+
+/// Append-only (UPDATE is revoked from both runtime roles): who did what, when.
+model AuditLog {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  tenantId    String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// Pseudonymous reference without a foreign key, so erasing a user never rewrites history.
+  actorUserId String?  @map("actor_user_id") @db.Uuid
+  action      String
+  entity      String
+  entityId    String?  @map("entity_id") @db.Uuid
+  before      Json?
+  after       Json?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, createdAt])
+  @@map("audit_log")
 }

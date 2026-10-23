@@ -12,6 +12,7 @@ import {
   type AuthorizationParams,
   type GoogleIdentity,
 } from '../src/modules/auth/google-oidc.client.js';
+import { UserRolesService } from '../src/modules/roles/user-roles.service.js';
 import { TenantProvisioningService } from '../src/modules/tenants/tenant-provisioning.service.js';
 import { testDbUrls } from './db-urls.js';
 import { createTestApp, testEnv } from './helpers.js';
@@ -260,7 +261,13 @@ describe.skipIf(!urls)('authentication (HTTP, real database)', () => {
         app
           .get(TenantContext)
           .run(ws.tenantId, () =>
-            app.get(TenantDb).tx((tx) => app.get(InvitationService).invite(tx, email)),
+            app
+              .get(TenantDb)
+              .tx(async (tx) =>
+                app
+                  .get(InvitationService)
+                  .invite(tx, email, [await app.get(UserRolesService).roleIdByKey(tx, 'employee')]),
+              ),
           );
 
       const second = await invite('maria@acme.eu');

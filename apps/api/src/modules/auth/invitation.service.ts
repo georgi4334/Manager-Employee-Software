@@ -4,6 +4,7 @@ import { AppException } from '../../common/errors/app-exception.js';
 import { TenantContext, type TenantTx } from '../../infrastructure/tenancy/tenant-context.js';
 import { AuthTokenService, tokenInvalid } from './auth-token.service.js';
 import type { SignInResult } from './auth.service.js';
+import { UserRolesService } from '../roles/user-roles.service.js';
 import { PasswordService } from './password.service.js';
 import { SessionService } from './session.service.js';
 
@@ -14,14 +15,20 @@ export class InvitationService {
     private readonly passwords: PasswordService,
     private readonly sessions: SessionService,
     private readonly context: TenantContext,
+    private readonly userRoles: UserRolesService,
   ) {}
 
   /**
-   * Invites an email into the current tenant (or re-sends an open invitation). Must run inside that
-   * tenant's transaction. Returns the new user's id and the invitation link.
+   * Invites an email into the current tenant with the given roles (or re-sends an open invitation and
+   * replaces its roles). Must run inside that tenant's transaction. Returns the new user's id and the invitation link.
    */
-  async invite(tx: TenantTx, rawEmail: string): Promise<{ userId: string; link: string }> {
+  async invite(
+    tx: TenantTx,
+    rawEmail: string,
+    roleIds: string[],
+  ): Promise<{ userId: string; link: string }> {
     const email = normalizeEmail(rawEmail);
+    await this.userRoles.assertRolesExist(tx, roleIds);
     const existing = await tx.user.findUnique({
       where: { tenantId_email: { tenantId: this.context.requireTenantId(), email } },
       select: { id: true, status: true },
@@ -34,6 +41,7 @@ export class InvitationService {
     }
     const userId =
       existing?.id ?? (await tx.user.create({ data: { email }, select: { id: true } })).id;
+    await this.userRoles.setRoles(tx, userId, roleIds);
     const link = await this.tokens.issue(tx, userId, 'invite');
     return { userId, link };
   }

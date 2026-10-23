@@ -15,9 +15,11 @@
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "docs:permissions": "tsc -p tsconfig.build.json && node scripts/generate-permission-docs.mjs"
   },
   "devDependencies": {
+    "@types/node": "^26.6.5",
     "vitest": "^5.0.5"
   },
   "dependencies": {

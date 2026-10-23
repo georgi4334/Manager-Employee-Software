@@ -4,6 +4,7 @@ import { AppException } from '../../common/errors/app-exception.js';
 import { SystemPrismaService } from '../../infrastructure/prisma/system-prisma.service.js';
 import { TenantContext } from '../../infrastructure/tenancy/tenant-context.js';
 import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
+import { PermissionsService } from '../roles/permissions.service.js';
 import type { IssuedTokens } from './cookies.js';
 import { LoginAttemptLimiter } from './login-attempt-limiter.js';
 import { PasswordService } from './password.service.js';
@@ -52,6 +53,7 @@ export class AuthService {
     private readonly sessions: SessionService,
     private readonly limiter: LoginAttemptLimiter,
     private readonly context: TenantContext,
+    private readonly permissions: PermissionsService,
   ) {}
 
   async login({ email, password, workspace }: LoginRequest): Promise<SignInResult> {
@@ -114,12 +116,15 @@ export class AuthService {
           tenant: { select: { slug: true, name: true } },
         },
       });
+      const access = await this.permissions.forUser(tx, userId);
       return {
         id: user.id,
         email: user.email,
         locale: user.locale,
         timezone: user.timezone,
         workspace: user.tenant,
+        roles: access.roles,
+        permissions: access.permissions,
       };
     });
   }

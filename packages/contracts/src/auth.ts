@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PERMISSION_SCOPES } from './roles.js';
 
 export const PASSWORD_MIN_LENGTH = 12;
 export const PASSWORD_MAX_LENGTH = 128;
@@ -64,12 +65,22 @@ export const resetPasswordRequestSchema = z.object({
 export const workspaceSchema = z.object({ slug: z.string(), name: z.string() });
 export type Workspace = z.infer<typeof workspaceSchema>;
 
+export const roleSummarySchema = z.object({
+  /** Stable key of system roles (admin, hr, manager, employee); null for custom roles. */
+  key: z.string().nullable(),
+  name: z.string(),
+});
+export type RoleSummary = z.infer<typeof roleSummarySchema>;
+
 export const currentUserSchema = z.object({
   id: z.uuid(),
   email: z.string(),
   locale: z.string().nullable(),
   timezone: z.string().nullable(),
   workspace: workspaceSchema,
+  roles: z.array(roleSummarySchema),
+  /** Effective permissions: permission code -> widest scope. For showing/hiding UI only. */
+  permissions: z.record(z.string(), z.enum(PERMISSION_SCOPES)),
 });
 export type CurrentUser = z.infer<typeof currentUserSchema>;
 

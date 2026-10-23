@@ -54,7 +54,18 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Cross-tenant lookups (login, refresh/one-time token lookup) use `SystemPrismaService`; everything after the tenant is known runs through `TenantDb`.
 - Child tables reference parents with composite `(tenant_id, id)` foreign keys.
 - New error codes go in `@intime/contracts` `ERROR_CODES` (the web app translates them).
-- First workspace: `pnpm --filter @intime/api build && pnpm --filter @intime/api tenant:create --name "Acme" --slug acme --admin-email a@acme.eu`.
+- First workspace: `pnpm --filter @intime/api build && pnpm --filter @intime/api tenant:create --name "Acme" --slug acme --admin-email a@acme.eu` (the admin gets the Admin role). Older accounts without roles: `pnpm --filter @intime/api roles:grant --workspace acme --email a@acme.eu --role admin`.
+
+## Permissions (docs/adr/0003-roles-and-permissions.md) — security critical
+
+- The permission catalog is `packages/contracts/src/permissions.ts` (code, module, description, allowed scopes, default grants of Admin/HR/Manager/Employee). After editing it run `pnpm --filter @intime/contracts docs:permissions` (a test fails if `docs/permission-matrix.md` is stale) and, on deploy, `pnpm --filter @intime/api roles:sync`.
+- Every route must declare its protection: `@Public()`, `@Authenticated()` or `@RequirePermission('code')`. Undeclared routes are refused and `test/routes.inventory.test.ts` fails.
+- A route permission only says the caller holds the permission at some scope. In the service, load the record and call `authz.assert(actor, 'code', { ownerUserId })` so the scope (own/reports/team/department/all) is applied. Get the actor with `@CurrentAuth()`.
+- Permissions are read fresh from the database on every request; never cache them across requests.
+- Anything that can remove an administrator takes the administrator lock and checks that another active administrator remains (see `UsersService`).
+- Admin actions write `AuditService.record(...)` (ids and role ids only, never emails or secrets). The audit log is append-only.
+- Web: `usePermission`, `<Can>`, `<RequirePermission>` are cosmetic. Add new nav entries with a `permission` in `app/nav.ts`.
+- Test fixtures: `userWithRole('admin')` / `userWithPermissions({...})` in `apps/web/src/tests/server.ts`.
 
 ## Web conventions (apps/web)
 
