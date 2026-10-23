@@ -82,6 +82,24 @@ describe('parseEnv', () => {
     expect(parseEnv(production).MAIL_TRANSPORT).toBe('disabled');
   });
 
+  it('allows the resend transport in production only with an API key and a sender', () => {
+    const resend = { ...production, MAIL_TRANSPORT: 'resend' };
+    expect(() => parseEnv(resend)).toThrow(/RESEND_API_KEY/);
+    expect(() => parseEnv({ ...resend, RESEND_API_KEY: 'k' })).toThrow(/MAIL_FROM/);
+    expect(() => parseEnv({ ...resend, MAIL_FROM: 'a@b.eu' })).toThrow(/RESEND_API_KEY/);
+    expect(parseEnv({ ...resend, RESEND_API_KEY: 'k', MAIL_FROM: 'a@b.eu' }).MAIL_TRANSPORT).toBe(
+      'resend',
+    );
+  });
+
+  it('trusts one proxy hop by default and validates the hop count', () => {
+    expect(parseEnv(production).TRUST_PROXY_HOPS).toBe(1);
+    expect(parseEnv({ ...production, TRUST_PROXY_HOPS: '2' }).TRUST_PROXY_HOPS).toBe(2);
+    for (const bad of ['0', '6', 'x', '1.5']) {
+      expect(() => parseEnv({ ...production, TRUST_PROXY_HOPS: bad })).toThrow(/TRUST_PROXY_HOPS/);
+    }
+  });
+
   it('fails when DATABASE_URL is missing', () => {
     expect(() => parseEnv({})).toThrow(EnvValidationError);
     expect(() => parseEnv({})).toThrow(/DATABASE_URL/);

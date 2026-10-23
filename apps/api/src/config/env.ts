@@ -41,15 +41,20 @@ const envSchema = z
      * limits see the real client IP. Defaults to on in production.
      */
     TRUST_PROXY: booleanString.optional(),
+    /** Proxy hops in front of the API whose X-Forwarded-For entries are trusted (see docs/adr/0005). */
+    TRUST_PROXY_HOPS: z.coerce.number().int().min(1).max(5).default(1),
     /** Background delivery of notifications and emails. Turn off for tests and one-off commands. */
     WORKER_ENABLED: booleanString.default(true),
     /** Secure cookies (HTTPS only). Defaults to on in production. */
     COOKIE_SECURE: booleanString.optional(),
     /**
      * "log" prints emails including their links (development only), "memory" keeps them (tests),
-     * "disabled" drops them with a content-free warning. A delivering provider arrives in step 8.
+     * "disabled" drops them with a content-free warning, "resend" delivers through Resend (production).
      */
-    MAIL_TRANSPORT: z.enum(['log', 'memory', 'disabled']).default('log'),
+    MAIL_TRANSPORT: z.enum(['log', 'memory', 'disabled', 'resend']).default('log'),
+    RESEND_API_KEY: z.string().min(1).optional(),
+    /** Sender shown to recipients, on a domain verified with the provider, e.g. "InTime <no-reply@example.eu>". */
+    MAIL_FROM: z.string().min(3).optional(),
     GOOGLE_CLIENT_ID: z.string().min(1).optional(),
     GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
     GOOGLE_REDIRECT_URL: z.url().optional(),
@@ -63,6 +68,17 @@ const envSchema = z
         message:
           'set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and GOOGLE_REDIRECT_URL together, or none',
       });
+    }
+    if (env.MAIL_TRANSPORT === 'resend') {
+      for (const key of ['RESEND_API_KEY', 'MAIL_FROM'] as const) {
+        if (!env[key]) {
+          ctx.addIssue({
+            code: 'custom',
+            path: [key],
+            message: 'is required when MAIL_TRANSPORT=resend',
+          });
+        }
+      }
     }
     // "log" would write one-time sign-in links into production logs.
     if (
