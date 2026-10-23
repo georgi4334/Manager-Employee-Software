@@ -1,11 +1,6 @@
 import { RELATIONS, type PermissionScope, type Relation } from '@intime/contracts';
 import { describe, expect, it, vi } from 'vitest';
-import {
-  AuthorizationService,
-  SelfOnlyOrgRelations,
-  type Actor,
-  type OrgRelations,
-} from './authorization.service.js';
+import { AuthorizationService, type Actor, type OrgRelations } from './authorization.service.js';
 
 const ME = '0192f5a0-0000-7000-8000-00000000000a';
 const OTHER = '0192f5a0-0000-7000-8000-00000000000b';
@@ -14,6 +9,8 @@ const OTHER = '0192f5a0-0000-7000-8000-00000000000b';
 const ownerFor = (relation: Relation) => `owner-${relation}`;
 const fakeOrg: OrgRelations = {
   relationOf: async (_actor, owner) => owner.replace('owner-', '') as Relation,
+  relationsToEmployees: async (_actor, ids) =>
+    new Map(ids.map((id) => [id, id.replace('owner-', '') as Relation])),
 };
 const service = new AuthorizationService(fakeOrg);
 const actorWith = (scope?: PermissionScope): Actor => ({
@@ -51,17 +48,16 @@ describe('AuthorizationService.can', () => {
 
   it('scope "all" does not even look up relations (no needless queries)', async () => {
     const relationOf = vi.fn(async () => 'other' as const);
-    const lazy = new AuthorizationService({ relationOf });
+    const lazy = new AuthorizationService({ relationOf, relationsToEmployees: vi.fn() });
     expect(await lazy.can(actorWith('all'), 'leave.view', { ownerUserId: OTHER })).toBe(true);
     expect(relationOf).not.toHaveBeenCalled();
   });
 
   it('fails closed when the relation provider cannot tell (an error is not an "allow")', async () => {
-    const broken = new AuthorizationService({
-      relationOf: async () => {
-        throw new Error('org lookup failed');
-      },
-    });
+    const fail = async () => {
+      throw new Error('org lookup failed');
+    };
+    const broken = new AuthorizationService({ relationOf: fail, relationsToEmployees: fail });
     await expect(
       broken.can(actorWith('team'), 'leave.view', { ownerUserId: OTHER }),
     ).rejects.toThrow('org lookup failed');
@@ -91,26 +87,47 @@ describe('AuthorizationService.assert', () => {
   });
 });
 
-describe('SelfOnlyOrgRelations (until the Organization module exists)', () => {
-  const selfOnly = new AuthorizationService(new SelfOnlyOrgRelations());
-
-  it('knows only self and other', async () => {
-    const org = new SelfOnlyOrgRelations();
-    expect(await org.relationOf(ME, ME)).toBe('self');
-    expect(await org.relationOf(ME, OTHER)).toBe('other');
+describe('employee-owned records', () => {
+  it.each(RELATIONS)('scope "team" and an employee who is "%s" to the actor', async (relation) => {
+    const allowed = await service.can(actorWith('team'), 'leave.view', {
+      ownerEmployeeId: ownerFor(relation),
+    });
+    expect(allowed).toBe(['self', 'direct_report', 'subordinate'].includes(relation));
   });
 
-  it.each(['own', 'reports', 'team', 'department'] as const)(
-    'a "%s" grant reaches only the actor’s own records',
-    async (scope) => {
-      expect(await selfOnly.can(actorWith(scope), 'leave.view', { ownerUserId: ME })).toBe(true);
-      expect(await selfOnly.can(actorWith(scope), 'leave.view', { ownerUserId: OTHER })).toBe(
-        false,
-      );
-    },
-  );
+  it('prefers the employee over the user when both are given', async () => {
+    const allowed = await service.can(actorWith('own'), 'leave.view', {
+      ownerUserId: ownerFor('self'),
+      ownerEmployeeId: ownerFor('other'),
+    });
+    expect(allowed).toBe(false);
+  });
 
-  it('an "all" grant still reaches everyone', async () => {
-    expect(await selfOnly.can(actorWith('all'), 'leave.view', { ownerUserId: OTHER })).toBe(true);
+  it('treats an employee the provider does not know as "other" (fail closed)', async () => {
+    const silent = new AuthorizationService({
+      relationOf: async () => 'other',
+      relationsToEmployees: async () => new Map(),
+    });
+    expect(await silent.can(actorWith('department'), 'leave.view', { ownerEmployeeId: 'x' })).toBe(
+      false,
+    );
+    expect(await silent.can(actorWith('all'), 'leave.view', { ownerEmployeeId: 'x' })).toBe(true);
+  });
+
+  it('allowedEmployees filters a list with one lookup and nothing for a missing permission', async () => {
+    const relationsToEmployees = vi.fn(fakeOrg.relationsToEmployees);
+    const batch = new AuthorizationService({
+      relationOf: fakeOrg.relationOf,
+      relationsToEmployees,
+    });
+    const ids = ['owner-self', 'owner-direct_report', 'owner-subordinate', 'owner-other'];
+    expect([...(await batch.allowedEmployees(actorWith('reports'), 'leave.view', ids))]).toEqual([
+      'owner-self',
+      'owner-direct_report',
+    ]);
+    expect(relationsToEmployees).toHaveBeenCalledTimes(1);
+    expect((await batch.allowedEmployees(actorWith(), 'leave.view', ids)).size).toBe(0);
+    expect((await batch.allowedEmployees(actorWith('all'), 'leave.view', ids)).size).toBe(4);
+    expect(relationsToEmployees).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,6 +1,6 @@
 import type { Employee } from '@intime/contracts';
 import { useTranslation } from 'react-i18next';
-import { formatDate } from '@/shared/lib/format';
+import { formatDate, formatList } from '@/shared/lib/format';
 import { Card, CardTitle } from '@/shared/ui/card';
 import { EmployeeAvatar } from './EmployeeAvatar';
 
@@ -42,6 +42,22 @@ export function EmployeeSummary({ employee }: { employee: Employee }) {
             [t('fields.email'), employee.email ?? none],
             [t('fields.jobTitle'), employee.jobTitle ?? none],
             [t('fields.location'), employee.location ?? none],
+            [t('fields.department'), employee.department?.name ?? none],
+            [
+              t('fields.manager'),
+              employee.manager
+                ? `${employee.manager.firstName} ${employee.manager.lastName}`
+                : none,
+            ],
+            [
+              t('fields.teams'),
+              employee.teams.length > 0
+                ? formatList(
+                    employee.teams.map((team) => team.name),
+                    language,
+                  )
+                : none,
+            ],
           ]}
         />
       </Card>

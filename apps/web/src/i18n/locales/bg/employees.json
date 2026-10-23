@@ -46,7 +46,10 @@
     "terminationDate": "Дата на напускане",
     "birthDate": "Дата на раждане",
     "phone": "Телефон",
-    "country": "Държава"
+    "country": "Държава",
+    "department": "Отдел",
+    "manager": "Ръководител",
+    "teams": "Екипи"
   },
   "employmentType": {
     "full_time": "На пълен работен ден",

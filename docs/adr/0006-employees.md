@@ -77,7 +77,8 @@ UI hiding is cosmetic; every rule above is enforced by the API.
 
 ## Consequences
 
-- Organization (step 2) adds `manager_id`, departments and teams and replaces `SelfOnlyOrgRelations`, which makes the
-  Manager grants (`team` scope) real; nothing in this step needs to change for that.
+- Organization (step 2, [ADR 0007](0007-organization.md)) adds `manager_id`, departments and teams and replaces
+  `SelfOnlyOrgRelations`, which makes the Manager grants (`team` scope) real. It also lets employees without an
+  account be reached by `reports`/`team`/`department` scopes (they have an employee record and a manager).
 - Accounts created through `POST /users/invitations` (admin tool) have no employee record until HR creates one
   with the same email via this flow's invitation endpoint; the directory only lists employees.

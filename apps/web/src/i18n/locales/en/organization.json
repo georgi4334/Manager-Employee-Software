@@ -1,0 +1,75 @@
+{
+  "title": "Organization",
+  "tabs": {
+    "label": "Organization views",
+    "chart": "Chart",
+    "departments": "Departments",
+    "teams": "Teams"
+  },
+  "none": "None",
+  "noManager": "No manager",
+  "noDepartment": "No department",
+  "noLead": "No lead",
+  "noHead": "No head",
+  "chart": {
+    "empty": "There are no employees yet.",
+    "expand": "Show reports of {{name}}",
+    "collapse": "Hide reports of {{name}}",
+    "reports_one": "{{count}} direct report",
+    "reports_other": "{{count}} direct reports"
+  },
+  "departments": {
+    "add": "Add department",
+    "empty": "No departments yet.",
+    "head": "Head: {{name}}",
+    "counts_one": "{{count}} employee",
+    "counts_other": "{{count}} employees",
+    "teamCount_one": "{{count}} team",
+    "teamCount_other": "{{count}} teams",
+    "parent": "Part of {{name}}",
+    "list": "Departments"
+  },
+  "teams": {
+    "add": "Add team",
+    "empty": "No teams yet.",
+    "lead": "Lead: {{name}}",
+    "members": "Members",
+    "noMembers": "No members yet.",
+    "list": "Teams",
+    "addMember": "Add member",
+    "addMemberAction": "Add",
+    "removeMember": "Remove {{name}}",
+    "chooseMember": "Choose an employee"
+  },
+  "fields": {
+    "name": "Name",
+    "parent": "Parent department",
+    "head": "Department head",
+    "department": "Department",
+    "lead": "Team lead",
+    "manager": "Manager"
+  },
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving…",
+    "confirmDelete": "Delete",
+    "change": "Change manager and department"
+  },
+  "deleteTitle": "Delete {{name}}?",
+  "deleteText": "This cannot be undone.",
+  "assign": {
+    "title": "Manager and department",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved."
+  },
+  "conflict": {
+    "name": "This name is already in use.",
+    "in_use": "This department still has employees, sub-departments or teams. Move or remove them first.",
+    "status": "This employee is not active."
+  },
+  "loading": "Loading…"
+}

@@ -46,7 +46,10 @@
     "terminationDate": "Austrittsdatum",
     "birthDate": "Geburtsdatum",
     "phone": "Telefon",
-    "country": "Land"
+    "country": "Land",
+    "department": "Abteilung",
+    "manager": "Vorgesetzte Person",
+    "teams": "Teams"
   },
   "employmentType": {
     "full_time": "Vollzeit",

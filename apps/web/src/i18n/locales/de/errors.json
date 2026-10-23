@@ -20,7 +20,8 @@
     "TIMEOUT": "Der Server hat zu lange nicht geantwortet. Bitte versuchen Sie es erneut.",
     "UNKNOWN": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "LAST_ADMIN": "Es muss immer mindestens eine aktive Administration geben.",
-    "CANNOT_DISABLE_SELF": "Sie können Ihr eigenes Konto nicht deaktivieren."
+    "CANNOT_DISABLE_SELF": "Sie können Ihr eigenes Konto nicht deaktivieren.",
+    "ORG_CYCLE": "Damit würde jemand in der Berichtsstruktur über sich selbst stehen."
   },
   "validation": {
     "required": "Dieses Feld ist erforderlich.",

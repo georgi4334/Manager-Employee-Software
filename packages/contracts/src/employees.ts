@@ -105,6 +105,7 @@ export type DeactivateEmployeeRequest = z.infer<typeof deactivateEmployeeRequest
 export const employeeQuerySchema = z.object({
   q: z.string().trim().max(100).optional(),
   status: z.enum(EMPLOYEE_LIST_STATUS_FILTERS).default('active'),
+  departmentId: z.uuid().optional(),
   page: z.coerce.number().int().min(1).max(10_000).default(1),
   pageSize: z.coerce
     .number()
@@ -137,6 +138,9 @@ export const employeeSchema = z.object({
   location: z.string().nullable(),
   email: z.string().nullable(),
   status: z.enum(EMPLOYEE_STATUSES),
+  department: z.object({ id: z.uuid(), name: z.string() }).nullable(),
+  manager: z.object({ id: z.uuid(), firstName: z.string(), lastName: z.string() }).nullable(),
+  teams: z.array(z.object({ id: z.uuid(), name: z.string() })),
   /** Whether this employee is the caller. */
   isSelf: z.boolean(),
   /** null when the caller may only see directory data. */

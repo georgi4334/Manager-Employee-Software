@@ -12,6 +12,7 @@ import { Button } from '@/shared/ui/button';
 import { Card, CardTitle } from '@/shared/ui/card';
 import { Field } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
+import { AssignmentPanel } from '@/features/organization/AssignmentPanel';
 import { EmployeeSummary } from './EmployeeSummary';
 import {
   deactivateFormSchema,
@@ -69,7 +70,7 @@ export function EmployeeDetailPage() {
   );
 }
 
-type Panel = 'invite' | 'deactivate' | null;
+type Panel = 'invite' | 'deactivate' | 'assign' | null;
 
 /** Buttons for people who may manage employees. Hidden for everyone else (the API refuses them anyway). */
 function EmployeeActions({ employee }: { employee: Employee }) {
@@ -78,6 +79,8 @@ function EmployeeActions({ employee }: { employee: Employee }) {
   const canEdit = usePermission('employee.update');
   const canInvite = usePermission('admin.user.invite');
   const canDeactivate = usePermission('employee.deactivate');
+  const canOrganize = usePermission('org.manage');
+  const { t: tOrg } = useTranslation('organization');
   const [panel, setPanel] = useState<Panel>(null);
   const reactivate = useReactivateEmployee(employee.id);
   const [notice, setNotice] = useState<string | null>(null);
@@ -88,7 +91,8 @@ function EmployeeActions({ employee }: { employee: Employee }) {
     employee.status === 'active' &&
     (accountStatus === null || accountStatus === 'invited');
   const showEdit = canEdit && employee.profile !== null;
-  if (!showEdit && !showInvite && !canDeactivate) return null;
+  const showAssign = canOrganize && employee.status === 'active';
+  if (!showEdit && !showInvite && !canDeactivate && !showAssign) return null;
 
   const name = `${employee.firstName} ${employee.lastName}`;
   return (
@@ -97,6 +101,14 @@ function EmployeeActions({ employee }: { employee: Employee }) {
         {showEdit && (
           <Button asChild variant="secondary">
             <Link to={`/employees/${employee.id}/edit`}>{t('actions.edit')}</Link>
+          </Button>
+        )}
+        {showAssign && (
+          <Button
+            variant="secondary"
+            onClick={() => setPanel(panel === 'assign' ? null : 'assign')}
+          >
+            {tOrg('actions.change')}
           </Button>
         )}
         {showInvite && (
@@ -142,6 +154,7 @@ function EmployeeActions({ employee }: { employee: Employee }) {
           }}
         />
       )}
+      {panel === 'assign' && <AssignmentPanel employee={employee} onDone={() => setPanel(null)} />}
       {panel === 'deactivate' && (
         <DeactivatePanel employee={employee} name={name} onClose={() => setPanel(null)} />
       )}

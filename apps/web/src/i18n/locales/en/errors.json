@@ -20,7 +20,8 @@
     "TIMEOUT": "The server took too long to answer. Please try again.",
     "UNKNOWN": "Something went wrong. Please try again.",
     "LAST_ADMIN": "There must always be at least one active administrator.",
-    "CANNOT_DISABLE_SELF": "You cannot disable your own account."
+    "CANNOT_DISABLE_SELF": "You cannot disable your own account.",
+    "ORG_CYCLE": "This would put someone above themselves in the reporting structure."
   },
   "validation": {
     "required": "This field is required.",

@@ -20,7 +20,10 @@ import {
  * Generated from the catalog: every permission x every role x every kind of record owner.
  * Allowed and denied cases are both covered, so granting or revoking anything changes a test.
  */
-const org: OrgRelations = { relationOf: async (_actor, owner) => owner as Relation };
+const org: OrgRelations = {
+  relationOf: async (_actor, owner) => owner as Relation,
+  relationsToEmployees: async (_actor, ids) => new Map(ids.map((id) => [id, id as Relation])),
+};
 const authz = new AuthorizationService(org);
 
 const actorFor = (role: SystemRole) => ({

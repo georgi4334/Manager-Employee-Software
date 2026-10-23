@@ -17,6 +17,7 @@ import { PrismaModule } from './infrastructure/prisma/prisma.module.js';
 import { TenancyModule } from './infrastructure/tenancy/tenancy.module.js';
 import { AuditModule } from './modules/audit/audit.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { OrganizationModule } from './modules/organization/organization.module.js';
 import { EmployeesModule } from './modules/employees/employees.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 import { NotificationsModule } from './modules/notifications/notifications.module.js';
@@ -81,6 +82,7 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     TenantsModule,
     UsersModule,
     EmployeesModule,
+    OrganizationModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },

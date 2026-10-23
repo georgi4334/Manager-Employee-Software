@@ -24,6 +24,9 @@ model Tenant {
   notifications           Notification[]
   notificationPreferences NotificationPreference[]
   employees               Employee[]
+  departments             Department[]
+  teams                   Team[]
+  teamMembers             TeamMember[]
 
   @@map("tenant")
 }
@@ -298,12 +301,82 @@ model Employee {
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user   User?  @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
+  /// docs/adr/0007-organization.md
+  departmentId String? @map("department_id") @db.Uuid
+  managerId    String? @map("manager_id") @db.Uuid
+
+  tenant            Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user              User?        @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
+  department        Department?  @relation("EmployeeDepartment", fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
+  manager           Employee?    @relation("Reporting", fields: [tenantId, managerId], references: [tenantId, id], onDelete: NoAction)
+  reports           Employee[]   @relation("Reporting")
+  headedDepartments Department[] @relation("DepartmentHead")
+  ledTeams          Team[]       @relation("TeamLead")
+  teamMemberships   TeamMember[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
   @@unique([tenantId, employeeNo])
+  @@index([tenantId, managerId])
+  @@index([tenantId, departmentId])
   @@index([tenantId, lastName, firstName])
   @@map("employee")
+}
+
+/// A department; departments form a tree (docs/adr/0007-organization.md). Names are unique per workspace
+/// (case-insensitive, a functional index in the migration).
+model Department {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  tenantId       String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  name           String
+  parentId       String?  @map("parent_id") @db.Uuid
+  headEmployeeId String?  @map("head_employee_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant    Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  parent    Department?  @relation("DepartmentTree", fields: [tenantId, parentId], references: [tenantId, id], onDelete: NoAction)
+  children  Department[] @relation("DepartmentTree")
+  head      Employee?    @relation("DepartmentHead", fields: [tenantId, headEmployeeId], references: [tenantId, id], onDelete: NoAction)
+  employees Employee[]   @relation("EmployeeDepartment")
+  teams     Team[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, parentId])
+  @@map("department")
+}
+
+/// A team inside a department. Teams group people; they grant no access.
+model Team {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  tenantId       String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  name           String
+  departmentId   String   @map("department_id") @db.Uuid
+  leadEmployeeId String?  @map("lead_employee_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant     Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  department Department   @relation(fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
+  lead       Employee?    @relation("TeamLead", fields: [tenantId, leadEmployeeId], references: [tenantId, id], onDelete: NoAction)
+  members    TeamMember[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, departmentId])
+  @@map("team")
+}
+
+model TeamMember {
+  tenantId   String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  teamId     String   @map("team_id") @db.Uuid
+  employeeId String   @map("employee_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  team     Team     @relation(fields: [tenantId, teamId], references: [tenantId, id], onDelete: Cascade)
+  employee Employee @relation(fields: [tenantId, employeeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@id([teamId, employeeId])
+  @@index([tenantId, employeeId])
+  @@map("team_member")
 }

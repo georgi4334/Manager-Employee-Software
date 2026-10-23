@@ -19,6 +19,7 @@ import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
 import { AuditService } from '../audit/audit.service.js';
 import { InvitationService } from '../auth/invitation.service.js';
 import { UserRolesService } from '../roles/user-roles.service.js';
+import { OrganizationService } from '../organization/organization.service.js';
 import { UsersService } from '../users/users.service.js';
 
 const SELECT = {
@@ -38,6 +39,12 @@ const SELECT = {
   country: true,
   status: true,
   user: { select: { email: true, status: true } },
+  department: { select: { id: true, name: true } },
+  manager: { select: { id: true, firstName: true, lastName: true } },
+  teamMemberships: {
+    select: { team: { select: { id: true, name: true } } },
+    orderBy: { team: { name: 'asc' as const } },
+  },
 } satisfies Prisma.EmployeeSelect;
 
 type Row = Prisma.EmployeeGetPayload<{ select: typeof SELECT }>;
@@ -64,6 +71,7 @@ export class EmployeesService {
     private readonly invitations: InvitationService,
     private readonly userRoles: UserRolesService,
     private readonly users: UsersService,
+    private readonly org: OrganizationService,
     private readonly audit: AuditService,
   ) {}
 
@@ -76,6 +84,7 @@ export class EmployeesService {
     return this.db.tx(async (tx) => {
       const where: Prisma.EmployeeWhereInput = {
         ...(query.status === 'all' ? {} : { status: query.status }),
+        ...(query.departmentId ? { departmentId: query.departmentId } : {}),
         // Every word must match somewhere.
         AND: (query.q?.split(/\s+/).filter(Boolean).map(escapeLike) ?? []).map((word) => ({
           OR: [
@@ -96,8 +105,14 @@ export class EmployeesService {
         }),
         tx.employee.count({ where }),
       ]);
+      // One relation lookup for the whole page instead of one per person.
+      const seeFull = await this.authz.allowedEmployees(
+        actor,
+        'employee.view_profile_full',
+        rows.map((row) => row.id),
+      );
       const items = [];
-      for (const row of rows) items.push(await this.present(actor, row));
+      for (const row of rows) items.push(await this.present(actor, row, seeFull.has(row.id)));
       return { items, total, page: query.page, pageSize: query.pageSize };
     });
   }
@@ -241,6 +256,7 @@ export class EmployeesService {
       }
       // Ends the account and its sessions; refuses yourself and the last administrator.
       if (row.userId) await this.users.disableInTx(tx, actor, row.userId);
+      await this.org.onEmployeeDeactivated(tx, actor.userId, id);
       await tx.employee.update({
         where: { id },
         data: { status: 'inactive', terminationDate: dateIn(terminationDate) },
@@ -295,15 +311,11 @@ export class EmployeesService {
   }
 
   /**
-   * Applies the permission's scope to one employee. Without an account an employee has no owner to relate to,
-   * so only scope "all" reaches them (a missing owner must never read as "anyone's record").
+   * Applies the permission's scope to one employee through the reporting tree and departments
+   * (docs/adr/0007-organization.md). An employee nobody is related to is reachable only at scope "all".
    */
   private async canScoped(actor: RequestAuth, code: PermissionCode, row: Row): Promise<boolean> {
-    const scope = actor.permissions[code];
-    if (!scope) return false;
-    if (scope === 'all') return true;
-    if (!row.userId) return false;
-    return this.authz.can(actor, code, { ownerUserId: row.userId });
+    return this.authz.can(actor, code, { ownerEmployeeId: row.id });
   }
 
   private async assertScoped(actor: RequestAuth, code: PermissionCode, row: Row): Promise<void> {
@@ -312,8 +324,8 @@ export class EmployeesService {
     }
   }
 
-  private async present(actor: RequestAuth, row: Row): Promise<Employee> {
-    const full = await this.canScoped(actor, 'employee.view_profile_full', row);
+  private async present(actor: RequestAuth, row: Row, seeFull?: boolean): Promise<Employee> {
+    const full = seeFull ?? (await this.canScoped(actor, 'employee.view_profile_full', row));
     return {
       id: row.id,
       firstName: row.firstName,
@@ -322,6 +334,9 @@ export class EmployeesService {
       location: row.location,
       email: row.user?.email ?? null,
       status: row.status as Employee['status'],
+      department: row.department,
+      manager: row.manager,
+      teams: row.teamMemberships.map((m) => m.team),
       isSelf: row.userId !== null && row.userId === actor.userId,
       profile: full
         ? {

@@ -11,6 +11,7 @@ import { EmployeeDetailPage } from '@/features/employees/EmployeeDetailPage';
 import { EmployeeFormPage } from '@/features/employees/EmployeeFormPage';
 import { EmployeesPage } from '@/features/employees/EmployeesPage';
 import { MyProfilePage } from '@/features/employees/MyProfilePage';
+import { OrganizationPage } from '@/features/organization/OrganizationPage';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
 import { NotFoundPage } from '@/features/not-found/NotFoundPage';
 import { NotificationSettingsPage } from '@/features/notifications/NotificationSettingsPage';
@@ -20,7 +21,7 @@ import { NAV_ITEMS } from './nav';
 import { AppShell } from './layout/AppShell';
 
 /** Modules that have real pages; the others still show the placeholder. */
-const IMPLEMENTED_PATHS = ['/employees'];
+const IMPLEMENTED_PATHS = ['/employees', '/organization'];
 
 export const routes: RouteObject[] = [
   {
@@ -66,6 +67,10 @@ export const routes: RouteObject[] = [
               { path: 'employees', element: <EmployeesPage /> },
               { path: 'employees/:id', element: <EmployeeDetailPage /> },
             ],
+          },
+          {
+            element: <RequirePermission permission="org.view" />,
+            children: [{ path: 'organization', element: <OrganizationPage /> }],
           },
           {
             element: <RequirePermission permission="employee.create" />,

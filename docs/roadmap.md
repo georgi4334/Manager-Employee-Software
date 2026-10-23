@@ -37,7 +37,7 @@ Solo developer + Claude, ~3–4 focused hours/day. Estimates are in **working da
 | Module           | Scope                                                                                                                           | Est.  |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------- | ----- |
 | Employees        | CRUD, directory, profile, invite flow (avatar upload moves to the file-storage step, ADR 0006) — **done**                       | 4–5 d |
-| Organization     | departments, teams, reporting lines, org chart, cycle prevention                                                                | 3–4 d |
+| Organization     | departments, teams, reporting lines, org chart, cycle prevention (ADR 0007) — **done**                                          | 3–4 d |
 | Leave            | types/policies, balances, request → approve flow, holidays (BG/DE), notifications (project-conflict warnings arrive in Phase 2) | 6–7 d |
 | Attendance       | manual check-in/out, office/remote, history, manager team view                                                                  | 3–4 d |
 | Calendar (basic) | month/week/day/agenda, events, leave + holiday layers, mobile agenda                                                            | 5–6 d |
