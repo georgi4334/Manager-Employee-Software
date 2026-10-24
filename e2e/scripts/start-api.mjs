@@ -67,8 +67,7 @@ const env = {
 };
 
 if (!existsSync(resolve(root, 'apps/api/dist/main.js'))) {
-  exec('pnpm', ['--filter', '@intime/contracts', 'build']);
-  exec('pnpm', ['--filter', '@intime/api', 'build']);
+  exec('pnpm', ['exec', 'turbo', 'run', 'build', '--filter=@intime/api']);
 }
 exec('pnpm', ['--filter', '@intime/api', 'db:deploy'], { env });
 

@@ -71,7 +71,7 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @intime/contracts build && pnpm --filter @intime/api build
+      - run: pnpm exec turbo run build --filter=@intime/api
       - run: pnpm --filter @intime/e2e exec playwright install --with-deps chromium
       - run: pnpm --filter @intime/e2e e2e
       - uses: actions/upload-artifact@v4
