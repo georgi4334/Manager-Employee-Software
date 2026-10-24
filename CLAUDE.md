@@ -100,6 +100,13 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Owners type or change their own records only for the last 7 days (`ATTENDANCE_SELF_EDIT_DAYS`); older days and other people's records need `attendance.correct` through `authz`, and nobody corrects their own old records. Corrections are audited (ids only) and notify the owner (`attendance.corrected`: date and action only). `canEdit` in responses is computed for the caller; the UI never decides.
 - Lists and presence are scoped with `allowedEmployees`; presence combines today's records with approved leave (`leave_request_day`). Break/overtime rules and exports are out of scope for now.
 
+## Calendar (docs/adr/0010-calendar.md)
+
+- Only events are stored (`calendar_event`: scope `personal` / `team` / `company`). Leave and public holidays are read-only layers the web page merges from the existing scoped endpoints (`/leave/requests`, `/leave/holidays`), so sick-leave masking stays in one place. No recurrence, sharing, invitations or reminders until Phase 4.
+- Visibility is decided in `CalendarService.visibleTo`: personal = owner only, team = members and lead (or `calendar.manage_team_calendars` at scope `all`), company = everybody. An event the caller cannot see is `404`, never `403`. Changes follow `mayManage`: owner (personal), team lead/member or scope `all` (team), `calendar.manage_company_calendar` (company). `canEdit` is computed per caller.
+- Every event has local `start_date`/`end_date` (range queries are plain date comparisons); timed events also store instants. Times are typed as `HH:MM` in the workspace time zone like attendance. The database re-checks shapes (all-day vs timed, team iff team scope, 31 days max).
+- Team and company changes are audited with ids only (never titles); personal events are not audited.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

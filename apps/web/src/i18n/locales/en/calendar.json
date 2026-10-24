@@ -1,0 +1,73 @@
+{
+  "title": "Calendar",
+  "loading": "Loading…",
+  "views": {
+    "label": "Calendar views",
+    "month": "Month",
+    "week": "Week",
+    "day": "Day",
+    "agenda": "Agenda"
+  },
+  "nav": {
+    "previous": "Previous",
+    "next": "Next",
+    "today": "Today"
+  },
+  "layers": {
+    "label": "Show on the calendar",
+    "personal": "My events",
+    "team": "Team events",
+    "company": "Company events",
+    "leave": "Leave",
+    "holiday": "Public holidays"
+  },
+  "month": {
+    "count_one": "{{count}} entry",
+    "count_other": "{{count}} entries"
+  },
+  "agenda": {
+    "empty": "Nothing in this period."
+  },
+  "day": {
+    "empty": "Nothing on this day.",
+    "allDay": "All day",
+    "range": "{{start}} – {{end}}",
+    "from": "From {{start}}",
+    "until": "Until {{end}}",
+    "span": "{{from}} – {{to}}",
+    "pending": "pending"
+  },
+  "event": {
+    "new": "New event",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Delete this event?",
+    "deleteConfirm": "Yes, delete",
+    "keep": "Keep it"
+  },
+  "form": {
+    "newTitle": "New event",
+    "editTitle": "Change event",
+    "scope": "Calendar",
+    "scopes": {
+      "personal": "Only me",
+      "team": "A team",
+      "company": "Everybody"
+    },
+    "team": "Team",
+    "title": "Title",
+    "allDay": "All day",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "location": "Location (optional)",
+    "description": "Description (optional)",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel"
+  },
+  "rule": {
+    "nonexistent_time": "That time does not exist on that day (clocks change)."
+  }
+}

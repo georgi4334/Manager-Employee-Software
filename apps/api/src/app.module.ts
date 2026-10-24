@@ -18,6 +18,7 @@ import { TenancyModule } from './infrastructure/tenancy/tenancy.module.js';
 import { AuditModule } from './modules/audit/audit.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { AttendanceModule } from './modules/attendance/attendance.module.js';
+import { CalendarModule } from './modules/calendar/calendar.module.js';
 import { LeaveModule } from './modules/leave/leave.module.js';
 import { OrganizationModule } from './modules/organization/organization.module.js';
 import { EmployeesModule } from './modules/employees/employees.module.js';
@@ -87,6 +88,7 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     OrganizationModule,
     LeaveModule,
     AttendanceModule,
+    CalendarModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },

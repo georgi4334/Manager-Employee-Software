@@ -31,6 +31,7 @@ model Tenant {
   holidays                Holiday[]
   leaveSettings           LeaveSettings?
   attendanceRecords       AttendanceRecord[]
+  calendarEvents          CalendarEvent[]
   leavePolicies           LeavePolicy[]
   leaveBalances           LeaveBalance[]
   leaveRequests           LeaveRequest[]
@@ -326,6 +327,7 @@ model Employee {
   leaveRequests     LeaveRequest[]
   leaveApprovals    LeaveApproval[]
   attendanceRecords AttendanceRecord[]
+  calendarEvents    CalendarEvent[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -361,6 +363,7 @@ model Department {
 
 /// A team inside a department. Teams group people; they grant no access.
 model Team {
+  calendarEvents CalendarEvent[]
   id             String   @id @default(uuid(7)) @db.Uuid
   tenantId       String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
   name           String
@@ -576,4 +579,38 @@ model AttendanceRecord {
   @@index([tenantId, employeeId, workDate])
   @@index([tenantId, workDate])
   @@map("attendance_record")
+}
+
+// ----- Calendar (docs/adr/0010-calendar.md) -------------------------------------------------------------
+
+model CalendarEvent {
+  id              String    @id @default(uuid(7)) @db.Uuid
+  tenantId        String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// personal | team | company
+  scope           String
+  /// The creator; for personal events the only person who sees it.
+  ownerEmployeeId String    @map("owner_employee_id") @db.Uuid
+  teamId          String?   @map("team_id") @db.Uuid
+  title           String
+  description     String?
+  location        String?
+  allDay          Boolean   @map("all_day")
+  /// Local dates in the workspace time zone, always set; the end is inclusive.
+  startDate       DateTime  @map("start_date") @db.Date
+  endDate         DateTime  @map("end_date") @db.Date
+  /// Instants, only for timed events.
+  startsAt        DateTime? @map("starts_at") @db.Timestamptz(6)
+  endsAt          DateTime? @map("ends_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  owner  Employee @relation(fields: [tenantId, ownerEmployeeId], references: [tenantId, id], onDelete: NoAction)
+  team   Team?    @relation(fields: [tenantId, teamId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, startDate, endDate])
+  @@index([tenantId, ownerEmployeeId])
+  @@index([tenantId, teamId])
+  @@map("calendar_event")
 }
