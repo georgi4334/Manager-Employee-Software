@@ -93,6 +93,13 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Nobody decides their own request (even Admin); approval scope comes from `leave.approve` through `authz` (`ownerEmployeeId`). Sick types never store a reason; masking of the type for colleagues is decided server-side (`hideSickTypeFromTeam`). Notifications and audit never contain reasons, comments or the sick type.
 - New built-in holiday keys must be added to `BUILT_IN_HOLIDAY_KEYS` and translated in en/de/bg (a test fails otherwise).
 
+## Attendance (docs/adr/0009-attendance.md)
+
+- Self-reported only: no location, IP or device is ever stored. Times are typed as `HH:MM` in the workspace time zone and stored as instants (`zonedToUtc`/`utcToZoned` in contracts; a time inside a DST gap is `nonexistent_time`).
+- The database enforces the rules too: one open record per employee (partial unique index), no overlaps (exclusion constraint, open = infinity), at most 16 h, end after start. The service maps them to `CONFLICT` with `field` `open`/`overlap`.
+- Owners type or change their own records only for the last 7 days (`ATTENDANCE_SELF_EDIT_DAYS`); older days and other people's records need `attendance.correct` through `authz`, and nobody corrects their own old records. Corrections are audited (ids only) and notify the owner (`attendance.corrected`: date and action only). `canEdit` in responses is computed for the caller; the UI never decides.
+- Lists and presence are scoped with `allowedEmployees`; presence combines today's records with approved leave (`leave_request_day`). Break/overtime rules and exports are out of scope for now.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

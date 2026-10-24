@@ -43,6 +43,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\na leave request in ${v.workspace} on InTime has been cancelled.\n\n` +
         `Open InTime for details:\n${v.link}`,
     },
+    'attendance.corrected': {
+      subject: (v) => `One of your attendance records in ${v.workspace} was changed`,
+      text: (v) =>
+        `Hello,\n\nsomebody changed one of your attendance records in ${v.workspace} on InTime.\n\n` +
+        `Open InTime to see it:\n${v.link}`,
+    },
   },
   de: {
     'account.roles_changed': {
@@ -70,6 +76,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hallo,\n\nein Urlaubsantrag in ${v.workspace} auf InTime wurde storniert.\n\n` +
         `Öffnen Sie InTime für Details:\n${v.link}`,
     },
+    'attendance.corrected': {
+      subject: (v) => `Einer Ihrer Anwesenheitseinträge in ${v.workspace} wurde geändert`,
+      text: (v) =>
+        `Hallo,\n\njemand hat einen Ihrer Anwesenheitseinträge in ${v.workspace} auf InTime geändert.\n\n` +
+        `Öffnen Sie InTime, um ihn zu sehen:\n${v.link}`,
+    },
   },
   bg: {
     'account.roles_changed': {
@@ -96,6 +108,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       text: (v) =>
         `Здравейте,\n\nзаявка за отпуск в ${v.workspace} в InTime беше отказана.\n\n` +
         `Отворете InTime за подробности:\n${v.link}`,
+    },
+    'attendance.corrected': {
+      subject: (v) => `Един от записите ви за присъствие в ${v.workspace} беше променен`,
+      text: (v) =>
+        `Здравейте,\n\nнякой промени един от записите ви за присъствие в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да го видите:\n${v.link}`,
     },
   },
 };

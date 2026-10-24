@@ -48,6 +48,16 @@
         "settingsTitle": "Stornierter Urlaub",
         "settingsHelp": "Wenn genehmigter Urlaub storniert wird."
       }
+    },
+    "attendance": {
+      "corrected": {
+        "title": "Anwesenheit korrigiert",
+        "textCreated": "Für den {{date}} wurde ein Zeiteintrag für Sie hinzugefügt.",
+        "textUpdated": "Ihr Zeiteintrag vom {{date}} wurde geändert.",
+        "textDeleted": "Ihr Zeiteintrag vom {{date}} wurde entfernt.",
+        "settingsTitle": "Korrekturen Ihrer Anwesenheit",
+        "settingsHelp": "Wenn eine Führungskraft oder HR einen Ihrer Zeiteinträge hinzufügt, ändert oder entfernt."
+      }
     }
   },
   "unknown": {

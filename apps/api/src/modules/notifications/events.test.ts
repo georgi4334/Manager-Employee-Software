@@ -24,6 +24,7 @@ describe('event catalog', () => {
       'leave.requested': { ...leaveBase, recipientUserIds: [USER], days: 2, autoApproved: false },
       'leave.decided': { ...leaveBase, recipientUserId: USER, status: 'approved' },
       'leave.cancelled': { ...leaveBase, recipientUserIds: [USER], by: 'employee' },
+      'attendance.corrected': { recipientUserId: USER, date: '2026-11-02', action: 'updated' },
     };
     for (const [type, definition] of Object.entries(EVENT_DEFINITIONS)) {
       const params = definition.params.parse(samples[type as keyof typeof samples]);
@@ -149,5 +150,29 @@ describe('leave events', () => {
     ],
   ] as const)('rejects %s', (_label, type, params) => {
     expect(EVENT_DEFINITIONS[type].params.safeParse(params).success).toBe(false);
+  });
+});
+
+describe('attendance.corrected', () => {
+  const definition = EVENT_DEFINITIONS['attendance.corrected'];
+
+  it('tells the person which day and what happened, nothing more', () => {
+    expect(
+      definition.notify({ recipientUserId: USER, date: '2026-11-02', action: 'deleted' }),
+    ).toEqual([
+      {
+        recipientUserId: USER,
+        type: 'attendance.corrected',
+        params: { date: '2026-11-02', action: 'deleted' },
+      },
+    ]);
+  });
+
+  it.each([
+    ['no recipient', { date: '2026-11-02', action: 'updated' }],
+    ['a bad date', { recipientUserId: USER, date: '2.11.2026', action: 'updated' }],
+    ['an unknown action', { recipientUserId: USER, date: '2026-11-02', action: 'viewed' }],
+  ])('rejects %s', (_label, params) => {
+    expect(definition.params.safeParse(params).success).toBe(false);
   });
 });

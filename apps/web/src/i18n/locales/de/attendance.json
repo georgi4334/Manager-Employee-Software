@@ -1,0 +1,89 @@
+{
+  "title": "Anwesenheit",
+  "loading": "Wird geladen…",
+  "noRecord": "Für Ihr Konto gibt es noch keinen Mitarbeitendeneintrag, daher ist nichts zu zeigen. Wenden Sie sich an HR.",
+  "tabs": {
+    "label": "Anwesenheitsansichten",
+    "today": "Heute",
+    "history": "Verlauf",
+    "team": "Team"
+  },
+  "mode": {
+    "office": "Büro",
+    "remote": "Homeoffice",
+    "field": "Außendienst"
+  },
+  "state": {
+    "working": "Arbeitet",
+    "done": "Fertig",
+    "leave": "Abwesend",
+    "none": "Nicht erfasst"
+  },
+  "duration": "{{hours}} Std. {{minutes}} Min.",
+  "clock": {
+    "notIn": "Sie sind nicht eingestempelt.",
+    "checkIn": "Einstempeln",
+    "checkOut": "Ausstempeln",
+    "working": "Arbeitet seit {{start}} ({{mode}})"
+  },
+  "today": {
+    "total": "Heute erfasst: {{duration}}",
+    "records": "Einträge von heute",
+    "empty": "Heute noch nichts erfasst."
+  },
+  "record": {
+    "since": "Seit {{start}}",
+    "range": "{{start}} – {{end}}",
+    "open": "Offen",
+    "corrected": "Korrigiert",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "confirmDelete": "Diesen Eintrag löschen?",
+    "deleteConfirm": "Ja, löschen",
+    "cancel": "Behalten"
+  },
+  "form": {
+    "addTitle": "Zeitraum nachtragen",
+    "editTitle": "Eintrag ändern",
+    "addHint": "Ein- oder Ausstempeln vergessen? Geben Sie die Zeiten in der Zeitzone Ihres Arbeitsbereichs ein. Die letzten 7 Tage sind möglich.",
+    "openHint": "Dieser Eintrag ist noch offen. Stempeln Sie aus, um das Ende zu setzen; hier können Sie Ort und Notiz ändern.",
+    "person": "Person",
+    "myself": "Ich selbst",
+    "date": "Datum",
+    "start": "Von",
+    "end": "Bis",
+    "mode": "Wo",
+    "note": "Notiz (optional)",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen"
+  },
+  "history": {
+    "from": "Von",
+    "to": "Bis",
+    "invalidRange": "Wählen Sie einen gültigen Zeitraum.",
+    "empty": "Keine Einträge in diesem Zeitraum.",
+    "total": "Gesamt: {{duration}}",
+    "list": "Ihre Einträge"
+  },
+  "team": {
+    "today": "Heute",
+    "records": "Einträge",
+    "empty": "Niemand anzuzeigen.",
+    "since": "Seit {{start}} ({{mode}})",
+    "addTitle": "Eintrag für jemanden hinzufügen",
+    "addHint": "Korrekturen sind für die Person sichtbar und werden im Audit-Log festgehalten."
+  },
+  "conflict": {
+    "open": "Es gibt bereits einen offenen Eintrag. Stempeln Sie zuerst aus.",
+    "overlap": "Das überschneidet sich mit einem anderen Eintrag derselben Person."
+  },
+  "rule": {
+    "in_future": "Diese Zeit liegt in der Zukunft.",
+    "before_check_in": "Das Ausstempeln muss nach dem Einstempeln liegen.",
+    "too_long": "Ein Eintrag darf höchstens 16 Stunden lang sein.",
+    "nonexistent_time": "Diese Uhrzeit gibt es an dem Tag nicht (Zeitumstellung).",
+    "open_record": "Ein offener Eintrag wird durch Ausstempeln beendet.",
+    "too_far_in_past": "Sie können nur die letzten 7 Tage selbst eintragen. Ältere Tage trägt Ihre Führungskraft oder HR nach."
+  }
+}

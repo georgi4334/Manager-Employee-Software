@@ -31,6 +31,16 @@ export const NOTIFICATION_TYPES = {
     locked: { email: true },
     link: '/notifications',
   }),
+  // Attendance (docs/adr/0009-attendance.md): somebody else changed your record. Date and kind only.
+  'attendance.corrected': typeDef({
+    params: z.object({
+      date: z.string().regex(DATE),
+      action: z.enum(['created', 'updated', 'deleted']),
+    }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/attendance',
+  }),
   // Leave (docs/adr/0008-leave.md). Names and dates only: never the type of a sick request, never reasons.
   'leave.requested': typeDef({
     params: z.object({

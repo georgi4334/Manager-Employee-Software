@@ -11,6 +11,7 @@ import { EmployeeDetailPage } from '@/features/employees/EmployeeDetailPage';
 import { EmployeeFormPage } from '@/features/employees/EmployeeFormPage';
 import { EmployeesPage } from '@/features/employees/EmployeesPage';
 import { MyProfilePage } from '@/features/employees/MyProfilePage';
+import { AttendancePage } from '@/features/attendance/AttendancePage';
 import { LeavePage } from '@/features/leave/LeavePage';
 import { OrganizationPage } from '@/features/organization/OrganizationPage';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
@@ -22,7 +23,7 @@ import { NAV_ITEMS } from './nav';
 import { AppShell } from './layout/AppShell';
 
 /** Modules that have real pages; the others still show the placeholder. */
-const IMPLEMENTED_PATHS = ['/employees', '/organization', '/leave'];
+const IMPLEMENTED_PATHS = ['/employees', '/organization', '/leave', '/attendance'];
 
 export const routes: RouteObject[] = [
   {
@@ -68,6 +69,10 @@ export const routes: RouteObject[] = [
               { path: 'employees', element: <EmployeesPage /> },
               { path: 'employees/:id', element: <EmployeeDetailPage /> },
             ],
+          },
+          {
+            element: <RequirePermission permission={['attendance.record', 'attendance.view']} />,
+            children: [{ path: 'attendance', element: <AttendancePage /> }],
           },
           {
             element: <RequirePermission permission={['leave.request', 'leave.view']} />,

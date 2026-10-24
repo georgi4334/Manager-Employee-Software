@@ -46,7 +46,8 @@
     "too_far_ahead": "The end is too far in the future.",
     "end_before_start": "The end cannot be before the start.",
     "too_long": "The period is too long.",
-    "half_day_conflict": "One day cannot start and end at noon."
+    "half_day_conflict": "One day cannot start and end at noon.",
+    "invalidTime": "Enter a valid time, like 09:30."
   },
   "forbiddenTitle": "No access",
   "forbiddenText": "You do not have permission to open this page. Ask your administrator if you think this is a mistake."

@@ -7,6 +7,7 @@ import type nav from './locales/en/nav.json';
 import type employees from './locales/en/employees.json';
 import type organization from './locales/en/organization.json';
 import type leave from './locales/en/leave.json';
+import type attendance from './locales/en/attendance.json';
 import type notifications from './locales/en/notifications.json';
 
 declare module 'i18next' {
@@ -22,6 +23,7 @@ declare module 'i18next' {
       employees: typeof employees;
       organization: typeof organization;
       leave: typeof leave;
+      attendance: typeof attendance;
     };
   }
 }

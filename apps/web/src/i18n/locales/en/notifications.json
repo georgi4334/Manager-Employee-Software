@@ -48,6 +48,16 @@
         "settingsTitle": "Cancelled leave",
         "settingsHelp": "When approved leave is cancelled."
       }
+    },
+    "attendance": {
+      "corrected": {
+        "title": "Attendance corrected",
+        "textCreated": "A time record on {{date}} was added for you.",
+        "textUpdated": "Your time record on {{date}} was changed.",
+        "textDeleted": "Your time record on {{date}} was removed.",
+        "settingsTitle": "Corrections to your attendance",
+        "settingsHelp": "When a manager or HR adds, changes or removes one of your time records."
+      }
     }
   },
   "unknown": {

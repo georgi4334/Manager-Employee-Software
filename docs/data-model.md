@@ -80,18 +80,18 @@ erDiagram
   HOLIDAY_CALENDAR ||--o{ PUBLIC_HOLIDAY : lists
 ```
 
-| Table               | Key columns                                                                                                                                                                     |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `work_schedule`     | name, weekly_hours, days jsonb (per weekday start/end/break)                                                                                                                    |
-| `attendance_record` | employee_id, work_date, check_in_at, check_out_at, mode (`office/remote/field`), note, source=`manual` — unique(employee_id, work_date, check_in_at)                            |
-| `leave_type`        | key (system types), name (custom), tracks_balance, requires_approval, is_sick, color, is_active — see [ADR 0008](adr/0008-leave.md)                                             |
-| `leave_policy`      | leave_type_id (unique), annual_allowance_days, carry_over_max_days                                                                                                              |
-| `leave_balance`     | employee_id, leave_type_id, year, entitled, carried_over, adjustment — created lazily and frozen; **used/pending are sums over request days**, never stored                     |
-| `leave_request`     | employee_id, leave_type_id, start_date, end_date, half_day_start, half_day_end, days, reason (never for sick types), status (`pending/approved/rejected/cancelled`), decided_at |
-| `leave_request_day` | request_id, day, fraction (0.5 or 1): the counted working days, stored at request time                                                                                          |
-| `leave_approval`    | request_id, approver_employee_id, decision (`approved/rejected/cancelled`), comment, decided_at                                                                                 |
-| `holiday`           | date, name, country (null = everybody), is_half_day — custom holidays; Bulgarian and German national days are computed in code                                                  |
-| `leave_settings`    | tenant (one row), hide_sick_type_from_team, default_country                                                                                                                     |
+| Table               | Key columns                                                                                                                                                                                                                               |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `work_schedule`     | name, weekly_hours, days jsonb (per weekday start/end/break)                                                                                                                                                                              |
+| `attendance_record` | employee_id, work_date, check_in_at, check_out_at (null while open), mode (`office/remote/field`), note, source (`clock/entry/correction`) — one open record per employee, no overlaps, at most 16 h ([ADR 0009](adr/0009-attendance.md)) |
+| `leave_type`        | key (system types), name (custom), tracks_balance, requires_approval, is_sick, color, is_active — see [ADR 0008](adr/0008-leave.md)                                                                                                       |
+| `leave_policy`      | leave_type_id (unique), annual_allowance_days, carry_over_max_days                                                                                                                                                                        |
+| `leave_balance`     | employee_id, leave_type_id, year, entitled, carried_over, adjustment — created lazily and frozen; **used/pending are sums over request days**, never stored                                                                               |
+| `leave_request`     | employee_id, leave_type_id, start_date, end_date, half_day_start, half_day_end, days, reason (never for sick types), status (`pending/approved/rejected/cancelled`), decided_at                                                           |
+| `leave_request_day` | request_id, day, fraction (0.5 or 1): the counted working days, stored at request time                                                                                                                                                    |
+| `leave_approval`    | request_id, approver_employee_id, decision (`approved/rejected/cancelled`), comment, decided_at                                                                                                                                           |
+| `holiday`           | date, name, country (null = everybody), is_half_day — custom holidays; Bulgarian and German national days are computed in code                                                                                                            |
+| `leave_settings`    | tenant (one row), hide_sick_type_from_team, default_country                                                                                                                                                                               |
 
 - **Sick leave** stores only the type — never diagnosis (GDPR special category).
 - Overlap rule: an employee cannot have two pending/approved requests sharing a date (exclusion constraint on the date range).

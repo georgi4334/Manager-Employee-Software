@@ -25,6 +25,8 @@ function useTypeTitle() {
         return t('types.leave.decided.settingsTitle');
       case 'leave.cancelled':
         return t('types.leave.cancelled.settingsTitle');
+      case 'attendance.corrected':
+        return t('types.attendance.corrected.settingsTitle');
       default:
         return t('unknown.title');
     }
@@ -124,6 +126,11 @@ function TypeHeading({ type }: { type: string }) {
         return [t('types.leave.decided.settingsTitle'), t('types.leave.decided.settingsHelp')];
       case 'leave.cancelled':
         return [t('types.leave.cancelled.settingsTitle'), t('types.leave.cancelled.settingsHelp')];
+      case 'attendance.corrected':
+        return [
+          t('types.attendance.corrected.settingsTitle'),
+          t('types.attendance.corrected.settingsHelp'),
+        ];
       default:
         return null;
     }

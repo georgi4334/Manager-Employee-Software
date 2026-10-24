@@ -17,6 +17,20 @@ const eventDef = <T extends z.ZodType>(definition: {
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const name = z.string().trim().min(1).max(200);
 
+export const ATTENDANCE_EVENTS = {
+  /** Somebody else created, changed or deleted a person's attendance record: they are told (date and kind only). */
+  'attendance.corrected': eventDef({
+    params: z.object({
+      recipientUserId: z.uuid(),
+      date: z.string().regex(DATE),
+      action: z.enum(['created', 'updated', 'deleted']),
+    }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'attendance.corrected' as const, params },
+    ],
+  }),
+} as const;
+
 export const LEAVE_EVENTS = {
   'leave.requested': eventDef({
     params: z.object({
@@ -80,6 +94,7 @@ export const EVENT_DEFINITIONS = {
     ],
   }),
   ...LEAVE_EVENTS,
+  ...ATTENDANCE_EVENTS,
 } as const;
 
 export type EventType = keyof typeof EVENT_DEFINITIONS;

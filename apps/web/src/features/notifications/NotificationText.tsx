@@ -79,6 +79,18 @@ export function useNotificationText() {
             : t('types.leave.cancelled.textEmployee', { ...range, name: str(params.employeeName) }),
       };
     }
+    if (type === 'attendance.corrected') {
+      const date = formatDay(str(params.date), language);
+      return {
+        title: t('types.attendance.corrected.title'),
+        text:
+          params.action === 'created'
+            ? t('types.attendance.corrected.textCreated', { date })
+            : params.action === 'deleted'
+              ? t('types.attendance.corrected.textDeleted', { date })
+              : t('types.attendance.corrected.textUpdated', { date }),
+      };
+    }
     return { title: t('unknown.title'), text: t('unknown.text') };
   };
 }

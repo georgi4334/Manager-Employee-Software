@@ -30,6 +30,7 @@ model Tenant {
   leaveTypes              LeaveType[]
   holidays                Holiday[]
   leaveSettings           LeaveSettings?
+  attendanceRecords       AttendanceRecord[]
   leavePolicies           LeavePolicy[]
   leaveBalances           LeaveBalance[]
   leaveRequests           LeaveRequest[]
@@ -313,17 +314,18 @@ model Employee {
   departmentId String? @map("department_id") @db.Uuid
   managerId    String? @map("manager_id") @db.Uuid
 
-  tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user              User?           @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
-  department        Department?     @relation("EmployeeDepartment", fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
-  manager           Employee?       @relation("Reporting", fields: [tenantId, managerId], references: [tenantId, id], onDelete: NoAction)
-  reports           Employee[]      @relation("Reporting")
-  headedDepartments Department[]    @relation("DepartmentHead")
-  ledTeams          Team[]          @relation("TeamLead")
+  tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user              User?              @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
+  department        Department?        @relation("EmployeeDepartment", fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
+  manager           Employee?          @relation("Reporting", fields: [tenantId, managerId], references: [tenantId, id], onDelete: NoAction)
+  reports           Employee[]         @relation("Reporting")
+  headedDepartments Department[]       @relation("DepartmentHead")
+  ledTeams          Team[]             @relation("TeamLead")
   teamMemberships   TeamMember[]
   leaveBalances     LeaveBalance[]
   leaveRequests     LeaveRequest[]
   leaveApprovals    LeaveApproval[]
+  attendanceRecords AttendanceRecord[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -546,4 +548,32 @@ model LeaveSettings {
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@map("leave_settings")
+}
+
+// ----- Attendance (docs/adr/0009-attendance.md) -------------------------------------------------------
+
+/// Self-reported working time: no location, no IP, no device. One open record per employee, no overlaps.
+model AttendanceRecord {
+  id         String    @id @default(uuid(7)) @db.Uuid
+  tenantId   String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  employeeId String    @map("employee_id") @db.Uuid
+  /// The date of the check-in in the workspace time zone.
+  workDate   DateTime  @map("work_date") @db.Date
+  checkInAt  DateTime  @map("check_in_at") @db.Timestamptz(6)
+  checkOutAt DateTime? @map("check_out_at") @db.Timestamptz(6)
+  /// office | remote | field
+  mode       String
+  note       String?
+  /// clock | entry | correction
+  source     String    @default("clock")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [tenantId, employeeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, employeeId, workDate])
+  @@index([tenantId, workDate])
+  @@map("attendance_record")
 }
