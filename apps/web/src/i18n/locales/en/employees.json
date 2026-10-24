@@ -121,6 +121,7 @@
     "employeeNo": "This employee number is already in use.",
     "email": "This email address is already in use.",
     "account": "This person already has an active account.",
-    "status": "This employee is not active."
+    "status": "This employee is not active.",
+    "erased": "This employee's personal data was erased; the record cannot be changed."
   }
 }

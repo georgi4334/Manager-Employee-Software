@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api/api-error';
 import { useMessages } from '@/features/auth/messages';
 
-const CONFLICT_FIELDS = ['employeeNo', 'email', 'account', 'status'] as const;
+const CONFLICT_FIELDS = ['employeeNo', 'email', 'account', 'status', 'erased'] as const;
 type ConflictField = (typeof CONFLICT_FIELDS)[number];
 
 /** API errors for the employee screens: conflicts name the field that clashes, the rest is generic. */

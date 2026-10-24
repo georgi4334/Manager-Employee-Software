@@ -143,6 +143,8 @@ export const employeeSchema = z.object({
   teams: z.array(z.object({ id: z.uuid(), name: z.string() })),
   /** Whether this employee is the caller. */
   isSelf: z.boolean(),
+  /** The personal data was erased (ADR 0011): the record is a placeholder and cannot be changed. */
+  erased: z.boolean().optional(),
   /** null when the caller may only see directory data. */
   profile: employeeProfileSchema.nullable(),
 });

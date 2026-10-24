@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useMessages } from '@/features/auth/messages';
 import { usePermission } from '@/features/auth/permissions';
+import { OwnDataCard } from '@/features/privacy/OwnDataCard';
 import { isApiError } from '@/shared/api/api-error';
 import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
@@ -43,6 +44,7 @@ export function MyProfilePage() {
         <>
           <EmployeeSummary employee={query.data} />
           {canEditPhone && <PhoneForm initial={query.data.profile?.phone ?? ''} />}
+          <OwnDataCard />
         </>
       )}
     </div>

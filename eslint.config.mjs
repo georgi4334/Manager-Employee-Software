@@ -43,6 +43,8 @@ export default tseslint.config(
       'apps/api/src/modules/tenants/**',
       'apps/api/src/modules/auth/**',
       'apps/api/src/modules/notifications/delivery/**',
+      // Erasure needs rights the application role deliberately lacks (ADR 0011).
+      'apps/api/src/modules/privacy/erasure.service.ts',
     ],
     rules: {
       'no-restricted-imports': [

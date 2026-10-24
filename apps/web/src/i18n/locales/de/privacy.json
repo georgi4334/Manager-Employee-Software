@@ -1,0 +1,30 @@
+{
+  "working": "Wird ausgeführt…",
+  "own": {
+    "title": "Ihre Daten",
+    "text": "Laden Sie eine Kopie aller Daten herunter, die dieser Arbeitsbereich über Sie speichert (Profil, Urlaub, Anwesenheit, Termine, Benachrichtigungen), als JSON-Datei.",
+    "download": "Meine Daten herunterladen",
+    "done": "Ihre Datei wurde heruntergeladen."
+  },
+  "employee": {
+    "title": "Personenbezogene Daten",
+    "text": "Auskunftsersuchen und Löschung der Daten ehemaliger Mitarbeitender.",
+    "download": "Daten herunterladen",
+    "downloaded": "Die Datei wurde heruntergeladen. Dieser Export wurde im Audit-Log festgehalten."
+  },
+  "erase": {
+    "open": "Personenbezogene Daten löschen",
+    "title": "Personenbezogene Daten von {{name}} löschen?",
+    "warning": "Das kann nicht rückgängig gemacht werden.",
+    "removes": "Entfernt werden: Name, Kontaktdaten, Geburtsdatum, Stellendaten, Zugang, Benachrichtigungen sowie alle Freitexte und Kommentare.",
+    "keeps": "Ohne Personenbezug bleiben, wie gesetzlich vorgeschrieben: Eintritts- und Austrittsdatum, Arbeitszeit- und Urlaubsdaten.",
+    "understand": "Mir ist bewusst, dass dies unwiderruflich ist.",
+    "confirm": "Endgültig löschen",
+    "cancel": "Abbrechen"
+  },
+  "conflict": {
+    "active": "Deaktivieren Sie die Person zuerst. Nur ehemalige Mitarbeitende können gelöscht werden.",
+    "self": "Sie können Ihre eigenen Daten nicht löschen.",
+    "erased": "Die personenbezogenen Daten dieser Person wurden bereits gelöscht."
+  }
+}

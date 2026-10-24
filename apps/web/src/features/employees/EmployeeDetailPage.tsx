@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 import { useMessages } from '@/features/auth/messages';
+import { EmployeeDataPanel } from '@/features/privacy/EmployeeDataPanel';
 import { usePermission } from '@/features/auth/permissions';
 import { isApiError } from '@/shared/api/api-error';
 import { Alert } from '@/shared/ui/alert';
@@ -64,6 +65,7 @@ export function EmployeeDetailPage() {
         <>
           <EmployeeActions employee={query.data} />
           <EmployeeSummary employee={query.data} />
+          <EmployeeDataPanel employee={query.data} />
         </>
       )}
     </div>
@@ -92,6 +94,8 @@ function EmployeeActions({ employee }: { employee: Employee }) {
     (accountStatus === null || accountStatus === 'invited');
   const showEdit = canEdit && employee.profile !== null;
   const showAssign = canOrganize && employee.status === 'active';
+  // An erased record is a placeholder for statutory data and stays as it is (ADR 0011).
+  if (employee.erased) return null;
   if (!showEdit && !showInvite && !canDeactivate && !showAssign) return null;
 
   const name = `${employee.firstName} ${employee.lastName}`;

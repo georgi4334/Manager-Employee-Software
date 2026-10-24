@@ -121,6 +121,7 @@
     "employeeNo": "Diese Personalnummer wird bereits verwendet.",
     "email": "Diese E-Mail-Adresse wird bereits verwendet.",
     "account": "Diese Person hat bereits ein aktives Konto.",
-    "status": "Diese Person ist nicht aktiv."
+    "status": "Diese Person ist nicht aktiv.",
+    "erased": "Die personenbezogenen Daten dieser Person wurden gelöscht; der Eintrag kann nicht mehr geändert werden."
   }
 }

@@ -38,6 +38,7 @@ const SELECT = {
   phone: true,
   country: true,
   status: true,
+  erasedAt: true,
   user: { select: { email: true, status: true } },
   department: { select: { id: true, name: true } },
   manager: { select: { id: true, firstName: true, lastName: true } },
@@ -160,6 +161,7 @@ export class EmployeesService {
     return this.db.tx(async (tx) => {
       const row = await this.find(tx, actor, id);
       await this.assertScoped(actor, 'employee.update', row);
+      this.assertNotErased(row);
 
       if (body.employeeNo && body.employeeNo !== row.employeeNo) {
         await this.assertEmployeeNoFree(tx, body.employeeNo, row.id);
@@ -276,6 +278,7 @@ export class EmployeesService {
     return this.db.tx(async (tx) => {
       const row = await this.find(tx, actor, id);
       await this.assertScoped(actor, 'employee.deactivate', row);
+      this.assertNotErased(row);
       if (row.status === 'active') return this.present(actor, row);
 
       if (row.userId) await this.users.enableInTx(tx, actor, row.userId);
@@ -294,6 +297,11 @@ export class EmployeesService {
   }
 
   // ----- helpers -------------------------------------------------------------------------------
+
+  /** An erased record is a placeholder for statutory data; it never comes back (docs/adr/0011). */
+  private assertNotErased(row: Row): void {
+    if (row.erasedAt) throw conflict('erased', 'The personal data of this employee was erased');
+  }
 
   private seesInactive(actor: RequestAuth): boolean {
     return actor.permissions['employee.deactivate'] !== undefined;
@@ -332,12 +340,13 @@ export class EmployeesService {
       lastName: row.lastName,
       jobTitle: row.jobTitle,
       location: row.location,
-      email: row.user?.email ?? null,
+      email: row.erasedAt ? null : (row.user?.email ?? null),
       status: row.status as Employee['status'],
       department: row.department,
       manager: row.manager,
       teams: row.teamMemberships.map((m) => m.team),
       isSelf: row.userId !== null && row.userId === actor.userId,
+      erased: row.erasedAt !== null,
       profile: full
         ? {
             employeeNo: row.employeeNo,

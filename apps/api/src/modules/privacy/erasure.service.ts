@@ -1,0 +1,120 @@
+import { Injectable } from '@nestjs/common';
+import { AppException } from '../../common/errors/app-exception.js';
+import { SystemPrismaService } from '../../infrastructure/prisma/system-prisma.service.js';
+
+const PLACEHOLDER = '—';
+const conflict = (field: string, message: string) =>
+  new AppException('CONFLICT', { message, params: { field } });
+
+/**
+ * Irreversible anonymisation of a former employee (docs/adr/0011-gdpr-export-erasure.md). Uses the system
+ * connection because the application role may neither delete notifications nor edit leave decisions; every
+ * statement is therefore scoped by tenant and employee here, and the caller has already checked permission and
+ * that the employee belongs to the caller's workspace.
+ */
+@Injectable()
+export class ErasureService {
+  constructor(private readonly system: SystemPrismaService) {}
+
+  async erase(tenantId: string, actorUserId: string, employeeId: string): Promise<void> {
+    await this.system.$transaction(async (tx) => {
+      const employee = await tx.employee.findFirst({
+        where: { id: employeeId, tenantId },
+        select: { userId: true, status: true, erasedAt: true },
+      });
+      if (!employee) throw new AppException('NOT_FOUND', { message: 'Employee not found' });
+      if (employee.userId && employee.userId === actorUserId) {
+        throw conflict('self', 'You cannot erase your own data');
+      }
+      if (employee.erasedAt) throw conflict('erased', 'The data was already erased');
+      if (employee.status !== 'inactive') {
+        throw conflict('active', 'Deactivate the employee before erasing their data');
+      }
+
+      // The condition makes a concurrent reactivation or a second erasure lose cleanly.
+      const claimed = await tx.employee.updateMany({
+        where: { id: employeeId, tenantId, status: 'inactive', erasedAt: null },
+        data: {
+          firstName: PLACEHOLDER,
+          lastName: `#${employeeId.slice(-6)}`,
+          employeeNo: null,
+          jobTitle: null,
+          location: null,
+          seniority: null,
+          birthDate: null,
+          phone: null,
+          country: null,
+          departmentId: null,
+          managerId: null,
+          erasedAt: new Date(),
+        },
+      });
+      if (claimed.count !== 1) throw conflict('active', 'The employee changed, try again');
+
+      await tx.teamMember.deleteMany({ where: { tenantId, employeeId } });
+      await tx.attendanceRecord.updateMany({
+        where: { tenantId, employeeId },
+        data: { note: null },
+      });
+      await tx.calendarEvent.deleteMany({
+        where: { tenantId, ownerEmployeeId: employeeId, scope: 'personal' },
+      });
+      await tx.leaveRequest.updateMany({ where: { tenantId, employeeId }, data: { reason: null } });
+      await tx.leaveApproval.updateMany({
+        where: {
+          tenantId,
+          OR: [{ approverEmployeeId: employeeId }, { request: { employeeId } }],
+        },
+        data: { comment: null },
+      });
+
+      // Other people's notifications and queued events that carry this person's name.
+      for (const table of ['notification', 'outbox_event'] as const) {
+        await tx.$executeRawUnsafe(
+          `UPDATE "${table}" SET params = jsonb_set(params, '{employeeName}', to_jsonb($3::text))
+           WHERE tenant_id = $1::uuid AND params ? 'employeeName'
+             AND params->>'requestId' IN (
+               SELECT id::text FROM leave_request WHERE tenant_id = $1::uuid AND employee_id = $2::uuid)`,
+          tenantId,
+          employeeId,
+          PLACEHOLDER,
+        );
+      }
+
+      const userId = employee.userId;
+      if (userId) {
+        await tx.$executeRawUnsafe(
+          `DELETE FROM outbox_event WHERE tenant_id = $1::uuid AND params->>'recipientUserId' = $2`,
+          tenantId,
+          userId,
+        );
+        await tx.notification.deleteMany({ where: { tenantId, recipientUserId: userId } });
+        await tx.notificationPreference.deleteMany({ where: { tenantId, userId } });
+        await tx.session.deleteMany({ where: { tenantId, userId } }); // refresh tokens cascade
+        await tx.authToken.deleteMany({ where: { tenantId, userId } });
+        await tx.authIdentity.deleteMany({ where: { tenantId, userId } });
+        await tx.userRole.deleteMany({ where: { tenantId, userId } });
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            email: `erased-${userId}@invalid`,
+            status: 'disabled',
+            locale: null,
+            timezone: null,
+            lastLoginAt: null,
+          },
+        });
+      }
+
+      await tx.auditLog.create({
+        data: {
+          tenantId,
+          actorUserId,
+          action: 'privacy.erased',
+          entity: 'employee',
+          entityId: employeeId,
+        },
+      });
+    });
+  }
+}
