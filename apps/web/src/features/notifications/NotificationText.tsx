@@ -79,6 +79,12 @@ export function useNotificationText() {
             : t('types.leave.cancelled.textEmployee', { ...range, name: str(params.employeeName) }),
       };
     }
+    if (type === 'project.assigned') {
+      return {
+        title: t('types.project.assigned.title'),
+        text: t('types.project.assigned.text', { projectName: str(params.projectName) }),
+      };
+    }
     if (type === 'attendance.corrected') {
       const date = formatDay(str(params.date), language);
       return {

@@ -59,6 +59,10 @@ export class ErasureService {
       await tx.calendarEvent.deleteMany({
         where: { tenantId, ownerEmployeeId: employeeId, scope: 'personal' },
       });
+      await tx.projectAssignment.updateMany({
+        where: { tenantId, employeeId },
+        data: { role: null },
+      });
       await tx.leaveRequest.updateMany({ where: { tenantId, employeeId }, data: { reason: null } });
       await tx.leaveApproval.updateMany({
         where: {

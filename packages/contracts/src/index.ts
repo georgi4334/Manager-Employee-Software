@@ -10,6 +10,7 @@ export * from './leave.js';
 export * from './notifications.js';
 export * from './organization.js';
 export * from './permissions.js';
+export * from './projects.js';
 export * from './privacy.js';
 export * from './roles.js';
 export * from './users.js';

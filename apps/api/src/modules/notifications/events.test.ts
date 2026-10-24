@@ -25,6 +25,7 @@ describe('event catalog', () => {
       'leave.decided': { ...leaveBase, recipientUserId: USER, status: 'approved' },
       'leave.cancelled': { ...leaveBase, recipientUserIds: [USER], by: 'employee' },
       'attendance.corrected': { recipientUserId: USER, date: '2026-11-02', action: 'updated' },
+      'project.assigned': { recipientUserId: USER, projectId: USER, projectName: 'Website' },
     };
     for (const [type, definition] of Object.entries(EVENT_DEFINITIONS)) {
       const params = definition.params.parse(samples[type as keyof typeof samples]);
@@ -172,6 +173,31 @@ describe('attendance.corrected', () => {
     ['no recipient', { date: '2026-11-02', action: 'updated' }],
     ['a bad date', { recipientUserId: USER, date: '2.11.2026', action: 'updated' }],
     ['an unknown action', { recipientUserId: USER, date: '2026-11-02', action: 'viewed' }],
+  ])('rejects %s', (_label, params) => {
+    expect(definition.params.safeParse(params).success).toBe(false);
+  });
+});
+
+describe('project.assigned', () => {
+  const definition = EVENT_DEFINITIONS['project.assigned'];
+
+  it('tells the person which project, by id and name only', () => {
+    expect(
+      definition.notify({ recipientUserId: USER, projectId: USER, projectName: 'Website' }),
+    ).toEqual([
+      {
+        recipientUserId: USER,
+        type: 'project.assigned',
+        params: { projectId: USER, projectName: 'Website' },
+      },
+    ]);
+  });
+
+  it.each([
+    ['no recipient', { projectId: USER, projectName: 'Website' }],
+    ['no project name', { recipientUserId: USER, projectId: USER, projectName: ' ' }],
+    ['a very long name', { recipientUserId: USER, projectId: USER, projectName: 'x'.repeat(121) }],
+    ['a bad project id', { recipientUserId: USER, projectId: 'x', projectName: 'Website' }],
   ])('rejects %s', (_label, params) => {
     expect(definition.params.safeParse(params).success).toBe(false);
   });

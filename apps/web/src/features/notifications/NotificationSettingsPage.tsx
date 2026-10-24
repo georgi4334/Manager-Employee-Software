@@ -27,6 +27,8 @@ function useTypeTitle() {
         return t('types.leave.cancelled.settingsTitle');
       case 'attendance.corrected':
         return t('types.attendance.corrected.settingsTitle');
+      case 'project.assigned':
+        return t('types.project.assigned.settingsTitle');
       default:
         return t('unknown.title');
     }
@@ -126,6 +128,11 @@ function TypeHeading({ type }: { type: string }) {
         return [t('types.leave.decided.settingsTitle'), t('types.leave.decided.settingsHelp')];
       case 'leave.cancelled':
         return [t('types.leave.cancelled.settingsTitle'), t('types.leave.cancelled.settingsHelp')];
+      case 'project.assigned':
+        return [
+          t('types.project.assigned.settingsTitle'),
+          t('types.project.assigned.settingsHelp'),
+        ];
       case 'attendance.corrected':
         return [
           t('types.attendance.corrected.settingsTitle'),

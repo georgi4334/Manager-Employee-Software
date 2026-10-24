@@ -34,6 +34,7 @@ describe('export document', () => {
       teams: [],
     },
     leave: { requests: [], balances: [] },
+    projects: { assignments: [], led: [] },
     attendance: [],
     calendarEvents: [],
     notifications: [],

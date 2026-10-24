@@ -119,6 +119,14 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - `e2e/` (Playwright, Chromium) is a separate package, not part of `pnpm test`: `pnpm --filter @intime/e2e e2e` (needs `E2E_DATABASE_URL`, a Postgres owner URL, and a built API; locally `PW_CHROMIUM` can point at an installed Chromium). It starts its own API (fresh database, real `tenant:create`, log mail transport) and the Vite dev server; specs run in order. Use roles and visible labels as selectors.
 - `06-accessibility.spec.ts` scans every page with axe (WCAG 2.1 A/AA, phone and desktop, light and dark). A new page must be added to its list; fix violations in the components or the design tokens, never by excluding rules.
 
+## Projects (docs/adr/0013-clients-and-projects.md)
+
+- `client`, `project`, `milestone`, `project_assignment` (all RLS). Rules are pure functions in `@intime/contracts` with unit tests: `projectHealth` (computed, never stored; only active projects have one) and `peakAllocation` (over-allocation is a warning, not a block). "Today" is the workspace time zone.
+- Visibility/rights live in `ProjectAccess`: `project.view` scope is about people (a project is visible through its lead or an assignee inside the scope; `own` = led or staffed), `project.manage`/`assignment.manage` at `own` mean "projects I lead", managers create projects they lead themselves, only scope `all` changes the lead. A project the caller cannot see is `404`. Clients are hidden from people without `client.view` (the response says `client: null`).
+- The database enforces: allocation 1–100, date order, no overlapping assignment of one person on one project (exclusion constraint), unique project code and client name. Services map these to `CONFLICT` with a `field`.
+- Deactivating an employee calls `AssignmentsService.onEmployeeDeactivated` (ends running assignments at the termination date, drops future ones, clears them as project lead) in the same transaction. Data export lists staffing; erasure clears assignment roles.
+- Audit entries carry ids and field names only; `project.assigned` notifications carry the project id and name.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

@@ -32,6 +32,10 @@ model Tenant {
   leaveSettings           LeaveSettings?
   attendanceRecords       AttendanceRecord[]
   calendarEvents          CalendarEvent[]
+  clients                 Client[]
+  projects                Project[]
+  milestones              Milestone[]
+  projectAssignments      ProjectAssignment[]
   leavePolicies           LeavePolicy[]
   leaveBalances           LeaveBalance[]
   leaveRequests           LeaveRequest[]
@@ -317,19 +321,21 @@ model Employee {
   departmentId String? @map("department_id") @db.Uuid
   managerId    String? @map("manager_id") @db.Uuid
 
-  tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user              User?              @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
-  department        Department?        @relation("EmployeeDepartment", fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
-  manager           Employee?          @relation("Reporting", fields: [tenantId, managerId], references: [tenantId, id], onDelete: NoAction)
-  reports           Employee[]         @relation("Reporting")
-  headedDepartments Department[]       @relation("DepartmentHead")
-  ledTeams          Team[]             @relation("TeamLead")
-  teamMemberships   TeamMember[]
-  leaveBalances     LeaveBalance[]
-  leaveRequests     LeaveRequest[]
-  leaveApprovals    LeaveApproval[]
-  attendanceRecords AttendanceRecord[]
-  calendarEvents    CalendarEvent[]
+  tenant             Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user               User?               @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
+  department         Department?         @relation("EmployeeDepartment", fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
+  manager            Employee?           @relation("Reporting", fields: [tenantId, managerId], references: [tenantId, id], onDelete: NoAction)
+  reports            Employee[]          @relation("Reporting")
+  headedDepartments  Department[]        @relation("DepartmentHead")
+  ledTeams           Team[]              @relation("TeamLead")
+  teamMemberships    TeamMember[]
+  leaveBalances      LeaveBalance[]
+  leaveRequests      LeaveRequest[]
+  leaveApprovals     LeaveApproval[]
+  attendanceRecords  AttendanceRecord[]
+  calendarEvents     CalendarEvent[]
+  ledProjects        Project[]           @relation("ProjectLead")
+  projectAssignments ProjectAssignment[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -366,13 +372,13 @@ model Department {
 /// A team inside a department. Teams group people; they grant no access.
 model Team {
   calendarEvents CalendarEvent[]
-  id             String   @id @default(uuid(7)) @db.Uuid
-  tenantId       String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  id             String          @id @default(uuid(7)) @db.Uuid
+  tenantId       String          @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
   name           String
-  departmentId   String   @map("department_id") @db.Uuid
-  leadEmployeeId String?  @map("lead_employee_id") @db.Uuid
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  departmentId   String          @map("department_id") @db.Uuid
+  leadEmployeeId String?         @map("lead_employee_id") @db.Uuid
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   tenant     Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   department Department   @relation(fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
@@ -615,4 +621,103 @@ model CalendarEvent {
   @@index([tenantId, ownerEmployeeId])
   @@index([tenantId, teamId])
   @@map("calendar_event")
+}
+
+// ----- Clients and projects (docs/adr/0013-clients-and-projects.md) -------------------------------------
+
+model Client {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  tenantId     String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// Unique per workspace, case-insensitive (a functional index in the migration).
+  name         String
+  contactName  String?  @map("contact_name")
+  contactEmail String?  @map("contact_email")
+  notes        String?
+  /// active | archived
+  status       String   @default("active")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  projects Project[]
+
+  @@unique([tenantId, id])
+  @@map("client")
+}
+
+model Project {
+  id             String    @id @default(uuid(7)) @db.Uuid
+  tenantId       String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// Upper-case letters, digits and dashes; unique per workspace.
+  code           String
+  name           String
+  description    String?
+  clientId       String?   @map("client_id") @db.Uuid
+  /// planned | active | paused | done
+  status         String    @default("planned")
+  /// low | normal | high
+  priority       String    @default("normal")
+  isBillable     Boolean   @default(true) @map("is_billable")
+  budgetHours    Decimal?  @map("budget_hours") @db.Decimal(9, 1)
+  startDate      DateTime  @map("start_date") @db.Date
+  endDate        DateTime? @map("end_date") @db.Date
+  leadEmployeeId String?   @map("lead_employee_id") @db.Uuid
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  client      Client?             @relation(fields: [tenantId, clientId], references: [tenantId, id], onDelete: NoAction)
+  lead        Employee?           @relation("ProjectLead", fields: [tenantId, leadEmployeeId], references: [tenantId, id], onDelete: NoAction)
+  milestones  Milestone[]
+  assignments ProjectAssignment[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, code])
+  @@index([tenantId, clientId])
+  @@index([tenantId, leadEmployeeId])
+  @@index([tenantId, status])
+  @@map("project")
+}
+
+model Milestone {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  tenantId  String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  projectId String    @map("project_id") @db.Uuid
+  title     String
+  dueDate   DateTime  @map("due_date") @db.Date
+  /// open | done
+  status    String    @default("open")
+  doneOn    DateTime? @map("done_on") @db.Date
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [tenantId, projectId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, projectId, dueDate])
+  @@map("milestone")
+}
+
+model ProjectAssignment {
+  id            String    @id @default(uuid(7)) @db.Uuid
+  tenantId      String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  projectId     String    @map("project_id") @db.Uuid
+  employeeId    String    @map("employee_id") @db.Uuid
+  role          String?
+  allocationPct Int       @map("allocation_pct")
+  fromDate      DateTime  @map("from_date") @db.Date
+  /// null = open end
+  toDate        DateTime? @map("to_date") @db.Date
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  project  Project  @relation(fields: [tenantId, projectId], references: [tenantId, id], onDelete: Cascade)
+  employee Employee @relation(fields: [tenantId, employeeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, projectId])
+  @@index([tenantId, employeeId, fromDate])
+  @@map("project_assignment")
 }
