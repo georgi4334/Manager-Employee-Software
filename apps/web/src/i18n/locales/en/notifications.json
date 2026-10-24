@@ -58,6 +58,14 @@
         "settingsTitle": "Corrections to your attendance",
         "settingsHelp": "When a manager or HR adds, changes or removes one of your time records."
       }
+    },
+    "project": {
+      "assigned": {
+        "title": "Added to a project",
+        "text": "You were added to the project “{{projectName}}”.",
+        "settingsTitle": "Added to projects",
+        "settingsHelp": "When somebody puts you on a project."
+      }
     }
   },
   "unknown": {

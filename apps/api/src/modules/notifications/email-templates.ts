@@ -49,6 +49,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\nsomebody changed one of your attendance records in ${v.workspace} on InTime.\n\n` +
         `Open InTime to see it:\n${v.link}`,
     },
+    'project.assigned': {
+      subject: (v) => `You were added to a project in ${v.workspace}`,
+      text: (v) =>
+        `Hello,\n\nyou were added to a project in ${v.workspace} on InTime.\n\n` +
+        `Open InTime to see it:\n${v.link}`,
+    },
   },
   de: {
     'account.roles_changed': {
@@ -82,6 +88,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hallo,\n\njemand hat einen Ihrer Anwesenheitseinträge in ${v.workspace} auf InTime geändert.\n\n` +
         `Öffnen Sie InTime, um ihn zu sehen:\n${v.link}`,
     },
+    'project.assigned': {
+      subject: (v) => `Sie wurden in ${v.workspace} einem Projekt zugeordnet`,
+      text: (v) =>
+        `Hallo,\n\nSie wurden in ${v.workspace} auf InTime einem Projekt zugeordnet.\n\n` +
+        `Öffnen Sie InTime, um es zu sehen:\n${v.link}`,
+    },
   },
   bg: {
     'account.roles_changed': {
@@ -113,6 +125,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       subject: (v) => `Един от записите ви за присъствие в ${v.workspace} беше променен`,
       text: (v) =>
         `Здравейте,\n\nнякой промени един от записите ви за присъствие в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да го видите:\n${v.link}`,
+    },
+    'project.assigned': {
+      subject: (v) => `Добавени сте към проект в ${v.workspace}`,
+      text: (v) =>
+        `Здравейте,\n\nдобавени сте към проект в ${v.workspace} в InTime.\n\n` +
         `Отворете InTime, за да го видите:\n${v.link}`,
     },
   },

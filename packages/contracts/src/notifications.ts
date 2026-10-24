@@ -41,6 +41,13 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/attendance',
   }),
+  // Projects (docs/adr/0013-clients-and-projects.md): you were put on a project. Ids and the project name only.
+  'project.assigned': typeDef({
+    params: z.object({ projectId: z.uuid(), projectName: z.string().trim().min(1).max(120) }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/projects',
+  }),
   // Leave (docs/adr/0008-leave.md). Names and dates only: never the type of a sick request, never reasons.
   'leave.requested': typeDef({
     params: z.object({

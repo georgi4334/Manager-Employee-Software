@@ -58,6 +58,14 @@
         "settingsTitle": "Korrekturen Ihrer Anwesenheit",
         "settingsHelp": "Wenn eine Führungskraft oder HR einen Ihrer Zeiteinträge hinzufügt, ändert oder entfernt."
       }
+    },
+    "project": {
+      "assigned": {
+        "title": "Einem Projekt zugeordnet",
+        "text": "Sie wurden dem Projekt „{{projectName}}“ zugeordnet.",
+        "settingsTitle": "Projektzuordnungen",
+        "settingsHelp": "Wenn jemand Sie einem Projekt zuordnet."
+      }
     }
   },
   "unknown": {

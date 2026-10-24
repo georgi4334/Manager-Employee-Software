@@ -13,6 +13,8 @@ import { EmployeesPage } from '@/features/employees/EmployeesPage';
 import { MyProfilePage } from '@/features/employees/MyProfilePage';
 import { AttendancePage } from '@/features/attendance/AttendancePage';
 import { CalendarPage } from '@/features/calendar/CalendarPage';
+import { ProjectDetailPage } from '@/features/projects/ProjectDetailPage';
+import { ProjectsPage } from '@/features/projects/ProjectsPage';
 import { LeavePage } from '@/features/leave/LeavePage';
 import { OrganizationPage } from '@/features/organization/OrganizationPage';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
@@ -24,7 +26,14 @@ import { NAV_ITEMS } from './nav';
 import { AppShell } from './layout/AppShell';
 
 /** Modules that have real pages; the others still show the placeholder. */
-const IMPLEMENTED_PATHS = ['/employees', '/organization', '/leave', '/attendance', '/calendar'];
+const IMPLEMENTED_PATHS = [
+  '/employees',
+  '/organization',
+  '/leave',
+  '/attendance',
+  '/calendar',
+  '/projects',
+];
 
 export const routes: RouteObject[] = [
   {
@@ -69,6 +78,13 @@ export const routes: RouteObject[] = [
             children: [
               { path: 'employees', element: <EmployeesPage /> },
               { path: 'employees/:id', element: <EmployeeDetailPage /> },
+            ],
+          },
+          {
+            element: <RequirePermission permission="project.view" />,
+            children: [
+              { path: 'projects', element: <ProjectsPage /> },
+              { path: 'projects/:id', element: <ProjectDetailPage /> },
             ],
           },
           {

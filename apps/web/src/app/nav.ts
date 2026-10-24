@@ -1,6 +1,7 @@
 import {
   CalendarDays,
   CalendarOff,
+  Briefcase,
   Clock,
   LayoutDashboard,
   Network,
@@ -44,6 +45,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: CalendarDays,
     primary: true,
     permission: ['calendar.manage_own', 'calendar.view_free_busy'],
+  },
+  {
+    path: '/projects',
+    labelKey: 'projects',
+    icon: Briefcase,
+    primary: false,
+    permission: 'project.view',
   },
   {
     path: '/employees',

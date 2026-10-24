@@ -10,6 +10,7 @@ import type leave from './locales/en/leave.json';
 import type attendance from './locales/en/attendance.json';
 import type calendar from './locales/en/calendar.json';
 import type privacy from './locales/en/privacy.json';
+import type projects from './locales/en/projects.json';
 import type notifications from './locales/en/notifications.json';
 
 declare module 'i18next' {
@@ -28,6 +29,7 @@ declare module 'i18next' {
       attendance: typeof attendance;
       calendar: typeof calendar;
       privacy: typeof privacy;
+      projects: typeof projects;
     };
   }
 }

@@ -67,6 +67,20 @@ export const personalDataExportSchema = z.object({
       }),
     ),
   }),
+  /** Projects they are staffed on or lead (names and codes, role, planned allocation and period). */
+  projects: z.object({
+    assignments: z.array(
+      z.object({
+        project: z.string(),
+        code: z.string(),
+        role: z.string().nullable(),
+        allocationPct: z.number().int(),
+        fromDate: date,
+        toDate: date.nullable(),
+      }),
+    ),
+    led: z.array(z.string()),
+  }),
   attendance: z.array(
     z.object({
       date,

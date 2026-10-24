@@ -30,6 +30,8 @@ const SIGNED_IN = [
   '/calendar?view=agenda',
   '/notifications',
   '/notifications/settings',
+  '/projects',
+  '/projects?tab=clients',
   '/profile',
   '/does-not-exist',
 ];
@@ -89,6 +91,15 @@ for (const variant of variants) {
       await page.locator('main a[href^="/employees/"]').first().click(); // a person, not the nav entry
       await page.waitForLoadState('networkidle');
       found.push(...(await scan(page, 'employee detail')));
+      await settle(page, '/projects');
+      await page.getByRole('button', { name: 'New project' }).click();
+      found.push(...(await scan(page, '/projects (new project form)')));
+      await settle(page, '/projects');
+      await page.locator('main a[href^="/projects/"]').first().click();
+      await page.waitForLoadState('networkidle');
+      await page.getByRole('button', { name: 'Add person' }).click();
+      await page.getByRole('button', { name: 'Add milestone' }).click();
+      found.push(...(await scan(page, 'project detail (forms open)')));
       expect(found).toEqual([]);
     });
   });

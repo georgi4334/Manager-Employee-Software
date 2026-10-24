@@ -1,0 +1,152 @@
+{
+  "title": "Projekte",
+  "loading": "Wird geladen…",
+  "retry": "Erneut versuchen",
+  "back": "Zurück zu den Projekten",
+  "notFoundTitle": "Projekt nicht gefunden",
+  "notFoundText": "Es existiert nicht, oder Sie gehören nicht dazu.",
+  "tabs": {
+    "label": "Projektansichten",
+    "projects": "Projekte",
+    "clients": "Kunden"
+  },
+  "new": "Neues Projekt",
+  "search": "Nach Name oder Kürzel suchen",
+  "total_one": "{{count}} Projekt",
+  "total_other": "{{count}} Projekte",
+  "empty": "Keine Projekte vorhanden.",
+  "pagination": "Seiten",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "page": "Seite {{page}} von {{pages}}",
+  "lead": "Leitung: {{name}}",
+  "noLead": "Keine Leitung",
+  "period": "{{from}} – {{to}}",
+  "since": "Ab {{from}}",
+  "filters": {
+    "status": "Status",
+    "allStatuses": "Alle Status",
+    "client": "Kunde",
+    "allClients": "Alle Kunden"
+  },
+  "status": {
+    "planned": "Geplant",
+    "active": "Aktiv",
+    "paused": "Pausiert",
+    "done": "Abgeschlossen"
+  },
+  "priority": {
+    "low": "Niedrig",
+    "normal": "Normal",
+    "high": "Hoch"
+  },
+  "health": {
+    "on_track": "Im Plan",
+    "at_risk": "Gefährdet",
+    "off_track": "Außer Plan"
+  },
+  "overview": {
+    "status": "Status",
+    "priority": "Priorität",
+    "billable": "Abrechenbar",
+    "lead": "Leitung",
+    "budget": "Budget",
+    "period": "Zeitraum",
+    "yes": "Ja",
+    "no": "Nein",
+    "none": "Nicht festgelegt",
+    "hours": "{{hours}} Std.",
+    "edit": "Projekt bearbeiten"
+  },
+  "timeline": {
+    "title": "Zeitplan",
+    "noEnd": "Dieses Projekt hat noch kein Enddatum.",
+    "notStarted": "Beginnt am {{date}}",
+    "ended": "Beendet am {{date}}",
+    "elapsed": "{{percent}} % der Zeit sind vergangen",
+    "milestoneCount_one": "{{count}} Meilenstein",
+    "milestoneCount_other": "{{count}} Meilensteine"
+  },
+  "milestones": {
+    "title": "Meilensteine",
+    "add": "Meilenstein hinzufügen",
+    "name": "Meilenstein",
+    "dueDate": "Fällig am",
+    "empty": "Noch keine Meilensteine.",
+    "due": "Fällig am {{date}}",
+    "doneOn": "Erledigt am {{date}}",
+    "done": "Erledigt",
+    "overdue_one": "{{count}} Tag überfällig",
+    "overdue_other": "{{count}} Tage überfällig",
+    "finish": "Als erledigt markieren",
+    "reopen": "Wieder öffnen",
+    "delete": "Löschen"
+  },
+  "team": {
+    "title": "Team",
+    "add": "Person hinzufügen",
+    "edit": "Bearbeiten",
+    "remove": "Entfernen",
+    "removeFor": "{{name}} entfernen",
+    "empty": "Noch niemand ist diesem Projekt zugeordnet.",
+    "person": "Person",
+    "role": "Rolle (optional)",
+    "allocationLabel": "Auslastung (%)",
+    "allocation": "{{pct}} % der Arbeitszeit",
+    "from": "Von",
+    "to": "Bis",
+    "toHint": "Leer lassen für kein Ende.",
+    "overAllocated": "Überlastet"
+  },
+  "person": {
+    "search": "{{label}} suchen"
+  },
+  "form": {
+    "newTitle": "Neues Projekt",
+    "editTitle": "Projekt ändern",
+    "code": "Kürzel",
+    "codeHint": "2–12 Buchstaben, Ziffern oder Bindestriche, z. B. WEB-1.",
+    "name": "Name",
+    "description": "Beschreibung (optional)",
+    "client": "Kunde",
+    "noClient": "Internes Projekt",
+    "status": "Status",
+    "priority": "Priorität",
+    "budget": "Budget in Stunden (optional)",
+    "budgetHint": "In Schritten von einer halben Stunde.",
+    "start": "Startdatum",
+    "end": "Enddatum (optional)",
+    "billable": "Abrechenbar",
+    "lead": "Projektleitung",
+    "noLead": "Keine Leitung",
+    "leadSelf": "Sie werden die Projektleitung.",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen"
+  },
+  "clients": {
+    "title": "Kunden",
+    "add": "Kunde hinzufügen",
+    "edit": "Bearbeiten",
+    "archive": "Archivieren",
+    "restore": "Wiederherstellen",
+    "archived": "Archiviert",
+    "empty": "Noch keine Kunden.",
+    "projects_one": "{{count}} Projekt",
+    "projects_other": "{{count}} Projekte",
+    "name": "Name",
+    "contactName": "Ansprechperson (optional)",
+    "contactEmail": "E-Mail der Ansprechperson (optional)",
+    "notes": "Notizen (optional)"
+  },
+  "conflict": {
+    "code": "Dieses Projektkürzel wird bereits verwendet.",
+    "name": "Ein Kunde mit diesem Namen existiert bereits.",
+    "overlap": "Diese Person ist in diesem Zeitraum bereits im Projekt.",
+    "client": "Dieser Kunde ist archiviert."
+  },
+  "rule": {
+    "unknown_client": "Dieser Kunde existiert nicht.",
+    "unknown_employee": "Diese Person existiert nicht oder ist nicht mehr aktiv."
+  }
+}

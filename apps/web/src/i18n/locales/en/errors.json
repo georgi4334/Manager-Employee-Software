@@ -47,7 +47,10 @@
     "end_before_start": "The end cannot be before the start.",
     "too_long": "The period is too long.",
     "half_day_conflict": "One day cannot start and end at noon.",
-    "invalidTime": "Enter a valid time, like 09:30."
+    "invalidTime": "Enter a valid time, like 09:30.",
+    "invalidCode": "Use 2 to 12 letters, digits or dashes.",
+    "invalidAllocation": "Enter a whole number from 1 to 100.",
+    "invalidHours": "Use whole or half hours."
   },
   "forbiddenTitle": "No access",
   "forbiddenText": "You do not have permission to open this page. Ask your administrator if you think this is a mistake."

@@ -47,7 +47,10 @@
     "end_before_start": "Das Ende darf nicht vor dem Beginn liegen.",
     "too_long": "Der Zeitraum ist zu lang.",
     "half_day_conflict": "Ein Tag kann nicht mittags beginnen und enden.",
-    "invalidTime": "Geben Sie eine gültige Uhrzeit ein, z. B. 09:30."
+    "invalidTime": "Geben Sie eine gültige Uhrzeit ein, z. B. 09:30.",
+    "invalidCode": "Verwenden Sie 2 bis 12 Buchstaben, Ziffern oder Bindestriche.",
+    "invalidAllocation": "Geben Sie eine ganze Zahl von 1 bis 100 ein.",
+    "invalidHours": "Verwenden Sie ganze oder halbe Stunden."
   },
   "forbiddenTitle": "Kein Zugriff",
   "forbiddenText": "Sie haben keine Berechtigung, diese Seite zu öffnen. Wenden Sie sich an Ihre Administration, falls das ein Irrtum ist."

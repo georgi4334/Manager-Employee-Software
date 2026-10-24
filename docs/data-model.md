@@ -163,14 +163,14 @@ erDiagram
   SKILL ||--o{ PROJECT_SKILL_REQUIREMENT : "required by"
 ```
 
-| Table                       | Key columns                                                                                       |
-| --------------------------- | ------------------------------------------------------------------------------------------------- |
-| `skill_category`            | name (i18n)                                                                                       |
-| `skill`                     | category_id, name, description                                                                    |
-| `employee_skill`            | employee_id, skill_id, level (1–5), years_experience, last_assessed_at, assessed_by               |
-| `project`                   | name, code, client, status (`planned/active/paused/done`), start_date, end_date, lead_employee_id |
-| `project_assignment`        | project_id, employee_id, role, allocation_pct, from_date, to_date                                 |
-| `project_skill_requirement` | project_id, skill_id, min_level, headcount                                                        |
+| Table                       | Key columns                                                                                                                         |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `skill_category`            | name (i18n)                                                                                                                         |
+| `skill`                     | category_id, name, description                                                                                                      |
+| `employee_skill`            | employee_id, skill_id, level (1–5), years_experience, last_assessed_at, assessed_by                                                 |
+| `project`                   | name, code, client, status (`planned/active/paused/done`), start_date, end_date, lead_employee_id                                   |
+| `project_assignment`        | project_id, employee_id, role, allocation_pct (1–100), from_date, to_date (open end) — no overlap per person and project (ADR 0013) |
+| `project_skill_requirement` | project_id, skill_id, min_level, headcount                                                                                          |
 
 ### 6b. Clients, tasks, time tracking
 

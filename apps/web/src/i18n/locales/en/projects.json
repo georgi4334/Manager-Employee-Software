@@ -1,0 +1,152 @@
+{
+  "title": "Projects",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "back": "Back to projects",
+  "notFoundTitle": "Project not found",
+  "notFoundText": "It does not exist, or you are not part of it.",
+  "tabs": {
+    "label": "Project views",
+    "projects": "Projects",
+    "clients": "Clients"
+  },
+  "new": "New project",
+  "search": "Search by name or code",
+  "total_one": "{{count}} project",
+  "total_other": "{{count}} projects",
+  "empty": "No projects to show.",
+  "pagination": "Pages",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{page}} of {{pages}}",
+  "lead": "Lead: {{name}}",
+  "noLead": "No lead",
+  "period": "{{from}} – {{to}}",
+  "since": "From {{from}}",
+  "filters": {
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "client": "Client",
+    "allClients": "All clients"
+  },
+  "status": {
+    "planned": "Planned",
+    "active": "Active",
+    "paused": "Paused",
+    "done": "Done"
+  },
+  "priority": {
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High"
+  },
+  "health": {
+    "on_track": "On track",
+    "at_risk": "At risk",
+    "off_track": "Off track"
+  },
+  "overview": {
+    "status": "Status",
+    "priority": "Priority",
+    "billable": "Billable",
+    "lead": "Lead",
+    "budget": "Budget",
+    "period": "Period",
+    "yes": "Yes",
+    "no": "No",
+    "none": "Not set",
+    "hours": "{{hours}} h",
+    "edit": "Edit project"
+  },
+  "timeline": {
+    "title": "Timeline",
+    "noEnd": "This project has no end date yet.",
+    "notStarted": "Starts {{date}}",
+    "ended": "Ended {{date}}",
+    "elapsed": "{{percent}}% of the time has passed",
+    "milestoneCount_one": "{{count}} milestone",
+    "milestoneCount_other": "{{count}} milestones"
+  },
+  "milestones": {
+    "title": "Milestones",
+    "add": "Add milestone",
+    "name": "Milestone",
+    "dueDate": "Due date",
+    "empty": "No milestones yet.",
+    "due": "Due {{date}}",
+    "doneOn": "Finished {{date}}",
+    "done": "Done",
+    "overdue_one": "{{count}} day overdue",
+    "overdue_other": "{{count}} days overdue",
+    "finish": "Mark as done",
+    "reopen": "Reopen",
+    "delete": "Delete"
+  },
+  "team": {
+    "title": "Team",
+    "add": "Add person",
+    "edit": "Edit",
+    "remove": "Remove",
+    "removeFor": "Remove {{name}}",
+    "empty": "Nobody is staffed on this project yet.",
+    "person": "Person",
+    "role": "Role (optional)",
+    "allocationLabel": "Allocation (%)",
+    "allocation": "{{pct}}% of their time",
+    "from": "From",
+    "to": "Until",
+    "toHint": "Leave empty for no end.",
+    "overAllocated": "Over-allocated"
+  },
+  "person": {
+    "search": "Search for {{label}}"
+  },
+  "form": {
+    "newTitle": "New project",
+    "editTitle": "Change project",
+    "code": "Code",
+    "codeHint": "2–12 letters, digits or dashes, e.g. WEB-1.",
+    "name": "Name",
+    "description": "Description (optional)",
+    "client": "Client",
+    "noClient": "Internal project",
+    "status": "Status",
+    "priority": "Priority",
+    "budget": "Budget in hours (optional)",
+    "budgetHint": "In steps of half an hour.",
+    "start": "Start date",
+    "end": "End date (optional)",
+    "billable": "Billable",
+    "lead": "Project lead",
+    "noLead": "No lead",
+    "leadSelf": "You will be the project lead.",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel"
+  },
+  "clients": {
+    "title": "Clients",
+    "add": "Add client",
+    "edit": "Edit",
+    "archive": "Archive",
+    "restore": "Restore",
+    "archived": "Archived",
+    "empty": "No clients yet.",
+    "projects_one": "{{count}} project",
+    "projects_other": "{{count}} projects",
+    "name": "Name",
+    "contactName": "Contact person (optional)",
+    "contactEmail": "Contact email (optional)",
+    "notes": "Notes (optional)"
+  },
+  "conflict": {
+    "code": "This project code is already in use.",
+    "name": "A client with this name already exists.",
+    "overlap": "This person is already on the project in this period.",
+    "client": "This client is archived."
+  },
+  "rule": {
+    "unknown_client": "This client does not exist.",
+    "unknown_employee": "This person does not exist or is no longer active."
+  }
+}
