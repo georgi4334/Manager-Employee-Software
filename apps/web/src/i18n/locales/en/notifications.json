@@ -24,6 +24,40 @@
         "settingsTitle": "Changes to your roles",
         "settingsHelp": "When an administrator changes your roles or permissions."
       }
+    },
+    "leave": {
+      "requested": {
+        "title": "Leave request",
+        "text_one": "{{name}} requested {{days}} day of leave ({{from}} – {{to}}).",
+        "text_other": "{{name}} requested {{days}} days of leave ({{from}} – {{to}}).",
+        "textAuto": "{{name}} is absent from {{from}} to {{to}} (no approval needed).",
+        "settingsTitle": "Leave requests to decide",
+        "settingsHelp": "When somebody asks you to approve leave, or a colleague of yours reports an absence."
+      },
+      "decided": {
+        "title": "Leave request decided",
+        "textApproved": "Your leave request ({{from}} – {{to}}) was approved.",
+        "textRejected": "Your leave request ({{from}} – {{to}}) was rejected.",
+        "settingsTitle": "Decisions on your leave",
+        "settingsHelp": "When your leave request is approved or rejected."
+      },
+      "cancelled": {
+        "title": "Leave cancelled",
+        "textEmployee": "{{name}} cancelled leave ({{from}} – {{to}}).",
+        "textApprover": "Your leave ({{from}} – {{to}}) was cancelled by an approver.",
+        "settingsTitle": "Cancelled leave",
+        "settingsHelp": "When approved leave is cancelled."
+      }
+    },
+    "attendance": {
+      "corrected": {
+        "title": "Attendance corrected",
+        "textCreated": "A time record on {{date}} was added for you.",
+        "textUpdated": "Your time record on {{date}} was changed.",
+        "textDeleted": "Your time record on {{date}} was removed.",
+        "settingsTitle": "Corrections to your attendance",
+        "settingsHelp": "When a manager or HR adds, changes or removes one of your time records."
+      }
     }
   },
   "unknown": {

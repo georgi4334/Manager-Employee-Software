@@ -1,0 +1,75 @@
+{
+  "title": "Organisation",
+  "tabs": {
+    "label": "Ansichten der Organisation",
+    "chart": "Organigramm",
+    "departments": "Abteilungen",
+    "teams": "Teams"
+  },
+  "none": "Keine",
+  "noManager": "Keine vorgesetzte Person",
+  "noDepartment": "Keine Abteilung",
+  "noLead": "Keine Leitung",
+  "noHead": "Keine Leitung",
+  "chart": {
+    "empty": "Es gibt noch keine Mitarbeitenden.",
+    "expand": "Direkt Unterstellte von {{name}} anzeigen",
+    "collapse": "Direkt Unterstellte von {{name}} ausblenden",
+    "reports_one": "{{count}} direkt unterstellte Person",
+    "reports_other": "{{count}} direkt unterstellte Personen"
+  },
+  "departments": {
+    "add": "Abteilung hinzufügen",
+    "empty": "Noch keine Abteilungen.",
+    "head": "Leitung: {{name}}",
+    "counts_one": "{{count}} Mitarbeiter:in",
+    "counts_other": "{{count}} Mitarbeitende",
+    "teamCount_one": "{{count}} Team",
+    "teamCount_other": "{{count}} Teams",
+    "parent": "Teil von {{name}}",
+    "list": "Abteilungen"
+  },
+  "teams": {
+    "add": "Team hinzufügen",
+    "empty": "Noch keine Teams.",
+    "lead": "Leitung: {{name}}",
+    "members": "Mitglieder",
+    "noMembers": "Noch keine Mitglieder.",
+    "list": "Teams",
+    "addMember": "Mitglied hinzufügen",
+    "addMemberAction": "Hinzufügen",
+    "removeMember": "{{name}} entfernen",
+    "chooseMember": "Mitarbeiter:in auswählen"
+  },
+  "fields": {
+    "name": "Name",
+    "parent": "Übergeordnete Abteilung",
+    "head": "Abteilungsleitung",
+    "department": "Abteilung",
+    "lead": "Teamleitung",
+    "manager": "Vorgesetzte Person"
+  },
+  "actions": {
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "confirmDelete": "Löschen",
+    "change": "Vorgesetzte Person und Abteilung ändern"
+  },
+  "deleteTitle": "{{name}} löschen?",
+  "deleteText": "Das lässt sich nicht rückgängig machen.",
+  "assign": {
+    "title": "Vorgesetzte Person und Abteilung",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "saved": "Gespeichert."
+  },
+  "conflict": {
+    "name": "Dieser Name wird bereits verwendet.",
+    "in_use": "Die Abteilung hat noch Mitarbeitende, Unterabteilungen oder Teams. Verschieben oder entfernen Sie diese zuerst.",
+    "status": "Diese Person ist nicht aktiv."
+  },
+  "loading": "Wird geladen…"
+}

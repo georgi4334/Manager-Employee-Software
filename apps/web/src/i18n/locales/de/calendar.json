@@ -1,0 +1,73 @@
+{
+  "title": "Kalender",
+  "loading": "Wird geladen…",
+  "views": {
+    "label": "Kalenderansichten",
+    "month": "Monat",
+    "week": "Woche",
+    "day": "Tag",
+    "agenda": "Liste"
+  },
+  "nav": {
+    "previous": "Zurück",
+    "next": "Weiter",
+    "today": "Heute"
+  },
+  "layers": {
+    "label": "Im Kalender anzeigen",
+    "personal": "Meine Termine",
+    "team": "Teamtermine",
+    "company": "Firmentermine",
+    "leave": "Abwesenheiten",
+    "holiday": "Feiertage"
+  },
+  "month": {
+    "count_one": "{{count}} Eintrag",
+    "count_other": "{{count}} Einträge"
+  },
+  "agenda": {
+    "empty": "In diesem Zeitraum gibt es nichts."
+  },
+  "day": {
+    "empty": "An diesem Tag gibt es nichts.",
+    "allDay": "Ganztägig",
+    "range": "{{start}} – {{end}}",
+    "from": "Ab {{start}}",
+    "until": "Bis {{end}}",
+    "span": "{{from}} – {{to}}",
+    "pending": "offen"
+  },
+  "event": {
+    "new": "Neuer Termin",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "confirmDelete": "Diesen Termin löschen?",
+    "deleteConfirm": "Ja, löschen",
+    "keep": "Behalten"
+  },
+  "form": {
+    "newTitle": "Neuer Termin",
+    "editTitle": "Termin ändern",
+    "scope": "Kalender",
+    "scopes": {
+      "personal": "Nur ich",
+      "team": "Ein Team",
+      "company": "Alle"
+    },
+    "team": "Team",
+    "title": "Titel",
+    "allDay": "Ganztägig",
+    "startDate": "Startdatum",
+    "endDate": "Enddatum",
+    "startTime": "Beginn",
+    "endTime": "Ende",
+    "location": "Ort (optional)",
+    "description": "Beschreibung (optional)",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen"
+  },
+  "rule": {
+    "nonexistent_time": "Diese Uhrzeit gibt es an dem Tag nicht (Zeitumstellung)."
+  }
+}

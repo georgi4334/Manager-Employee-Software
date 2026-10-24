@@ -4,6 +4,12 @@ import type common from './locales/en/common.json';
 import type dashboard from './locales/en/dashboard.json';
 import type errors from './locales/en/errors.json';
 import type nav from './locales/en/nav.json';
+import type employees from './locales/en/employees.json';
+import type organization from './locales/en/organization.json';
+import type leave from './locales/en/leave.json';
+import type attendance from './locales/en/attendance.json';
+import type calendar from './locales/en/calendar.json';
+import type privacy from './locales/en/privacy.json';
 import type notifications from './locales/en/notifications.json';
 
 declare module 'i18next' {
@@ -16,6 +22,12 @@ declare module 'i18next' {
       errors: typeof errors;
       auth: typeof auth;
       notifications: typeof notifications;
+      employees: typeof employees;
+      organization: typeof organization;
+      leave: typeof leave;
+      attendance: typeof attendance;
+      calendar: typeof calendar;
+      privacy: typeof privacy;
     };
   }
 }

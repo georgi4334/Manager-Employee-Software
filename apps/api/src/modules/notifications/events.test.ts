@@ -3,6 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { EVENT_DEFINITIONS, isEventType } from './events.js';
 
 const USER = '0192f5a0-0000-7000-8000-00000000000a';
+const leaveBase = {
+  requestId: '0192f5a0-0000-7000-8000-00000000000b',
+  employeeName: 'Ada Lovelace',
+  startDate: '2026-11-02',
+  endDate: '2026-11-06',
+};
 
 describe('event catalog', () => {
   it('recognizes events, not inherited property names', () => {
@@ -15,6 +21,10 @@ describe('event catalog', () => {
   it('every event only notifies with types that exist in the notification catalog', () => {
     const samples: Record<keyof typeof EVENT_DEFINITIONS, unknown> = {
       'user.roles_changed': { userId: USER, roleNames: ['HR'] },
+      'leave.requested': { ...leaveBase, recipientUserIds: [USER], days: 2, autoApproved: false },
+      'leave.decided': { ...leaveBase, recipientUserId: USER, status: 'approved' },
+      'leave.cancelled': { ...leaveBase, recipientUserIds: [USER], by: 'employee' },
+      'attendance.corrected': { recipientUserId: USER, date: '2026-11-02', action: 'updated' },
     };
     for (const [type, definition] of Object.entries(EVENT_DEFINITIONS)) {
       const params = definition.params.parse(samples[type as keyof typeof samples]);
@@ -44,6 +54,124 @@ describe('user.roles_changed', () => {
     ['no role names', { userId: USER, roleNames: [] }],
     ['blank role names', { userId: USER, roleNames: [' '] }],
     ['too many role names', { userId: USER, roleNames: Array.from({ length: 11 }, () => 'r') }],
+  ])('rejects %s', (_label, params) => {
+    expect(definition.params.safeParse(params).success).toBe(false);
+  });
+});
+
+describe('leave events', () => {
+  const other = '0192f5a0-0000-7000-8000-00000000000c';
+
+  it('leave.requested notifies every approver with the same facts, once each', () => {
+    const intents = EVENT_DEFINITIONS['leave.requested'].notify({
+      ...leaveBase,
+      recipientUserIds: [USER, other],
+      days: 3.5,
+      autoApproved: false,
+    });
+    expect(intents.map((i) => i.recipientUserId)).toEqual([USER, other]);
+    expect(intents[0]).toMatchObject({
+      type: 'leave.requested',
+      params: { ...leaveBase, days: 3.5, autoApproved: false },
+    });
+    // the recipient list is routing, not part of what the notification says
+    expect(JSON.stringify(intents[0]?.params)).not.toContain(other);
+  });
+
+  it('leave.decided tells the requester the outcome', () => {
+    expect(
+      EVENT_DEFINITIONS['leave.decided'].notify({
+        recipientUserId: USER,
+        requestId: leaveBase.requestId,
+        status: 'rejected',
+        startDate: leaveBase.startDate,
+        endDate: leaveBase.endDate,
+      }),
+    ).toEqual([
+      {
+        recipientUserId: USER,
+        type: 'leave.decided',
+        params: {
+          requestId: leaveBase.requestId,
+          status: 'rejected',
+          startDate: leaveBase.startDate,
+          endDate: leaveBase.endDate,
+        },
+      },
+    ]);
+  });
+
+  it.each([
+    [
+      'requested without recipients',
+      'leave.requested',
+      { ...leaveBase, recipientUserIds: [], days: 1, autoApproved: false },
+    ],
+    [
+      'requested with zero days',
+      'leave.requested',
+      { ...leaveBase, recipientUserIds: [USER], days: 0, autoApproved: false },
+    ],
+    [
+      'requested with a bad date',
+      'leave.requested',
+      {
+        ...leaveBase,
+        startDate: '2.11.2026',
+        recipientUserIds: [USER],
+        days: 1,
+        autoApproved: false,
+      },
+    ],
+    [
+      'requested with over 100 recipients',
+      'leave.requested',
+      {
+        ...leaveBase,
+        recipientUserIds: Array.from({ length: 101 }, () => USER),
+        days: 1,
+        autoApproved: false,
+      },
+    ],
+    [
+      'decided with a status that is no decision',
+      'leave.decided',
+      { ...leaveBase, recipientUserId: USER, status: 'pending' },
+    ],
+    [
+      'cancelled by nobody known',
+      'leave.cancelled',
+      { ...leaveBase, recipientUserIds: [USER], by: 'robot' },
+    ],
+    [
+      'a blank employee name',
+      'leave.cancelled',
+      { ...leaveBase, employeeName: ' ', recipientUserIds: [USER], by: 'employee' },
+    ],
+  ] as const)('rejects %s', (_label, type, params) => {
+    expect(EVENT_DEFINITIONS[type].params.safeParse(params).success).toBe(false);
+  });
+});
+
+describe('attendance.corrected', () => {
+  const definition = EVENT_DEFINITIONS['attendance.corrected'];
+
+  it('tells the person which day and what happened, nothing more', () => {
+    expect(
+      definition.notify({ recipientUserId: USER, date: '2026-11-02', action: 'deleted' }),
+    ).toEqual([
+      {
+        recipientUserId: USER,
+        type: 'attendance.corrected',
+        params: { date: '2026-11-02', action: 'deleted' },
+      },
+    ]);
+  });
+
+  it.each([
+    ['no recipient', { date: '2026-11-02', action: 'updated' }],
+    ['a bad date', { recipientUserId: USER, date: '2.11.2026', action: 'updated' }],
+    ['an unknown action', { recipientUserId: USER, date: '2026-11-02', action: 'viewed' }],
   ])('rejects %s', (_label, params) => {
     expect(definition.params.safeParse(params).success).toBe(false);
   });

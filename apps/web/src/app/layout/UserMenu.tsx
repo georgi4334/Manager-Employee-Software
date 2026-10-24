@@ -1,5 +1,6 @@
-import { LogOut } from 'lucide-react';
+import { CircleUser, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import { useCurrentUser, useSignOut } from '@/features/auth/use-auth';
 import { Button } from '@/shared/ui/button';
 
@@ -10,7 +11,7 @@ export function UserMenu() {
   if (!user) return null;
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-0.5 sm:gap-1">
       <div className="hidden min-w-0 text-right leading-tight md:block">
         <p className="truncate text-sm font-medium">{user.email}</p>
         <p className="truncate text-xs text-muted-foreground">
@@ -19,6 +20,11 @@ export function UserMenu() {
             .join(' · ')}
         </p>
       </div>
+      <Button asChild variant="ghost" size="icon">
+        <Link to="/profile" aria-label={t('myProfile')} title={t('myProfile')}>
+          <CircleUser className="size-5" aria-hidden="true" />
+        </Link>
+      </Button>
       <Button
         variant="ghost"
         size="icon"

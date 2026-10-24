@@ -1,0 +1,127 @@
+{
+  "title": "Employees",
+  "searchLabel": "Search employees",
+  "searchPlaceholder": "Name, job title or email",
+  "statusLabel": "Show",
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "all": "All"
+  },
+  "add": "Add employee",
+  "total_one": "{{count}} employee",
+  "total_other": "{{count}} employees",
+  "empty": "No employees found.",
+  "page": "Page {{page}} of {{pages}}",
+  "previous": "Previous",
+  "next": "Next",
+  "pagination": "Pages",
+  "list": "Employee list",
+  "badge": {
+    "inactive": "Inactive",
+    "invited": "Invited",
+    "you": "You"
+  },
+  "back": "Back to employees",
+  "notFoundTitle": "Employee not found",
+  "notFoundText": "This employee does not exist or you cannot see them.",
+  "limitedView": "You can see the directory information of this person.",
+  "notProvided": "Not provided",
+  "sections": {
+    "directory": "Directory",
+    "employment": "Employment",
+    "personal": "Personal",
+    "account": "Account"
+  },
+  "fields": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "jobTitle": "Job title",
+    "location": "Location",
+    "employeeNo": "Employee number",
+    "employmentType": "Employment type",
+    "seniority": "Seniority",
+    "hireDate": "Hire date",
+    "terminationDate": "Termination date",
+    "birthDate": "Date of birth",
+    "phone": "Phone",
+    "country": "Country",
+    "department": "Department",
+    "manager": "Manager",
+    "teams": "Teams"
+  },
+  "employmentType": {
+    "full_time": "Full-time",
+    "part_time": "Part-time",
+    "contractor": "Contractor",
+    "outsourced": "Outsourced"
+  },
+  "seniority": {
+    "intern": "Intern",
+    "junior": "Junior",
+    "mid": "Mid-level",
+    "senior": "Senior",
+    "lead": "Lead",
+    "principal": "Principal"
+  },
+  "accountStatus": {
+    "none": "No account",
+    "invited": "Invitation sent",
+    "active": "Active",
+    "disabled": "Disabled"
+  },
+  "actions": {
+    "edit": "Edit",
+    "invite": "Invite to sign in",
+    "resendInvite": "Resend invitation",
+    "deactivate": "Deactivate",
+    "reactivate": "Reactivate",
+    "cancel": "Cancel"
+  },
+  "invite": {
+    "title": "Invite {{name}}",
+    "email": "Email address",
+    "hint": "They receive an email with a link to set a password.",
+    "send": "Send invitation",
+    "sending": "Sending…",
+    "sent": "Invitation sent."
+  },
+  "deactivate": {
+    "title": "Deactivate {{name}}?",
+    "text": "Their account is disabled and they are signed out immediately. The record is kept.",
+    "date": "Termination date",
+    "dateHint": "Leave empty for today.",
+    "confirm": "Deactivate",
+    "working": "Deactivating…"
+  },
+  "reactivated": "Employee reactivated.",
+  "form": {
+    "createTitle": "Add employee",
+    "editTitle": "Edit {{name}}",
+    "emailHint": "They receive an invitation to sign in. Leave empty to add the person without an account.",
+    "countryHint": "Two-letter code, for example BG or DE.",
+    "notSpecified": "Not specified",
+    "create": "Create employee",
+    "creating": "Creating…",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "limited": "You can only edit people whose full profile you can see."
+  },
+  "profile": {
+    "title": "My profile",
+    "noRecord": "There is no employee record for your account yet. Ask HR to add you.",
+    "phoneTitle": "Phone number",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved."
+  },
+  "conflict": {
+    "employeeNo": "This employee number is already in use.",
+    "email": "This email address is already in use.",
+    "account": "This person already has an active account.",
+    "status": "This employee is not active.",
+    "erased": "This employee's personal data was erased; the record cannot be changed."
+  }
+}

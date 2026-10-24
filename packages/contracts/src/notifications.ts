@@ -20,6 +20,8 @@ export interface NotificationTypeDef {
   readonly link: string;
 }
 
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
+
 const typeDef = <const T extends NotificationTypeDef>(definition: T): T => definition;
 
 export const NOTIFICATION_TYPES = {
@@ -28,6 +30,54 @@ export const NOTIFICATION_TYPES = {
     defaults: { in_app: true, email: true },
     locked: { email: true },
     link: '/notifications',
+  }),
+  // Attendance (docs/adr/0009-attendance.md): somebody else changed your record. Date and kind only.
+  'attendance.corrected': typeDef({
+    params: z.object({
+      date: z.string().regex(DATE),
+      action: z.enum(['created', 'updated', 'deleted']),
+    }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/attendance',
+  }),
+  // Leave (docs/adr/0008-leave.md). Names and dates only: never the type of a sick request, never reasons.
+  'leave.requested': typeDef({
+    params: z.object({
+      requestId: z.uuid(),
+      employeeName: z.string().trim().min(1).max(200),
+      startDate: z.string().regex(DATE),
+      endDate: z.string().regex(DATE),
+      days: z.number().positive().max(366),
+      /** Types without approval (sick leave): the manager is only informed. */
+      autoApproved: z.boolean(),
+    }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/leave?tab=approvals',
+  }),
+  'leave.decided': typeDef({
+    params: z.object({
+      requestId: z.uuid(),
+      status: z.enum(['approved', 'rejected']),
+      startDate: z.string().regex(DATE),
+      endDate: z.string().regex(DATE),
+    }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/leave',
+  }),
+  'leave.cancelled': typeDef({
+    params: z.object({
+      requestId: z.uuid(),
+      employeeName: z.string().trim().min(1).max(200),
+      startDate: z.string().regex(DATE),
+      endDate: z.string().regex(DATE),
+      by: z.enum(['employee', 'approver']),
+    }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/leave',
   }),
 } as const;
 

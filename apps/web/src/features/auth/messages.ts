@@ -15,6 +15,18 @@ void allCodesTranslated;
 const validationRules: Record<string, true> = {
   password_contains_email: true,
   password_too_repetitive: true,
+  invalidDate: true,
+  futureDate: true,
+  invalidPhone: true,
+  invalidCountry: true,
+  terminationBeforeHire: true,
+  invalidDays: true,
+  duplicate: true,
+  too_far_in_past: true,
+  too_far_ahead: true,
+  end_before_start: true,
+  too_long: true,
+  half_day_conflict: true,
 };
 
 /** Translators for form validation errors and API errors, in the user's current language. */

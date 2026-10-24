@@ -629,6 +629,13 @@ export const PERMISSIONS = [
     grants: g('own', 'own', 'own', 'own'),
   }),
   def({
+    code: 'gdpr.export_employee',
+    module: 'gdpr',
+    description: "Export an employee's data (subject access request)",
+    scopes: ALL,
+    grants: g(null, null, 'all', 'all'),
+  }),
+  def({
     code: 'gdpr.erase_employee',
     module: 'gdpr',
     description: 'Erase or anonymize an employee',

@@ -1,0 +1,30 @@
+{
+  "working": "Working…",
+  "own": {
+    "title": "Your data",
+    "text": "Download a copy of everything this workspace holds about you (profile, leave, attendance, events, notifications) as a JSON file.",
+    "download": "Download my data",
+    "done": "Your file was downloaded."
+  },
+  "employee": {
+    "title": "Personal data",
+    "text": "Subject access requests and erasure of a former employee's data.",
+    "download": "Download data",
+    "downloaded": "The file was downloaded. This export was recorded in the audit log."
+  },
+  "erase": {
+    "open": "Erase personal data",
+    "title": "Erase the personal data of {{name}}?",
+    "warning": "This cannot be undone.",
+    "removes": "Removed: name, contact details, birth date, job details, login, notifications and all free-text notes and comments.",
+    "keeps": "Kept without personal details, as the law requires: hire and termination dates, working-time and leave records.",
+    "understand": "I understand that this is irreversible.",
+    "confirm": "Erase permanently",
+    "cancel": "Cancel"
+  },
+  "conflict": {
+    "active": "Deactivate the employee first. Only former employees can be erased.",
+    "self": "You cannot erase your own data.",
+    "erased": "The personal data of this employee was already erased."
+  }
+}

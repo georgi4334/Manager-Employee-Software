@@ -45,8 +45,8 @@ Ordered `own < reports < team < department < all`; each includes the narrower on
 
 A user with several roles gets, per permission, the **widest** scope among their roles (union).
 How a record owner relates to the actor (`self`, `direct_report`, `subordinate`, `same_department`, `other`)
-is answered by an `OrgRelations` provider. Until the Organization module exists the provider only knows
-`self` and `other`, so `reports`/`team`/`department` grants **never reach beyond the actor** (fail closed).
+is answered by an `OrgRelations` provider. Since [ADR 0007](0007-organization.md) the provider reads the reporting tree and departments; before an employee
+record, manager or department exists for a person, the answer is `other` (fail closed).
 
 ### 4. Enforcement in three layers
 

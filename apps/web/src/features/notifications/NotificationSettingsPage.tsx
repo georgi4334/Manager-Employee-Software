@@ -15,10 +15,22 @@ import { usePreferences, useUpdatePreference } from './hooks';
 /** Name of a notification type for the settings page; unknown (newer) types get a generic name. */
 function useTypeTitle() {
   const { t } = useTranslation(['notifications', 'common']);
-  return (type: string): string =>
-    type === 'account.roles_changed' && isNotificationType(type)
-      ? t('types.account.roles_changed.settingsTitle')
-      : t('unknown.title');
+  return (type: string): string => {
+    switch (type) {
+      case 'account.roles_changed':
+        return t('types.account.roles_changed.settingsTitle');
+      case 'leave.requested':
+        return t('types.leave.requested.settingsTitle');
+      case 'leave.decided':
+        return t('types.leave.decided.settingsTitle');
+      case 'leave.cancelled':
+        return t('types.leave.cancelled.settingsTitle');
+      case 'attendance.corrected':
+        return t('types.attendance.corrected.settingsTitle');
+      default:
+        return t('unknown.title');
+    }
+  };
 }
 
 export function NotificationSettingsPage() {
@@ -101,15 +113,33 @@ export function NotificationSettingsPage() {
 
 function TypeHeading({ type }: { type: string }) {
   const { t } = useTranslation('notifications');
-  if (type === 'account.roles_changed' && isNotificationType(type)) {
-    return (
-      <div>
-        <CardTitle>{t('types.account.roles_changed.settingsTitle')}</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          {t('types.account.roles_changed.settingsHelp')}
-        </p>
-      </div>
-    );
-  }
-  return <CardTitle>{t('unknown.title')}</CardTitle>;
+  const texts = (() => {
+    switch (type) {
+      case 'account.roles_changed':
+        return [
+          t('types.account.roles_changed.settingsTitle'),
+          t('types.account.roles_changed.settingsHelp'),
+        ];
+      case 'leave.requested':
+        return [t('types.leave.requested.settingsTitle'), t('types.leave.requested.settingsHelp')];
+      case 'leave.decided':
+        return [t('types.leave.decided.settingsTitle'), t('types.leave.decided.settingsHelp')];
+      case 'leave.cancelled':
+        return [t('types.leave.cancelled.settingsTitle'), t('types.leave.cancelled.settingsHelp')];
+      case 'attendance.corrected':
+        return [
+          t('types.attendance.corrected.settingsTitle'),
+          t('types.attendance.corrected.settingsHelp'),
+        ];
+      default:
+        return null;
+    }
+  })();
+  if (!texts) return <CardTitle>{t('unknown.title')}</CardTitle>;
+  return (
+    <div>
+      <CardTitle>{texts[0]}</CardTitle>
+      <p className="text-sm text-muted-foreground">{texts[1]}</p>
+    </div>
+  );
 }

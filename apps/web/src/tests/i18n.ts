@@ -2,7 +2,8 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { DEFAULT_LANGUAGE, LANGUAGES, NAMESPACES } from '@/i18n/languages';
 
-// All translation files, loaded eagerly so tests render synchronously.
+// All translation files, loaded eagerly so tests render synchronously. (Vite caches this glob: after adding a
+// namespace file, touch this file once so tests see it. Touched for: organization, leave, attendance, calendar, privacy.)
 const files = import.meta.glob<{ default: Record<string, unknown> }>('../i18n/locales/*/*.json', {
   eager: true,
 });

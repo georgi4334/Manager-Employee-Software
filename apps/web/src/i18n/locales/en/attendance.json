@@ -1,0 +1,89 @@
+{
+  "title": "Attendance",
+  "loading": "Loading…",
+  "noRecord": "There is no employee record for your account yet, so there is nothing to show. Ask HR.",
+  "tabs": {
+    "label": "Attendance views",
+    "today": "Today",
+    "history": "History",
+    "team": "Team"
+  },
+  "mode": {
+    "office": "Office",
+    "remote": "Remote",
+    "field": "Field work"
+  },
+  "state": {
+    "working": "Working",
+    "done": "Done",
+    "leave": "On leave",
+    "none": "Not recorded"
+  },
+  "duration": "{{hours}} h {{minutes}} min",
+  "clock": {
+    "notIn": "You are not checked in.",
+    "checkIn": "Check in",
+    "checkOut": "Check out",
+    "working": "Working since {{start}} ({{mode}})"
+  },
+  "today": {
+    "total": "Recorded today: {{duration}}",
+    "records": "Today's records",
+    "empty": "Nothing recorded yet today."
+  },
+  "record": {
+    "since": "Since {{start}}",
+    "range": "{{start}} – {{end}}",
+    "open": "Open",
+    "corrected": "Corrected",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Delete this record?",
+    "deleteConfirm": "Yes, delete",
+    "cancel": "Keep it"
+  },
+  "form": {
+    "addTitle": "Add a period",
+    "editTitle": "Change record",
+    "addHint": "Forgot to check in or out? Enter the times in your workspace's time zone. You can add the last 7 days.",
+    "openHint": "This record is still open. Check out to set its end; here you can change the mode and note.",
+    "person": "Person",
+    "myself": "Myself",
+    "date": "Date",
+    "start": "From",
+    "end": "To",
+    "mode": "Where",
+    "note": "Note (optional)",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel"
+  },
+  "history": {
+    "from": "From",
+    "to": "To",
+    "invalidRange": "Choose a valid period.",
+    "empty": "No records in this period.",
+    "total": "Total: {{duration}}",
+    "list": "Your records"
+  },
+  "team": {
+    "today": "Today",
+    "records": "Records",
+    "empty": "Nobody to show.",
+    "since": "Since {{start}} ({{mode}})",
+    "addTitle": "Add a record for someone",
+    "addHint": "Corrections are visible to the person and recorded in the audit log."
+  },
+  "conflict": {
+    "open": "There is already an open record. Check out first.",
+    "overlap": "This overlaps another record of the same person."
+  },
+  "rule": {
+    "in_future": "That time is in the future.",
+    "before_check_in": "The check-out must be after the check-in.",
+    "too_long": "A record can be at most 16 hours long.",
+    "nonexistent_time": "That time does not exist on that day (clocks change).",
+    "open_record": "An open record is closed by checking out.",
+    "too_far_in_past": "You can only enter the last 7 days yourself. Ask your manager or HR for older days."
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "title": "Urlaub",
+  "loading": "Wird geladen…",
+  "tabs": {
+    "label": "Urlaubsansichten",
+    "my": "Mein Urlaub",
+    "approvals": "Genehmigungen",
+    "team": "Team",
+    "settings": "Einstellungen"
+  },
+  "status": {
+    "pending": "Offen",
+    "approved": "Genehmigt",
+    "rejected": "Abgelehnt",
+    "cancelled": "Storniert"
+  },
+  "types": {
+    "annual": "Erholungsurlaub",
+    "sick": "Krankheit",
+    "unpaid": "Unbezahlter Urlaub",
+    "parental": "Elternzeit"
+  },
+  "absent": "Abwesend",
+  "days_one": "{{formattedCount}} Tag",
+  "days_other": "{{formattedCount}} Tage",
+  "range": "{{from}} – {{to}}",
+  "balance": {
+    "title": "Urlaubskonto",
+    "year": "Jahr",
+    "previousYear": "Vorjahr",
+    "nextYear": "Nächstes Jahr",
+    "entitled": "Anspruch",
+    "carriedOver": "Übertrag",
+    "adjustment": "Korrektur",
+    "used": "Genommen",
+    "pending": "Beantragt",
+    "remaining": "Verbleibend",
+    "empty": "Keine Urlaubsart mit Jahresanspruch."
+  },
+  "form": {
+    "title": "Urlaub beantragen",
+    "type": "Art",
+    "from": "Von",
+    "to": "Bis",
+    "halfStart": "Beginnt mittags (erster Tag zählt halb)",
+    "halfEnd": "Endet mittags (letzter Tag zählt halb)",
+    "reason": "Notiz (optional)",
+    "reasonHint": "Sichtbar für Sie und die Personen, die Ihren Urlaub genehmigen.",
+    "sickNote": "Bei Krankheit wird kein Grund gespeichert, nur die Daten.",
+    "submit": "Antrag senden",
+    "submitting": "Wird gesendet…",
+    "sentApproval": "Antrag gesendet. Er wartet auf Genehmigung.",
+    "sentApproved": "Erfasst. Für diese Art ist keine Genehmigung nötig.",
+    "preview": {
+      "counted_one": "{{formattedCount}} Arbeitstag wird gezählt.",
+      "counted_other": "{{formattedCount}} Arbeitstage werden gezählt.",
+      "noDays": "In diesem Zeitraum liegt kein Arbeitstag.",
+      "remainingAfter": "Verbleibend nach diesem Antrag: {{value}}",
+      "notEnough": "Das sind mehr Tage, als Sie übrig haben.",
+      "checking": "Wird berechnet…"
+    }
+  },
+  "requests": {
+    "mine": "Meine Anträge",
+    "empty": "Sie haben noch keinen Urlaub beantragt.",
+    "cancel": "Antrag stornieren",
+    "cancelling": "Wird storniert…",
+    "reason": "Notiz: {{text}}",
+    "comment": "Kommentar: {{text}}",
+    "list": "Urlaubsanträge"
+  },
+  "approvals": {
+    "title": "Wartet auf Ihre Entscheidung",
+    "empty": "Es warten keine Anträge auf Sie.",
+    "approve": "Genehmigen",
+    "reject": "Ablehnen",
+    "comment": "Kommentar (optional)",
+    "confirmApprove": "Genehmigung bestätigen",
+    "confirmReject": "Ablehnung bestätigen",
+    "cancel": "Abbrechen",
+    "working": "Wird bearbeitet…",
+    "requester": "{{name}}"
+  },
+  "team": {
+    "title": "Wer ist abwesend",
+    "from": "Von",
+    "to": "Bis",
+    "empty": "In diesem Zeitraum ist niemand abwesend.",
+    "hidden": "Abwesend",
+    "cancelByApprover": "Urlaub stornieren"
+  },
+  "settings": {
+    "types": {
+      "title": "Urlaubsarten",
+      "add": "Art hinzufügen",
+      "name": "Name",
+      "tracksBalance": "Zählt gegen einen Jahresanspruch",
+      "requiresApproval": "Braucht Genehmigung",
+      "isSick": "Krankheit (kein Grund wird gespeichert)",
+      "color": "Farbe",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "allowance": "Tage pro Jahr",
+      "carryOver": "Maximale Übertragstage",
+      "edit": "Bearbeiten",
+      "save": "Speichern",
+      "saving": "Wird gespeichert…",
+      "cancel": "Abbrechen",
+      "system": "Vorgegeben"
+    },
+    "colors": {
+      "primary": "Blau",
+      "success": "Grün",
+      "warning": "Orange",
+      "danger": "Rot",
+      "info": "Türkis",
+      "accent": "Violett"
+    },
+    "holidays": {
+      "title": "Feiertage",
+      "year": "Jahr",
+      "country": "Land",
+      "countryHint": "Zwei Buchstaben, zum Beispiel BG oder DE. Die nationalen Feiertage von Bulgarien und Deutschland sind eingebaut.",
+      "none": "Keine Feiertage für dieses Land und Jahr.",
+      "add": "Betriebsfreien Tag hinzufügen",
+      "date": "Datum",
+      "name": "Name",
+      "allCountries": "Alle Länder",
+      "halfDay": "Halber Tag",
+      "delete": "Löschen",
+      "compensation": "Ersatzruhetag für {{name}}",
+      "builtIn": "Eingebaut",
+      "custom": "Von der Personalabteilung"
+    },
+    "privacy": {
+      "title": "Einstellungen",
+      "hideSick": "Art der Krankmeldung vor Kolleginnen und Kollegen verbergen (sie sehen nur „Abwesend“)",
+      "country": "Standardland für Feiertage",
+      "countryHint": "Gilt für Personen ohne Land. Zwei Buchstaben, zum Beispiel BG.",
+      "save": "Speichern",
+      "saving": "Wird gespeichert…",
+      "saved": "Gespeichert."
+    },
+    "adjust": {
+      "title": "Urlaubskonto korrigieren",
+      "employee": "Mitarbeiter:in",
+      "year": "Jahr",
+      "delta": "Zu addierende Tage (negativ zum Abziehen)",
+      "deltaHint": "In Schritten von einem halben Tag.",
+      "submit": "Korrigieren",
+      "working": "Wird korrigiert…",
+      "done": "Verbleibend: {{value}} Tage.",
+      "choose": "Mitarbeiter:in auswählen"
+    }
+  },
+  "holiday": {
+    "BG": {
+      "new_year": "Neujahr",
+      "liberation_day": "Tag der Befreiung",
+      "labour_day": "Tag der Arbeit",
+      "st_george": "Georgstag",
+      "culture_day": "Tag der bulgarischen Bildung und Kultur",
+      "unification_day": "Tag der Vereinigung",
+      "independence_day": "Unabhängigkeitstag",
+      "christmas_eve": "Heiligabend",
+      "christmas": "Weihnachtstag",
+      "christmas_second_day": "Zweiter Weihnachtstag",
+      "good_friday": "Orthodoxer Karfreitag",
+      "holy_saturday": "Orthodoxer Karsamstag",
+      "easter_sunday": "Orthodoxer Ostersonntag",
+      "easter_monday": "Orthodoxer Ostermontag",
+      "compensation_day": "Ersatzruhetag"
+    },
+    "DE": {
+      "new_year": "Neujahr",
+      "good_friday": "Karfreitag",
+      "easter_monday": "Ostermontag",
+      "labour_day": "Tag der Arbeit",
+      "ascension_day": "Christi Himmelfahrt",
+      "whit_monday": "Pfingstmontag",
+      "unity_day": "Tag der Deutschen Einheit",
+      "christmas": "Erster Weihnachtstag",
+      "christmas_second_day": "Zweiter Weihnachtstag"
+    }
+  },
+  "conflict": {
+    "dates": "Diese Tage überschneiden sich mit einem anderen Antrag von Ihnen.",
+    "status": "Dieser Antrag wurde bereits entschieden oder geschlossen.",
+    "name": "Dieser Name wird bereits verwendet.",
+    "in_use": "Für diese Art gibt es schon Anträge, daher lässt sich das nicht ändern.",
+    "date": "Für dieses Datum gibt es bereits einen Feiertag."
+  },
+  "insufficient": "Sie haben für {{year}} noch {{available}} Tage, dieser Antrag braucht aber {{requested}}.",
+  "noRecord": "Für Ihr Konto gibt es noch keinen Mitarbeiterdatensatz. Bitten Sie die Personalabteilung, Sie anzulegen, bevor Sie Urlaub beantragen."
+}

@@ -91,6 +91,7 @@ This table is **generated** from the permission catalog in `packages/contracts/s
 |  | `admin.tenant.settings` | Workspace settings | — | — | — | all |
 |  | `admin.audit_log.view` | View the audit log (HR sees HR-related events only) | — | — | all | all |
 | **GDPR** | `gdpr.export_own` | Export own data | own | own | own | own |
+|  | `gdpr.export_employee` | Export an employee's data (subject access request) | — | — | all | all |
 |  | `gdpr.erase_employee` | Erase or anonymize an employee | — | — | all | all |
 |  | `gdpr.manage_retention` | Manage data retention | — | — | all | all |
 

@@ -23,5 +23,6 @@
   "hidePassword": "Hide password",
   "serverWaking": "The server is waking up. This can take up to a minute after a period of inactivity.",
   "connectionProblemTitle": "Can't reach the server",
-  "connectionProblemText": "Check your internet connection and try again."
+  "connectionProblemText": "Check your internet connection and try again.",
+  "myProfile": "My profile"
 }

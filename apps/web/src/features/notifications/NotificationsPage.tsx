@@ -95,10 +95,10 @@ export function NotificationsPage() {
                     )}
                   />
                   <span className="min-w-0 flex-1">
-                    <NotificationText type={item.type} params={item.params} />
+                    <NotificationText type={item.type} params={item.params} onAccent={isUnread} />
                     <time
                       dateTime={item.createdAt}
-                      className="mt-1 block text-xs text-muted-foreground"
+                      className={cn('mt-1 block text-xs', !isUnread && 'text-muted-foreground')}
                     >
                       {formatDate(item.createdAt, language, {
                         dateStyle: 'medium',

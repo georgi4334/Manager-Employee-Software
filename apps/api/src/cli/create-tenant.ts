@@ -6,7 +6,7 @@ import { parseEnv } from '../config/env.js';
 import { TenantProvisioningService } from '../modules/tenants/tenant-provisioning.service.js';
 
 const USAGE =
-  'Usage: pnpm --filter @intime/api tenant:create --name "Acme GmbH" --slug acme --admin-email admin@acme.eu [--locale de] [--timezone Europe/Berlin]';
+  'Usage: pnpm --filter @intime/api tenant:create --name "Acme GmbH" --slug acme --admin-email admin@acme.eu [--admin-first-name Ada --admin-last-name Lovelace] [--locale de] [--timezone Europe/Berlin]';
 
 async function main(): Promise<void> {
   const { values } = parseArgs({
@@ -14,6 +14,8 @@ async function main(): Promise<void> {
       name: { type: 'string' },
       slug: { type: 'string' },
       'admin-email': { type: 'string' },
+      'admin-first-name': { type: 'string' },
+      'admin-last-name': { type: 'string' },
       locale: { type: 'string' },
       timezone: { type: 'string' },
     },
@@ -31,6 +33,8 @@ async function main(): Promise<void> {
       name: values.name,
       slug: values.slug,
       adminEmail: values['admin-email'],
+      adminFirstName: values['admin-first-name'],
+      adminLastName: values['admin-last-name'],
       locale: values.locale as 'en' | 'de' | 'bg' | undefined,
       timezone: values.timezone,
     });

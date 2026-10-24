@@ -7,6 +7,8 @@
     color: var(--foreground);
     font-family: var(--font-sans);
     -webkit-text-size-adjust: 100%;
+    /* The fixed bottom bar must never cover what scrolls into view or receives focus (WCAG 2.4.11). */
+    scroll-padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
   body {
     margin: 0;

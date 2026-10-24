@@ -15,6 +15,15 @@ export function formatDate(
   return new Intl.DateTimeFormat(intlLocale(language), options).format(date);
 }
 
+/** A calendar date ("YYYY-MM-DD") shown in the user's language; never shifted by the time zone. */
+export function formatDay(
+  date: string,
+  language: string,
+  options: Intl.DateTimeFormatOptions = { dateStyle: 'medium' },
+): string {
+  return formatDate(`${date}T00:00:00Z`, language, { ...options, timeZone: 'UTC' });
+}
+
 export function formatNumber(
   value: number,
   language: string,

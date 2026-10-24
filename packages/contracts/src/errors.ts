@@ -17,6 +17,9 @@ export const ERROR_CODES = [
   'TOKEN_INVALID',
   'LAST_ADMIN',
   'CANNOT_DISABLE_SELF',
+  'ORG_CYCLE',
+  'INSUFFICIENT_BALANCE',
+  'NO_WORKING_DAYS',
   'PAYLOAD_TOO_LARGE',
   'RATE_LIMITED',
   'INTERNAL_ERROR',
@@ -41,6 +44,12 @@ export const ERROR_STATUS: Record<ErrorCode, number> = {
   LAST_ADMIN: 409,
   /** Users cannot disable their own account. */
   CANNOT_DISABLE_SELF: 409,
+  /** The change would make a manager or a parent department its own ancestor. */
+  ORG_CYCLE: 409,
+  /** The request needs more leave days than the balance has left; params: available, requested. */
+  INSUFFICIENT_BALANCE: 409,
+  /** The chosen dates contain no working day (only weekends and holidays). */
+  NO_WORKING_DAYS: 400,
   PAYLOAD_TOO_LARGE: 413,
   RATE_LIMITED: 429,
   INTERNAL_ERROR: 500,

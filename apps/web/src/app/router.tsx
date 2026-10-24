@@ -7,6 +7,14 @@ import { PublicOnly } from '@/features/auth/PublicOnly';
 import { RequirePermission } from '@/features/auth/RequirePermission';
 import { RequireAuth } from '@/features/auth/RequireAuth';
 import { ResetPasswordPage } from '@/features/auth/ResetPasswordPage';
+import { EmployeeDetailPage } from '@/features/employees/EmployeeDetailPage';
+import { EmployeeFormPage } from '@/features/employees/EmployeeFormPage';
+import { EmployeesPage } from '@/features/employees/EmployeesPage';
+import { MyProfilePage } from '@/features/employees/MyProfilePage';
+import { AttendancePage } from '@/features/attendance/AttendancePage';
+import { CalendarPage } from '@/features/calendar/CalendarPage';
+import { LeavePage } from '@/features/leave/LeavePage';
+import { OrganizationPage } from '@/features/organization/OrganizationPage';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
 import { NotFoundPage } from '@/features/not-found/NotFoundPage';
 import { NotificationSettingsPage } from '@/features/notifications/NotificationSettingsPage';
@@ -14,6 +22,9 @@ import { NotificationsPage } from '@/features/notifications/NotificationsPage';
 import { ModulePlaceholderPage } from '@/features/placeholder/ModulePlaceholderPage';
 import { NAV_ITEMS } from './nav';
 import { AppShell } from './layout/AppShell';
+
+/** Modules that have real pages; the others still show the placeholder. */
+const IMPLEMENTED_PATHS = ['/employees', '/organization', '/leave', '/attendance', '/calendar'];
 
 export const routes: RouteObject[] = [
   {
@@ -39,7 +50,9 @@ export const routes: RouteObject[] = [
         element: <AppShell />,
         children: [
           { index: true, element: <DashboardPage /> },
-          ...NAV_ITEMS.filter((item) => item.path !== '/').map((item) => ({
+          ...NAV_ITEMS.filter(
+            (item) => item.path !== '/' && !IMPLEMENTED_PATHS.includes(item.path),
+          ).map((item) => ({
             // Users without the item's permission see "no access" instead of the screen.
             element: item.permission ? (
               <RequirePermission permission={item.permission} />
@@ -51,6 +64,40 @@ export const routes: RouteObject[] = [
               },
             ],
           })),
+          {
+            element: <RequirePermission permission="employee.view_directory" />,
+            children: [
+              { path: 'employees', element: <EmployeesPage /> },
+              { path: 'employees/:id', element: <EmployeeDetailPage /> },
+            ],
+          },
+          {
+            element: (
+              <RequirePermission permission={['calendar.manage_own', 'calendar.view_free_busy']} />
+            ),
+            children: [{ path: 'calendar', element: <CalendarPage /> }],
+          },
+          {
+            element: <RequirePermission permission={['attendance.record', 'attendance.view']} />,
+            children: [{ path: 'attendance', element: <AttendancePage /> }],
+          },
+          {
+            element: <RequirePermission permission={['leave.request', 'leave.view']} />,
+            children: [{ path: 'leave', element: <LeavePage /> }],
+          },
+          {
+            element: <RequirePermission permission="org.view" />,
+            children: [{ path: 'organization', element: <OrganizationPage /> }],
+          },
+          {
+            element: <RequirePermission permission="employee.create" />,
+            children: [{ path: 'employees/new', element: <EmployeeFormPage /> }],
+          },
+          {
+            element: <RequirePermission permission="employee.update" />,
+            children: [{ path: 'employees/:id/edit', element: <EmployeeFormPage /> }],
+          },
+          { path: 'profile', element: <MyProfilePage /> },
           { path: 'notifications', element: <NotificationsPage /> },
           {
             element: <RequirePermission permission="notification.manage_own_prefs" />,

@@ -23,5 +23,6 @@
   "hidePassword": "Passwort verbergen",
   "serverWaking": "Der Server wird gestartet. Nach längerer Inaktivität kann das bis zu einer Minute dauern.",
   "connectionProblemTitle": "Server nicht erreichbar",
-  "connectionProblemText": "Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+  "connectionProblemText": "Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+  "myProfile": "Mein Profil"
 }
