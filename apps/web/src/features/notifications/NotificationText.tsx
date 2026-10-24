@@ -1,11 +1,13 @@
 import { isNotificationType } from '@intime/contracts';
 import { useTranslation } from 'react-i18next';
-import { formatList } from '@/shared/lib/format';
+import { formatDay, formatList, formatNumber } from '@/shared/lib/format';
 
 interface NotificationTextProps {
   type: string;
   params: Record<string, unknown>;
 }
+
+const str = (value: unknown): string => (typeof value === 'string' ? value : '');
 
 const roleNames = (params: Record<string, unknown>): string[] =>
   Array.isArray(params.roleNames)
@@ -27,6 +29,54 @@ export function useNotificationText() {
         text: t('types.account.roles_changed.text', {
           roles: formatList(roleNames(params), language),
         }),
+      };
+    }
+    if (type === 'leave.requested') {
+      const from = formatDay(str(params.startDate), language);
+      const to = formatDay(str(params.endDate), language);
+      const name = str(params.employeeName);
+      if (params.autoApproved === true) {
+        return {
+          title: t('types.leave.requested.title'),
+          text: t('types.leave.requested.textAuto', { name, from, to }),
+        };
+      }
+      const days = typeof params.days === 'number' ? params.days : 0;
+      return {
+        title: t('types.leave.requested.title'),
+        text: t('types.leave.requested.text', {
+          name,
+          from,
+          to,
+          count: days,
+          days: formatNumber(days, language),
+        }),
+      };
+    }
+    if (type === 'leave.decided') {
+      const range = {
+        from: formatDay(str(params.startDate), language),
+        to: formatDay(str(params.endDate), language),
+      };
+      return {
+        title: t('types.leave.decided.title'),
+        text:
+          params.status === 'approved'
+            ? t('types.leave.decided.textApproved', range)
+            : t('types.leave.decided.textRejected', range),
+      };
+    }
+    if (type === 'leave.cancelled') {
+      const range = {
+        from: formatDay(str(params.startDate), language),
+        to: formatDay(str(params.endDate), language),
+      };
+      return {
+        title: t('types.leave.cancelled.title'),
+        text:
+          params.by === 'approver'
+            ? t('types.leave.cancelled.textApprover', range)
+            : t('types.leave.cancelled.textEmployee', { ...range, name: str(params.employeeName) }),
       };
     }
     return { title: t('unknown.title'), text: t('unknown.text') };

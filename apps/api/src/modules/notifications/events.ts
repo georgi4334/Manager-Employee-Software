@@ -14,6 +14,57 @@ const eventDef = <T extends z.ZodType>(definition: {
   notify: (params: z.output<T>) => NotificationIntent[];
 }) => definition;
 
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
+const name = z.string().trim().min(1).max(200);
+
+export const LEAVE_EVENTS = {
+  'leave.requested': eventDef({
+    params: z.object({
+      recipientUserIds: z.array(z.uuid()).min(1).max(100),
+      requestId: z.uuid(),
+      employeeName: name,
+      startDate: z.string().regex(DATE),
+      endDate: z.string().regex(DATE),
+      days: z.number().positive().max(366),
+      autoApproved: z.boolean(),
+    }),
+    notify: ({ recipientUserIds, ...params }) =>
+      recipientUserIds.map((recipientUserId) => ({
+        recipientUserId,
+        type: 'leave.requested' as const,
+        params,
+      })),
+  }),
+  'leave.decided': eventDef({
+    params: z.object({
+      recipientUserId: z.uuid(),
+      requestId: z.uuid(),
+      status: z.enum(['approved', 'rejected']),
+      startDate: z.string().regex(DATE),
+      endDate: z.string().regex(DATE),
+    }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'leave.decided' as const, params },
+    ],
+  }),
+  'leave.cancelled': eventDef({
+    params: z.object({
+      recipientUserIds: z.array(z.uuid()).min(1).max(100),
+      requestId: z.uuid(),
+      employeeName: name,
+      startDate: z.string().regex(DATE),
+      endDate: z.string().regex(DATE),
+      by: z.enum(['employee', 'approver']),
+    }),
+    notify: ({ recipientUserIds, ...params }) =>
+      recipientUserIds.map((recipientUserId) => ({
+        recipientUserId,
+        type: 'leave.cancelled' as const,
+        params,
+      })),
+  }),
+} as const;
+
 /**
  * Domain events that can be published to the outbox. A feature publishes a fact ("roles changed"); what
  * that means for whom is decided here, in one place.
@@ -28,6 +79,7 @@ export const EVENT_DEFINITIONS = {
       { recipientUserId: userId, type: 'account.roles_changed', params: { roleNames } },
     ],
   }),
+  ...LEAVE_EVENTS,
 } as const;
 
 export type EventType = keyof typeof EVENT_DEFINITIONS;

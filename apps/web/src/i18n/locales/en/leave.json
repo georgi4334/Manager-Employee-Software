@@ -1,0 +1,195 @@
+{
+  "title": "Leave",
+  "loading": "Loading…",
+  "tabs": {
+    "label": "Leave views",
+    "my": "My leave",
+    "approvals": "Approvals",
+    "team": "Team",
+    "settings": "Settings"
+  },
+  "status": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "cancelled": "Cancelled"
+  },
+  "types": {
+    "annual": "Annual leave",
+    "sick": "Sick leave",
+    "unpaid": "Unpaid leave",
+    "parental": "Parental leave"
+  },
+  "absent": "Absent",
+  "days_one": "{{formattedCount}} day",
+  "days_other": "{{formattedCount}} days",
+  "range": "{{from}} – {{to}}",
+  "balance": {
+    "title": "Leave balance",
+    "year": "Year",
+    "previousYear": "Previous year",
+    "nextYear": "Next year",
+    "entitled": "Entitled",
+    "carriedOver": "Carried over",
+    "adjustment": "Adjustment",
+    "used": "Used",
+    "pending": "Pending",
+    "remaining": "Remaining",
+    "empty": "No leave type with a yearly allowance."
+  },
+  "form": {
+    "title": "Request leave",
+    "type": "Type",
+    "from": "From",
+    "to": "To",
+    "halfStart": "Starts at noon (first day counts half)",
+    "halfEnd": "Ends at noon (last day counts half)",
+    "reason": "Note (optional)",
+    "reasonHint": "Visible to you and to the people who approve your leave.",
+    "sickNote": "For sick leave no reason is stored. Only the dates are recorded.",
+    "submit": "Send request",
+    "submitting": "Sending…",
+    "sentApproval": "Request sent. It waits for approval.",
+    "sentApproved": "Recorded. No approval is needed for this type.",
+    "preview": {
+      "counted_one": "{{formattedCount}} working day will be counted.",
+      "counted_other": "{{formattedCount}} working days will be counted.",
+      "noDays": "These dates contain no working day.",
+      "remainingAfter": "Remaining after this request: {{value}}",
+      "notEnough": "This is more than the days you have left.",
+      "checking": "Calculating…"
+    }
+  },
+  "requests": {
+    "mine": "My requests",
+    "empty": "You have not requested any leave yet.",
+    "cancel": "Cancel request",
+    "cancelling": "Cancelling…",
+    "reason": "Note: {{text}}",
+    "comment": "Comment: {{text}}",
+    "list": "Leave requests"
+  },
+  "approvals": {
+    "title": "Waiting for your decision",
+    "empty": "No requests are waiting for you.",
+    "approve": "Approve",
+    "reject": "Reject",
+    "comment": "Comment (optional)",
+    "confirmApprove": "Confirm approval",
+    "confirmReject": "Confirm rejection",
+    "cancel": "Cancel",
+    "working": "Working…",
+    "requester": "{{name}}"
+  },
+  "team": {
+    "title": "Who is off",
+    "from": "From",
+    "to": "To",
+    "empty": "Nobody is off in this period.",
+    "hidden": "Absent",
+    "cancelByApprover": "Cancel leave"
+  },
+  "settings": {
+    "types": {
+      "title": "Leave types",
+      "add": "Add type",
+      "name": "Name",
+      "tracksBalance": "Counts against a yearly allowance",
+      "requiresApproval": "Needs approval",
+      "isSick": "Sick leave (no reason is stored)",
+      "color": "Colour",
+      "active": "Active",
+      "inactive": "Inactive",
+      "allowance": "Days per year",
+      "carryOver": "Maximum carry-over days",
+      "edit": "Edit",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "system": "Built in"
+    },
+    "colors": {
+      "primary": "Blue",
+      "success": "Green",
+      "warning": "Orange",
+      "danger": "Red",
+      "info": "Cyan",
+      "accent": "Purple"
+    },
+    "holidays": {
+      "title": "Public holidays",
+      "year": "Year",
+      "country": "Country",
+      "countryHint": "Two-letter code, for example BG or DE. Bulgarian and German national days are built in.",
+      "none": "No holidays for this country and year.",
+      "add": "Add company day",
+      "date": "Date",
+      "name": "Name",
+      "allCountries": "All countries",
+      "halfDay": "Half day",
+      "delete": "Delete",
+      "compensation": "Day off for {{name}}",
+      "builtIn": "Built in",
+      "custom": "Added by HR"
+    },
+    "privacy": {
+      "title": "Workspace settings",
+      "hideSick": "Hide the type of sick leave from colleagues (they only see “Absent”)",
+      "country": "Default holiday country",
+      "countryHint": "Used for people without a country. Two-letter code, for example BG.",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved."
+    },
+    "adjust": {
+      "title": "Adjust a balance",
+      "employee": "Employee",
+      "year": "Year",
+      "delta": "Days to add (negative to subtract)",
+      "deltaHint": "In steps of half a day.",
+      "submit": "Adjust",
+      "working": "Adjusting…",
+      "done": "The balance is now {{value}} days remaining.",
+      "choose": "Choose an employee"
+    }
+  },
+  "holiday": {
+    "BG": {
+      "new_year": "New Year's Day",
+      "liberation_day": "Liberation Day",
+      "labour_day": "Labour Day",
+      "st_george": "St George's Day",
+      "culture_day": "Day of Bulgarian Education and Culture",
+      "unification_day": "Unification Day",
+      "independence_day": "Independence Day",
+      "christmas_eve": "Christmas Eve",
+      "christmas": "Christmas Day",
+      "christmas_second_day": "Second day of Christmas",
+      "good_friday": "Orthodox Good Friday",
+      "holy_saturday": "Orthodox Holy Saturday",
+      "easter_sunday": "Orthodox Easter Sunday",
+      "easter_monday": "Orthodox Easter Monday",
+      "compensation_day": "Day off in lieu"
+    },
+    "DE": {
+      "new_year": "New Year's Day",
+      "good_friday": "Good Friday",
+      "easter_monday": "Easter Monday",
+      "labour_day": "Labour Day",
+      "ascension_day": "Ascension Day",
+      "whit_monday": "Whit Monday",
+      "unity_day": "German Unity Day",
+      "christmas": "Christmas Day",
+      "christmas_second_day": "Second day of Christmas"
+    }
+  },
+  "conflict": {
+    "dates": "These dates overlap another request of yours.",
+    "status": "This request was already decided or closed.",
+    "name": "This name is already in use.",
+    "in_use": "This type already has requests, so this cannot be changed.",
+    "date": "A holiday already exists on this date."
+  },
+  "insufficient": "You have {{available}} days left for {{year}}, but this request needs {{requested}}.",
+  "noRecord": "There is no employee record for your account yet. Ask HR to add you before you request leave."
+}

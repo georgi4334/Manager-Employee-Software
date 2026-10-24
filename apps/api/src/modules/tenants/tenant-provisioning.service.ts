@@ -8,6 +8,7 @@ import { TenantContext } from '../../infrastructure/tenancy/tenant-context.js';
 import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
 import { AuditService } from '../audit/audit.service.js';
 import { InvitationService } from '../auth/invitation.service.js';
+import { LeaveTypesService } from '../leave/leave-types.service.js';
 import { SystemRolesService } from '../roles/system-roles.service.js';
 
 export const createTenantInputSchema = z.object({
@@ -31,6 +32,7 @@ export class TenantProvisioningService {
     private readonly invitations: InvitationService,
     private readonly systemRoles: SystemRolesService,
     private readonly audit: AuditService,
+    private readonly leaveTypes: LeaveTypesService,
   ) {}
 
   async create(
@@ -62,6 +64,7 @@ export class TenantProvisioningService {
     const { userId, link } = await this.context.run(tenant.id, () =>
       this.db.tx(async (tx) => {
         const { roleIds } = await this.systemRoles.ensureSystemRoles(tx);
+        await this.leaveTypes.ensureDefaults(tx);
         const invited = await this.invitations.invite(tx, input.adminEmail, [roleIds.admin]);
         // The administrator is an employee too (the directory, leave and the calendar start from there).
         await tx.employee.create({

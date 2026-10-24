@@ -24,6 +24,30 @@
         "settingsTitle": "Änderungen an Ihren Rollen",
         "settingsHelp": "Wenn eine Administration Ihre Rollen oder Berechtigungen ändert."
       }
+    },
+    "leave": {
+      "requested": {
+        "title": "Urlaubsantrag",
+        "text_one": "{{name}} hat {{days}} Tag Urlaub beantragt ({{from}} – {{to}}).",
+        "text_other": "{{name}} hat {{days}} Tage Urlaub beantragt ({{from}} – {{to}}).",
+        "textAuto": "{{name}} ist vom {{from}} bis {{to}} abwesend (keine Genehmigung nötig).",
+        "settingsTitle": "Zu entscheidende Urlaubsanträge",
+        "settingsHelp": "Wenn Sie Urlaub genehmigen sollen oder eine Person aus Ihrem Team eine Abwesenheit meldet."
+      },
+      "decided": {
+        "title": "Entscheidung zum Urlaubsantrag",
+        "textApproved": "Ihr Urlaubsantrag ({{from}} – {{to}}) wurde genehmigt.",
+        "textRejected": "Ihr Urlaubsantrag ({{from}} – {{to}}) wurde abgelehnt.",
+        "settingsTitle": "Entscheidungen zu Ihrem Urlaub",
+        "settingsHelp": "Wenn Ihr Urlaubsantrag genehmigt oder abgelehnt wird."
+      },
+      "cancelled": {
+        "title": "Urlaub storniert",
+        "textEmployee": "{{name}} hat Urlaub storniert ({{from}} – {{to}}).",
+        "textApprover": "Ihr Urlaub ({{from}} – {{to}}) wurde von einer genehmigenden Person storniert.",
+        "settingsTitle": "Stornierter Urlaub",
+        "settingsHelp": "Wenn genehmigter Urlaub storniert wird."
+      }
     }
   },
   "unknown": {

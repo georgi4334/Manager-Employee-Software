@@ -21,7 +21,9 @@
     "UNKNOWN": "Something went wrong. Please try again.",
     "LAST_ADMIN": "There must always be at least one active administrator.",
     "CANNOT_DISABLE_SELF": "You cannot disable your own account.",
-    "ORG_CYCLE": "This would put someone above themselves in the reporting structure."
+    "ORG_CYCLE": "This would put someone above themselves in the reporting structure.",
+    "INSUFFICIENT_BALANCE": "You do not have enough leave days left for this request.",
+    "NO_WORKING_DAYS": "The chosen dates contain no working day."
   },
   "validation": {
     "required": "This field is required.",
@@ -37,7 +39,14 @@
     "futureDate": "The date cannot be in the future.",
     "invalidPhone": "Enter a valid phone number.",
     "invalidCountry": "Use a two-letter country code.",
-    "terminationBeforeHire": "The termination date cannot be before the hire date."
+    "terminationBeforeHire": "The termination date cannot be before the hire date.",
+    "invalidDays": "Use whole or half days.",
+    "duplicate": "Each entry may appear only once.",
+    "too_far_in_past": "The start is too far in the past.",
+    "too_far_ahead": "The end is too far in the future.",
+    "end_before_start": "The end cannot be before the start.",
+    "too_long": "The period is too long.",
+    "half_day_conflict": "One day cannot start and end at noon."
   },
   "forbiddenTitle": "No access",
   "forbiddenText": "You do not have permission to open this page. Ask your administrator if you think this is a mistake."

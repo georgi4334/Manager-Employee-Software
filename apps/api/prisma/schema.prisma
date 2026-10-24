@@ -27,6 +27,14 @@ model Tenant {
   departments             Department[]
   teams                   Team[]
   teamMembers             TeamMember[]
+  leaveTypes              LeaveType[]
+  holidays                Holiday[]
+  leaveSettings           LeaveSettings?
+  leavePolicies           LeavePolicy[]
+  leaveBalances           LeaveBalance[]
+  leaveRequests           LeaveRequest[]
+  leaveRequestDays        LeaveRequestDay[]
+  leaveApprovals          LeaveApproval[]
 
   @@map("tenant")
 }
@@ -305,14 +313,17 @@ model Employee {
   departmentId String? @map("department_id") @db.Uuid
   managerId    String? @map("manager_id") @db.Uuid
 
-  tenant            Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user              User?        @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
-  department        Department?  @relation("EmployeeDepartment", fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
-  manager           Employee?    @relation("Reporting", fields: [tenantId, managerId], references: [tenantId, id], onDelete: NoAction)
-  reports           Employee[]   @relation("Reporting")
-  headedDepartments Department[] @relation("DepartmentHead")
-  ledTeams          Team[]       @relation("TeamLead")
+  tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user              User?           @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
+  department        Department?     @relation("EmployeeDepartment", fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
+  manager           Employee?       @relation("Reporting", fields: [tenantId, managerId], references: [tenantId, id], onDelete: NoAction)
+  reports           Employee[]      @relation("Reporting")
+  headedDepartments Department[]    @relation("DepartmentHead")
+  ledTeams          Team[]          @relation("TeamLead")
   teamMemberships   TeamMember[]
+  leaveBalances     LeaveBalance[]
+  leaveRequests     LeaveRequest[]
+  leaveApprovals    LeaveApproval[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -379,4 +390,160 @@ model TeamMember {
   @@id([teamId, employeeId])
   @@index([tenantId, employeeId])
   @@map("team_member")
+}
+
+// ----- Leave (docs/adr/0008-leave.md) -----------------------------------------------------------------
+
+/// System types have a key (translated by the client) and no name; custom types have a name and no key.
+model LeaveType {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  tenantId         String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  key              String?
+  name             String?
+  tracksBalance    Boolean  @default(false) @map("tracks_balance")
+  requiresApproval Boolean  @default(true) @map("requires_approval")
+  isSick           Boolean  @default(false) @map("is_sick")
+  /// A design-token colour name, never a hex value.
+  color            String   @default("primary")
+  isActive         Boolean  @default(true) @map("is_active")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policy   LeavePolicy?
+  balances LeaveBalance[]
+  requests LeaveRequest[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, key])
+  @@map("leave_type")
+}
+
+model LeavePolicy {
+  id                  String   @id @default(uuid(7)) @db.Uuid
+  tenantId            String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  leaveTypeId         String   @map("leave_type_id") @db.Uuid
+  annualAllowanceDays Decimal  @map("annual_allowance_days") @db.Decimal(5, 1)
+  carryOverMaxDays    Decimal  @default(0) @map("carry_over_max_days") @db.Decimal(5, 1)
+  updatedAt           DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leaveType LeaveType @relation(fields: [tenantId, leaveTypeId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, leaveTypeId])
+  @@map("leave_policy")
+}
+
+/// Created lazily the first time it is needed, then frozen. Used and pending days are never stored: they are
+/// sums over leave_request_day.
+model LeaveBalance {
+  tenantId    String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  employeeId  String   @map("employee_id") @db.Uuid
+  leaveTypeId String   @map("leave_type_id") @db.Uuid
+  year        Int
+  entitled    Decimal  @db.Decimal(5, 1)
+  carriedOver Decimal  @default(0) @map("carried_over") @db.Decimal(5, 1)
+  adjustment  Decimal  @default(0) @db.Decimal(5, 1)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee  Employee  @relation(fields: [tenantId, employeeId], references: [tenantId, id], onDelete: NoAction)
+  leaveType LeaveType @relation(fields: [tenantId, leaveTypeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@id([employeeId, leaveTypeId, year])
+  @@index([tenantId, employeeId])
+  @@map("leave_balance")
+}
+
+model LeaveRequest {
+  id           String    @id @default(uuid(7)) @db.Uuid
+  tenantId     String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  employeeId   String    @map("employee_id") @db.Uuid
+  leaveTypeId  String    @map("leave_type_id") @db.Uuid
+  startDate    DateTime  @map("start_date") @db.Date
+  endDate      DateTime  @map("end_date") @db.Date
+  halfDayStart Boolean   @default(false) @map("half_day_start")
+  halfDayEnd   Boolean   @default(false) @map("half_day_end")
+  days         Decimal   @db.Decimal(4, 1)
+  /// Never stored for sick types.
+  reason       String?
+  /// pending | approved | rejected | cancelled
+  status       String    @default("pending")
+  decidedAt    DateTime? @map("decided_at") @db.Timestamptz(6)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee  Employee          @relation(fields: [tenantId, employeeId], references: [tenantId, id], onDelete: NoAction)
+  leaveType LeaveType         @relation(fields: [tenantId, leaveTypeId], references: [tenantId, id], onDelete: NoAction)
+  daysList  LeaveRequestDay[]
+  approvals LeaveApproval[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, employeeId, startDate])
+  @@index([tenantId, status, startDate])
+  @@map("leave_request")
+}
+
+/// The counted working days of a request, stored when it is made (later holiday edits never change them).
+model LeaveRequestDay {
+  tenantId  String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  requestId String   @map("request_id") @db.Uuid
+  day       DateTime @db.Date
+  fraction  Decimal  @db.Decimal(2, 1)
+
+  tenant  Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  request LeaveRequest @relation(fields: [tenantId, requestId], references: [tenantId, id], onDelete: Cascade)
+
+  @@id([requestId, day])
+  @@index([tenantId, day])
+  @@map("leave_request_day")
+}
+
+/// Append-only record of decisions.
+model LeaveApproval {
+  id                 String   @id @default(uuid(7)) @db.Uuid
+  tenantId           String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  requestId          String   @map("request_id") @db.Uuid
+  approverEmployeeId String   @map("approver_employee_id") @db.Uuid
+  /// approved | rejected | cancelled
+  decision           String
+  comment            String?
+  decidedAt          DateTime @default(now()) @map("decided_at") @db.Timestamptz(6)
+
+  tenant   Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  request  LeaveRequest @relation(fields: [tenantId, requestId], references: [tenantId, id], onDelete: Cascade)
+  approver Employee     @relation(fields: [tenantId, approverEmployeeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@index([tenantId, requestId])
+  @@map("leave_approval")
+}
+
+/// Custom public or company holidays; the Bulgarian and German national days are computed in code.
+model Holiday {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  tenantId  String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  date      DateTime @db.Date
+  name      String
+  /// ISO 3166-1 alpha-2; null = every employee
+  country   String?
+  isHalfDay Boolean  @default(false) @map("is_half_day")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, date])
+  @@map("holiday")
+}
+
+model LeaveSettings {
+  tenantId             String   @id @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  hideSickTypeFromTeam Boolean  @default(false) @map("hide_sick_type_from_team")
+  defaultCountry       String?  @map("default_country")
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("leave_settings")
 }

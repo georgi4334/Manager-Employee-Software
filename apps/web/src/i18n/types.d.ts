@@ -6,6 +6,7 @@ import type errors from './locales/en/errors.json';
 import type nav from './locales/en/nav.json';
 import type employees from './locales/en/employees.json';
 import type organization from './locales/en/organization.json';
+import type leave from './locales/en/leave.json';
 import type notifications from './locales/en/notifications.json';
 
 declare module 'i18next' {
@@ -20,6 +21,7 @@ declare module 'i18next' {
       notifications: typeof notifications;
       employees: typeof employees;
       organization: typeof organization;
+      leave: typeof leave;
     };
   }
 }
