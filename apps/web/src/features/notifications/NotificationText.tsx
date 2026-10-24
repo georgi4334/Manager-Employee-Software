@@ -95,12 +95,14 @@ export function useNotificationText() {
   };
 }
 
-export function NotificationText(props: NotificationTextProps) {
+export function NotificationText(props: NotificationTextProps & { onAccent?: boolean }) {
   const { title, text } = useNotificationText()(props);
   return (
     <>
       <span className="block font-medium">{title}</span>
-      <span className="block text-sm text-muted-foreground">{text}</span>
+      <span className={props.onAccent ? 'block text-sm' : 'block text-sm text-muted-foreground'}>
+        {text}
+      </span>
     </>
   );
 }

@@ -19,6 +19,7 @@ export function MonthGrid({ anchor, selected, today, items, onSelect }: MonthGri
   const language = i18n.resolvedLanguage ?? 'en';
   const { from, to } = rangeFor('month', anchor);
   const days = eachDay(from, to);
+  const weeks = Array.from({ length: days.length / 7 }, (_, i) => days.slice(i * 7, i * 7 + 7));
 
   return (
     <div role="grid" aria-label={formatDay(anchor, language, { month: 'long', year: 'numeric' })}>
@@ -29,34 +30,38 @@ export function MonthGrid({ anchor, selected, today, items, onSelect }: MonthGri
           </span>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-px overflow-hidden rounded-xl border border-border bg-border">
-        {days.map((date) => {
-          const list = itemsOnDay(items, date);
-          const kinds = [...new Set(list.map((i) => i.kind))].slice(0, 3);
-          return (
-            <button
-              key={date}
-              type="button"
-              role="gridcell"
-              aria-selected={date === selected}
-              aria-label={`${formatDay(date, language, { dateStyle: 'full' })}${list.length ? `, ${t('month.count', { count: list.length })}` : ''}`}
-              onClick={() => onSelect(date)}
-              className={cn(
-                'flex min-h-14 flex-col items-center gap-1 bg-surface p-1 text-sm',
-                monthOf(date) !== monthOf(anchor) && 'text-muted-foreground',
-                date === selected && 'bg-secondary font-semibold',
-                date === today && 'text-primary font-semibold',
-              )}
-            >
-              <span>{Number(date.slice(8))}</span>
-              <span className="flex gap-0.5" aria-hidden="true">
-                {kinds.map((kind) => (
-                  <span key={kind} className={cn('size-1.5 rounded-full', KIND_DOT[kind])} />
-                ))}
-              </span>
-            </button>
-          );
-        })}
+      <div className="space-y-px overflow-hidden rounded-xl border border-border bg-border">
+        {weeks.map((week) => (
+          <div key={week[0]} role="row" className="grid grid-cols-7 gap-px">
+            {week.map((date) => {
+              const list = itemsOnDay(items, date);
+              const kinds = [...new Set(list.map((i) => i.kind))].slice(0, 3);
+              return (
+                <button
+                  key={date}
+                  type="button"
+                  role="gridcell"
+                  aria-selected={date === selected}
+                  aria-label={`${formatDay(date, language, { dateStyle: 'full' })}${list.length ? `, ${t('month.count', { count: list.length })}` : ''}`}
+                  onClick={() => onSelect(date)}
+                  className={cn(
+                    'flex min-h-14 flex-col items-center gap-1 bg-surface p-1 text-sm',
+                    monthOf(date) !== monthOf(anchor) && 'text-muted-foreground',
+                    date === selected && 'bg-secondary font-semibold',
+                    date === today && 'font-semibold text-primary',
+                  )}
+                >
+                  <span>{Number(date.slice(8))}</span>
+                  <span className="flex gap-0.5" aria-hidden="true">
+                    {kinds.map((kind) => (
+                      <span key={kind} className={cn('size-1.5 rounded-full', KIND_DOT[kind])} />
+                    ))}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );

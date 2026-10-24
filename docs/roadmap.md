@@ -22,27 +22,27 @@ Solo developer + Claude, ~3–4 focused hours/day. Estimates are in **working da
 
 ## Phase 0 — Foundation (~10–12 days)
 
-1. Monorepo (pnpm + Turborepo), TS config, ESLint/Prettier, Husky + commitlint, GitHub Actions. _(1–2 d)_
-2. `apps/web`: Vite + React 19 + React Router, Tailwind with `tokens.css` (neutral placeholder palette, light/dark), shadcn/ui base components, app shell (sidebar / mobile bottom nav), Vitest + RTL + MSW. _(2–3 d)_
-3. i18n: react-i18next, EN/DE/BG namespaces, language switcher, missing-key check in CI. _(1 d)_
-4. `apps/api`: NestJS, config validation, Prisma + Postgres (docker-compose locally), health check, error format with codes, OpenAPI. _(2 d)_
-5. Tenancy: tenant context + RLS migration + isolation tests. _(1–2 d)_
-6. Auth: email/password (argon2id), Google OAuth, refresh rotation, invitations, password reset, throttling. _(3 d)_
-7. RBAC: roles/permissions seed from `packages/contracts`, guard, policies, matrix test. _(2 d)_
+1. Monorepo (pnpm + Turborepo), TS config, ESLint/Prettier, Husky + commitlint, GitHub Actions — **done**. _(1–2 d)_
+2. `apps/web`: Vite + React 19 + React Router, Tailwind with `tokens.css` (neutral placeholder palette, light/dark), shadcn/ui base components, app shell (sidebar / mobile bottom nav), Vitest + RTL + MSW — **done**. _(2–3 d)_
+3. i18n: react-i18next, EN/DE/BG namespaces, language switcher, missing-key check in CI — **done**. _(1 d)_
+4. `apps/api`: NestJS, config validation, Prisma + Postgres (docker-compose locally), health check, error format with codes, OpenAPI — **done**. _(2 d)_
+5. Tenancy: tenant context + RLS migration + isolation tests — **done** (ADR 0001). _(1–2 d)_
+6. Auth: email/password (argon2id), Google OAuth, refresh rotation, invitations, password reset, throttling — **done** (ADR 0002). _(3 d)_
+7. RBAC: roles/permissions seed from `packages/contracts`, guard, policies, matrix test — **done** (ADR 0003). _(2 d)_
 8. Notification skeleton (outbox → in-app + email, ADR 0004) — **done**.
 9. Deploy pipeline to free EU hosting + "API waking up" UI state (ADR 0005, `docs/deployment.md`) — **done** (accounts and secrets are set up by following the runbook).
 
 ## Phase 1 — First release (~25–30 days)
 
-| Module           | Scope                                                                                                                                                  | Est.  |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- |
-| Employees        | CRUD, directory, profile, invite flow (avatar upload moves to the file-storage step, ADR 0006) — **done**                                              | 4–5 d |
-| Organization     | departments, teams, reporting lines, org chart, cycle prevention (ADR 0007) — **done**                                                                 | 3–4 d |
-| Leave            | types/policies, balances, request → approve flow, holidays (BG/DE), notifications (ADR 0008) — **done**; project-conflict warnings arrive in Phase 2   | 6–7 d |
-| Attendance       | manual check-in/out, office/remote/field, typed periods, corrections, history, team presence (ADR 0009) — **done**                                     | 3–4 d |
-| Calendar (basic) | month/week/day/agenda, personal/team/company events, leave + holiday layers, mobile agenda (ADR 0010) — **done**                                       | 5–6 d |
-| Notifications UI | bell, preferences, email templates (3 languages)                                                                                                       | 2–3 d |
-| Hardening        | GDPR export/erase for employee data (ADR 0011) — **done**; E2E happy paths and an a11y pass — open; automated retention periods need a policy decision | 2–3 d |
+| Module           | Scope                                                                                                                                                               | Est.  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| Employees        | CRUD, directory, profile, invite flow (avatar upload moves to the file-storage step, ADR 0006) — **done**                                                           | 4–5 d |
+| Organization     | departments, teams, reporting lines, org chart, cycle prevention (ADR 0007) — **done**                                                                              | 3–4 d |
+| Leave            | types/policies, balances, request → approve flow, holidays (BG/DE), notifications (ADR 0008) — **done**; project-conflict warnings arrive in Phase 2                | 6–7 d |
+| Attendance       | manual check-in/out, office/remote/field, typed periods, corrections, history, team presence (ADR 0009) — **done**                                                  | 3–4 d |
+| Calendar (basic) | month/week/day/agenda, personal/team/company events, leave + holiday layers, mobile agenda (ADR 0010) — **done**                                                    | 5–6 d |
+| Notifications UI | bell, inbox, preferences, email templates (3 languages) — **done** (with ADR 0004)                                                                                  | 2–3 d |
+| Hardening        | GDPR export/erase for employee data (ADR 0011), E2E happy paths and an accessibility gate (ADR 0012) — **done**; automated retention periods need a policy decision | 2–3 d |
 
 ## Phase 2 — Projects & Time (~30–35 days)
 

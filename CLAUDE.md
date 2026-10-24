@@ -114,6 +114,11 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Audit entries and notifications carry only ids and non-identifying labels; names in notification params (`employeeName`) are replaced on erasure. Never put free text (titles, notes, reasons) into audit or notification params.
 - Automatic retention periods are not implemented (they need a per-country decision); `gdpr.manage_retention` is reserved for it.
 
+## End-to-end and accessibility (docs/adr/0012-e2e-and-accessibility.md)
+
+- `e2e/` (Playwright, Chromium) is a separate package, not part of `pnpm test`: `pnpm --filter @intime/e2e e2e` (needs `E2E_DATABASE_URL`, a Postgres owner URL, and a built API; locally `PW_CHROMIUM` can point at an installed Chromium). It starts its own API (fresh database, real `tenant:create`, log mail transport) and the Vite dev server; specs run in order. Use roles and visible labels as selectors.
+- `06-accessibility.spec.ts` scans every page with axe (WCAG 2.1 A/AA, phone and desktop, light and dark). A new page must be added to its list; fix violations in the components or the design tokens, never by excluding rules.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).
