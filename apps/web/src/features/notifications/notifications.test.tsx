@@ -344,6 +344,7 @@ const SAMPLES: Record<NotificationType, Record<string, unknown>> = {
   'attendance.reminder': { date: '2026-10-26' },
   'project.assigned': { projectId: uuid(9), projectName: 'Website' },
   'task.assigned': { projectId: uuid(9), taskKey: 'WEB-12' },
+  'goal.assigned': { goalId: uuid(9) },
   'time.timer_reminder': { date: '2026-10-26' },
   'timesheet.decided': { weekStart: '2026-10-26', decision: 'approved' },
   'leave.requested': {

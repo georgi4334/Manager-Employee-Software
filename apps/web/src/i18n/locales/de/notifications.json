@@ -97,6 +97,14 @@
         "settingsTitle": "Weiterlaufende Timer",
         "settingsHelp": "Wenn ein Timer 10 Stunden lang läuft."
       }
+    },
+    "goal": {
+      "assigned": {
+        "title": "Ziel gesetzt",
+        "text": "Dir wurde ein Ziel gesetzt.",
+        "settingsTitle": "Dir gesetzte Ziele",
+        "settingsHelp": "Wenn dir jemand ein Ziel setzt."
+      }
     }
   },
   "unknown": {

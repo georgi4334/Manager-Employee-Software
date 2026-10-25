@@ -73,6 +73,16 @@ export const TIME_EVENTS = {
   }),
 } as const;
 
+export const GOAL_EVENTS = {
+  /** Somebody set a personal goal for you: the goal id only. */
+  'goal.assigned': eventDef({
+    params: z.object({ recipientUserId: z.uuid(), goalId: z.uuid() }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'goal.assigned' as const, params },
+    ],
+  }),
+} as const;
+
 export const REMINDER_EVENTS = {
   /** Something started and was never finished: the day only. */
   'attendance.reminder': eventDef({
@@ -157,6 +167,7 @@ export const EVENT_DEFINITIONS = {
   ...TASK_EVENTS,
   ...TIME_EVENTS,
   ...REMINDER_EVENTS,
+  ...GOAL_EVENTS,
 } as const;
 
 export type EventType = keyof typeof EVENT_DEFINITIONS;

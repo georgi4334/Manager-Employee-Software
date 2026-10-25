@@ -1,0 +1,98 @@
+{
+  "title": "Goals",
+  "new": "New goal",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "search": "Search by title",
+  "total_one": "{{count}} goal",
+  "total_other": "{{count}} goals",
+  "empty": "No goals to show.",
+  "pagination": "Pages",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{page}} of {{pages}}",
+  "percent": "{{pct}} %",
+  "progressOf": "Progress of {{title}}",
+  "back": "Back to goals",
+  "notFound": "This goal does not exist or you cannot see it.",
+  "edit": "Edit",
+  "delete": "Delete",
+  "confirmDelete": "Yes, delete this goal",
+  "alignedTo": "Contributes to",
+  "children": "Goals aligned to this one",
+  "scope": {
+    "personal": "Personal",
+    "team": "Team",
+    "company": "Company"
+  },
+  "status": {
+    "draft": "Draft",
+    "active": "Active",
+    "done": "Done",
+    "cancelled": "Cancelled"
+  },
+  "filters": {
+    "scope": "Show goals",
+    "allScopes": "All",
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "open": "Open"
+  },
+  "card": {
+    "due": "due {{date}}",
+    "keyResults_one": "{{count}} key result",
+    "keyResults_other": "{{count}} key results",
+    "overdue": "Overdue"
+  },
+  "form": {
+    "newTitle": "New goal",
+    "editTitle": "Edit goal",
+    "scope": "Kind of goal",
+    "team": "Team",
+    "owner": "For",
+    "myself": "Myself",
+    "title": "Title",
+    "description": "Description",
+    "status": "Status",
+    "dueDate": "Due date",
+    "parent": "Contributes to",
+    "parentHint": "Optional. A goal can contribute to a wider one: personal to team or company, team to company.",
+    "noParent": "No parent goal",
+    "progress": "Progress in percent",
+    "progressHint": "Used while the goal has no key results; with key results the progress is calculated.",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "rule": {
+    "unknown_employee": "This person cannot be given goals.",
+    "unknown_team": "This team does not exist.",
+    "parent_not_found": "The goal to contribute to does not exist or you cannot see it.",
+    "parent_not_wider": "A goal can only contribute to a wider goal.",
+    "too_many": "A goal can have at most 10 key results.",
+    "same_as_start": "The target must differ from the start value.",
+    "children": "Other goals contribute to this one. Remove that link first."
+  },
+  "kr": {
+    "heading": "Key results",
+    "none": "No key results yet. Progress is set by hand.",
+    "new": "Add a key result",
+    "newTitle": "New key result",
+    "title": "Key result",
+    "unit": "Unit (optional)",
+    "start": "Start value",
+    "target": "Target value",
+    "current": "Current value",
+    "add": "Add",
+    "update": "Update",
+    "remove": "Remove",
+    "updateLabel": "Update {{title}}",
+    "range": "From {{start}} now at {{current}} to {{target}}"
+  },
+  "checkIn": {
+    "heading": "Check-ins",
+    "title": "New check-in",
+    "comment": "What changed? (optional)",
+    "save": "Record check-in",
+    "none": "No check-ins yet."
+  }
+}

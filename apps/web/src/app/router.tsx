@@ -13,6 +13,8 @@ import { EmployeesPage } from '@/features/employees/EmployeesPage';
 import { MyProfilePage } from '@/features/employees/MyProfilePage';
 import { AttendancePage } from '@/features/attendance/AttendancePage';
 import { CalendarPage } from '@/features/calendar/CalendarPage';
+import { GoalDetailPage } from '@/features/goals/GoalDetailPage';
+import { GoalsPage } from '@/features/goals/GoalsPage';
 import { CapacityPage } from '@/features/capacity/CapacityPage';
 import { ProjectDetailPage } from '@/features/projects/ProjectDetailPage';
 import { ProjectsPage } from '@/features/projects/ProjectsPage';
@@ -39,6 +41,7 @@ const IMPLEMENTED_PATHS = [
   '/tasks',
   '/time',
   '/capacity',
+  '/goals',
 ];
 
 export const routes: RouteObject[] = [
@@ -96,6 +99,13 @@ export const routes: RouteObject[] = [
           {
             element: <RequirePermission permission="task.view" />,
             children: [{ path: 'tasks', element: <TasksPage /> }],
+          },
+          {
+            element: <RequirePermission permission="goal.view" />,
+            children: [
+              { path: 'goals', element: <GoalsPage /> },
+              { path: 'goals/:id', element: <GoalDetailPage /> },
+            ],
           },
           {
             element: <RequirePermission permission="capacity.view" />,

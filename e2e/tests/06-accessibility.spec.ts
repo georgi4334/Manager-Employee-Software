@@ -38,6 +38,8 @@ const SIGNED_IN = [
   '/time?tab=approvals',
   '/time?tab=reports',
   '/capacity',
+  '/goals',
+  '/goals?scope=personal',
   '/profile',
   '/does-not-exist',
 ];
@@ -120,6 +122,14 @@ for (const variant of variants) {
       await settle(page, '/capacity');
       await page.getByText('Days and projects').first().click();
       found.push(...(await scan(page, '/capacity (days and projects open)')));
+      await settle(page, '/goals');
+      await page.getByRole('button', { name: 'New goal' }).click();
+      found.push(...(await scan(page, '/goals (new goal form)')));
+      await settle(page, '/goals');
+      await page.locator('main a[href^="/goals/"]').first().click();
+      await page.waitForLoadState('networkidle');
+      await page.getByRole('button', { name: 'Add a key result' }).click();
+      found.push(...(await scan(page, 'goal detail (key result form open)')));
       await settle(page, '/leave?tab=approvals');
       await page
         .getByRole('button', { name: /^Check the project impact/ })

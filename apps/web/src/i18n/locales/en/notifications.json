@@ -97,6 +97,14 @@
         "settingsTitle": "Timers left running",
         "settingsHelp": "When a timer keeps running for 10 hours."
       }
+    },
+    "goal": {
+      "assigned": {
+        "title": "Goal set",
+        "text": "A goal was set for you.",
+        "settingsTitle": "Goals set for you",
+        "settingsHelp": "When somebody sets a goal for you."
+      }
     }
   },
   "unknown": {

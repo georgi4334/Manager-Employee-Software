@@ -27,6 +27,7 @@ describe('event catalog', () => {
       'attendance.corrected': { recipientUserId: USER, date: '2026-11-02', action: 'updated' },
       'project.assigned': { recipientUserId: USER, projectId: USER, projectName: 'Website' },
       'task.assigned': { recipientUserId: USER, projectId: USER, taskKey: 'WEB-12' },
+      'goal.assigned': { recipientUserId: USER, goalId: USER },
       'attendance.reminder': { recipientUserId: USER, date: '2026-10-26' },
       'time.timer_reminder': { recipientUserId: USER, date: '2026-10-26' },
       'timesheet.decided': { recipientUserId: USER, weekStart: '2026-10-26', decision: 'approved' },
@@ -269,6 +270,24 @@ describe.each(['attendance.reminder', 'time.timer_reminder'] as const)('%s', (ty
     ['no recipient', { date: '2026-10-26' }],
     ['no date', { recipientUserId: USER }],
     ['a bad date', { recipientUserId: USER, date: '26.10.2026' }],
+  ])('rejects %s', (_label, params) => {
+    expect(definition.params.safeParse(params).success).toBe(false);
+  });
+});
+
+describe('goal.assigned', () => {
+  const definition = EVENT_DEFINITIONS['goal.assigned'];
+
+  it('tells the person the goal id and nothing else', () => {
+    expect(definition.notify({ recipientUserId: USER, goalId: USER })).toEqual([
+      { recipientUserId: USER, type: 'goal.assigned', params: { goalId: USER } },
+    ]);
+  });
+
+  it.each([
+    ['no recipient', { goalId: USER }],
+    ['no goal', { recipientUserId: USER }],
+    ['a bad goal id', { recipientUserId: USER, goalId: 'x' }],
   ])('rejects %s', (_label, params) => {
     expect(definition.params.safeParse(params).success).toBe(false);
   });

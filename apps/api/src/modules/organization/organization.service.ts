@@ -259,6 +259,11 @@ export class OrganizationService {
       await this.lock(tx);
       const current = await tx.team.findUnique({ where: { id }, select: { name: true } });
       if (!current) throw notFound('Team');
+      // Team goals go with the team; goals aligned to them are set free first (docs/adr/0019-goals.md).
+      await tx.goal.updateMany({
+        where: { parent: { is: { teamId: id } } },
+        data: { parentGoalId: null },
+      });
       await tx.team.delete({ where: { id } });
       await this.audit.record(tx, {
         actorUserId: actor.userId,

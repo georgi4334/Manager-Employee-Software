@@ -4,6 +4,7 @@ import {
   Briefcase,
   Clock,
   Gauge,
+  Target,
   ListChecks,
   Timer,
   LayoutDashboard,
@@ -76,6 +77,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Gauge,
     primary: false,
     permission: 'capacity.view',
+  },
+  {
+    path: '/goals',
+    labelKey: 'goals',
+    icon: Target,
+    primary: false,
+    permission: 'goal.view',
   },
   {
     path: '/employees',

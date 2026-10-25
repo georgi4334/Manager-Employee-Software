@@ -1,0 +1,98 @@
+{
+  "title": "Ziele",
+  "new": "Neues Ziel",
+  "loading": "Lädt…",
+  "retry": "Erneut versuchen",
+  "search": "Nach Titel suchen",
+  "total_one": "{{count}} Ziel",
+  "total_other": "{{count}} Ziele",
+  "empty": "Keine Ziele vorhanden.",
+  "pagination": "Seiten",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "page": "Seite {{page}} von {{pages}}",
+  "percent": "{{pct}} %",
+  "progressOf": "Fortschritt von {{title}}",
+  "back": "Zurück zu den Zielen",
+  "notFound": "Dieses Ziel existiert nicht oder du darfst es nicht sehen.",
+  "edit": "Bearbeiten",
+  "delete": "Löschen",
+  "confirmDelete": "Ja, dieses Ziel löschen",
+  "alignedTo": "Trägt bei zu",
+  "children": "Ziele, die zu diesem beitragen",
+  "scope": {
+    "personal": "Persönlich",
+    "team": "Team",
+    "company": "Unternehmen"
+  },
+  "status": {
+    "draft": "Entwurf",
+    "active": "Aktiv",
+    "done": "Erledigt",
+    "cancelled": "Abgebrochen"
+  },
+  "filters": {
+    "scope": "Ziele anzeigen",
+    "allScopes": "Alle",
+    "status": "Status",
+    "allStatuses": "Alle Status",
+    "open": "Offen"
+  },
+  "card": {
+    "due": "fällig {{date}}",
+    "keyResults_one": "{{count}} Key Result",
+    "keyResults_other": "{{count}} Key Results",
+    "overdue": "Überfällig"
+  },
+  "form": {
+    "newTitle": "Neues Ziel",
+    "editTitle": "Ziel bearbeiten",
+    "scope": "Art des Ziels",
+    "team": "Team",
+    "owner": "Für",
+    "myself": "Mich selbst",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "status": "Status",
+    "dueDate": "Fällig am",
+    "parent": "Trägt bei zu",
+    "parentHint": "Optional. Ein Ziel kann zu einem übergeordneten beitragen: persönlich zu Team oder Unternehmen, Team zu Unternehmen.",
+    "noParent": "Kein übergeordnetes Ziel",
+    "progress": "Fortschritt in Prozent",
+    "progressHint": "Gilt, solange das Ziel keine Key Results hat; mit Key Results wird der Fortschritt berechnet.",
+    "save": "Speichern",
+    "cancel": "Abbrechen"
+  },
+  "rule": {
+    "unknown_employee": "Dieser Person können keine Ziele gesetzt werden.",
+    "unknown_team": "Dieses Team existiert nicht.",
+    "parent_not_found": "Das übergeordnete Ziel existiert nicht oder du darfst es nicht sehen.",
+    "parent_not_wider": "Ein Ziel kann nur zu einem übergeordneten Ziel beitragen.",
+    "too_many": "Ein Ziel kann höchstens 10 Key Results haben.",
+    "same_as_start": "Das Ziel muss sich vom Startwert unterscheiden.",
+    "children": "Andere Ziele tragen zu diesem bei. Entferne zuerst diese Verknüpfung."
+  },
+  "kr": {
+    "heading": "Key Results",
+    "none": "Noch keine Key Results. Der Fortschritt wird von Hand gesetzt.",
+    "new": "Key Result hinzufügen",
+    "newTitle": "Neues Key Result",
+    "title": "Key Result",
+    "unit": "Einheit (optional)",
+    "start": "Startwert",
+    "target": "Zielwert",
+    "current": "Aktueller Wert",
+    "add": "Hinzufügen",
+    "update": "Aktualisieren",
+    "remove": "Entfernen",
+    "updateLabel": "{{title}} aktualisieren",
+    "range": "Von {{start}}, jetzt bei {{current}}, bis {{target}}"
+  },
+  "checkIn": {
+    "heading": "Check-ins",
+    "title": "Neuer Check-in",
+    "comment": "Was hat sich geändert? (optional)",
+    "save": "Check-in erfassen",
+    "none": "Noch keine Check-ins."
+  }
+}

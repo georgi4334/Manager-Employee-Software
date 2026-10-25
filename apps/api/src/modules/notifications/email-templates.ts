@@ -61,6 +61,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\na task was assigned to you in ${v.workspace} on InTime.\n\n` +
         `Open InTime to see it:\n${v.link}`,
     },
+    'goal.assigned': {
+      subject: (v) => `A goal was set for you in ${v.workspace}`,
+      text: (v) =>
+        `Hello,\n\na goal was set for you in ${v.workspace} on InTime.\n\n` +
+        `Open InTime to see it:\n${v.link}`,
+    },
     'attendance.reminder': {
       subject: (v) => `A check-in in ${v.workspace} is still open`,
       text: (v) =>
@@ -124,6 +130,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hallo,\n\nIhnen wurde in ${v.workspace} auf InTime eine Aufgabe zugewiesen.\n\n` +
         `Öffnen Sie InTime, um sie zu sehen:\n${v.link}`,
     },
+    'goal.assigned': {
+      subject: (v) => `Für Sie wurde in ${v.workspace} ein Ziel gesetzt`,
+      text: (v) =>
+        `Hallo,\n\nfür Sie wurde in ${v.workspace} auf InTime ein Ziel gesetzt.\n\n` +
+        `Öffnen Sie InTime, um es zu sehen:\n${v.link}`,
+    },
     'attendance.reminder': {
       subject: (v) => `Eine Anmeldung in ${v.workspace} ist noch offen`,
       text: (v) =>
@@ -185,6 +197,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       subject: (v) => `Възложена ви е задача в ${v.workspace}`,
       text: (v) =>
         `Здравейте,\n\nвъзложена ви е задача в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да я видите:\n${v.link}`,
+    },
+    'goal.assigned': {
+      subject: (v) => `Зададена ви е цел в ${v.workspace}`,
+      text: (v) =>
+        `Здравейте,\n\nзададена ви е цел в ${v.workspace} в InTime.\n\n` +
         `Отворете InTime, за да я видите:\n${v.link}`,
     },
     'attendance.reminder': {

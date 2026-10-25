@@ -91,6 +91,9 @@ export function useNotificationText() {
         text: t('types.task.assigned.text', { taskKey: str(params.taskKey) }),
       };
     }
+    if (type === 'goal.assigned') {
+      return { title: t('types.goal.assigned.title'), text: t('types.goal.assigned.text') };
+    }
     if (type === 'attendance.reminder') {
       return {
         title: t('types.attendance.reminder.title'),
