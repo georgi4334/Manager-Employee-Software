@@ -1,0 +1,51 @@
+{
+  "title": "Capacity",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "hours": "{{value}} h",
+  "standardDay": "Measured against a standard working day of 8 hours, without public holidays and approved leave.",
+  "search": "Search by name",
+  "project": "Project",
+  "allProjects": "All projects",
+  "mostFree": "Most free time first",
+  "empty": "Nobody to show for this week.",
+  "total_one": "{{count}} person",
+  "total_other": "{{count}} people",
+  "pagination": "Pages",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{page}} of {{pages}}",
+  "week": {
+    "of": "Week of {{date}}",
+    "previous": "Previous week",
+    "next": "Next week",
+    "thisWeek": "This week"
+  },
+  "level": {
+    "none": "Not available",
+    "free": "Free",
+    "busy": "Busy",
+    "full": "Almost full",
+    "over": "Over-booked"
+  },
+  "day": {
+    "off": "Not working",
+    "leave": "Leave",
+    "partly_leave": "Part of the day on leave",
+    "free": "Free",
+    "busy": "Busy",
+    "full": "Almost full",
+    "over": "Over-booked"
+  },
+  "numbers": "Available {{available}} · planned {{planned}} · logged {{logged}} · free {{free}}",
+  "dayNumbers": "planned {{planned}} of {{available}} h",
+  "dayLogged": "logged {{logged}} h",
+  "projectNumbers": "planned {{planned}} h · logged {{logged}} h",
+  "details": {
+    "title": "Days and projects",
+    "show": "Days and projects of {{name}}",
+    "days": "Days of {{name}}",
+    "projects": "Projects of {{name}}",
+    "otherProjects": "Other projects"
+  }
+}

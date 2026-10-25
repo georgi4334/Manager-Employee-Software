@@ -118,6 +118,7 @@ describe('navigation by permission', () => {
         'Projects',
         'Tasks',
         'Time',
+        'Capacity',
         'Employees',
         'Organization',
       ]);

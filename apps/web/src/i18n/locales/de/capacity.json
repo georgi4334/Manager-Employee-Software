@@ -1,0 +1,51 @@
+{
+  "title": "Kapazität",
+  "loading": "Wird geladen…",
+  "retry": "Erneut versuchen",
+  "hours": "{{value}} Std.",
+  "standardDay": "Gemessen an einem Standardarbeitstag von 8 Stunden, ohne Feiertage und genehmigten Urlaub.",
+  "search": "Nach Namen suchen",
+  "project": "Projekt",
+  "allProjects": "Alle Projekte",
+  "mostFree": "Meiste freie Zeit zuerst",
+  "empty": "Für diese Woche gibt es niemanden anzuzeigen.",
+  "total_one": "{{count}} Person",
+  "total_other": "{{count}} Personen",
+  "pagination": "Seiten",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "page": "Seite {{page}} von {{pages}}",
+  "week": {
+    "of": "Woche ab {{date}}",
+    "previous": "Vorherige Woche",
+    "next": "Nächste Woche",
+    "thisWeek": "Diese Woche"
+  },
+  "level": {
+    "none": "Nicht verfügbar",
+    "free": "Frei",
+    "busy": "Ausgelastet",
+    "full": "Fast voll",
+    "over": "Überbucht"
+  },
+  "day": {
+    "off": "Arbeitsfrei",
+    "leave": "Urlaub",
+    "partly_leave": "Teil des Tages im Urlaub",
+    "free": "Frei",
+    "busy": "Ausgelastet",
+    "full": "Fast voll",
+    "over": "Überbucht"
+  },
+  "numbers": "Verfügbar {{available}} · geplant {{planned}} · erfasst {{logged}} · frei {{free}}",
+  "dayNumbers": "geplant {{planned}} von {{available}} Std.",
+  "dayLogged": "erfasst {{logged}} Std.",
+  "projectNumbers": "geplant {{planned}} Std. · erfasst {{logged}} Std.",
+  "details": {
+    "title": "Tage und Projekte",
+    "show": "Tage und Projekte von {{name}}",
+    "days": "Tage von {{name}}",
+    "projects": "Projekte von {{name}}",
+    "otherProjects": "Andere Projekte"
+  }
+}

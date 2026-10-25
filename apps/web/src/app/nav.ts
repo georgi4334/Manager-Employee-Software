@@ -3,6 +3,7 @@ import {
   CalendarOff,
   Briefcase,
   Clock,
+  Gauge,
   ListChecks,
   Timer,
   LayoutDashboard,
@@ -68,6 +69,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Timer,
     primary: false,
     permission: ['time.log', 'time.view'],
+  },
+  {
+    path: '/capacity',
+    labelKey: 'capacity',
+    icon: Gauge,
+    primary: false,
+    permission: 'capacity.view',
   },
   {
     path: '/employees',

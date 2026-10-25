@@ -53,7 +53,7 @@ Solo developer + Claude, ~3–4 focused hours/day. Estimates are in **working da
 | Time Tracker       | start/stop timer, manual entries, billable flag, weekly timesheet, submit/approve/lock (ADR 0015) — **done**                              | 8–9 d |
 | Time reports       | hours per project/person/client, budget vs actual, CSV export of approved hours (ADR 0016) — **done**; daily targets move to Integrations | 4–5 d |
 | Integrations       | leave-conflict warnings on approval, attendance vs logged hours, missed check-out/timer reminders (ADR 0017) — **done**                   | 3–4 d |
-| Capacity           | planned vs actual load, availability view                                                                                                 | 4–5 d |
+| Capacity           | planned vs actual load, availability view (ADR 0018) — **done**                                                                           | 4–5 d |
 
 Out of scope: payroll calculation, screenshots/activity monitoring, sprints/sub-tasks.
 

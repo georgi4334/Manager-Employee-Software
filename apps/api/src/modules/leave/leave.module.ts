@@ -17,6 +17,6 @@ import { LeaveController } from './leave.controller.js';
     LeaveRequestsService,
     LeaveConflictsService,
   ],
-  exports: [LeaveTypesService],
+  exports: [LeaveTypesService, LeaveSettingsService],
 })
 export class LeaveModule {}

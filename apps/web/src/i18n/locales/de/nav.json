@@ -7,5 +7,6 @@
   "organization": "Organisation",
   "projects": "Projekte",
   "tasks": "Aufgaben",
-  "time": "Zeit"
+  "time": "Zeit",
+  "capacity": "Kapazität"
 }
