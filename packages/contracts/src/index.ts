@@ -5,6 +5,7 @@ export * from './auth.js';
 export * from './dates.js';
 export * from './employees.js';
 export * from './errors.js';
+export * from './goals.js';
 export * from './holidays.js';
 export * from './integrations.js';
 export * from './leave-days.js';

@@ -91,6 +91,35 @@ export const personalDataExportSchema = z.object({
       dueDate: date.nullable(),
     }),
   ),
+  /** Their personal goals with key results, and the check-ins they wrote (ADR 0019). */
+  goals: z.object({
+    personal: z.array(
+      z.object({
+        title: z.string(),
+        description: z.string().nullable(),
+        status: z.string(),
+        dueDate: date.nullable(),
+        progressPct: z.number().int(),
+        keyResults: z.array(
+          z.object({
+            title: z.string(),
+            unit: z.string().nullable(),
+            startValue: z.number(),
+            targetValue: z.number(),
+            currentValue: z.number(),
+          }),
+        ),
+      }),
+    ),
+    checkIns: z.array(
+      z.object({
+        goal: z.string(),
+        progressPct: z.number().int(),
+        comment: z.string().nullable(),
+        createdAt: dateTime,
+      }),
+    ),
+  }),
   /** Logged time and weekly timesheets (ADR 0015). */
   time: z.object({
     entries: z.array(

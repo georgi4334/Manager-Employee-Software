@@ -57,6 +57,14 @@ export class ErasureService {
         data: { note: null },
       });
       await tx.timeEntry.updateMany({ where: { tenantId, employeeId }, data: { note: null } });
+      // Personal goals go with the person; what they wrote in check-ins elsewhere is cleared, the numbers stay.
+      await tx.goal.deleteMany({
+        where: { tenantId, scope: 'personal', ownerEmployeeId: employeeId },
+      });
+      await tx.goalUpdate.updateMany({
+        where: { tenantId, authorEmployeeId: employeeId },
+        data: { comment: null },
+      });
       await tx.calendarEvent.deleteMany({
         where: { tenantId, ownerEmployeeId: employeeId, scope: 'personal' },
       });

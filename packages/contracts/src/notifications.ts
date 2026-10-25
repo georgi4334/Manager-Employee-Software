@@ -65,6 +65,13 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/time',
   }),
+  // Goals (docs/adr/0019-goals.md): somebody set a personal goal for you. The goal id only, never the title.
+  'goal.assigned': typeDef({
+    params: z.object({ goalId: z.uuid() }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/goals',
+  }),
   // Reminders (docs/adr/0017-integrations.md): something started and was never finished. The day only.
   'attendance.reminder': typeDef({
     params: z.object({ date: z.string().regex(DATE) }),

@@ -39,6 +39,9 @@ model Tenant {
   tasks                   Task[]
   timeEntries             TimeEntry[]
   timesheets              Timesheet[]
+  goals                   Goal[]
+  keyResults              KeyResult[]
+  goalUpdates             GoalUpdate[]
   leavePolicies           LeavePolicy[]
   leaveBalances           LeaveBalance[]
   leaveRequests           LeaveRequest[]
@@ -343,6 +346,8 @@ model Employee {
   timeEntries        TimeEntry[]
   timesheets         Timesheet[]         @relation("TimesheetOwner")
   timesheetsDecided  Timesheet[]         @relation("TimesheetDecider")
+  goalsOwned         Goal[]              @relation("GoalOwner")
+  goalUpdates        GoalUpdate[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -379,6 +384,7 @@ model Department {
 /// A team inside a department. Teams group people; they grant no access.
 model Team {
   calendarEvents CalendarEvent[]
+  goals          Goal[]
   id             String          @id @default(uuid(7)) @db.Uuid
   tenantId       String          @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
   name           String
@@ -833,4 +839,83 @@ model Timesheet {
   @@unique([tenantId, employeeId, weekStart])
   @@index([tenantId, status])
   @@map("timesheet")
+}
+
+// ----- Goals (docs/adr/0019-goals.md) --------------------------------------------------------------------
+
+model Goal {
+  id              String    @id @default(uuid(7)) @db.Uuid
+  tenantId        String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// personal | team | company
+  scope           String
+  /// Personal: the person the goal belongs to. Team and company: who created it.
+  ownerEmployeeId String    @map("owner_employee_id") @db.Uuid
+  /// Exactly for team goals; they go with the team.
+  teamId          String?   @map("team_id") @db.Uuid
+  /// Alignment: a strictly wider goal (checked by the service and a trigger).
+  parentGoalId    String?   @map("parent_goal_id") @db.Uuid
+  title           String
+  description     String?
+  /// draft | active | done | cancelled
+  status          String    @default("active")
+  dueDate         DateTime? @map("due_date") @db.Date
+  /// The manual progress, used while the goal has no key results.
+  progressPct     Int       @default(0) @map("progress_pct")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant     Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  owner      Employee     @relation("GoalOwner", fields: [tenantId, ownerEmployeeId], references: [tenantId, id], onDelete: NoAction)
+  team       Team?        @relation(fields: [tenantId, teamId], references: [tenantId, id], onDelete: Cascade)
+  parent     Goal?        @relation("GoalAlignment", fields: [tenantId, parentGoalId], references: [tenantId, id], onDelete: NoAction)
+  children   Goal[]       @relation("GoalAlignment")
+  keyResults KeyResult[]
+  updates    GoalUpdate[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, scope, status])
+  @@index([tenantId, ownerEmployeeId])
+  @@index([tenantId, teamId])
+  @@index([tenantId, parentGoalId])
+  @@map("goal")
+}
+
+model KeyResult {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  tenantId     String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  goalId       String   @map("goal_id") @db.Uuid
+  title        String
+  unit         String?
+  startValue   Decimal  @default(0) @map("start_value") @db.Decimal(14, 2)
+  targetValue  Decimal  @map("target_value") @db.Decimal(14, 2)
+  currentValue Decimal  @map("current_value") @db.Decimal(14, 2)
+  position     Int      @default(0)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  goal   Goal   @relation(fields: [tenantId, goalId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, goalId])
+  @@map("key_result")
+}
+
+/// Append-only check-ins: the progress at that moment and an optional comment.
+model GoalUpdate {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  tenantId         String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  goalId           String   @map("goal_id") @db.Uuid
+  authorEmployeeId String   @map("author_employee_id") @db.Uuid
+  progressPct      Int      @map("progress_pct")
+  comment          String?
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  tenant Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  goal   Goal     @relation(fields: [tenantId, goalId], references: [tenantId, id], onDelete: Cascade)
+  author Employee @relation(fields: [tenantId, authorEmployeeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, goalId, createdAt])
+  @@map("goal_update")
 }

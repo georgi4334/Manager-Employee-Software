@@ -19,6 +19,7 @@ import { AuditModule } from './modules/audit/audit.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { AttendanceModule } from './modules/attendance/attendance.module.js';
 import { CalendarModule } from './modules/calendar/calendar.module.js';
+import { GoalsModule } from './modules/goals/goals.module.js';
 import { CapacityModule } from './modules/capacity/capacity.module.js';
 import { ProjectsModule } from './modules/projects/projects.module.js';
 import { TimeModule } from './modules/time/time.module.js';
@@ -97,6 +98,7 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     ProjectsModule,
     TimeModule,
     CapacityModule,
+    GoalsModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },

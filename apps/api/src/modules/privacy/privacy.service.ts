@@ -104,6 +104,8 @@ export class PrivacyService {
       tasks,
       timeEntries,
       timesheets,
+      goals,
+      checkIns,
     ] = employeeId
       ? await Promise.all([
           tx.leaveRequest.findMany({
@@ -148,8 +150,18 @@ export class PrivacyService {
             },
           }),
           tx.timesheet.findMany({ where: { employeeId }, orderBy: { weekStart: 'asc' } }),
+          tx.goal.findMany({
+            where: { scope: 'personal', ownerEmployeeId: employeeId },
+            orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+            include: { keyResults: { orderBy: [{ position: 'asc' }, { id: 'asc' }] } },
+          }),
+          tx.goalUpdate.findMany({
+            where: { authorEmployeeId: employeeId },
+            orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+            include: { goal: { select: { title: true, scope: true } } },
+          }),
         ])
-      : [[], [], [], [], [], [], [], [], []];
+      : [[], [], [], [], [], [], [], [], [], [], []];
     const [notifications, preferences, auditEntries] = userId
       ? await Promise.all([
           tx.notification.findMany({
@@ -240,6 +252,29 @@ export class PrivacyService {
         estimateHours: t.estimateHours === null ? null : Number(t.estimateHours),
         dueDate: iso(t.dueDate)?.slice(0, 10) ?? null,
       })),
+      goals: {
+        personal: goals.map((g) => ({
+          title: g.title,
+          description: g.description,
+          status: g.status,
+          dueDate: g.dueDate ? day(g.dueDate)! : null,
+          progressPct: g.progressPct,
+          keyResults: g.keyResults.map((k) => ({
+            title: k.title,
+            unit: k.unit,
+            startValue: Number(k.startValue),
+            targetValue: Number(k.targetValue),
+            currentValue: Number(k.currentValue),
+          })),
+        })),
+        // Check-ins on team and company goals are named by scope, not by the title of somebody else's goal.
+        checkIns: checkIns.map((c) => ({
+          goal: c.goal.scope === 'personal' ? c.goal.title : c.goal.scope,
+          progressPct: c.progressPct,
+          comment: c.comment,
+          createdAt: c.createdAt.toISOString(),
+        })),
+      },
       time: {
         entries: timeEntries.map((e) => ({
           workDate: day(e.workDate)!,
