@@ -17,6 +17,7 @@ import { AppException } from '../../common/errors/app-exception.js';
 import type { TenantTx } from '../../infrastructure/tenancy/tenant-context.js';
 import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
 import { AuditService } from '../audit/audit.service.js';
+import { TimeService } from '../time/time.service.js';
 import { AssignmentsService } from '../projects/assignments.service.js';
 import { InvitationService } from '../auth/invitation.service.js';
 import { UserRolesService } from '../roles/user-roles.service.js';
@@ -75,6 +76,7 @@ export class EmployeesService {
     private readonly users: UsersService,
     private readonly org: OrganizationService,
     private readonly projects: AssignmentsService,
+    private readonly time: TimeService,
     private readonly audit: AuditService,
   ) {}
 
@@ -262,6 +264,7 @@ export class EmployeesService {
       if (row.userId) await this.users.disableInTx(tx, actor, row.userId);
       await this.org.onEmployeeDeactivated(tx, actor.userId, id);
       await this.projects.onEmployeeDeactivated(tx, id, terminationDate);
+      await this.time.onEmployeeDeactivated(tx, id);
       await tx.employee.update({
         where: { id },
         data: { status: 'inactive', terminationDate: dateIn(terminationDate) },

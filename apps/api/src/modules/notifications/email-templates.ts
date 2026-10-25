@@ -61,6 +61,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\na task was assigned to you in ${v.workspace} on InTime.\n\n` +
         `Open InTime to see it:\n${v.link}`,
     },
+    'timesheet.decided': {
+      subject: (v) => `A decision on your timesheet in ${v.workspace}`,
+      text: (v) =>
+        `Hello,\n\nthere is a decision on your timesheet in ${v.workspace} on InTime.\n\n` +
+        `Open InTime to see it:\n${v.link}`,
+    },
   },
   de: {
     'account.roles_changed': {
@@ -104,6 +110,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       subject: (v) => `Ihnen wurde in ${v.workspace} eine Aufgabe zugewiesen`,
       text: (v) =>
         `Hallo,\n\nIhnen wurde in ${v.workspace} auf InTime eine Aufgabe zugewiesen.\n\n` +
+        `Öffnen Sie InTime, um sie zu sehen:\n${v.link}`,
+    },
+    'timesheet.decided': {
+      subject: (v) => `Entscheidung zu Ihrem Zeitnachweis in ${v.workspace}`,
+      text: (v) =>
+        `Hallo,\n\nzu Ihrem Zeitnachweis in ${v.workspace} auf InTime gibt es eine Entscheidung.\n\n` +
         `Öffnen Sie InTime, um sie zu sehen:\n${v.link}`,
     },
   },
@@ -150,6 +162,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       text: (v) =>
         `Здравейте,\n\nвъзложена ви е задача в ${v.workspace} в InTime.\n\n` +
         `Отворете InTime, за да я видите:\n${v.link}`,
+    },
+    'timesheet.decided': {
+      subject: (v) => `Решение по вашия график на часовете в ${v.workspace}`,
+      text: (v) =>
+        `Здравейте,\n\nима решение по вашия график на часовете в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да го видите:\n${v.link}`,
     },
   },
 };

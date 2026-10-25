@@ -34,6 +34,9 @@ const SIGNED_IN = [
   '/projects?tab=clients',
   '/tasks',
   '/tasks?view=board',
+  '/time',
+  '/time?tab=approvals',
+  '/time?tab=reports',
   '/profile',
   '/does-not-exist',
 ];
@@ -108,6 +111,9 @@ for (const variant of variants) {
       await page.getByRole('button', { name: 'Cancel' }).click();
       await page.getByRole('button', { name: 'Edit' }).first().click();
       found.push(...(await scan(page, '/tasks (edit form)')));
+      await settle(page, '/time');
+      await page.getByRole('button', { name: 'Add time' }).click();
+      found.push(...(await scan(page, '/time (add time form)')));
       expect(found).toEqual([]);
     });
   });

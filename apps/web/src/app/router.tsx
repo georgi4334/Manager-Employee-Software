@@ -16,6 +16,7 @@ import { CalendarPage } from '@/features/calendar/CalendarPage';
 import { ProjectDetailPage } from '@/features/projects/ProjectDetailPage';
 import { ProjectsPage } from '@/features/projects/ProjectsPage';
 import { TasksPage } from '@/features/tasks/TasksPage';
+import { TimePage } from '@/features/time/TimePage';
 import { LeavePage } from '@/features/leave/LeavePage';
 import { OrganizationPage } from '@/features/organization/OrganizationPage';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
@@ -35,6 +36,7 @@ const IMPLEMENTED_PATHS = [
   '/calendar',
   '/projects',
   '/tasks',
+  '/time',
 ];
 
 export const routes: RouteObject[] = [
@@ -87,8 +89,15 @@ export const routes: RouteObject[] = [
             children: [
               { path: 'projects', element: <ProjectsPage /> },
               { path: 'projects/:id', element: <ProjectDetailPage /> },
-              { path: 'tasks', element: <TasksPage /> },
             ],
+          },
+          {
+            element: <RequirePermission permission="task.view" />,
+            children: [{ path: 'tasks', element: <TasksPage /> }],
+          },
+          {
+            element: <RequirePermission permission={['time.log', 'time.view']} />,
+            children: [{ path: 'time', element: <TimePage /> }],
           },
           {
             element: (

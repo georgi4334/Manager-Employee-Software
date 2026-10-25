@@ -1,0 +1,132 @@
+{
+  "title": "Zeit",
+  "loading": "Wird geladen…",
+  "retry": "Erneut versuchen",
+  "hours": "{{value}} Std.",
+  "tabs": {
+    "label": "Zeitansichten",
+    "week": "Meine Zeit",
+    "approvals": "Genehmigungen",
+    "reports": "Berichte"
+  },
+  "status": {
+    "none": "Nicht eingereicht",
+    "open": "Wieder geöffnet",
+    "submitted": "Eingereicht",
+    "approved": "Genehmigt",
+    "rejected": "Zurückgegeben"
+  },
+  "timer": {
+    "title": "Timer",
+    "startTitle": "Timer starten",
+    "start": "Starten",
+    "stop": "Stoppen",
+    "runningOn": "Läuft auf {{project}}"
+  },
+  "week": {
+    "of": "Woche ab {{date}}",
+    "previous": "Vorherige Woche",
+    "next": "Nächste Woche",
+    "thisWeek": "Diese Woche",
+    "days": "Tage der Woche",
+    "total": "{{value}} Std. erfasst",
+    "billable": "{{value}} Std. abrechenbar",
+    "submit": "Woche einreichen",
+    "submitting": "Wird eingereicht…",
+    "lockedSubmitted": "Diese Woche ist eingereicht. Sie kann bis zur Entscheidung nicht geändert werden.",
+    "lockedApproved": "Diese Woche ist genehmigt und gesperrt.",
+    "sentBack": "Diese Woche wurde zurückgegeben. Ändere sie und reiche sie erneut ein."
+  },
+  "entry": {
+    "add": "Zeit erfassen",
+    "addTitle": "Zeit erfassen",
+    "editTitle": "Zeit bearbeiten",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "running": "Läuft",
+    "billable": "Abrechenbar",
+    "notBillable": "Nicht abrechenbar"
+  },
+  "form": {
+    "project": "Projekt",
+    "task": "Aufgabe (optional)",
+    "noTask": "Keine Aufgabe",
+    "date": "Datum",
+    "duration": "Dauer",
+    "durationHint": "Z. B. 1:30 oder 1,5 (Stunden)",
+    "note": "Notiz (optional)",
+    "billable": "Abrechenbar",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen"
+  },
+  "approvals": {
+    "filter": "Status",
+    "filters": {
+      "submitted": "Wartet auf Entscheidung",
+      "approved": "Genehmigt",
+      "rejected": "Zurückgegeben",
+      "all": "Alle"
+    },
+    "empty": "Keine Zeitnachweise vorhanden.",
+    "show": "Zeit anzeigen",
+    "hide": "Zeit ausblenden",
+    "showFor": "Zeit von {{name}} anzeigen",
+    "hideFor": "Zeit von {{name}} ausblenden",
+    "approve": "Genehmigen",
+    "reject": "Zurückgeben",
+    "reopen": "Wieder öffnen",
+    "approveFor": "Woche von {{name}} genehmigen",
+    "rejectFor": "Woche von {{name}} zurückgeben",
+    "reopenFor": "Woche von {{name}} wieder öffnen"
+  },
+  "conflict": {
+    "running": "Es läuft bereits ein Timer. Stoppe ihn zuerst.",
+    "locked": "Diese Woche ist eingereicht oder genehmigt und kann nicht geändert werden.",
+    "status": "Über diesen Zeitnachweis wurde bereits entschieden."
+  },
+  "rule": {
+    "unknown_project": "Dieses Projekt existiert nicht.",
+    "not_on_project": "Du bist nicht in diesem Projekt.",
+    "task_not_in_project": "Diese Aufgabe gehört nicht zum Projekt.",
+    "project_closed": "Dieses Projekt ist abgeschlossen.",
+    "future_date": "Für einen Tag in der Zukunft kann keine Zeit erfasst werden.",
+    "day_too_long": "Ein Tag kann nicht mehr als 24 Stunden enthalten.",
+    "not_a_monday": "Eine Woche beginnt an einem Montag.",
+    "future_week": "Eine Woche, die noch nicht begonnen hat, kann nicht eingereicht werden.",
+    "no_entries": "In dieser Woche ist keine Zeit erfasst.",
+    "timer_running": "Stoppe den laufenden Timer, bevor du diese Woche einreichst."
+  },
+  "reports": {
+    "from": "Von",
+    "to": "Bis",
+    "groupBy": "Gruppieren nach",
+    "groups": {
+      "project": "Projekt",
+      "person": "Person",
+      "client": "Kunde"
+    },
+    "project": "Projekt",
+    "allProjects": "Alle Projekte",
+    "problem": {
+      "invalidDate": "Gib ein gültiges Datum als Jahr-Monat-Tag ein.",
+      "end_before_start": "Das Ende darf nicht vor dem Beginn liegen.",
+      "too_long": "Ein Bericht umfasst höchstens ein Jahr."
+    },
+    "export": "Genehmigte Stunden exportieren (CSV)",
+    "exporting": "Wird vorbereitet…",
+    "exportHint": "Nur genehmigte Wochen. Ohne Notizen. Die Datei enthält Namen: bitte sorgfältig behandeln.",
+    "exported": "Datei mit {{count}} Zeilen gespeichert.",
+    "empty": "In diesem Zeitraum ist keine Zeit erfasst.",
+    "totals": "Gesamt {{total}} Std. · abrechenbar {{billable}} Std. · genehmigt {{approved}} Std.",
+    "split": "Abrechenbar {{billable}} Std. · genehmigt {{approved}} Std.",
+    "noClient": "Kein Kunde",
+    "budgetOf": "Budget von {{name}} verbraucht",
+    "budget": "{{logged}} Std. von {{budget}} Std. verbraucht ({{percent}} %)",
+    "level": {
+      "ok": "Im Budget",
+      "warning": "Nahe am Budget",
+      "over": "Über dem Budget"
+    }
+  }
+}

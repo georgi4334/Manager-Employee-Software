@@ -27,6 +27,7 @@ describe('event catalog', () => {
       'attendance.corrected': { recipientUserId: USER, date: '2026-11-02', action: 'updated' },
       'project.assigned': { recipientUserId: USER, projectId: USER, projectName: 'Website' },
       'task.assigned': { recipientUserId: USER, projectId: USER, taskKey: 'WEB-12' },
+      'timesheet.decided': { recipientUserId: USER, weekStart: '2026-10-26', decision: 'approved' },
     };
     for (const [type, definition] of Object.entries(EVENT_DEFINITIONS)) {
       const params = definition.params.parse(samples[type as keyof typeof samples]);
@@ -224,6 +225,30 @@ describe('task.assigned', () => {
     ['no reference', { recipientUserId: USER, projectId: USER, taskKey: ' ' }],
     ['a very long reference', { recipientUserId: USER, projectId: USER, taskKey: 'x'.repeat(31) }],
     ['a bad project id', { recipientUserId: USER, projectId: 'x', taskKey: 'WEB-12' }],
+  ])('rejects %s', (_label, params) => {
+    expect(definition.params.safeParse(params).success).toBe(false);
+  });
+});
+
+describe('timesheet.decided', () => {
+  const definition = EVENT_DEFINITIONS['timesheet.decided'];
+
+  it('tells the person the week and the decision, nothing else', () => {
+    expect(
+      definition.notify({ recipientUserId: USER, weekStart: '2026-10-26', decision: 'rejected' }),
+    ).toEqual([
+      {
+        recipientUserId: USER,
+        type: 'timesheet.decided',
+        params: { weekStart: '2026-10-26', decision: 'rejected' },
+      },
+    ]);
+  });
+
+  it.each([
+    ['no recipient', { weekStart: '2026-10-26', decision: 'approved' }],
+    ['a bad date', { recipientUserId: USER, weekStart: '26.10.2026', decision: 'approved' }],
+    ['another decision', { recipientUserId: USER, weekStart: '2026-10-26', decision: 'locked' }],
   ])('rejects %s', (_label, params) => {
     expect(definition.params.safeParse(params).success).toBe(false);
   });

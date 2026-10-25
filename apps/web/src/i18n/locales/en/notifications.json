@@ -74,6 +74,15 @@
         "settingsTitle": "Tasks assigned to you",
         "settingsHelp": "When somebody gives you a task."
       }
+    },
+    "timesheet": {
+      "decided": {
+        "title": "Timesheet decided",
+        "textApproved": "Your timesheet for the week of {{week}} was approved.",
+        "textRejected": "Your timesheet for the week of {{week}} was sent back. You can change it and submit it again.",
+        "settingsTitle": "Decisions on your timesheets",
+        "settingsHelp": "When a manager approves or sends back one of your weeks."
+      }
     }
   },
   "unknown": {

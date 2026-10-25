@@ -41,6 +41,7 @@ const document: PersonalDataExport = {
   leave: { requests: [], balances: [] },
   projects: { assignments: [], led: [] },
   tasks: [],
+  time: { entries: [], timesheets: [] },
   attendance: [],
   calendarEvents: [],
   notifications: [],

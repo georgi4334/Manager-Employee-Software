@@ -55,6 +55,16 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/tasks',
   }),
+  // Time (docs/adr/0015-time-tracker.md): your week was approved or sent back. The week and the decision only.
+  'timesheet.decided': typeDef({
+    params: z.object({
+      weekStart: z.string().regex(DATE),
+      decision: z.enum(['approved', 'rejected']),
+    }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/time',
+  }),
   // Leave (docs/adr/0008-leave.md). Names and dates only: never the type of a sick request, never reasons.
   'leave.requested': typeDef({
     params: z.object({

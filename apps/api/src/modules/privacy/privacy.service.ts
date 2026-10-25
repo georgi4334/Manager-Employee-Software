@@ -94,7 +94,17 @@ export class PrivacyService {
         })
       : null;
 
-    const [requests, balances, attendance, events, assignments, led, tasks] = employeeId
+    const [
+      requests,
+      balances,
+      attendance,
+      events,
+      assignments,
+      led,
+      tasks,
+      timeEntries,
+      timesheets,
+    ] = employeeId
       ? await Promise.all([
           tx.leaveRequest.findMany({
             where: { employeeId },
@@ -129,8 +139,17 @@ export class PrivacyService {
             orderBy: [{ project: { code: 'asc' } }, { number: 'asc' }],
             include: { project: { select: { code: true } } },
           }),
+          tx.timeEntry.findMany({
+            where: { employeeId },
+            orderBy: [{ workDate: 'asc' }, { createdAt: 'asc' }],
+            include: {
+              project: { select: { code: true } },
+              task: { select: { number: true } },
+            },
+          }),
+          tx.timesheet.findMany({ where: { employeeId }, orderBy: { weekStart: 'asc' } }),
         ])
-      : [[], [], [], [], [], [], []];
+      : [[], [], [], [], [], [], [], [], []];
     const [notifications, preferences, auditEntries] = userId
       ? await Promise.all([
           tx.notification.findMany({
@@ -221,6 +240,18 @@ export class PrivacyService {
         estimateHours: t.estimateHours === null ? null : Number(t.estimateHours),
         dueDate: iso(t.dueDate)?.slice(0, 10) ?? null,
       })),
+      time: {
+        entries: timeEntries.map((e) => ({
+          workDate: day(e.workDate)!,
+          minutes: e.minutes,
+          project: e.project.code,
+          task: e.task ? `${e.project.code}-${e.task.number}` : null,
+          isBillable: e.isBillable,
+          note: e.note,
+          source: e.source,
+        })),
+        timesheets: timesheets.map((t) => ({ weekStart: day(t.weekStart)!, status: t.status })),
+      },
       attendance: attendance.map((a) => ({
         date: day(a.workDate)!,
         checkInAt: a.checkInAt.toISOString(),

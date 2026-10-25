@@ -59,6 +59,20 @@ export const TASK_EVENTS = {
   }),
 } as const;
 
+export const TIME_EVENTS = {
+  /** A week of time was approved or sent back: the week and the decision only. */
+  'timesheet.decided': eventDef({
+    params: z.object({
+      recipientUserId: z.uuid(),
+      weekStart: z.string().regex(DATE),
+      decision: z.enum(['approved', 'rejected']),
+    }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'timesheet.decided' as const, params },
+    ],
+  }),
+} as const;
+
 export const LEAVE_EVENTS = {
   'leave.requested': eventDef({
     params: z.object({
@@ -125,6 +139,7 @@ export const EVENT_DEFINITIONS = {
   ...ATTENDANCE_EVENTS,
   ...PROJECT_EVENTS,
   ...TASK_EVENTS,
+  ...TIME_EVENTS,
 } as const;
 
 export type EventType = keyof typeof EVENT_DEFINITIONS;
