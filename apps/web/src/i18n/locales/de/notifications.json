@@ -74,6 +74,15 @@
         "settingsTitle": "Dir zugewiesene Aufgaben",
         "settingsHelp": "Wenn dir jemand eine Aufgabe zuweist."
       }
+    },
+    "timesheet": {
+      "decided": {
+        "title": "Zeitnachweis entschieden",
+        "textApproved": "Dein Zeitnachweis für die Woche ab {{week}} wurde genehmigt.",
+        "textRejected": "Dein Zeitnachweis für die Woche ab {{week}} wurde zurückgegeben. Du kannst ihn ändern und erneut einreichen.",
+        "settingsTitle": "Entscheidungen zu deinen Zeitnachweisen",
+        "settingsHelp": "Wenn jemand eine deiner Wochen genehmigt oder zurückgibt."
+      }
     }
   },
   "unknown": {

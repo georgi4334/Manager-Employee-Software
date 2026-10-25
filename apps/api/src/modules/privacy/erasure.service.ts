@@ -56,6 +56,7 @@ export class ErasureService {
         where: { tenantId, employeeId },
         data: { note: null },
       });
+      await tx.timeEntry.updateMany({ where: { tenantId, employeeId }, data: { note: null } });
       await tx.calendarEvent.deleteMany({
         where: { tenantId, ownerEmployeeId: employeeId, scope: 'personal' },
       });

@@ -4,6 +4,7 @@ import {
   Briefcase,
   Clock,
   ListChecks,
+  Timer,
   LayoutDashboard,
   Network,
   Users,
@@ -60,6 +61,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: ListChecks,
     primary: false,
     permission: 'task.view',
+  },
+  {
+    path: '/time',
+    labelKey: 'time',
+    icon: Timer,
+    primary: false,
+    permission: ['time.log', 'time.view'],
   },
   {
     path: '/employees',

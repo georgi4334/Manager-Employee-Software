@@ -1,0 +1,99 @@
+{
+  "title": "Time",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "hours": "{{value}} h",
+  "tabs": {
+    "label": "Time views",
+    "week": "My time",
+    "approvals": "Approvals"
+  },
+  "status": {
+    "none": "Not submitted",
+    "open": "Reopened",
+    "submitted": "Submitted",
+    "approved": "Approved",
+    "rejected": "Sent back"
+  },
+  "timer": {
+    "title": "Timer",
+    "startTitle": "Start the timer",
+    "start": "Start",
+    "stop": "Stop",
+    "runningOn": "Running on {{project}}"
+  },
+  "week": {
+    "of": "Week of {{date}}",
+    "previous": "Previous week",
+    "next": "Next week",
+    "thisWeek": "This week",
+    "days": "Days of the week",
+    "total": "{{value}} h logged",
+    "billable": "{{value}} h billable",
+    "submit": "Submit week",
+    "submitting": "Submitting…",
+    "lockedSubmitted": "This week is submitted. It cannot be changed until it is decided.",
+    "lockedApproved": "This week is approved and locked.",
+    "sentBack": "This week was sent back. Change it and submit it again."
+  },
+  "entry": {
+    "add": "Add time",
+    "addTitle": "Add time",
+    "editTitle": "Edit time",
+    "edit": "Edit",
+    "delete": "Delete",
+    "running": "Running",
+    "billable": "Billable",
+    "notBillable": "Not billable"
+  },
+  "form": {
+    "project": "Project",
+    "task": "Task (optional)",
+    "noTask": "No task",
+    "date": "Date",
+    "duration": "Duration",
+    "durationHint": "Like 1:30 or 1.5 (hours)",
+    "note": "Note (optional)",
+    "billable": "Billable",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel"
+  },
+  "approvals": {
+    "filter": "Status",
+    "filters": {
+      "submitted": "Waiting for a decision",
+      "approved": "Approved",
+      "rejected": "Sent back",
+      "all": "All"
+    },
+    "empty": "No timesheets to show.",
+    "show": "Show time",
+    "hide": "Hide time",
+    "showFor": "Show the time of {{name}}",
+    "hideFor": "Hide the time of {{name}}",
+    "approve": "Approve",
+    "reject": "Send back",
+    "reopen": "Reopen",
+    "approveFor": "Approve the week of {{name}}",
+    "rejectFor": "Send back the week of {{name}}",
+    "reopenFor": "Reopen the week of {{name}}"
+  },
+  "conflict": {
+    "running": "A timer is already running. Stop it first.",
+    "locked": "This week is submitted or approved and cannot be changed.",
+    "status": "This timesheet was already decided."
+  },
+  "rule": {
+    "unknown_project": "This project does not exist.",
+    "not_on_project": "You are not on this project.",
+    "task_not_in_project": "This task is not part of the project.",
+    "project_closed": "This project is finished.",
+    "future_date": "You cannot log time for a day in the future.",
+    "day_too_long": "A day cannot hold more than 24 hours.",
+    "not_a_monday": "A week starts on a Monday.",
+    "future_week": "A week that has not started cannot be submitted.",
+    "no_entries": "There is no time logged in this week.",
+    "timer_running": "Stop the running timer before submitting this week."
+  }
+}

@@ -136,6 +136,15 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Web: `/tasks` (list and board views, filters in the query string for `project` and `view`), move via the status select (no drag and drop), a task count on the project page. The project picker lists the first page of projects only.
 - e2e: the start script always builds the API through turbo; a stale `dist/` once hid a missing route.
 
+## Time tracker (docs/adr/0015-time-tracker.md)
+
+- `time_entry` and `timesheet` (RLS). Self-reported only: nothing but the entry is stored (no idle detection, location or device). A running timer is a `timer` entry with `started_at` set and `minutes` null (one per person, partial unique index); stopping rounds up to whole minutes, at least 1, capped at 16 h (`timerMinutes` in contracts). `work_date` is the workspace-local date the entry started on.
+- Timesheets are per employee and Monday-based week (`weekStartOf`), created on first submit; entries belong to the sheet of their week by date, not by a link. `submitted` and `approved` lock the week (`CONFLICT`, `field: locked`) for create, change, delete, timer start and moving an entry in or out; `rejected` and `open` (reopened) are editable. Never lock-check by hand: use `assertUnlocked`.
+- Logging needs an active employee record, a project the person is staffed on or leads, not a finished project; the task must belong to the project (trigger plus `task_not_in_project`). A day holds at most 24 h (`day_too_long`, per-employee advisory lock `lockEmployee`). Own entries only: other people's are `404`, also for managers, HR and Admin.
+- Approval goes through `authz` on the owner with `timesheet.approve`; **nobody decides or reopens their own sheet**, whatever the role; out-of-scope sheets are `404`. `timesheet.decided` notifications carry the week and the decision only. Audit has ids and the week, never notes.
+- Deactivation stops a running timer (`TimeService.onEmployeeDeactivated`); the export lists entries and sheets; erasure clears notes and keeps hours detached from the person.
+- Web: `/time` (My time: timer, week navigator, entries, submit; Approvals tab). Durations are typed as `1:30` or `1.5` (`parseDuration`/`formatDuration`, pure and tested). Reports, CSV export and budgets are the next step (Time reports).
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

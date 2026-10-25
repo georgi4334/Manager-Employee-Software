@@ -37,6 +37,8 @@ model Tenant {
   milestones              Milestone[]
   projectAssignments      ProjectAssignment[]
   tasks                   Task[]
+  timeEntries             TimeEntry[]
+  timesheets              Timesheet[]
   leavePolicies           LeavePolicy[]
   leaveBalances           LeaveBalance[]
   leaveRequests           LeaveRequest[]
@@ -338,6 +340,9 @@ model Employee {
   ledProjects        Project[]           @relation("ProjectLead")
   projectAssignments ProjectAssignment[]
   tasksAssigned      Task[]
+  timeEntries        TimeEntry[]
+  timesheets         Timesheet[]         @relation("TimesheetOwner")
+  timesheetsDecided  Timesheet[]         @relation("TimesheetDecider")
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -675,6 +680,7 @@ model Project {
   milestones  Milestone[]
   assignments ProjectAssignment[]
   tasks       Task[]
+  timeEntries TimeEntry[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, code])
@@ -753,10 +759,11 @@ model Task {
   createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  project   Project    @relation(fields: [tenantId, projectId], references: [tenantId, id], onDelete: Cascade)
-  milestone Milestone? @relation(fields: [tenantId, milestoneId], references: [tenantId, id], onDelete: NoAction)
-  assignee  Employee?  @relation(fields: [tenantId, assigneeEmployeeId], references: [tenantId, id], onDelete: NoAction)
+  tenant      Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  project     Project     @relation(fields: [tenantId, projectId], references: [tenantId, id], onDelete: Cascade)
+  milestone   Milestone?  @relation(fields: [tenantId, milestoneId], references: [tenantId, id], onDelete: NoAction)
+  assignee    Employee?   @relation(fields: [tenantId, assigneeEmployeeId], references: [tenantId, id], onDelete: NoAction)
+  timeEntries TimeEntry[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, projectId, number])
@@ -764,4 +771,62 @@ model Task {
   @@index([tenantId, assigneeEmployeeId])
   @@index([tenantId, milestoneId])
   @@map("task")
+}
+
+// ----- Time tracker (docs/adr/0015-time-tracker.md) -----------------------------------------------------
+
+model TimeEntry {
+  id         String    @id @default(uuid(7)) @db.Uuid
+  tenantId   String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  employeeId String    @map("employee_id") @db.Uuid
+  projectId  String    @map("project_id") @db.Uuid
+  /// Must belong to the same project (a trigger in the migration checks it).
+  taskId     String?   @map("task_id") @db.Uuid
+  /// The local date (workspace time zone) the entry started on.
+  workDate   DateTime  @map("work_date") @db.Date
+  /// 1..960; null while the timer runs.
+  minutes    Int?
+  isBillable Boolean   @default(true) @map("is_billable")
+  note       String?
+  /// timer | manual
+  source     String
+  startedAt  DateTime? @map("started_at") @db.Timestamptz(6)
+  endedAt    DateTime? @map("ended_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [tenantId, employeeId], references: [tenantId, id], onDelete: NoAction)
+  project  Project  @relation(fields: [tenantId, projectId], references: [tenantId, id], onDelete: NoAction)
+  task     Task?    @relation(fields: [tenantId, taskId], references: [tenantId, id], onDelete: NoAction)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, employeeId, workDate])
+  @@index([tenantId, projectId, workDate])
+  @@index([tenantId, taskId])
+  @@map("time_entry")
+}
+
+model Timesheet {
+  id                  String    @id @default(uuid(7)) @db.Uuid
+  tenantId            String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  employeeId          String    @map("employee_id") @db.Uuid
+  /// A Monday.
+  weekStart           DateTime  @map("week_start") @db.Date
+  /// submitted | approved | rejected | open
+  status              String
+  submittedAt         DateTime  @map("submitted_at") @db.Timestamptz(6)
+  decidedByEmployeeId String?   @map("decided_by_employee_id") @db.Uuid
+  decidedAt           DateTime? @map("decided_at") @db.Timestamptz(6)
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee  Employee  @relation("TimesheetOwner", fields: [tenantId, employeeId], references: [tenantId, id], onDelete: NoAction)
+  decidedBy Employee? @relation("TimesheetDecider", fields: [tenantId, decidedByEmployeeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, employeeId, weekStart])
+  @@index([tenantId, status])
+  @@map("timesheet")
 }

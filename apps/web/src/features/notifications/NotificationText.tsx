@@ -91,6 +91,16 @@ export function useNotificationText() {
         text: t('types.task.assigned.text', { taskKey: str(params.taskKey) }),
       };
     }
+    if (type === 'timesheet.decided') {
+      const week = formatDay(str(params.weekStart), language);
+      return {
+        title: t('types.timesheet.decided.title'),
+        text:
+          params.decision === 'approved'
+            ? t('types.timesheet.decided.textApproved', { week })
+            : t('types.timesheet.decided.textRejected', { week }),
+      };
+    }
     if (type === 'attendance.corrected') {
       const date = formatDay(str(params.date), language);
       return {

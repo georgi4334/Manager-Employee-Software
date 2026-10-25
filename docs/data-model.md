@@ -187,17 +187,17 @@ erDiagram
   TIMESHEET ||--o{ TIME_ENTRY : groups
 ```
 
-| Table                  | Key columns                                                                                                                                                                                                   |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `client`               | name, contact_name, contact_email, status, notes                                                                                                                                                              |
-| `project` (extends §6) | client_id, budget_hours, is_billable, priority, health (`on_track/at_risk/off_track`, computed)                                                                                                               |
-| `milestone`            | project_id, title, due_date, status                                                                                                                                                                           |
-| `task`                 | project_id, milestone_id, title, description, type (`functional/non_functional`), status (`todo/in_progress/review/done`), assignee_id, estimate_hours, due_date, priority                                    |
-| `time_entry`           | employee_id, project_id, task_id (nullable), work_date, started_at, ended_at, minutes, is_billable, note, source (`timer/manual`), timesheet_id — a running timer = `ended_at is null` (max one per employee) |
-| `timesheet`            | employee_id, period_start, period_end, status (`open/submitted/approved/rejected/locked`), submitted_at, approved_by, approved_at                                                                             |
-| `daily_target`         | employee_id, project_id, work_date, target_minutes                                                                                                                                                            |
+| Table                  | Key columns                                                                                                                                                                                                                                                 |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `client`               | name, contact_name, contact_email, status, notes                                                                                                                                                                                                            |
+| `project` (extends §6) | client_id, budget_hours, is_billable, priority, health (`on_track/at_risk/off_track`, computed)                                                                                                                                                             |
+| `milestone`            | project_id, title, due_date, status                                                                                                                                                                                                                         |
+| `task`                 | project_id, milestone_id, title, description, type (`functional/non_functional`), status (`todo/in_progress/review/done`), assignee_id, estimate_hours, due_date, priority                                                                                  |
+| `time_entry`           | employee_id, project_id, task_id (nullable, same project), work_date, minutes (1–960), is_billable, note, source (`timer/manual`), started_at/ended_at (timer only) — a running timer = `started_at` set, `ended_at` null (max one per employee) (ADR 0015) |
+| `timesheet`            | employee_id, week_start (Monday), status (`submitted/approved/rejected/open`), submitted_at, decided_by_employee_id, decided_at — created on first submit, unique per employee and week; entries belong to the sheet of their week (ADR 0015)               |
+| `daily_target`         | employee_id, project_id, work_date, target_minutes                                                                                                                                                                                                          |
 
-- Approved timesheets are locked (edits need HR/Manager reopen + audit log entry).
+- Submitted and approved timesheets are locked (edits need a reject, or HR/Admin reopen with an audit log entry).
 - Reports (hours per project/person/client, budget vs actual, planned vs actual) are queries/views over `time_entry`; export approved hours as CSV. No payroll calculation, no screenshots or activity monitoring (self-reported only).
 - Leave-conflict check: approving a `leave_request` queries `project_assignment`, `task.due_date` and `milestone.due_date` in the range and returns warnings.
 

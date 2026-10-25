@@ -91,6 +91,21 @@ export const personalDataExportSchema = z.object({
       dueDate: date.nullable(),
     }),
   ),
+  /** Logged time and weekly timesheets (ADR 0015). */
+  time: z.object({
+    entries: z.array(
+      z.object({
+        workDate: date,
+        minutes: z.number().int().nullable(),
+        project: z.string(),
+        task: z.string().nullable(),
+        isBillable: z.boolean(),
+        note: z.string().nullable(),
+        source: z.string(),
+      }),
+    ),
+    timesheets: z.array(z.object({ weekStart: date, status: z.string() })),
+  }),
   attendance: z.array(
     z.object({
       date,

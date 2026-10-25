@@ -20,6 +20,7 @@ import { AuthModule } from './modules/auth/auth.module.js';
 import { AttendanceModule } from './modules/attendance/attendance.module.js';
 import { CalendarModule } from './modules/calendar/calendar.module.js';
 import { ProjectsModule } from './modules/projects/projects.module.js';
+import { TimeModule } from './modules/time/time.module.js';
 import { PrivacyModule } from './modules/privacy/privacy.module.js';
 import { LeaveModule } from './modules/leave/leave.module.js';
 import { OrganizationModule } from './modules/organization/organization.module.js';
@@ -93,6 +94,7 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     CalendarModule,
     PrivacyModule,
     ProjectsModule,
+    TimeModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
