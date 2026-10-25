@@ -14,6 +14,7 @@ import { MilestonesSection } from './MilestonesSection';
 import { ProjectForm } from './ProjectForm';
 import { TeamSection } from './TeamSection';
 import { Timeline } from './Timeline';
+import { ProjectTasksLink } from '@/features/tasks/ProjectTasksLink';
 import { useProjectErrors } from './use-project-errors';
 
 export function ProjectDetailPage() {
@@ -129,6 +130,7 @@ function Detail({ project, today }: { project: ProjectDetail; today: string }) {
 
       <MilestonesSection project={project} today={today} />
       <TeamSection project={project} today={today} />
+      <ProjectTasksLink projectId={project.id} />
     </>
   );
 }

@@ -26,6 +26,7 @@ describe('event catalog', () => {
       'leave.cancelled': { ...leaveBase, recipientUserIds: [USER], by: 'employee' },
       'attendance.corrected': { recipientUserId: USER, date: '2026-11-02', action: 'updated' },
       'project.assigned': { recipientUserId: USER, projectId: USER, projectName: 'Website' },
+      'task.assigned': { recipientUserId: USER, projectId: USER, taskKey: 'WEB-12' },
     };
     for (const [type, definition] of Object.entries(EVENT_DEFINITIONS)) {
       const params = definition.params.parse(samples[type as keyof typeof samples]);
@@ -198,6 +199,31 @@ describe('project.assigned', () => {
     ['no project name', { recipientUserId: USER, projectId: USER, projectName: ' ' }],
     ['a very long name', { recipientUserId: USER, projectId: USER, projectName: 'x'.repeat(121) }],
     ['a bad project id', { recipientUserId: USER, projectId: 'x', projectName: 'Website' }],
+  ])('rejects %s', (_label, params) => {
+    expect(definition.params.safeParse(params).success).toBe(false);
+  });
+});
+
+describe('task.assigned', () => {
+  const definition = EVENT_DEFINITIONS['task.assigned'];
+
+  it('tells the person the project and the reference, never a title', () => {
+    expect(
+      definition.notify({ recipientUserId: USER, projectId: USER, taskKey: 'WEB-12' }),
+    ).toEqual([
+      {
+        recipientUserId: USER,
+        type: 'task.assigned',
+        params: { projectId: USER, taskKey: 'WEB-12' },
+      },
+    ]);
+  });
+
+  it.each([
+    ['no recipient', { projectId: USER, taskKey: 'WEB-12' }],
+    ['no reference', { recipientUserId: USER, projectId: USER, taskKey: ' ' }],
+    ['a very long reference', { recipientUserId: USER, projectId: USER, taskKey: 'x'.repeat(31) }],
+    ['a bad project id', { recipientUserId: USER, projectId: 'x', taskKey: 'WEB-12' }],
   ])('rejects %s', (_label, params) => {
     expect(definition.params.safeParse(params).success).toBe(false);
   });

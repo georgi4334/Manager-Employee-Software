@@ -3,6 +3,7 @@ import {
   CalendarOff,
   Briefcase,
   Clock,
+  ListChecks,
   LayoutDashboard,
   Network,
   Users,
@@ -52,6 +53,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Briefcase,
     primary: false,
     permission: 'project.view',
+  },
+  {
+    path: '/tasks',
+    labelKey: 'tasks',
+    icon: ListChecks,
+    primary: false,
+    permission: 'task.view',
   },
   {
     path: '/employees',

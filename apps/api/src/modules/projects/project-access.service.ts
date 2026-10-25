@@ -23,12 +23,16 @@ export class ProjectAccess {
    * The projects the caller may see: all at scope "all", otherwise the ones led by or staffing somebody inside
    * the scope ("own" = themselves).
    */
-  async visibleWhere(tx: TenantTx, actor: RequestAuth): Promise<Prisma.ProjectWhereInput> {
-    const scope = actor.permissions['project.view'];
+  async visibleWhere(
+    tx: TenantTx,
+    actor: RequestAuth,
+    code: 'project.view' | 'task.view' = 'project.view',
+  ): Promise<Prisma.ProjectWhereInput> {
+    const scope = actor.permissions[code];
     if (!scope) return { id: { in: [] } };
     if (scope === 'all') return {};
     const everyone = (await tx.employee.findMany({ select: { id: true } })).map((e) => e.id);
-    const allowed = [...(await this.authz.allowedEmployees(actor, 'project.view', everyone))];
+    const allowed = [...(await this.authz.allowedEmployees(actor, code, everyone))];
     if (allowed.length === 0) return { id: { in: [] } };
     return {
       OR: [
@@ -36,6 +40,11 @@ export class ProjectAccess {
         { assignments: { some: { employeeId: { in: allowed } } } },
       ],
     };
+  }
+
+  /** The ids among `ids` that the caller reaches with this permission's scope. */
+  allowed(actor: RequestAuth, code: 'task.view' | 'project.view', ids: readonly string[]) {
+    return this.authz.allowedEmployees(actor, code, ids);
   }
 
   /** May the caller use this permission on a project with this lead? Scope "all" needs no lead. */

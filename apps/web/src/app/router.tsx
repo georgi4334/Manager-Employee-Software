@@ -15,6 +15,7 @@ import { AttendancePage } from '@/features/attendance/AttendancePage';
 import { CalendarPage } from '@/features/calendar/CalendarPage';
 import { ProjectDetailPage } from '@/features/projects/ProjectDetailPage';
 import { ProjectsPage } from '@/features/projects/ProjectsPage';
+import { TasksPage } from '@/features/tasks/TasksPage';
 import { LeavePage } from '@/features/leave/LeavePage';
 import { OrganizationPage } from '@/features/organization/OrganizationPage';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
@@ -33,6 +34,7 @@ const IMPLEMENTED_PATHS = [
   '/attendance',
   '/calendar',
   '/projects',
+  '/tasks',
 ];
 
 export const routes: RouteObject[] = [
@@ -85,6 +87,7 @@ export const routes: RouteObject[] = [
             children: [
               { path: 'projects', element: <ProjectsPage /> },
               { path: 'projects/:id', element: <ProjectDetailPage /> },
+              { path: 'tasks', element: <TasksPage /> },
             ],
           },
           {

@@ -1,0 +1,82 @@
+{
+  "title": "Aufgaben",
+  "loading": "Wird geladen…",
+  "retry": "Erneut versuchen",
+  "new": "Neue Aufgabe",
+  "search": "Nach Titel oder Kürzel suchen, z. B. WEB-12",
+  "total_one": "{{count}} Aufgabe",
+  "total_other": "{{count}} Aufgaben",
+  "empty": "Keine Aufgaben vorhanden.",
+  "pagination": "Seiten",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "page": "Seite {{page}} von {{pages}}",
+  "unassigned": "Nicht zugewiesen",
+  "views": {
+    "label": "Ansicht",
+    "list": "Liste",
+    "board": "Board"
+  },
+  "filters": {
+    "project": "Projekt",
+    "allProjects": "Alle Projekte",
+    "status": "Status",
+    "allStatuses": "Alle Status",
+    "open": "Offen",
+    "type": "Art",
+    "allTypes": "Alle Arten",
+    "mine": "Mir zugewiesen"
+  },
+  "status": {
+    "todo": "Offen",
+    "in_progress": "In Arbeit",
+    "review": "In Prüfung",
+    "done": "Erledigt"
+  },
+  "type": {
+    "functional": "Funktional",
+    "non_functional": "Nicht funktional"
+  },
+  "priority": {
+    "low": "Niedrig",
+    "normal": "Normal",
+    "high": "Hoch"
+  },
+  "card": {
+    "overdue": "Überfällig",
+    "due": "Fällig am {{date}}",
+    "doneOn": "Erledigt am {{date}}",
+    "hours": "{{hours}} Std.",
+    "status": "Status von {{key}}",
+    "edit": "Bearbeiten",
+    "delete": "Löschen"
+  },
+  "form": {
+    "newTitle": "Neue Aufgabe",
+    "editTitle": "Aufgabe bearbeiten",
+    "project": "Projekt",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "type": "Art",
+    "status": "Status",
+    "priority": "Priorität",
+    "assignee": "Zugewiesen an",
+    "milestone": "Meilenstein",
+    "noMilestone": "Kein Meilenstein",
+    "estimate": "Schätzung (Stunden)",
+    "dueDate": "Fälligkeitsdatum",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen"
+  },
+  "rule": {
+    "unknown_employee": "Diese Person existiert nicht oder ist nicht mehr aktiv.",
+    "assignee_not_on_project": "Aufgaben können nur Personen im Projekt zugewiesen werden.",
+    "milestone_not_in_project": "Dieser Meilenstein gehört zu einem anderen Projekt."
+  },
+  "link": {
+    "open_one": "{{count}} offene Aufgabe",
+    "open_other": "{{count}} offene Aufgaben",
+    "go": "Aufgaben öffnen"
+  }
+}

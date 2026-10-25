@@ -1,0 +1,82 @@
+{
+  "title": "Задачи",
+  "loading": "Зареждане…",
+  "retry": "Опитай отново",
+  "new": "Нова задача",
+  "search": "Търсене по заглавие или номер, напр. WEB-12",
+  "total_one": "{{count}} задача",
+  "total_other": "{{count}} задачи",
+  "empty": "Няма задачи за показване.",
+  "pagination": "Страници",
+  "previous": "Назад",
+  "next": "Напред",
+  "page": "Страница {{page}} от {{pages}}",
+  "unassigned": "Без изпълнител",
+  "views": {
+    "label": "Изглед",
+    "list": "Списък",
+    "board": "Табло"
+  },
+  "filters": {
+    "project": "Проект",
+    "allProjects": "Всички проекти",
+    "status": "Статус",
+    "allStatuses": "Всички статуси",
+    "open": "Отворени",
+    "type": "Вид",
+    "allTypes": "Всички видове",
+    "mine": "Възложени на мен"
+  },
+  "status": {
+    "todo": "За изпълнение",
+    "in_progress": "В процес",
+    "review": "За преглед",
+    "done": "Готово"
+  },
+  "type": {
+    "functional": "Функционална",
+    "non_functional": "Нефункционална"
+  },
+  "priority": {
+    "low": "Нисък",
+    "normal": "Нормален",
+    "high": "Висок"
+  },
+  "card": {
+    "overdue": "Просрочена",
+    "due": "Срок {{date}}",
+    "doneOn": "Готова на {{date}}",
+    "hours": "{{hours}} ч",
+    "status": "Статус на {{key}}",
+    "edit": "Редактирай",
+    "delete": "Изтрий"
+  },
+  "form": {
+    "newTitle": "Нова задача",
+    "editTitle": "Редакция на задача",
+    "project": "Проект",
+    "title": "Заглавие",
+    "description": "Описание",
+    "type": "Вид",
+    "status": "Статус",
+    "priority": "Приоритет",
+    "assignee": "Възложена на",
+    "milestone": "Етап",
+    "noMilestone": "Без етап",
+    "estimate": "Оценка (часове)",
+    "dueDate": "Срок",
+    "save": "Запази",
+    "saving": "Запазване…",
+    "cancel": "Отказ"
+  },
+  "rule": {
+    "unknown_employee": "Този човек не съществува или вече не е активен.",
+    "assignee_not_on_project": "Задачи могат да се възлагат само на хора от проекта.",
+    "milestone_not_in_project": "Този етап принадлежи на друг проект."
+  },
+  "link": {
+    "open_one": "{{count}} отворена задача",
+    "open_other": "{{count}} отворени задачи",
+    "go": "Отвори задачите"
+  }
+}

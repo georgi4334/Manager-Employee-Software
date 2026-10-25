@@ -85,6 +85,12 @@ export function useNotificationText() {
         text: t('types.project.assigned.text', { projectName: str(params.projectName) }),
       };
     }
+    if (type === 'task.assigned') {
+      return {
+        title: t('types.task.assigned.title'),
+        text: t('types.task.assigned.text', { taskKey: str(params.taskKey) }),
+      };
+    }
     if (type === 'attendance.corrected') {
       const date = formatDay(str(params.date), language);
       return {

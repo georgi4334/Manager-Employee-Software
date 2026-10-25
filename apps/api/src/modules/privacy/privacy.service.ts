@@ -94,7 +94,7 @@ export class PrivacyService {
         })
       : null;
 
-    const [requests, balances, attendance, events, assignments, led] = employeeId
+    const [requests, balances, attendance, events, assignments, led, tasks] = employeeId
       ? await Promise.all([
           tx.leaveRequest.findMany({
             where: { employeeId },
@@ -124,8 +124,13 @@ export class PrivacyService {
             orderBy: { name: 'asc' },
             select: { name: true },
           }),
+          tx.task.findMany({
+            where: { assigneeEmployeeId: employeeId },
+            orderBy: [{ project: { code: 'asc' } }, { number: 'asc' }],
+            include: { project: { select: { code: true } } },
+          }),
         ])
-      : [[], [], [], [], [], []];
+      : [[], [], [], [], [], [], []];
     const [notifications, preferences, auditEntries] = userId
       ? await Promise.all([
           tx.notification.findMany({
@@ -209,6 +214,13 @@ export class PrivacyService {
         })),
         led: led.map((p) => p.name),
       },
+      tasks: tasks.map((t) => ({
+        key: `${t.project.code}-${t.number}`,
+        title: t.title,
+        status: t.status,
+        estimateHours: t.estimateHours === null ? null : Number(t.estimateHours),
+        dueDate: iso(t.dueDate)?.slice(0, 10) ?? null,
+      })),
       attendance: attendance.map((a) => ({
         date: day(a.workDate)!,
         checkInAt: a.checkInAt.toISOString(),

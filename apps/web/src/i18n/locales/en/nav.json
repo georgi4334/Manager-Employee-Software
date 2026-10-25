@@ -5,5 +5,6 @@
   "calendar": "Calendar",
   "employees": "Employees",
   "organization": "Organization",
-  "projects": "Projects"
+  "projects": "Projects",
+  "tasks": "Tasks"
 }

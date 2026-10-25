@@ -45,6 +45,20 @@ export const PROJECT_EVENTS = {
   }),
 } as const;
 
+export const TASK_EVENTS = {
+  /** A task was given to somebody: the project and the reference (WEB-12) only, never the title. */
+  'task.assigned': eventDef({
+    params: z.object({
+      recipientUserId: z.uuid(),
+      projectId: z.uuid(),
+      taskKey: z.string().trim().min(1).max(30),
+    }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'task.assigned' as const, params },
+    ],
+  }),
+} as const;
+
 export const LEAVE_EVENTS = {
   'leave.requested': eventDef({
     params: z.object({
@@ -110,6 +124,7 @@ export const EVENT_DEFINITIONS = {
   ...LEAVE_EVENTS,
   ...ATTENDANCE_EVENTS,
   ...PROJECT_EVENTS,
+  ...TASK_EVENTS,
 } as const;
 
 export type EventType = keyof typeof EVENT_DEFINITIONS;

@@ -49,7 +49,7 @@ Solo developer + Claude, ~3–4 focused hours/day. Estimates are in **working da
 | Module             | Scope                                                                                                                 | Est.  |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------- | ----- |
 | Clients & Projects | clients, projects, milestones, staffing with allocation %, project dashboard (timeline, health) (ADR 0013) — **done** | 6–7 d |
-| Tasks (lean)       | functional / non-functional tasks, assignee, estimate, due date, status, list + simple board                          | 5–6 d |
+| Tasks (lean)       | functional / non-functional tasks, assignee, estimate, due date, status, list + simple board (ADR 0014) — **done**    | 5–6 d |
 | Time Tracker       | start/stop timer, manual entries, billable flag, weekly timesheet, submit/approve/lock                                | 8–9 d |
 | Time reports       | hours per project/person/client, budget vs actual, daily targets, CSV export of approved hours                        | 4–5 d |
 | Integrations       | leave-conflict warnings on approval, attendance vs logged hours, missed check-out/timer reminders                     | 3–4 d |
