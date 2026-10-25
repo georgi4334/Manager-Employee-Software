@@ -165,7 +165,14 @@ describe('access and structure', () => {
     expect(await screen.findByText('No access')).toBeInTheDocument();
   });
 
-  it('gives employees their week only, managers also the approvals tab', async () => {
+  it('needs a time permission and nothing else', async () => {
+    server.use(...signedInHandlers(userWithPermissions({ 'time.log': 'own' })));
+    serve();
+    await open();
+    expect(await screen.findByRole('heading', { name: 'Time' })).toBeInTheDocument();
+  });
+
+  it('gives employees their week only, managers also approvals and reports', async () => {
     serve();
     const { unmount } = await open();
     expect(await screen.findByRole('heading', { name: 'Time' })).toBeInTheDocument();
@@ -177,6 +184,7 @@ describe('access and structure', () => {
     expect((await screen.findAllByRole('tab')).map((tab) => tab.textContent)).toEqual([
       'My time',
       'Approvals',
+      'Reports',
     ]);
   });
 

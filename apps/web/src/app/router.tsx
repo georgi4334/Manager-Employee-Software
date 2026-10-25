@@ -89,9 +89,15 @@ export const routes: RouteObject[] = [
             children: [
               { path: 'projects', element: <ProjectsPage /> },
               { path: 'projects/:id', element: <ProjectDetailPage /> },
-              { path: 'tasks', element: <TasksPage /> },
-              { path: 'time', element: <TimePage /> },
             ],
+          },
+          {
+            element: <RequirePermission permission="task.view" />,
+            children: [{ path: 'tasks', element: <TasksPage /> }],
+          },
+          {
+            element: <RequirePermission permission={['time.log', 'time.view']} />,
+            children: [{ path: 'time', element: <TimePage /> }],
           },
           {
             element: (

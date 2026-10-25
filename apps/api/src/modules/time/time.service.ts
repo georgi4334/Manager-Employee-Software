@@ -105,6 +105,9 @@ export class TimeService {
 
   week(actor: RequestAuth, query: WeekQuery): Promise<TimeWeek> {
     return this.db.tx(async (tx) => {
+      if (!actor.permissions['time.log'] && !actor.permissions['time.view']) {
+        throw forbidden('Not allowed: time.log or time.view');
+      }
       const today = await workspaceToday(tx, this.context);
       const weekStart = weekStartOf(query.weekStart ?? today);
       const me = await tx.employee.findFirst({

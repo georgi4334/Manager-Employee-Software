@@ -1,5 +1,8 @@
 import type {
   CreateTimeEntryRequest,
+  ExportData,
+  Report,
+  ReportGroup,
   StartTimerRequest,
   TimeEntry,
   TimerResponse,
@@ -40,3 +43,25 @@ export const fetchTimesheets = (status: TimesheetQuery['status']) =>
 export const fetchTimesheet = (id: string) => apiRequest<TimeWeek>(`/time/timesheets/${id}`);
 export const decideTimesheet = (id: string, action: 'approve' | 'reject' | 'reopen') =>
   apiRequest<Timesheet>(`/time/timesheets/${id}/${action}`, { method: 'POST' });
+
+export interface ReportParams {
+  from: string;
+  to: string;
+  groupBy: ReportGroup;
+  projectId: string;
+}
+export const reportKeys = {
+  report: (p: ReportParams) => ['time', 'report', p] as const,
+};
+const periodQuery = (p: { from: string; to: string; projectId: string }) => {
+  const query = new URLSearchParams({ from: p.from, to: p.to });
+  if (p.projectId) query.set('projectId', p.projectId);
+  return query;
+};
+export const fetchReport = (p: ReportParams) => {
+  const query = periodQuery(p);
+  query.set('groupBy', p.groupBy);
+  return apiRequest<Report>(`/time/reports?${query}`);
+};
+export const fetchExport = (p: Omit<ReportParams, 'groupBy'>) =>
+  apiRequest<ExportData>(`/time/reports/export?${periodQuery(p)}`);

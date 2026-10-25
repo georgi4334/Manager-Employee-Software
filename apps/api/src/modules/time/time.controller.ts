@@ -2,12 +2,18 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query } fr
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   createTimeEntryRequestSchema,
+  exportQuerySchema,
+  reportQuerySchema,
   startTimerRequestSchema,
   submitTimesheetRequestSchema,
   timesheetQuerySchema,
   updateTimeEntryRequestSchema,
   weekQuerySchema,
   type CreateTimeEntryRequest,
+  type ExportData,
+  type ExportQuery,
+  type Report,
+  type ReportQuery,
   type StartTimerRequest,
   type SubmitTimesheetRequest,
   type TimeEntry,
@@ -21,8 +27,9 @@ import {
 } from '@intime/contracts';
 import { z } from 'zod';
 import type { RequestAuth } from '../../common/auth/auth.types.js';
-import { CurrentAuth, RequirePermission } from '../../common/auth/decorators.js';
+import { Authenticated, CurrentAuth, RequirePermission } from '../../common/auth/decorators.js';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
+import { TimeReportsService } from './time-reports.service.js';
 import { TimeService } from './time.service.js';
 import { TimesheetsService } from './timesheets.service.js';
 
@@ -34,6 +41,7 @@ export class TimeController {
   constructor(
     private readonly time: TimeService,
     private readonly sheets: TimesheetsService,
+    private readonly reports: TimeReportsService,
   ) {}
 
   @Get('timer')
@@ -62,7 +70,7 @@ export class TimeController {
   }
 
   @Get('week')
-  @RequirePermission('time.log', 'time.view')
+  @Authenticated() // time.log or time.view: checked in the service
   @ApiOperation({ summary: 'One week of time: yours, or a person you may view' })
   week(
     @CurrentAuth() actor: RequestAuth,
@@ -150,5 +158,25 @@ export class TimeController {
   @ApiOperation({ summary: 'Reopen an approved timesheet' })
   reopen(@CurrentAuth() actor: RequestAuth, @Param('id', id) sheetId: string): Promise<Timesheet> {
     return this.sheets.reopen(actor, sheetId);
+  }
+
+  @Get('reports')
+  @Authenticated() // the permission depends on the grouping: checked in the service
+  @ApiOperation({ summary: 'Hours per project, person or client; budget versus actual' })
+  report(
+    @CurrentAuth() actor: RequestAuth,
+    @Query(new ZodValidationPipe(reportQuerySchema)) query: ReportQuery,
+  ): Promise<Report> {
+    return this.reports.report(actor, query);
+  }
+
+  @Get('reports/export')
+  @RequirePermission('time.export')
+  @ApiOperation({ summary: 'Approved hours of a period, as rows for the CSV file' })
+  export(
+    @CurrentAuth() actor: RequestAuth,
+    @Query(new ZodValidationPipe(exportQuerySchema)) query: ExportQuery,
+  ): Promise<ExportData> {
+    return this.reports.export(actor, query);
   }
 }

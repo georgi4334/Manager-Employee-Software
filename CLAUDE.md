@@ -145,6 +145,14 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Deactivation stops a running timer (`TimeService.onEmployeeDeactivated`); the export lists entries and sheets; erasure clears notes and keeps hours detached from the person.
 - Web: `/time` (My time: timer, week navigator, entries, submit; Approvals tab). Durations are typed as `1:30` or `1.5` (`parseDuration`/`formatDuration`, pure and tested). Reports, CSV export and budgets are the next step (Time reports).
 
+## Time reports (docs/adr/0016-time-reports.md)
+
+- No new tables: reports are queries over `time_entry` (finished entries only) joined to `timesheet` for the approved share (`TimeReportsService`). Project and client reports need `time.report_project` (scope `all`, otherwise only projects led by people inside the scope; clients also need `client.view`), person reports need `time.view` (people in scope). A project outside the caller's scope is `404`.
+- `GET /time/week` and `GET /time/reports` are `@Authenticated()` and check their permission in the service: the permission guard requires **all** listed codes, so "this or that" must not use `@RequirePermission(a, b)`.
+- Budget versus actual is `budgetUsage` in contracts (`ok` below 80 %, `warning` up to 100 %, `over` above); logged minutes are all-time, not the period. The page says the level in words.
+- The CSV export (`time.export`, same project scoping) returns JSON rows of **approved** hours without notes; contracts' `timeExportCsv` builds the file (quotes, line breaks, formula neutralising) and the browser saves it. Every export is audited (`time.exported`: period, project id, row count).
+- Web routes carry their own guards (`/tasks`: `task.view`; `/time`: `time.log` or `time.view`), never the project guard. Daily targets wait for the Integrations step.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

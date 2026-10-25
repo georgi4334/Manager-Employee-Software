@@ -6,7 +6,8 @@
   "tabs": {
     "label": "Zeitansichten",
     "week": "Meine Zeit",
-    "approvals": "Genehmigungen"
+    "approvals": "Genehmigungen",
+    "reports": "Berichte"
   },
   "status": {
     "none": "Nicht eingereicht",
@@ -95,5 +96,37 @@
     "future_week": "Eine Woche, die noch nicht begonnen hat, kann nicht eingereicht werden.",
     "no_entries": "In dieser Woche ist keine Zeit erfasst.",
     "timer_running": "Stoppe den laufenden Timer, bevor du diese Woche einreichst."
+  },
+  "reports": {
+    "from": "Von",
+    "to": "Bis",
+    "groupBy": "Gruppieren nach",
+    "groups": {
+      "project": "Projekt",
+      "person": "Person",
+      "client": "Kunde"
+    },
+    "project": "Projekt",
+    "allProjects": "Alle Projekte",
+    "problem": {
+      "invalidDate": "Gib ein gültiges Datum als Jahr-Monat-Tag ein.",
+      "end_before_start": "Das Ende darf nicht vor dem Beginn liegen.",
+      "too_long": "Ein Bericht umfasst höchstens ein Jahr."
+    },
+    "export": "Genehmigte Stunden exportieren (CSV)",
+    "exporting": "Wird vorbereitet…",
+    "exportHint": "Nur genehmigte Wochen. Ohne Notizen. Die Datei enthält Namen: bitte sorgfältig behandeln.",
+    "exported": "Datei mit {{count}} Zeilen gespeichert.",
+    "empty": "In diesem Zeitraum ist keine Zeit erfasst.",
+    "totals": "Gesamt {{total}} Std. · abrechenbar {{billable}} Std. · genehmigt {{approved}} Std.",
+    "split": "Abrechenbar {{billable}} Std. · genehmigt {{approved}} Std.",
+    "noClient": "Kein Kunde",
+    "budgetOf": "Budget von {{name}} verbraucht",
+    "budget": "{{logged}} Std. von {{budget}} Std. verbraucht ({{percent}} %)",
+    "level": {
+      "ok": "Im Budget",
+      "warning": "Nahe am Budget",
+      "over": "Über dem Budget"
+    }
   }
 }

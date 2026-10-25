@@ -6,7 +6,8 @@
   "tabs": {
     "label": "Time views",
     "week": "My time",
-    "approvals": "Approvals"
+    "approvals": "Approvals",
+    "reports": "Reports"
   },
   "status": {
     "none": "Not submitted",
@@ -95,5 +96,37 @@
     "future_week": "A week that has not started cannot be submitted.",
     "no_entries": "There is no time logged in this week.",
     "timer_running": "Stop the running timer before submitting this week."
+  },
+  "reports": {
+    "from": "From",
+    "to": "To",
+    "groupBy": "Group by",
+    "groups": {
+      "project": "Project",
+      "person": "Person",
+      "client": "Client"
+    },
+    "project": "Project",
+    "allProjects": "All projects",
+    "problem": {
+      "invalidDate": "Enter a valid date as year-month-day.",
+      "end_before_start": "The end cannot be before the start.",
+      "too_long": "A report covers at most one year."
+    },
+    "export": "Export approved hours (CSV)",
+    "exporting": "Preparing…",
+    "exportHint": "Only approved weeks. No notes. The file contains names: handle it with care.",
+    "exported": "File saved with {{count}} lines.",
+    "empty": "No time logged in this period.",
+    "totals": "Total {{total}} h · billable {{billable}} h · approved {{approved}} h",
+    "split": "Billable {{billable}} h · approved {{approved}} h",
+    "noClient": "No client",
+    "budgetOf": "Budget used by {{name}}",
+    "budget": "{{logged}} h of {{budget}} h used ({{percent}}%)",
+    "level": {
+      "ok": "Within budget",
+      "warning": "Close to the budget",
+      "over": "Over budget"
+    }
   }
 }

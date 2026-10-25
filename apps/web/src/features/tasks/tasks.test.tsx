@@ -130,6 +130,13 @@ describe('access and structure', () => {
     expect(await screen.findByText('No access')).toBeInTheDocument();
   });
 
+  it('needs the task permission and nothing else', async () => {
+    server.use(...signedInHandlers(userWithPermissions({ 'task.view': 'own' })));
+    serve([task(1, { canEdit: false })]);
+    await renderApp('/tasks');
+    expect(await screen.findByText('Task 1')).toBeInTheDocument();
+  });
+
   it('gives employees the list without a way to create', async () => {
     serve([task(1, { canEdit: false })], [summary({ canEdit: false })]);
     await renderApp('/tasks');

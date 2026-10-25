@@ -36,6 +36,7 @@ const SIGNED_IN = [
   '/tasks?view=board',
   '/time',
   '/time?tab=approvals',
+  '/time?tab=reports',
   '/profile',
   '/does-not-exist',
 ];

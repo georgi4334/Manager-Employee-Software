@@ -5,9 +5,10 @@ import { usePermission } from '@/features/auth/permissions';
 import { useCurrentUser } from '@/features/auth/use-auth';
 import { cn } from '@/shared/lib/cn';
 import { ApprovalsTab } from './ApprovalsTab';
+import { ReportsTab } from './ReportsTab';
 import { WeekTab } from './WeekTab';
 
-type Tab = 'week' | 'approvals';
+type Tab = 'week' | 'approvals' | 'reports';
 
 export function TimePage() {
   const { t } = useTranslation('time');
@@ -15,9 +16,13 @@ export function TimePage() {
   const [params, setParams] = useSearchParams();
   const seesWeek = usePermission(['time.log', 'time.view']);
   const approves = usePermission('timesheet.approve');
+  const reportsByProject = usePermission('time.report_project');
+  const reportsByPerson = usePermission('time.view', 'reports');
+  const reports = reportsByProject || reportsByPerson;
   const tabs: Tab[] = [
     ...(seesWeek ? (['week'] as const) : []),
     ...(approves ? (['approvals'] as const) : []),
+    ...(reports ? (['reports'] as const) : []),
   ];
   const requested = params.get('tab');
   const tab: Tab | undefined = tabs.find((candidate) => candidate === requested) ?? tabs[0];
@@ -54,6 +59,7 @@ export function TimePage() {
       <div role="tabpanel" id="time-panel" aria-labelledby={tab ? `time-tab-${tab}` : undefined}>
         {tab === 'week' && <WeekTab today={today} />}
         {tab === 'approvals' && <ApprovalsTab />}
+        {tab === 'reports' && <ReportsTab today={today} />}
       </div>
     </div>
   );

@@ -1,18 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { TimesheetQuery } from '@intime/contracts';
+import { timeExportCsv, type TimesheetQuery } from '@intime/contracts';
+import { saveText } from '@/features/privacy/download';
 import {
   createEntry,
   decideTimesheet,
   deleteEntry,
+  fetchExport,
+  fetchReport,
   fetchTimer,
   fetchTimesheet,
   fetchTimesheets,
   fetchWeek,
+  reportKeys,
   startTimer,
   stopTimer,
   submitWeek,
   timeKeys,
   updateEntry,
+  type ReportParams,
 } from './api';
 
 export const useTimer = (enabled = true) =>
@@ -80,5 +85,24 @@ export function useDecideTimesheet() {
     mutationFn: ({ id, action }: { id: string; action: 'approve' | 'reject' | 'reopen' }) =>
       decideTimesheet(id, action),
     onSuccess: refresh,
+  });
+}
+
+export const useReport = (params: ReportParams, enabled: boolean) =>
+  useQuery({
+    queryKey: reportKeys.report(params),
+    queryFn: () => fetchReport(params),
+    enabled,
+    retry: false,
+  });
+
+/** Fetches the approved hours and saves them as a CSV file in the browser. */
+export function useExportHours() {
+  return useMutation({
+    mutationFn: async (params: Omit<ReportParams, 'groupBy'>) => {
+      const data = await fetchExport(params);
+      saveText(timeExportCsv(data.rows), `approved-hours-${data.from}-${data.to}.csv`, 'text/csv');
+      return data.rows.length;
+    },
   });
 }
