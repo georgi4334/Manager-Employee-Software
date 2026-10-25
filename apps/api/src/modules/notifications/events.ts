@@ -73,6 +73,22 @@ export const TIME_EVENTS = {
   }),
 } as const;
 
+export const REMINDER_EVENTS = {
+  /** Something started and was never finished: the day only. */
+  'attendance.reminder': eventDef({
+    params: z.object({ recipientUserId: z.uuid(), date: z.string().regex(DATE) }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'attendance.reminder' as const, params },
+    ],
+  }),
+  'time.timer_reminder': eventDef({
+    params: z.object({ recipientUserId: z.uuid(), date: z.string().regex(DATE) }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'time.timer_reminder' as const, params },
+    ],
+  }),
+} as const;
+
 export const LEAVE_EVENTS = {
   'leave.requested': eventDef({
     params: z.object({
@@ -140,6 +156,7 @@ export const EVENT_DEFINITIONS = {
   ...PROJECT_EVENTS,
   ...TASK_EVENTS,
   ...TIME_EVENTS,
+  ...REMINDER_EVENTS,
 } as const;
 
 export type EventType = keyof typeof EVENT_DEFINITIONS;

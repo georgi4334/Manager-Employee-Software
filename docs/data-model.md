@@ -199,7 +199,8 @@ erDiagram
 
 - Submitted and approved timesheets are locked (edits need a reject, or HR/Admin reopen with an audit log entry).
 - Reports (hours per project/person/client, budget vs actual, planned vs actual) are queries/views over `time_entry`; export approved hours as CSV. No payroll calculation, no screenshots or activity monitoring (self-reported only).
-- Leave-conflict check: approving a `leave_request` queries `project_assignment`, `task.due_date` and `milestone.due_date` in the range and returns warnings.
+- Leave-conflict check: `GET /leave/requests/:id/conflicts` lists `project_assignment`s, open `milestone`s and the person's open `task`s that fall in the dates, filtered by what the approver may see (ADR 0017). Warnings only.
+- `attendance_record.reminded_at` and `time_entry.reminded_at` make the forgotten check-out / timer reminders fire once (ADR 0017).
 
 **Capacity (computed, not stored):** for an employee and a date range =
 `schedule hours − public holidays − approved leave − Σ(allocation_pct × hours)`; actual load compares this plan with logged `time_entry` hours. Exposed through a SQL view / service query; cached per week if needed.

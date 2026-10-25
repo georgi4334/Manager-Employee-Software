@@ -5,6 +5,7 @@ export * from './dates.js';
 export * from './employees.js';
 export * from './errors.js';
 export * from './holidays.js';
+export * from './integrations.js';
 export * from './leave-days.js';
 export * from './leave.js';
 export * from './notifications.js';

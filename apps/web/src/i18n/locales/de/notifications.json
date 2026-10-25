@@ -57,6 +57,12 @@
         "textDeleted": "Ihr Zeiteintrag vom {{date}} wurde entfernt.",
         "settingsTitle": "Korrekturen Ihrer Anwesenheit",
         "settingsHelp": "Wenn eine Führungskraft oder HR einen Ihrer Zeiteinträge hinzufügt, ändert oder entfernt."
+      },
+      "reminder": {
+        "title": "Anmeldung noch offen",
+        "text": "Deine Anmeldung vom {{date}} wurde nie beendet. Melde dich ab oder korrigiere sie.",
+        "settingsTitle": "Vergessene Abmeldungen",
+        "settingsHelp": "Wenn eine Anmeldung 12 Stunden offen bleibt."
       }
     },
     "project": {
@@ -82,6 +88,14 @@
         "textRejected": "Dein Zeitnachweis für die Woche ab {{week}} wurde zurückgegeben. Du kannst ihn ändern und erneut einreichen.",
         "settingsTitle": "Entscheidungen zu deinen Zeitnachweisen",
         "settingsHelp": "Wenn jemand eine deiner Wochen genehmigt oder zurückgibt."
+      }
+    },
+    "time": {
+      "timer_reminder": {
+        "title": "Timer läuft noch",
+        "text": "Ein Timer, den du am {{date}} gestartet hast, läuft noch. Stoppe ihn oder korrigiere den Eintrag.",
+        "settingsTitle": "Weiterlaufende Timer",
+        "settingsHelp": "Wenn ein Timer 10 Stunden lang läuft."
       }
     }
   },

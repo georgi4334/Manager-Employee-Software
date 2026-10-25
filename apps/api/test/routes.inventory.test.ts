@@ -75,11 +75,17 @@ describe('route inventory', () => {
     expect(problems).toEqual([]);
   });
 
-  it('only health checks and the sign-in flow are public', () => {
+  it('only health checks, the sign-in flow and the reminder hook are public', () => {
     const publicRoutes = routes
       .filter((r) => r.declaration === 'public')
       .map((r) => r.route.split('.')[0]);
-    expect(new Set(publicRoutes)).toEqual(new Set(['HealthController', 'AuthController']));
+    // The reminder hook is public to the guard because it has no user: it checks a shared secret itself.
+    expect(new Set(publicRoutes)).toEqual(
+      new Set(['HealthController', 'AuthController', 'RemindersController']),
+    );
+    expect(
+      routes.filter((r) => r.route.startsWith('RemindersController')).map((r) => r.route),
+    ).toEqual(['RemindersController.run [POST reminders/run]']);
     const publicAuth = routes
       .filter((r) => r.route.startsWith('AuthController') && r.declaration === 'public')
       .map((r) => r.route.split(' ')[0]);

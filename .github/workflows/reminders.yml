@@ -1,0 +1,27 @@
+# Hourly nudge for the time-based reminders (docs/adr/0017-integrations.md): forgotten check-outs and timers.
+# It is also what wakes a sleeping free-tier API. Runs only when the repository variable REMINDERS_URL (the API
+# origin, e.g. https://intime-api.onrender.com) and the secret REMINDERS_TOKEN (the same value as the API's
+# REMINDERS_TOKEN) are set; scheduled workflows run on the default branch only.
+name: Reminders
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    if: ${{ vars.REMINDERS_URL != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Run the reminder sweep
+        env:
+          URL: ${{ vars.REMINDERS_URL }}
+          TOKEN: ${{ secrets.REMINDERS_TOKEN }}
+        run: |
+          # A cold start of the free API can take a minute: retry before giving up.
+          curl --fail --silent --show-error --max-time 90 --retry 3 --retry-delay 20 --retry-all-errors \
+            -X POST -H "Authorization: Bearer ${TOKEN}" "${URL%/}/api/v1/internal/reminders/run"

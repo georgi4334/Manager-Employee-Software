@@ -128,5 +128,19 @@
       "warning": "Nahe am Budget",
       "over": "Über dem Budget"
     }
+  },
+  "compare": {
+    "show": "Mit Anwesenheit vergleichen",
+    "hide": "Vergleich ausblenden",
+    "title": "Anwesenheit und erfasste Zeit",
+    "row": "anwesend {{present}} Std. · erfasst {{logged}} Std.",
+    "onLeave": "Urlaub",
+    "open": "Abmeldung fehlt",
+    "flag": {
+      "more_logged": "mehr Zeit erfasst als anwesend",
+      "less_logged": "mehr anwesend als Zeit erfasst"
+    },
+    "empty": "In dieser Woche ist auf beiden Seiten nichts erfasst.",
+    "hint": "Nur ein Spiegel: Unterschiede über 30 Minuten werden angezeigt. Nichts wird geändert oder gemeldet."
   }
 }

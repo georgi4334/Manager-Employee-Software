@@ -7,6 +7,7 @@ import { Card } from '@/shared/ui/card';
 import { Select } from '@/shared/ui/select';
 import { formatDay } from '@/shared/lib/format';
 import { useDecideTimesheet, useTimesheetDetail, useTimesheets } from './hooks';
+import { ComparePanel } from './ComparePanel';
 import { StatusBadge } from './StatusBadge';
 import { useTimeErrors } from './use-time-errors';
 import { WeekDays } from './WeekDays';
@@ -129,7 +130,12 @@ function SheetRow({ sheet }: { sheet: Timesheet }) {
         </p>
       )}
       {open && detail.isError && <Alert tone="danger">{errors.apiError(detail.error)}</Alert>}
-      {open && detail.data && <WeekDays week={detail.data} />}
+      {open && detail.data && (
+        <>
+          <ComparePanel weekStart={sheet.weekStart} employeeId={sheet.employee.id} openByDefault />
+          <WeekDays week={detail.data} />
+        </>
+      )}
     </li>
   );
 }

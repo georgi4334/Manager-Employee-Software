@@ -1,4 +1,5 @@
 import type { LeaveRequest } from '@intime/contracts';
+import { ConflictsPanel } from './ConflictsPanel';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from '@/shared/ui/alert';
@@ -104,6 +105,7 @@ export function RequestRow({ request, showEmployee, decide, cancel }: RequestRow
         </p>
       )}
       {error && <Alert tone="danger">{errors.apiError(error)}</Alert>}
+      {decide && request.canApprove && <ConflictsPanel requestId={request.id} name={name} />}
 
       {(decide && request.canApprove) || (cancel && request.canCancel) ? (
         <div className="space-y-2">

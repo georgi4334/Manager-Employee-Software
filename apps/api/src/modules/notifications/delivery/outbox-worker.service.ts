@@ -10,6 +10,7 @@ import type { Env } from '../../../config/env.js';
 import { ActivityTracker } from '../../../infrastructure/activity/activity-tracker.js';
 import { EmailDispatcher } from './email-dispatcher.service.js';
 import { NotificationRetention } from './notification-retention.service.js';
+import { RemindersService } from './reminders.service.js';
 import { NotificationProcessor } from './notification-processor.service.js';
 
 const BATCH = 20;
@@ -37,6 +38,7 @@ export class OutboxWorker implements OnApplicationBootstrap, OnModuleDestroy {
   private running?: Promise<RunStats>;
   private rerun = false;
   private lastRetentionAt = 0;
+  private lastReminderAt = 0;
   private stopped = false;
 
   constructor(
@@ -45,6 +47,7 @@ export class OutboxWorker implements OnApplicationBootstrap, OnModuleDestroy {
     private readonly emails: EmailDispatcher,
     private readonly retention: NotificationRetention,
     private readonly activity: ActivityTracker,
+    private readonly reminders: RemindersService,
   ) {}
 
   onApplicationBootstrap(): void {
@@ -126,6 +129,17 @@ export class OutboxWorker implements OnApplicationBootstrap, OnModuleDestroy {
         stats.purged = true;
       } catch (error) {
         this.logger.error({ err: error }, 'Retention failed');
+      }
+    }
+    // Reminders are time-based: here they only run while the API is busy, the external hook covers quiet hours.
+    if (now.getTime() - this.lastReminderAt >= RETENTION_INTERVAL_MS) {
+      try {
+        const sent = await this.reminders.run(now);
+        // Their events are delivered right away, in one more round of this run.
+        if (sent.attendance + sent.timers > 0) this.rerun = true;
+        this.lastReminderAt = now.getTime();
+      } catch (error) {
+        this.logger.error({ err: error }, 'Reminders failed');
       }
     }
     return stats;

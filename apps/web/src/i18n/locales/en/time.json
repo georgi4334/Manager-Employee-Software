@@ -128,5 +128,19 @@
       "warning": "Close to the budget",
       "over": "Over budget"
     }
+  },
+  "compare": {
+    "show": "Compare with attendance",
+    "hide": "Hide the comparison",
+    "title": "Presence and logged time",
+    "row": "present {{present}} h · logged {{logged}} h",
+    "onLeave": "leave",
+    "open": "check-out missing",
+    "flag": {
+      "more_logged": "more time logged than presence",
+      "less_logged": "more presence than time logged"
+    },
+    "empty": "Nothing recorded on either side this week.",
+    "hint": "Only a mirror: differences above 30 minutes are pointed out. Nothing is changed or reported."
   }
 }

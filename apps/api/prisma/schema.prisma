@@ -584,6 +584,8 @@ model AttendanceRecord {
   note       String?
   /// clock | entry | correction
   source     String    @default("clock")
+  /// Set when the reminder about a forgotten check-out was sent (once).
+  remindedAt DateTime? @map("reminded_at") @db.Timestamptz(6)
   createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
@@ -792,6 +794,8 @@ model TimeEntry {
   source     String
   startedAt  DateTime? @map("started_at") @db.Timestamptz(6)
   endedAt    DateTime? @map("ended_at") @db.Timestamptz(6)
+  /// Set when the reminder about a timer left running was sent (once).
+  remindedAt DateTime? @map("reminded_at") @db.Timestamptz(6)
   createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 

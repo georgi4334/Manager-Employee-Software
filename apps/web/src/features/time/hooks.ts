@@ -5,6 +5,7 @@ import {
   createEntry,
   decideTimesheet,
   deleteEntry,
+  fetchCompare,
   fetchExport,
   fetchReport,
   fetchTimer,
@@ -106,3 +107,12 @@ export function useExportHours() {
     },
   });
 }
+
+/** Presence next to logged time for a week: informational, fetched only when it is shown. */
+export const useCompare = (weekStart: string, employeeId: string | undefined, enabled: boolean) =>
+  useQuery({
+    queryKey: timeKeys.compare(weekStart, employeeId ?? 'me'),
+    queryFn: () => fetchCompare(weekStart, employeeId),
+    enabled,
+    retry: false,
+  });

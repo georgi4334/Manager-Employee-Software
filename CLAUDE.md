@@ -153,6 +153,14 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - The CSV export (`time.export`, same project scoping) returns JSON rows of **approved** hours without notes; contracts' `timeExportCsv` builds the file (quotes, line breaks, formula neutralising) and the browser saves it. Every export is audited (`time.exported`: period, project id, row count).
 - Web routes carry their own guards (`/tasks`: `task.view`; `/time`: `time.log` or `time.view`), never the project guard. Daily targets wait for the Integrations step.
 
+## Integrations (docs/adr/0017-integrations.md)
+
+- Everything here is **informational**: nothing blocks, changes or reports by itself, and nothing new is collected.
+- Leave conflicts: `GET /leave/requests/:id/conflicts` (`leave.approve` scope over the owner, else `404`) lists staffed projects, open milestones and the owner's open tasks that fall in the dates. Each part is filtered through `ProjectAccess` (`project.view` / `task.view`); tasks show reference and date, never the title.
+- Attendance versus logged time: `GET /time/compare` (`@Authenticated()`, checked in the service) shows one week for yourself (needs `attendance.view` and `time.log`/`time.view`) or for people covered by **both** `attendance.view` and `time.view`; otherwise `404`. `compareDay` (contracts) flags only differences above 30 minutes and never approved-leave days, open records or empty days. No lists across people, no export, no notification.
+- Reminders: `RemindersService` (in `notifications/delivery`, the only code besides auth allowed to use the system connection, and only to list workspaces) reports an attendance record open for 12 h and a timer running for 10 h, **once** (`reminded_at`, claimed with a conditional update). It runs from the worker's hourly sweep while the API is active and from `POST /api/v1/internal/reminders/run` (`@Public()`, bearer `REMINDERS_TOKEN`, constant-time compare, `404` when unset, `401` otherwise). `.github/workflows/reminders.yml` is the hourly pinger (needs variable `REMINDERS_URL` and secret `REMINDERS_TOKEN`). `RemindersService` must not depend on `OutboxService` (the worker depends on it): it queues events with `outboxEvent.createMany`.
+- A new notification type needs a text in `NotificationText`, a settings entry and en/de/bg `notifications.json` keys: a web test walks the whole catalog and fails otherwise.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

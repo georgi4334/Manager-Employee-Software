@@ -36,6 +36,9 @@ services:
         sync: false
       - key: RESEND_API_KEY
         sync: false
+      # Optional: the hook the hourly reminders workflow calls (docs/adr/0017-integrations.md).
+      - key: REMINDERS_TOKEN
+        sync: false
       - key: MAIL_FROM
         sync: false
       # Optional Google sign-in (all three or none):

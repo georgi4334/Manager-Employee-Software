@@ -64,6 +64,7 @@ const env = {
   MAIL_TRANSPORT: 'log',
   LOG_LEVEL: 'info',
   WORKER_ENABLED: 'true',
+  REMINDERS_TOKEN: 'e2e-reminders-token-e2e-reminders-token-1234',
 };
 
 // Always through turbo: a cache hit is instant, and a stale dist/ would test yesterday's API.

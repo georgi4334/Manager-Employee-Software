@@ -7,6 +7,7 @@ import {
 import type { EmailDispatcher } from './email-dispatcher.service.js';
 import type { NotificationProcessor } from './notification-processor.service.js';
 import type { NotificationRetention } from './notification-retention.service.js';
+import type { RemindersService } from './reminders.service.js';
 import { OutboxWorker } from './outbox-worker.service.js';
 
 function build(options: { enabled?: boolean } = {}) {
@@ -19,6 +20,7 @@ function build(options: { enabled?: boolean } = {}) {
     send: vi.fn(async () => 'sent' as const),
   };
   const retention = { purge: vi.fn(async () => ({ notifications: 0, events: 0 })) };
+  const reminders = { run: vi.fn(async () => ({ attendance: 0, timers: 0 })) };
   const activity = new ActivityTracker();
   const worker = new OutboxWorker(
     testEnv({ WORKER_ENABLED: String(options.enabled ?? true) }),
@@ -26,8 +28,9 @@ function build(options: { enabled?: boolean } = {}) {
     emails as unknown as EmailDispatcher,
     retention as unknown as NotificationRetention,
     activity,
+    reminders as unknown as RemindersService,
   );
-  return { worker, processor, emails, retention, activity };
+  return { worker, processor, emails, retention, activity, reminders };
 }
 
 describe('OutboxWorker.runOnce', () => {
@@ -161,5 +164,32 @@ describe('OutboxWorker sweep (never wakes an idle database)', () => {
     await vi.advanceTimersByTimeAsync(5 * 60_000);
     worker.wake();
     expect(processor.claim).not.toHaveBeenCalled();
+  });
+});
+
+describe('reminders in the worker', () => {
+  it('runs them at most once per hour, like retention', async () => {
+    const { worker, reminders } = build();
+    await worker.runOnce(new Date('2026-10-26T10:00:00Z'));
+    await worker.runOnce(new Date('2026-10-26T10:30:00Z'));
+    await worker.runOnce(new Date('2026-10-26T11:00:01Z'));
+    expect(reminders.run).toHaveBeenCalledTimes(2);
+  });
+
+  it('survives a failing reminder run and tries again next time', async () => {
+    const { worker, reminders, processor } = build();
+    reminders.run.mockRejectedValueOnce(new Error('db down'));
+    await expect(worker.runOnce(new Date('2026-10-26T10:00:00Z'))).resolves.toBeDefined();
+    expect(processor.claim).toHaveBeenCalled();
+    await worker.runOnce(new Date('2026-10-26T10:05:00Z'));
+    expect(reminders.run).toHaveBeenCalledTimes(2);
+  });
+
+  it('delivers the events of new reminders in the same run', async () => {
+    const { worker, reminders, processor } = build();
+    reminders.run.mockResolvedValueOnce({ attendance: 1, timers: 0 });
+    await worker.runOnce(new Date('2026-10-26T10:00:00Z'));
+    expect(processor.claim).toHaveBeenCalledTimes(2);
+    expect(reminders.run).toHaveBeenCalledTimes(1);
   });
 });

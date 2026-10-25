@@ -16,7 +16,11 @@ test('an employee downloads everything held about them', async ({ page }, testIn
   expect(download.suggestedFilename()).toBe('intime-data-export.json');
   expect(doc.account.email).toBe(EMPLOYEE_EMAIL);
   expect(doc.employee.firstName).toBe('Eva');
-  expect(doc.leave.requests).toHaveLength(1);
+  // the approved request of the leave spec and the pending one of the integrations spec
+  expect(doc.leave.requests.map((r: { status: string }) => r.status).sort()).toEqual([
+    'approved',
+    'pending',
+  ]);
   expect(doc.attendance.length).toBeGreaterThanOrEqual(2);
   expect(doc.calendarEvents.map((e: { title: string }) => e.title)).toEqual(['Dentist']);
   expect(JSON.stringify(doc)).not.toMatch(/passwordHash|tokenHash/);

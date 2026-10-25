@@ -7,6 +7,7 @@ import type {
   Holiday,
   LeaveBalance,
   LeaveBalances,
+  LeaveConflicts,
   LeavePreview,
   LeaveRequest,
   LeaveRequestList,
@@ -25,6 +26,7 @@ export const leaveKeys = {
   settings: ['leave', 'settings'] as const,
   balances: (employeeId: string | undefined, year: number) =>
     ['leave', 'balances', employeeId ?? 'me', year] as const,
+  conflicts: (requestId: string) => ['leave', 'conflicts', requestId] as const,
   requests: (params: RequestParams) => ['leave', 'requests', params] as const,
   holidays: (year: number, country: string) => ['leave', 'holidays', year, country] as const,
 };
@@ -88,3 +90,6 @@ export const createHoliday = (body: CreateHolidayRequest) =>
   apiRequest<Holiday>('/leave/holidays', { method: 'POST', body });
 export const deleteHoliday = (id: string) =>
   apiRequest(`/leave/holidays/${id}`, { method: 'DELETE' });
+
+export const fetchConflicts = (requestId: string) =>
+  apiRequest<LeaveConflicts>(`/leave/requests/${requestId}/conflicts`);

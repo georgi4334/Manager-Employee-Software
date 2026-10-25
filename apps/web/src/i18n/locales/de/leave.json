@@ -191,5 +191,16 @@
     "date": "Für dieses Datum gibt es bereits einen Feiertag."
   },
   "insufficient": "Sie haben für {{year}} noch {{available}} Tage, dieser Antrag braucht aber {{requested}}.",
-  "noRecord": "Für Ihr Konto gibt es noch keinen Mitarbeiterdatensatz. Bitten Sie die Personalabteilung, Sie anzulegen, bevor Sie Urlaub beantragen."
+  "noRecord": "Für Ihr Konto gibt es noch keinen Mitarbeiterdatensatz. Bitten Sie die Personalabteilung, Sie anzulegen, bevor Sie Urlaub beantragen.",
+  "conflicts": {
+    "show": "Auswirkungen auf Projekte prüfen",
+    "hide": "Auswirkungen ausblenden",
+    "showFor": "Auswirkungen des Antrags von {{name}} auf Projekte prüfen",
+    "hideFor": "Auswirkungen des Antrags von {{name}} ausblenden",
+    "none": "Keine Projekte, Meilensteine oder Aufgaben betroffen.",
+    "projects": "In dieser Zeit in Projekten",
+    "allocation": "{{percent}} % ihrer Zeit",
+    "milestones": "Fällige Meilensteine",
+    "tasks": "Fällige Aufgaben"
+  }
 }

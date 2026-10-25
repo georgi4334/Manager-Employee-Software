@@ -61,6 +61,18 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\na task was assigned to you in ${v.workspace} on InTime.\n\n` +
         `Open InTime to see it:\n${v.link}`,
     },
+    'attendance.reminder': {
+      subject: (v) => `A check-in in ${v.workspace} is still open`,
+      text: (v) =>
+        `Hello,\n\nyou have a check-in in ${v.workspace} on InTime that was never closed.\n\n` +
+        `Open InTime to check out or correct it:\n${v.link}`,
+    },
+    'time.timer_reminder': {
+      subject: (v) => `Your timer in ${v.workspace} is still running`,
+      text: (v) =>
+        `Hello,\n\na timer is still running for you in ${v.workspace} on InTime.\n\n` +
+        `Open InTime to stop it:\n${v.link}`,
+    },
     'timesheet.decided': {
       subject: (v) => `A decision on your timesheet in ${v.workspace}`,
       text: (v) =>
@@ -112,6 +124,18 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hallo,\n\nIhnen wurde in ${v.workspace} auf InTime eine Aufgabe zugewiesen.\n\n` +
         `Öffnen Sie InTime, um sie zu sehen:\n${v.link}`,
     },
+    'attendance.reminder': {
+      subject: (v) => `Eine Anmeldung in ${v.workspace} ist noch offen`,
+      text: (v) =>
+        `Hallo,\n\nSie haben in ${v.workspace} auf InTime eine Anmeldung, die nie beendet wurde.\n\n` +
+        `Öffnen Sie InTime, um sich abzumelden oder sie zu korrigieren:\n${v.link}`,
+    },
+    'time.timer_reminder': {
+      subject: (v) => `Ihr Timer in ${v.workspace} läuft noch`,
+      text: (v) =>
+        `Hallo,\n\nfür Sie läuft in ${v.workspace} auf InTime noch ein Timer.\n\n` +
+        `Öffnen Sie InTime, um ihn zu stoppen:\n${v.link}`,
+    },
     'timesheet.decided': {
       subject: (v) => `Entscheidung zu Ihrem Zeitnachweis in ${v.workspace}`,
       text: (v) =>
@@ -162,6 +186,18 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       text: (v) =>
         `Здравейте,\n\nвъзложена ви е задача в ${v.workspace} в InTime.\n\n` +
         `Отворете InTime, за да я видите:\n${v.link}`,
+    },
+    'attendance.reminder': {
+      subject: (v) => `Отметка за пристигане в ${v.workspace} е още отворена`,
+      text: (v) =>
+        `Здравейте,\n\nимате отметка за пристигане в ${v.workspace} в InTime, която не е приключена.\n\n` +
+        `Отворете InTime, за да отбележите излизане или да я коригирате:\n${v.link}`,
+    },
+    'time.timer_reminder': {
+      subject: (v) => `Таймерът ви в ${v.workspace} още работи`,
+      text: (v) =>
+        `Здравейте,\n\nза вас още работи таймер в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да го спрете:\n${v.link}`,
     },
     'timesheet.decided': {
       subject: (v) => `Решение по вашия график на часовете в ${v.workspace}`,

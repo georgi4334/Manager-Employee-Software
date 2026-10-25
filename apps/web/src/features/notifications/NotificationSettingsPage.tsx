@@ -33,6 +33,10 @@ function useTypeTitle() {
         return t('types.task.assigned.settingsTitle');
       case 'timesheet.decided':
         return t('types.timesheet.decided.settingsTitle');
+      case 'attendance.reminder':
+        return t('types.attendance.reminder.settingsTitle');
+      case 'time.timer_reminder':
+        return t('types.time.timer_reminder.settingsTitle');
       default:
         return t('unknown.title');
     }
@@ -139,6 +143,16 @@ function TypeHeading({ type }: { type: string }) {
         ];
       case 'task.assigned':
         return [t('types.task.assigned.settingsTitle'), t('types.task.assigned.settingsHelp')];
+      case 'attendance.reminder':
+        return [
+          t('types.attendance.reminder.settingsTitle'),
+          t('types.attendance.reminder.settingsHelp'),
+        ];
+      case 'time.timer_reminder':
+        return [
+          t('types.time.timer_reminder.settingsTitle'),
+          t('types.time.timer_reminder.settingsHelp'),
+        ];
       case 'timesheet.decided':
         return [
           t('types.timesheet.decided.settingsTitle'),
