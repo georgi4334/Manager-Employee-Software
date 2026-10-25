@@ -149,6 +149,10 @@ export class AssignmentsService {
       where: { leadEmployeeId: employeeId },
       data: { leadEmployeeId: null },
     });
+    await tx.task.updateMany({
+      where: { assigneeEmployeeId: employeeId, status: { not: 'done' } },
+      data: { assigneeEmployeeId: null },
+    });
     await tx.projectAssignment.deleteMany({
       where: { employeeId, fromDate: { gt: dateIn(terminationDate) } },
     });

@@ -81,6 +81,16 @@ export const personalDataExportSchema = z.object({
     ),
     led: z.array(z.string()),
   }),
+  /** Tasks assigned to them (reference, title, status, estimate, due date). */
+  tasks: z.array(
+    z.object({
+      key: z.string(),
+      title: z.string(),
+      status: z.string(),
+      estimateHours: z.number().nullable(),
+      dueDate: date.nullable(),
+    }),
+  ),
   attendance: z.array(
     z.object({
       date,

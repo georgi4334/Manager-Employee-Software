@@ -55,6 +55,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\nyou were added to a project in ${v.workspace} on InTime.\n\n` +
         `Open InTime to see it:\n${v.link}`,
     },
+    'task.assigned': {
+      subject: (v) => `A task was assigned to you in ${v.workspace}`,
+      text: (v) =>
+        `Hello,\n\na task was assigned to you in ${v.workspace} on InTime.\n\n` +
+        `Open InTime to see it:\n${v.link}`,
+    },
   },
   de: {
     'account.roles_changed': {
@@ -94,6 +100,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hallo,\n\nSie wurden in ${v.workspace} auf InTime einem Projekt zugeordnet.\n\n` +
         `Öffnen Sie InTime, um es zu sehen:\n${v.link}`,
     },
+    'task.assigned': {
+      subject: (v) => `Ihnen wurde in ${v.workspace} eine Aufgabe zugewiesen`,
+      text: (v) =>
+        `Hallo,\n\nIhnen wurde in ${v.workspace} auf InTime eine Aufgabe zugewiesen.\n\n` +
+        `Öffnen Sie InTime, um sie zu sehen:\n${v.link}`,
+    },
   },
   bg: {
     'account.roles_changed': {
@@ -132,6 +144,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       text: (v) =>
         `Здравейте,\n\nдобавени сте към проект в ${v.workspace} в InTime.\n\n` +
         `Отворете InTime, за да го видите:\n${v.link}`,
+    },
+    'task.assigned': {
+      subject: (v) => `Възложена ви е задача в ${v.workspace}`,
+      text: (v) =>
+        `Здравейте,\n\nвъзложена ви е задача в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да я видите:\n${v.link}`,
     },
   },
 };

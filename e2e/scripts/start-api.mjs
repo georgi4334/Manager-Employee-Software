@@ -3,7 +3,7 @@
 // foreground (Playwright stops it). The invitation link of the first administrator goes to .run/admin-invite.txt
 // and everything the API mails (log transport) ends up in .run/api.log, where the tests read their links.
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, openSync, writeFileSync } from 'node:fs';
+import { mkdirSync, openSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -66,9 +66,8 @@ const env = {
   WORKER_ENABLED: 'true',
 };
 
-if (!existsSync(resolve(root, 'apps/api/dist/main.js'))) {
-  exec('pnpm', ['exec', 'turbo', 'run', 'build', '--filter=@intime/api']);
-}
+// Always through turbo: a cache hit is instant, and a stale dist/ would test yesterday's API.
+exec('pnpm', ['exec', 'turbo', 'run', 'build', '--filter=@intime/api']);
 exec('pnpm', ['--filter', '@intime/api', 'db:deploy'], { env });
 
 const created = spawnSync(

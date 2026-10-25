@@ -66,6 +66,14 @@
         "settingsTitle": "Added to projects",
         "settingsHelp": "When somebody puts you on a project."
       }
+    },
+    "task": {
+      "assigned": {
+        "title": "Task assigned",
+        "text": "You were given the task {{taskKey}}.",
+        "settingsTitle": "Tasks assigned to you",
+        "settingsHelp": "When somebody gives you a task."
+      }
     }
   },
   "unknown": {

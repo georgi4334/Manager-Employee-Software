@@ -1,0 +1,82 @@
+{
+  "title": "Tasks",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "new": "New task",
+  "search": "Search by title or key, like WEB-12",
+  "total_one": "{{count}} task",
+  "total_other": "{{count}} tasks",
+  "empty": "No tasks to show.",
+  "pagination": "Pages",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{page}} of {{pages}}",
+  "unassigned": "Unassigned",
+  "views": {
+    "label": "View",
+    "list": "List",
+    "board": "Board"
+  },
+  "filters": {
+    "project": "Project",
+    "allProjects": "All projects",
+    "status": "Status",
+    "allStatuses": "All statuses",
+    "open": "Open",
+    "type": "Type",
+    "allTypes": "All types",
+    "mine": "Assigned to me"
+  },
+  "status": {
+    "todo": "To do",
+    "in_progress": "In progress",
+    "review": "In review",
+    "done": "Done"
+  },
+  "type": {
+    "functional": "Functional",
+    "non_functional": "Non-functional"
+  },
+  "priority": {
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High"
+  },
+  "card": {
+    "overdue": "Overdue",
+    "due": "Due {{date}}",
+    "doneOn": "Done {{date}}",
+    "hours": "{{hours}} h",
+    "status": "Status of {{key}}",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "form": {
+    "newTitle": "New task",
+    "editTitle": "Edit task",
+    "project": "Project",
+    "title": "Title",
+    "description": "Description",
+    "type": "Type",
+    "status": "Status",
+    "priority": "Priority",
+    "assignee": "Assigned to",
+    "milestone": "Milestone",
+    "noMilestone": "No milestone",
+    "estimate": "Estimate (hours)",
+    "dueDate": "Due date",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel"
+  },
+  "rule": {
+    "unknown_employee": "This person does not exist or is no longer active.",
+    "assignee_not_on_project": "Only people on the project can be given its tasks.",
+    "milestone_not_in_project": "This milestone belongs to another project."
+  },
+  "link": {
+    "open_one": "{{count}} open task",
+    "open_other": "{{count}} open tasks",
+    "go": "Open the tasks"
+  }
+}

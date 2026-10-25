@@ -66,6 +66,14 @@
         "settingsTitle": "Projektzuordnungen",
         "settingsHelp": "Wenn jemand Sie einem Projekt zuordnet."
       }
+    },
+    "task": {
+      "assigned": {
+        "title": "Aufgabe zugewiesen",
+        "text": "Dir wurde die Aufgabe {{taskKey}} zugewiesen.",
+        "settingsTitle": "Dir zugewiesene Aufgaben",
+        "settingsHelp": "Wenn dir jemand eine Aufgabe zuweist."
+      }
     }
   },
   "unknown": {

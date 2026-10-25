@@ -36,6 +36,7 @@ model Tenant {
   projects                Project[]
   milestones              Milestone[]
   projectAssignments      ProjectAssignment[]
+  tasks                   Task[]
   leavePolicies           LeavePolicy[]
   leaveBalances           LeaveBalance[]
   leaveRequests           LeaveRequest[]
@@ -336,6 +337,7 @@ model Employee {
   calendarEvents     CalendarEvent[]
   ledProjects        Project[]           @relation("ProjectLead")
   projectAssignments ProjectAssignment[]
+  tasksAssigned      Task[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -662,6 +664,8 @@ model Project {
   startDate      DateTime  @map("start_date") @db.Date
   endDate        DateTime? @map("end_date") @db.Date
   leadEmployeeId String?   @map("lead_employee_id") @db.Uuid
+  /// Counter for the task numbers of this project (docs/adr/0014-tasks.md).
+  taskSeq        Int       @default(0) @map("task_seq")
   createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
@@ -670,6 +674,7 @@ model Project {
   lead        Employee?           @relation("ProjectLead", fields: [tenantId, leadEmployeeId], references: [tenantId, id], onDelete: NoAction)
   milestones  Milestone[]
   assignments ProjectAssignment[]
+  tasks       Task[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, code])
@@ -693,6 +698,7 @@ model Milestone {
 
   tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   project Project @relation(fields: [tenantId, projectId], references: [tenantId, id], onDelete: Cascade)
+  tasks   Task[]
 
   @@unique([tenantId, id])
   @@index([tenantId, projectId, dueDate])
@@ -720,4 +726,42 @@ model ProjectAssignment {
   @@index([tenantId, projectId])
   @@index([tenantId, employeeId, fromDate])
   @@map("project_assignment")
+}
+
+// ----- Tasks (docs/adr/0014-tasks.md) -------------------------------------------------------------------
+
+model Task {
+  id                 String    @id @default(uuid(7)) @db.Uuid
+  tenantId           String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  projectId          String    @map("project_id") @db.Uuid
+  /// 1, 2, 3 ... inside the project; the reference is CODE-number.
+  number             Int
+  /// Must belong to the same project (a trigger in the migration checks it).
+  milestoneId        String?   @map("milestone_id") @db.Uuid
+  title              String
+  description        String?
+  /// functional | non_functional
+  type               String    @default("functional")
+  /// todo | in_progress | review | done
+  status             String    @default("todo")
+  /// low | normal | high
+  priority           String    @default("normal")
+  assigneeEmployeeId String?   @map("assignee_employee_id") @db.Uuid
+  estimateHours      Decimal?  @map("estimate_hours") @db.Decimal(6, 1)
+  dueDate            DateTime? @map("due_date") @db.Date
+  doneOn             DateTime? @map("done_on") @db.Date
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant    Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  project   Project    @relation(fields: [tenantId, projectId], references: [tenantId, id], onDelete: Cascade)
+  milestone Milestone? @relation(fields: [tenantId, milestoneId], references: [tenantId, id], onDelete: NoAction)
+  assignee  Employee?  @relation(fields: [tenantId, assigneeEmployeeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, projectId, number])
+  @@index([tenantId, projectId, status])
+  @@index([tenantId, assigneeEmployeeId])
+  @@index([tenantId, milestoneId])
+  @@map("task")
 }

@@ -127,6 +127,15 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Deactivating an employee calls `AssignmentsService.onEmployeeDeactivated` (ends running assignments at the termination date, drops future ones, clears them as project lead) in the same transaction. Data export lists staffing; erasure clears assignment roles.
 - Audit entries carry ids and field names only; `project.assigned` notifications carry the project id and name.
 
+## Tasks (docs/adr/0014-tasks.md)
+
+- `task` (RLS, composite foreign keys). Numbering is per project: `project.task_seq` is incremented under the project row lock; the reference is `CODE-number` (`taskKey`). Never compute numbers from `max(number)`.
+- Rights: `task.view` scope is about people and projects (`ProjectAccess.visibleWhere(..., 'task.view')` plus tasks assigned to people in scope). Full edit/create/delete needs `task.manage` and either scope `all` or leading the project (`project.manage` covers the lead); the assignee may change only the status (`canMove`). A task the caller cannot see is `404`.
+- The assignee must be an active person staffed on the project or its lead (`assignee_not_on_project`, `unknown_employee`); the milestone must belong to the same project (`milestone_not_in_project`, also a DB trigger). `done_on` is set exactly when the status is `done`.
+- `task.assigned` notifications carry the project id and task key, never the title. Audit entries carry ids and field names only. Deactivating an employee un-assigns their open tasks (`AssignmentsService.onEmployeeDeactivated`); the data export lists assigned tasks.
+- Web: `/tasks` (list and board views, filters in the query string for `project` and `view`), move via the status select (no drag and drop), a task count on the project page. The project picker lists the first page of projects only.
+- e2e: the start script always builds the API through turbo; a stale `dist/` once hid a missing route.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

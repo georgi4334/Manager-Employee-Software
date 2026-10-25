@@ -32,6 +32,8 @@ const SIGNED_IN = [
   '/notifications/settings',
   '/projects',
   '/projects?tab=clients',
+  '/tasks',
+  '/tasks?view=board',
   '/profile',
   '/does-not-exist',
 ];
@@ -100,6 +102,12 @@ for (const variant of variants) {
       await page.getByRole('button', { name: 'Add person' }).click();
       await page.getByRole('button', { name: 'Add milestone' }).click();
       found.push(...(await scan(page, 'project detail (forms open)')));
+      await settle(page, '/tasks');
+      await page.getByRole('button', { name: 'New task' }).click();
+      found.push(...(await scan(page, '/tasks (new task form)')));
+      await page.getByRole('button', { name: 'Cancel' }).click();
+      await page.getByRole('button', { name: 'Edit' }).first().click();
+      found.push(...(await scan(page, '/tasks (edit form)')));
       expect(found).toEqual([]);
     });
   });

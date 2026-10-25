@@ -29,6 +29,8 @@ function useTypeTitle() {
         return t('types.attendance.corrected.settingsTitle');
       case 'project.assigned':
         return t('types.project.assigned.settingsTitle');
+      case 'task.assigned':
+        return t('types.task.assigned.settingsTitle');
       default:
         return t('unknown.title');
     }
@@ -133,6 +135,8 @@ function TypeHeading({ type }: { type: string }) {
           t('types.project.assigned.settingsTitle'),
           t('types.project.assigned.settingsHelp'),
         ];
+      case 'task.assigned':
+        return [t('types.task.assigned.settingsTitle'), t('types.task.assigned.settingsHelp')];
       case 'attendance.corrected':
         return [
           t('types.attendance.corrected.settingsTitle'),

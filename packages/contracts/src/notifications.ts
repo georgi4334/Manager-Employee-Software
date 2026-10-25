@@ -48,6 +48,13 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/projects',
   }),
+  // Tasks (docs/adr/0014-tasks.md): a task was given to you. The reference (WEB-12) only, never the title.
+  'task.assigned': typeDef({
+    params: z.object({ projectId: z.uuid(), taskKey: z.string().trim().min(1).max(30) }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/tasks',
+  }),
   // Leave (docs/adr/0008-leave.md). Names and dates only: never the type of a sick request, never reasons.
   'leave.requested': typeDef({
     params: z.object({
