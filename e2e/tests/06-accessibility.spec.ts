@@ -37,6 +37,7 @@ const SIGNED_IN = [
   '/time',
   '/time?tab=approvals',
   '/time?tab=reports',
+  '/capacity',
   '/profile',
   '/does-not-exist',
 ];
@@ -116,6 +117,9 @@ for (const variant of variants) {
       found.push(...(await scan(page, '/time (add time form)')));
       await page.getByRole('button', { name: 'Compare with attendance' }).click();
       found.push(...(await scan(page, '/time (comparison open)')));
+      await settle(page, '/capacity');
+      await page.getByText('Days and projects').first().click();
+      found.push(...(await scan(page, '/capacity (days and projects open)')));
       await settle(page, '/leave?tab=approvals');
       await page
         .getByRole('button', { name: /^Check the project impact/ })

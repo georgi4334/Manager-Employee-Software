@@ -1,0 +1,12 @@
+import { Module } from '@nestjs/common';
+import { LeaveModule } from '../leave/leave.module.js';
+import { ProjectsModule } from '../projects/projects.module.js';
+import { CapacityController } from './capacity.controller.js';
+import { CapacityService } from './capacity.service.js';
+
+@Module({
+  imports: [LeaveModule, ProjectsModule],
+  controllers: [CapacityController],
+  providers: [CapacityService],
+})
+export class CapacityModule {}

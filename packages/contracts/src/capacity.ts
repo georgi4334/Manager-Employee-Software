@@ -1,0 +1,139 @@
+import { z } from 'zod';
+import { daysBetween, isWeekend, type DateString } from './dates.js';
+import { dateOnlySchema } from './employees.js';
+
+/** Everybody is measured against the same standard day for now (docs/adr/0018-capacity.md). */
+export const WORKDAY_MINUTES = 8 * 60;
+export const MAX_CAPACITY_DAYS = 31;
+/** From this share of the available time on, a person counts as "full". */
+export const FULL_PERCENT = 80;
+
+export const CAPACITY_LEVELS = ['none', 'free', 'busy', 'full', 'over'] as const;
+export type CapacityLevel = (typeof CAPACITY_LEVELS)[number];
+export const DAY_STATUSES = [
+  'off',
+  'leave',
+  'partly_leave',
+  'free',
+  'busy',
+  'full',
+  'over',
+] as const;
+export type DayStatus = (typeof DAY_STATUSES)[number];
+
+/**
+ * Working minutes of a date before leave: none on weekends, full holidays and outside the employment, half a day
+ * on a half-day holiday.
+ */
+export function workingMinutes(
+  date: DateString,
+  options: {
+    holiday?: { halfDay: boolean } | undefined;
+    hireDate?: DateString | null;
+    terminationDate?: DateString | null;
+  } = {},
+): number {
+  if (isWeekend(date)) return 0;
+  if (options.hireDate && date < options.hireDate) return 0;
+  if (options.terminationDate && date > options.terminationDate) return 0;
+  if (options.holiday) return options.holiday.halfDay ? WORKDAY_MINUTES / 2 : 0;
+  return WORKDAY_MINUTES;
+}
+
+/** What is left of the working minutes after approved leave (1 = a whole day, 0.5 = half a day). */
+export const availableMinutes = (working: number, leaveFraction: number): number =>
+  Math.max(0, working - Math.round(leaveFraction * WORKDAY_MINUTES));
+
+/** The time one assignment claims of an available stretch. */
+export const assignmentMinutes = (available: number, allocationPercent: number): number =>
+  Math.round((available * allocationPercent) / 100);
+
+/**
+ * The available time promised to projects: every covering assignment claims its percentage (rounded per
+ * assignment, so the parts always add up to the whole).
+ */
+export const plannedMinutes = (available: number, allocationPercents: readonly number[]): number =>
+  allocationPercents.reduce((sum, p) => sum + assignmentMinutes(available, p), 0);
+
+/** How full a period is. More planned than available is over-booking: shown, never blocked. */
+export function loadLevel(planned: number, available: number): CapacityLevel {
+  if (available <= 0) return 'none';
+  if (planned <= 0) return 'free';
+  const ratio = planned / available;
+  if (ratio > 1) return 'over';
+  return ratio >= FULL_PERCENT / 100 ? 'full' : 'busy';
+}
+
+/** The same for one day, in words that also cover days nobody works. */
+export function dayStatus(day: {
+  working: number;
+  leaveFraction: number;
+  available: number;
+  planned: number;
+}): DayStatus {
+  if (day.leaveFraction >= 1) return 'leave';
+  if (day.working === 0) return 'off';
+  if (day.leaveFraction > 0) return 'partly_leave';
+  const level = loadLevel(day.planned, day.available);
+  return level === 'none' ? 'off' : level;
+}
+
+export const freeMinutes = (available: number, planned: number): number =>
+  Math.max(0, available - planned);
+
+// ----- API -------------------------------------------------------------------------------------
+
+export const capacityQuerySchema = z
+  .object({
+    from: dateOnlySchema,
+    to: dateOnlySchema,
+    projectId: z.uuid().optional(),
+    q: z.string().trim().max(100).optional(),
+    page: z.coerce.number().int().min(1).max(10_000).default(1),
+    pageSize: z.coerce.number().int().min(1).max(100).default(50),
+  })
+  .refine((v) => v.to >= v.from, { path: ['to'], error: 'end_before_start' })
+  .refine((v) => v.to < v.from || daysBetween(v.from, v.to) < MAX_CAPACITY_DAYS, {
+    path: ['to'],
+    error: 'too_long',
+  });
+export type CapacityQuery = z.infer<typeof capacityQuerySchema>;
+
+export const capacityPersonSchema = z.object({
+  employee: z.object({ id: z.uuid(), firstName: z.string(), lastName: z.string() }),
+  availableMinutes: z.number().int(),
+  plannedMinutes: z.number().int(),
+  loggedMinutes: z.number().int(),
+  freeMinutes: z.number().int(),
+  level: z.enum(CAPACITY_LEVELS),
+  days: z.array(
+    z.object({
+      date: z.string(),
+      availableMinutes: z.number().int(),
+      plannedMinutes: z.number().int(),
+      loggedMinutes: z.number().int(),
+      status: z.enum(DAY_STATUSES),
+    }),
+  ),
+  /** Projects the caller may see; the rest is summed in one row without an id. */
+  projects: z.array(
+    z.object({
+      id: z.uuid().nullable(),
+      code: z.string().nullable(),
+      name: z.string().nullable(),
+      plannedMinutes: z.number().int(),
+      loggedMinutes: z.number().int(),
+    }),
+  ),
+});
+export type CapacityPerson = z.infer<typeof capacityPersonSchema>;
+
+export const capacitySchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  items: z.array(capacityPersonSchema),
+  total: z.number().int().min(0),
+  page: z.number().int().min(1),
+  pageSize: z.number().int().min(1),
+});
+export type Capacity = z.infer<typeof capacitySchema>;

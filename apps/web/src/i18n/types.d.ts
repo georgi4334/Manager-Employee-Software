@@ -13,6 +13,7 @@ import type privacy from './locales/en/privacy.json';
 import type projects from './locales/en/projects.json';
 import type tasks from './locales/en/tasks.json';
 import type time from './locales/en/time.json';
+import type capacity from './locales/en/capacity.json';
 import type notifications from './locales/en/notifications.json';
 
 declare module 'i18next' {
@@ -34,6 +35,7 @@ declare module 'i18next' {
       projects: typeof projects;
       tasks: typeof tasks;
       time: typeof time;
+      capacity: typeof capacity;
     };
   }
 }

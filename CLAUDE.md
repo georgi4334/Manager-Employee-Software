@@ -161,6 +161,13 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Reminders: `RemindersService` (in `notifications/delivery`, the only code besides auth allowed to use the system connection, and only to list workspaces) reports an attendance record open for 12 h and a timer running for 10 h, **once** (`reminded_at`, claimed with a conditional update). It runs from the worker's hourly sweep while the API is active and from `POST /api/v1/internal/reminders/run` (`@Public()`, bearer `REMINDERS_TOKEN`, constant-time compare, `404` when unset, `401` otherwise). `.github/workflows/reminders.yml` is the hourly pinger (needs variable `REMINDERS_URL` and secret `REMINDERS_TOKEN`). `RemindersService` must not depend on `OutboxService` (the worker depends on it): it queues events with `outboxEvent.createMany`.
 - A new notification type needs a text in `NotificationText`, a settings entry and en/de/bg `notifications.json` keys: a web test walks the whole catalog and fails otherwise.
 
+## Capacity (docs/adr/0018-capacity.md)
+
+- Computed, never stored (no table, nothing to export or erase). The model is pure functions in `@intime/contracts` (`capacity.ts`): `workingMinutes` (weekends, holidays of the person's country, hire and termination dates), `availableMinutes` (minus approved leave; pending leave changes nothing), `plannedMinutes` (each covering assignment claims its percentage of the available time, rounded **per assignment** so project parts add up to the whole), `loadLevel` / `dayStatus`.
+- Everybody is measured against the same **8-hour day** (`WORKDAY_MINUTES`) for now; the page says so. Part-time schedules need a per-person working-time setting later.
+- `GET /capacity` (`capacity.view`; people = active employees inside the scope via `allowedEmployees`; period at most 31 days). The per-project breakdown shows only projects the caller may see (`project.view`); the rest is one row without an id so totals still add up. A `projectId` the caller cannot see is `404`. Over-booking is information, never a block.
+- Web: `/capacity` has its own route guard (`capacity.view`); cards, a week at a time, no wide table.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

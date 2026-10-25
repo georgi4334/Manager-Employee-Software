@@ -7,5 +7,6 @@
   "organization": "Organization",
   "projects": "Projects",
   "tasks": "Tasks",
-  "time": "Time"
+  "time": "Time",
+  "capacity": "Capacity"
 }
