@@ -45,6 +45,11 @@ const envSchema = z
     TRUST_PROXY_HOPS: z.coerce.number().int().min(1).max(5).default(1),
     /** Background delivery of notifications and emails. Turn off for tests and one-off commands. */
     WORKER_ENABLED: booleanString.default(true),
+    /**
+     * Shared secret of the reminder hook (POST /api/v1/internal/reminders/run) for an external scheduler. Without it
+     * the hook does not exist. At least 32 characters; generate: openssl rand -base64 48
+     */
+    REMINDERS_TOKEN: z.string().min(32).optional(),
     /** Secure cookies (HTTPS only). Defaults to on in production. */
     COOKIE_SECURE: booleanString.optional(),
     /**

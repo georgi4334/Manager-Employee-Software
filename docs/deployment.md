@@ -37,13 +37,16 @@ Rotating a password = re-run the script with a new one and update the Render var
 `DATABASE_URL`, `SYSTEM_DATABASE_URL` (above), `JWT_ACCESS_SECRET` (`openssl rand -base64 48`, different from every
 other environment), `WEB_APP_URL` (= `WEB_ORIGIN`), `RESEND_API_KEY`, `MAIL_FROM`. Optional Google sign-in: create an
 OAuth client, redirect URL `<WEB_ORIGIN>/api/v1/auth/google/callback`, set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
-`GOOGLE_REDIRECT_URL`. The other variables come from `render.yaml`.
+`GOOGLE_REDIRECT_URL`. Optional reminders (forgotten check-outs and timers): `REMINDERS_TOKEN`
+(`openssl rand -base64 48`); without it the hook does not exist. The other variables come from `render.yaml`.
 
 ## 4. GitHub
 
 Settings → Environments → create `production`. Secrets: `MIGRATION_DATABASE_URL`, `RENDER_DEPLOY_HOOK_URL`,
 `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. Repository variables: `API_ORIGIN`, `WEB_ORIGIN`, `CF_PAGES_PROJECT`,
-and last `DEPLOY_ENABLED=true`. Protect `main` (PR + passing CI). Merging `dev` → `main` then deploys.
+and last `DEPLOY_ENABLED=true`. Reminders (optional, `.github/workflows/reminders.yml`, hourly): secret
+`REMINDERS_TOKEN` (same value as on Render) and variable `REMINDERS_URL` (= `API_ORIGIN`); the workflow does nothing while
+`REMINDERS_URL` is empty. Protect `main` (PR + passing CI). Merging `dev` → `main` then deploys.
 
 ## 5. First workspace (once, after the first deploy)
 
@@ -63,5 +66,7 @@ The admin receives an invitation email; open the link, set a password.
 - **Rollback**: Render → Deploys → redeploy the previous one. Migrations are backward compatible, so the old code
   still works with the new schema; never edit a migration that has been deployed.
 - **Failed deploy workflow**: fix forward or re-run it (workflow_dispatch); steps are idempotent.
-- **Open items**: scheduled database backups, error monitoring, custom domain + SPF/DKIM, external pinger for
-  time-based features.
+- **Open items**: scheduled database backups, error monitoring, custom domain + SPF/DKIM.
+- **Reminders**: the `Reminders` workflow calls `POST /api/v1/internal/reminders/run` every hour (it also wakes the
+  free API). Check its runs in GitHub → Actions; a `401` means the two `REMINDERS_TOKEN` values differ, a `404` that
+  Render has none. Each record is reminded once.

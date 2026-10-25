@@ -9,6 +9,7 @@ import {
   deleteHoliday,
   fetchBalances,
   fetchHolidays,
+  fetchConflicts,
   fetchRequests,
   fetchSettings,
   fetchTypes,
@@ -105,3 +106,12 @@ export function useAdjustBalance() {
   const refresh = useRefresh();
   return useMutation({ mutationFn: adjustBalance, onSuccess: refresh });
 }
+
+/** What a request collides with (projects, milestones, tasks); fetched only when the approver asks. */
+export const useLeaveConflicts = (requestId: string, enabled: boolean) =>
+  useQuery({
+    queryKey: leaveKeys.conflicts(requestId),
+    queryFn: () => fetchConflicts(requestId),
+    enabled,
+    retry: false,
+  });

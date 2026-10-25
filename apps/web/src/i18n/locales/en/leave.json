@@ -191,5 +191,16 @@
     "date": "A holiday already exists on this date."
   },
   "insufficient": "You have {{available}} days left for {{year}}, but this request needs {{requested}}.",
-  "noRecord": "There is no employee record for your account yet. Ask HR to add you before you request leave."
+  "noRecord": "There is no employee record for your account yet. Ask HR to add you before you request leave.",
+  "conflicts": {
+    "show": "Check project impact",
+    "hide": "Hide project impact",
+    "showFor": "Check the project impact of the request of {{name}}",
+    "hideFor": "Hide the project impact of the request of {{name}}",
+    "none": "No projects, milestones or tasks are affected.",
+    "projects": "On projects during this time",
+    "allocation": "{{percent}}% of their time",
+    "milestones": "Milestones due",
+    "tasks": "Tasks due"
+  }
 }

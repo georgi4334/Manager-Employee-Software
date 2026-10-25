@@ -19,6 +19,6 @@ import { ProjectsService } from './projects.service.js';
     TasksService,
   ],
   // The offboarding hook of employees.
-  exports: [AssignmentsService],
+  exports: [AssignmentsService, ProjectAccess],
 })
 export class ProjectsModule {}

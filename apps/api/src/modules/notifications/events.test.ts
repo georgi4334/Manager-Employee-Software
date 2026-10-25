@@ -27,6 +27,8 @@ describe('event catalog', () => {
       'attendance.corrected': { recipientUserId: USER, date: '2026-11-02', action: 'updated' },
       'project.assigned': { recipientUserId: USER, projectId: USER, projectName: 'Website' },
       'task.assigned': { recipientUserId: USER, projectId: USER, taskKey: 'WEB-12' },
+      'attendance.reminder': { recipientUserId: USER, date: '2026-10-26' },
+      'time.timer_reminder': { recipientUserId: USER, date: '2026-10-26' },
       'timesheet.decided': { recipientUserId: USER, weekStart: '2026-10-26', decision: 'approved' },
     };
     for (const [type, definition] of Object.entries(EVENT_DEFINITIONS)) {
@@ -249,6 +251,24 @@ describe('timesheet.decided', () => {
     ['no recipient', { weekStart: '2026-10-26', decision: 'approved' }],
     ['a bad date', { recipientUserId: USER, weekStart: '26.10.2026', decision: 'approved' }],
     ['another decision', { recipientUserId: USER, weekStart: '2026-10-26', decision: 'locked' }],
+  ])('rejects %s', (_label, params) => {
+    expect(definition.params.safeParse(params).success).toBe(false);
+  });
+});
+
+describe.each(['attendance.reminder', 'time.timer_reminder'] as const)('%s', (type) => {
+  const definition = EVENT_DEFINITIONS[type];
+
+  it('tells the person the day, nothing else', () => {
+    expect(definition.notify({ recipientUserId: USER, date: '2026-10-26' })).toEqual([
+      { recipientUserId: USER, type, params: { date: '2026-10-26' } },
+    ]);
+  });
+
+  it.each([
+    ['no recipient', { date: '2026-10-26' }],
+    ['no date', { recipientUserId: USER }],
+    ['a bad date', { recipientUserId: USER, date: '26.10.2026' }],
   ])('rejects %s', (_label, params) => {
     expect(definition.params.safeParse(params).success).toBe(false);
   });

@@ -6,6 +6,7 @@ import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { formatDay } from '@/shared/lib/format';
+import { ComparePanel } from './ComparePanel';
 import { EntryForm } from './EntryForm';
 import { useSubmitWeek, useWeek } from './hooks';
 import { StatusBadge } from './StatusBadge';
@@ -18,6 +19,7 @@ export function WeekTab({ today }: { today: string }) {
   const language = i18n.resolvedLanguage ?? 'en';
   const errors = useTimeErrors();
   const canLog = usePermission('time.log');
+  const seesAttendance = usePermission('attendance.view');
   const [weekStart, setWeekStart] = useState(weekStartOf(today));
   const [adding, setAdding] = useState(false);
   const week = useWeek(weekStart);
@@ -98,6 +100,7 @@ export function WeekTab({ today }: { today: string }) {
               />
             </Card>
           )}
+          {seesAttendance && <ComparePanel key={weekStart} weekStart={weekStart} />}
           <WeekDays week={data} />
         </>
       )}

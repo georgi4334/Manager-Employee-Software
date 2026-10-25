@@ -57,6 +57,12 @@
         "textDeleted": "Your time record on {{date}} was removed.",
         "settingsTitle": "Corrections to your attendance",
         "settingsHelp": "When a manager or HR adds, changes or removes one of your time records."
+      },
+      "reminder": {
+        "title": "Check-in still open",
+        "text": "Your check-in on {{date}} was never closed. Check out or correct it.",
+        "settingsTitle": "Forgotten check-outs",
+        "settingsHelp": "When a check-in stays open for 12 hours."
       }
     },
     "project": {
@@ -82,6 +88,14 @@
         "textRejected": "Your timesheet for the week of {{week}} was sent back. You can change it and submit it again.",
         "settingsTitle": "Decisions on your timesheets",
         "settingsHelp": "When a manager approves or sends back one of your weeks."
+      }
+    },
+    "time": {
+      "timer_reminder": {
+        "title": "Timer still running",
+        "text": "A timer you started on {{date}} is still running. Stop it or correct the entry.",
+        "settingsTitle": "Timers left running",
+        "settingsHelp": "When a timer keeps running for 10 hours."
       }
     }
   },

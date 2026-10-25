@@ -114,6 +114,14 @@ for (const variant of variants) {
       await settle(page, '/time');
       await page.getByRole('button', { name: 'Add time' }).click();
       found.push(...(await scan(page, '/time (add time form)')));
+      await page.getByRole('button', { name: 'Compare with attendance' }).click();
+      found.push(...(await scan(page, '/time (comparison open)')));
+      await settle(page, '/leave?tab=approvals');
+      await page
+        .getByRole('button', { name: /^Check the project impact/ })
+        .first()
+        .click();
+      found.push(...(await scan(page, '/leave approvals (project impact open)')));
       expect(found).toEqual([]);
     });
   });

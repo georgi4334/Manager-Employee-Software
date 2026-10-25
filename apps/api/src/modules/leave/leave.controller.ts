@@ -29,6 +29,7 @@ import {
   type CreateLeaveRequest,
   type CreateLeaveTypeRequest,
   type DecisionRequest,
+  type LeaveConflicts,
   type Holiday,
   type HolidayQuery,
   type LeaveBalance,
@@ -48,6 +49,7 @@ import type { RequestAuth } from '../../common/auth/auth.types.js';
 import { Authenticated, CurrentAuth, RequirePermission } from '../../common/auth/decorators.js';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
 import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
+import { LeaveConflictsService } from './leave-conflicts.service.js';
 import { LeaveBalancesService } from './leave-balances.service.js';
 import { LeaveRequestsService } from './leave-requests.service.js';
 import { LeaveSettingsService } from './leave-settings.service.js';
@@ -63,6 +65,7 @@ export class LeaveController {
     private readonly settings: LeaveSettingsService,
     private readonly balances: LeaveBalancesService,
     private readonly requests: LeaveRequestsService,
+    private readonly conflictChecks: LeaveConflictsService,
     private readonly db: TenantDb,
   ) {}
 
@@ -211,6 +214,18 @@ export class LeaveController {
     @Query(new ZodValidationPipe(leaveRequestQuerySchema)) query: LeaveRequestQuery,
   ): Promise<LeaveRequestList> {
     return this.requests.list(actor, query);
+  }
+
+  @Get('requests/:id/conflicts')
+  @RequirePermission('leave.approve')
+  @ApiOperation({
+    summary: 'Projects, milestones and tasks a request collides with (informational)',
+  })
+  conflicts(
+    @CurrentAuth() actor: RequestAuth,
+    @Param('id', idParam) id: string,
+  ): Promise<LeaveConflicts> {
+    return this.conflictChecks.conflicts(actor, id);
   }
 
   @Post('requests/:id/approve')

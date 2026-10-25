@@ -65,6 +65,19 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/time',
   }),
+  // Reminders (docs/adr/0017-integrations.md): something started and was never finished. The day only.
+  'attendance.reminder': typeDef({
+    params: z.object({ date: z.string().regex(DATE) }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/attendance',
+  }),
+  'time.timer_reminder': typeDef({
+    params: z.object({ date: z.string().regex(DATE) }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/time',
+  }),
   // Leave (docs/adr/0008-leave.md). Names and dates only: never the type of a sick request, never reasons.
   'leave.requested': typeDef({
     params: z.object({

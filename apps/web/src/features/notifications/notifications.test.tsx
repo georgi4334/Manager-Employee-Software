@@ -1,4 +1,10 @@
-import type { NotificationItem, NotificationList } from '@intime/contracts';
+import {
+  NOTIFICATION_TYPES,
+  NOTIFICATION_TYPE_KEYS,
+  type NotificationItem,
+  type NotificationList,
+  type NotificationType,
+} from '@intime/contracts';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
@@ -330,6 +336,84 @@ const preferences = (inApp: boolean) => [
     channels: { in_app: { enabled: inApp, locked: false }, email: { enabled: true, locked: true } },
   },
 ];
+
+/** One sample of every type in the catalog: a new type without a text here (and in the app) fails this test. */
+const SAMPLES: Record<NotificationType, Record<string, unknown>> = {
+  'account.roles_changed': { roleNames: ['HR'] },
+  'attendance.corrected': { date: '2026-10-26', action: 'updated' },
+  'attendance.reminder': { date: '2026-10-26' },
+  'project.assigned': { projectId: uuid(9), projectName: 'Website' },
+  'task.assigned': { projectId: uuid(9), taskKey: 'WEB-12' },
+  'time.timer_reminder': { date: '2026-10-26' },
+  'timesheet.decided': { weekStart: '2026-10-26', decision: 'approved' },
+  'leave.requested': {
+    requestId: uuid(9),
+    employeeName: 'Dan Test',
+    startDate: '2026-11-02',
+    endDate: '2026-11-06',
+    days: 5,
+    autoApproved: false,
+  },
+  'leave.decided': {
+    requestId: uuid(9),
+    status: 'approved',
+    startDate: '2026-11-02',
+    endDate: '2026-11-06',
+  },
+  'leave.cancelled': {
+    requestId: uuid(9),
+    employeeName: 'Dan Test',
+    startDate: '2026-11-02',
+    endDate: '2026-11-06',
+    by: 'employee',
+  },
+};
+
+describe('every notification type has a text', () => {
+  it('knows a sample for each type of the catalog', () => {
+    expect(Object.keys(SAMPLES).sort()).toEqual([...NOTIFICATION_TYPE_KEYS].sort());
+  });
+
+  it.each(['en', 'de', 'bg'] as const)('shows real text for each type in %s', async (language) => {
+    await initTestI18n(language);
+    const types = NOTIFICATION_TYPE_KEYS;
+    serve(() =>
+      list(
+        types.map((type, i) =>
+          item(i + 1, { type, params: SAMPLES[type], link: NOTIFICATION_TYPES[type].link }),
+        ),
+      ),
+    );
+    await renderApp('/notifications');
+    const entries = await screen.findAllByRole('listitem');
+    expect(entries).toHaveLength(types.length);
+    const unknown = (await import(`@/i18n/locales/${language}/notifications.json`)).default.unknown;
+    for (const entry of entries) {
+      expect(entry.textContent).not.toContain(unknown.title);
+      expect(entry.textContent).not.toMatch(/types\.|notifications:|\{\{/);
+    }
+  });
+
+  it('lists every type in the settings, with a title', async () => {
+    server.use(
+      http.get(`${API}/notifications/preferences`, () =>
+        HttpResponse.json(
+          NOTIFICATION_TYPE_KEYS.map((type) => ({
+            type,
+            channels: {
+              in_app: { enabled: true, locked: false },
+              email: { enabled: true, locked: false },
+            },
+          })),
+        ),
+      ),
+    );
+    await renderApp('/notifications/settings');
+    await screen.findAllByRole('switch');
+    expect(screen.getAllByRole('switch')).toHaveLength(NOTIFICATION_TYPE_KEYS.length * 2);
+    expect(document.body.textContent).not.toMatch(/New notification|types\./);
+  });
+});
 
 describe('notification settings page', () => {
   it('shows each notification type with a switch per channel; required channels are on and cannot be changed', async () => {

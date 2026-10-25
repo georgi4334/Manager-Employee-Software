@@ -513,6 +513,96 @@ describe('approvals', () => {
     expect(calls.requests.at(-1)?.searchParams.get('approvable')).toBe('true');
   });
 
+  it('shows on demand what the request collides with, never before', async () => {
+    as('manager');
+    serve({ requests: [pending(1, 'Dan')] });
+    let asked = 0;
+    server.use(
+      http.get(`${API}/leave/requests/${uuid(101)}/conflicts`, () => {
+        asked += 1;
+        return HttpResponse.json({
+          assignments: [
+            {
+              projectId: uuid(7),
+              code: 'WEB-1',
+              name: 'Website',
+              allocationPct: 40,
+              fromDate: '2026-01-01',
+              toDate: null,
+            },
+          ],
+          milestones: [
+            {
+              id: uuid(8),
+              projectId: uuid(7),
+              code: 'WEB-1',
+              title: 'Beta',
+              dueDate: '2030-03-05',
+            },
+          ],
+          tasks: [{ id: uuid(9), projectId: uuid(7), key: 'WEB-1-3', dueDate: '2030-03-06' }],
+        });
+      }),
+    );
+    await renderApp('/leave?tab=approvals');
+    const user = userEvent.setup();
+    const button = await screen.findByRole('button', {
+      name: 'Check the project impact of the request of Dan Test',
+    });
+    expect(asked).toBe(0);
+    await user.click(button);
+    expect(await screen.findByText('WEB-1 · Website (40% of their time)')).toBeInTheDocument();
+    expect(screen.getByText(/WEB-1 · Beta/)).toBeInTheDocument();
+    expect(screen.getByText(/WEB-1-3/)).toBeInTheDocument();
+    expect(asked).toBe(1);
+    await user.click(
+      screen.getByRole('button', { name: 'Hide the project impact of the request of Dan Test' }),
+    );
+    expect(screen.queryByText('WEB-1 · Website (40% of their time)')).not.toBeInTheDocument();
+  });
+
+  it('says so when nothing is affected, and shows an error when the check fails', async () => {
+    as('manager');
+    serve({ requests: [pending(1, 'Dan')] });
+    server.use(
+      http.get(`${API}/leave/requests/${uuid(101)}/conflicts`, () =>
+        HttpResponse.json({ assignments: [], milestones: [], tasks: [] }),
+      ),
+    );
+    const { unmount } = await renderApp('/leave?tab=approvals');
+    const user = userEvent.setup();
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Check the project impact of the request of Dan Test',
+      }),
+    );
+    expect(
+      await screen.findByText('No projects, milestones or tasks are affected.'),
+    ).toBeInTheDocument();
+    unmount();
+
+    server.use(
+      http.get(`${API}/leave/requests/${uuid(101)}/conflicts`, () =>
+        errorResponse('INTERNAL', 500),
+      ),
+    );
+    await renderApp('/leave?tab=approvals');
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Check the project impact of the request of Dan Test',
+      }),
+    );
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+  });
+
+  it('offers no impact check on requests the person cannot decide', async () => {
+    as('manager');
+    serve({ requests: [pending(1, 'Dan', { canApprove: false })] });
+    await renderApp('/leave?tab=approvals');
+    await screen.findByText('Dan Test');
+    expect(screen.queryByRole('button', { name: /project impact/ })).not.toBeInTheDocument();
+  });
+
   it('approves with an optional comment, after a confirmation step', async () => {
     as('manager');
     serve({ requests: [pending(1, 'Dan')] });

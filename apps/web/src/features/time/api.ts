@@ -1,4 +1,5 @@
 import type {
+  Compare,
   CreateTimeEntryRequest,
   ExportData,
   Report,
@@ -20,6 +21,8 @@ export const timeKeys = {
   timer: ['time', 'timer'] as const,
   week: (weekStart: string) => ['time', 'week', weekStart] as const,
   sheets: (status: TimesheetQuery['status']) => ['time', 'sheets', status] as const,
+  compare: (weekStart: string, employeeId: string) =>
+    ['time', 'compare', weekStart, employeeId] as const,
   sheet: (id: string) => ['time', 'sheet', id] as const,
 };
 
@@ -65,3 +68,9 @@ export const fetchReport = (p: ReportParams) => {
 };
 export const fetchExport = (p: Omit<ReportParams, 'groupBy'>) =>
   apiRequest<ExportData>(`/time/reports/export?${periodQuery(p)}`);
+
+export const fetchCompare = (weekStart: string, employeeId?: string) => {
+  const query = new URLSearchParams({ weekStart });
+  if (employeeId) query.set('employeeId', employeeId);
+  return apiRequest<Compare>(`/time/compare?${query}`);
+};

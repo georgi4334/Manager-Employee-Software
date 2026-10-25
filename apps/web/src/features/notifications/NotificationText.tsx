@@ -91,6 +91,18 @@ export function useNotificationText() {
         text: t('types.task.assigned.text', { taskKey: str(params.taskKey) }),
       };
     }
+    if (type === 'attendance.reminder') {
+      return {
+        title: t('types.attendance.reminder.title'),
+        text: t('types.attendance.reminder.text', { date: formatDay(str(params.date), language) }),
+      };
+    }
+    if (type === 'time.timer_reminder') {
+      return {
+        title: t('types.time.timer_reminder.title'),
+        text: t('types.time.timer_reminder.text', { date: formatDay(str(params.date), language) }),
+      };
+    }
     if (type === 'timesheet.decided') {
       const week = formatDay(str(params.weekStart), language);
       return {

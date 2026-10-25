@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
+  compareQuerySchema,
   createTimeEntryRequestSchema,
   exportQuerySchema,
   reportQuerySchema,
@@ -9,6 +10,8 @@ import {
   timesheetQuerySchema,
   updateTimeEntryRequestSchema,
   weekQuerySchema,
+  type Compare,
+  type CompareQuery,
   type CreateTimeEntryRequest,
   type ExportData,
   type ExportQuery,
@@ -29,6 +32,7 @@ import { z } from 'zod';
 import type { RequestAuth } from '../../common/auth/auth.types.js';
 import { Authenticated, CurrentAuth, RequirePermission } from '../../common/auth/decorators.js';
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
+import { TimeCompareService } from './time-compare.service.js';
 import { TimeReportsService } from './time-reports.service.js';
 import { TimeService } from './time.service.js';
 import { TimesheetsService } from './timesheets.service.js';
@@ -42,6 +46,7 @@ export class TimeController {
     private readonly time: TimeService,
     private readonly sheets: TimesheetsService,
     private readonly reports: TimeReportsService,
+    private readonly compare: TimeCompareService,
   ) {}
 
   @Get('timer')
@@ -178,5 +183,15 @@ export class TimeController {
     @Query(new ZodValidationPipe(exportQuerySchema)) query: ExportQuery,
   ): Promise<ExportData> {
     return this.reports.export(actor, query);
+  }
+
+  @Get('compare')
+  @Authenticated() // attendance and time permissions, own or by scope: checked in the service
+  @ApiOperation({ summary: 'Presence next to logged time for one week (informational)' })
+  compareWeek(
+    @CurrentAuth() actor: RequestAuth,
+    @Query(new ZodValidationPipe(compareQuerySchema)) query: CompareQuery,
+  ): Promise<Compare> {
+    return this.compare.week(actor, query);
   }
 }
