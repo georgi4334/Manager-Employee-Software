@@ -238,7 +238,11 @@ describe.skipIf(!urls)('reminders over HTTP (real database)', () => {
       await openRecord(acme, p, 13);
       const res = await call({ Authorization: `Bearer ${TOKEN}` });
       expect(res.status, JSON.stringify(res.body)).toBe(200);
-      expect(res.body).toEqual({ attendance: expect.any(Number), timers: expect.any(Number) });
+      expect(res.body).toEqual({
+        attendance: expect.any(Number),
+        timers: expect.any(Number),
+        erased: 0,
+      });
       expect(await notesOf(p)).toHaveLength(1);
     });
 

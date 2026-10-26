@@ -267,6 +267,7 @@ export class PrivacyService {
         department: employee.department?.name ?? null,
         manager: full(employee.manager),
         teams: employee.teamMemberships.map((m) => m.team.name),
+        retentionHold: employee.retentionHold,
       },
       leave: {
         requests: requests.map((r) => ({

@@ -10,6 +10,7 @@ import type { Env } from '../../../config/env.js';
 import { ActivityTracker } from '../../../infrastructure/activity/activity-tracker.js';
 import { EmailDispatcher } from './email-dispatcher.service.js';
 import { NotificationRetention } from './notification-retention.service.js';
+import { RetentionRunner } from '../../privacy/retention.runner.js';
 import { RemindersService } from './reminders.service.js';
 import { NotificationProcessor } from './notification-processor.service.js';
 
@@ -39,6 +40,7 @@ export class OutboxWorker implements OnApplicationBootstrap, OnModuleDestroy {
   private rerun = false;
   private lastRetentionAt = 0;
   private lastReminderAt = 0;
+  private lastPersonalDataAt = 0;
   private stopped = false;
 
   constructor(
@@ -48,6 +50,7 @@ export class OutboxWorker implements OnApplicationBootstrap, OnModuleDestroy {
     private readonly retention: NotificationRetention,
     private readonly activity: ActivityTracker,
     private readonly reminders: RemindersService,
+    private readonly personalData: RetentionRunner,
   ) {}
 
   onApplicationBootstrap(): void {
@@ -140,6 +143,15 @@ export class OutboxWorker implements OnApplicationBootstrap, OnModuleDestroy {
         this.lastReminderAt = now.getTime();
       } catch (error) {
         this.logger.error({ err: error }, 'Reminders failed');
+      }
+    }
+    // Automatic erasure of former employees (ADR 0027): a workspace is checked once a day, off unless switched on.
+    if (now.getTime() - this.lastPersonalDataAt >= RETENTION_INTERVAL_MS) {
+      try {
+        await this.personalData.run(now);
+        this.lastPersonalDataAt = now.getTime();
+      } catch (error) {
+        this.logger.error({ err: error }, 'Personal data retention failed');
       }
     }
     return stats;

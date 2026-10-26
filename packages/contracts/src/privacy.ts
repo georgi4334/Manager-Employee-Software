@@ -40,6 +40,8 @@ export const personalDataExportSchema = z.object({
       department: z.string().nullable(),
       manager: z.string().nullable(),
       teams: z.array(z.string()),
+      /** Kept out of the automatic retention erasure by HR (ADR 0027). */
+      retentionHold: z.boolean(),
     })
     .nullable(),
   leave: z.object({

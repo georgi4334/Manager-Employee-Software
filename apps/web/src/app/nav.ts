@@ -11,6 +11,7 @@ import {
   ClipboardCheck,
   ChartColumn,
   Sparkles,
+  Archive,
   ListChecks,
   Timer,
   LayoutDashboard,
@@ -132,6 +133,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Sparkles,
     primary: false,
     permission: 'ai.use',
+  },
+  {
+    path: '/retention',
+    labelKey: 'retention',
+    icon: Archive,
+    primary: false,
+    permission: 'gdpr.manage_retention',
   },
   {
     path: '/employees',

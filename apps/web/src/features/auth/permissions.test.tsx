@@ -126,6 +126,7 @@ describe('navigation by permission', () => {
         'Reviews',
         ...(role === 'employee' ? [] : ['Analytics']),
         'Assistant',
+        ...(role === 'hr' || role === 'admin' ? ['Data retention'] : []),
         'Employees',
         'Organization',
       ]);

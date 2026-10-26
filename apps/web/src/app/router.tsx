@@ -21,6 +21,7 @@ import { FeedbackPage } from '@/features/feedback/FeedbackPage';
 import { MeetingDetailPage } from '@/features/one-on-ones/MeetingDetailPage';
 import { MeetingsPage } from '@/features/one-on-ones/MeetingsPage';
 import { GoalsPage } from '@/features/goals/GoalsPage';
+import { RetentionPage } from '@/features/retention/RetentionPage';
 import { AssistantPage } from '@/features/assistant/AssistantPage';
 import { AnalyticsPage } from '@/features/analytics/AnalyticsPage';
 import { CapacityPage } from '@/features/capacity/CapacityPage';
@@ -56,6 +57,7 @@ const IMPLEMENTED_PATHS = [
   '/reviews',
   '/analytics',
   '/assistant',
+  '/retention',
 ];
 
 export const routes: RouteObject[] = [
@@ -142,6 +144,10 @@ export const routes: RouteObject[] = [
               { path: 'reviews', element: <ReviewsPage /> },
               { path: 'reviews/:id', element: <ReviewDetailPage /> },
             ],
+          },
+          {
+            element: <RequirePermission permission="gdpr.manage_retention" />,
+            children: [{ path: 'retention', element: <RetentionPage /> }],
           },
           {
             element: <RequirePermission permission="ai.use" />,

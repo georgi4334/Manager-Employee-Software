@@ -41,6 +41,7 @@ const SIGNED_IN = [
   '/analytics',
   '/assistant',
   '/assistant?tab=settings',
+  '/retention',
   '/goals',
   '/goals?scope=personal',
   '/one-on-ones',

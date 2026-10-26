@@ -205,6 +205,8 @@ erDiagram
 **Capacity (computed, not stored):** for an employee and a date range =
 `schedule hours − public holidays − approved leave − Σ(allocation_pct × hours)`; actual load compares this plan with logged `time_entry` hours. Exposed through a service query (`GET /capacity`, ADR 0018): a standard 8-hour day, per-person working hours come later.
 
+**Retention (ADR 0027):** `retention_policy` (country `BG`, enabled, former_employee_months, last_run_at, last_run_erased; one row per workspace, none = preset and off) and `employee.retention_hold`.
+
 **Working hours (ADR 0026):** `work_schedule` (employee_id, valid_from, minutes[7] Monday first, 0–960 each). No row = 8 h Monday to Friday. Capacity uses the schedule in force; overtime is logged time beyond available time, computed per day.
 
 **Analytics (computed, not stored):** counts and sums over existing tables for the people in the caller's scope (`GET /analytics`, ADR 0024); breakdowns are withheld for groups under 5 people. No table of its own.
@@ -223,12 +225,12 @@ Retention: conversations older than the workspace's `retention_days` are purged 
 
 ## 8. GDPR support tables
 
-| Table                 | Purpose                                                           |
-| --------------------- | ----------------------------------------------------------------- |
-| `data_export_request` | user_id, status, file_ref, requested_at — "export my data"        |
-| `erasure_request`     | employee_id, status, processed_at, legal_hold_reason              |
-| `consent_record`      | user_id, purpose (`ai_processing/...`), granted, at, text_version |
-| `retention_policy`    | entity, keep_days — read by the nightly purge job                 |
+| Table                 | Purpose                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------ |
+| `data_export_request` | user_id, status, file_ref, requested_at — "export my data"                           |
+| `erasure_request`     | employee_id, status, processed_at, legal_hold_reason                                 |
+| `consent_record`      | user_id, purpose (`ai_processing/...`), granted, at, text_version                    |
+| `retention_policy`    | country (BG), enabled, former_employee_months — read by the retention job (ADR 0027) |
 
 ## 9. Indexing & performance notes
 

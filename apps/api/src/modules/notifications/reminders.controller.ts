@@ -7,6 +7,7 @@ import { Public } from '../../common/auth/decorators.js';
 import { AppException } from '../../common/errors/app-exception.js';
 import { OutboxWorker } from './delivery/outbox-worker.service.js';
 import { RemindersService, type ReminderStats } from './delivery/reminders.service.js';
+import { RetentionRunner } from '../privacy/retention.runner.js';
 
 const safeEqual = (given: string, expected: string): boolean => {
   const a = Buffer.from(given);
@@ -22,13 +23,16 @@ export class RemindersController {
     @Inject(APP_CONFIG) private readonly env: Env,
     private readonly reminders: RemindersService,
     private readonly worker: OutboxWorker,
+    private readonly retention: RetentionRunner,
   ) {}
 
   @Post('reminders/run')
   @HttpCode(200)
   @Public()
   @ApiOperation({ summary: 'Send due reminders (needs the REMINDERS_TOKEN as a bearer token)' })
-  async run(@Headers('authorization') authorization?: string): Promise<ReminderStats> {
+  async run(
+    @Headers('authorization') authorization?: string,
+  ): Promise<ReminderStats & { erased: number }> {
     const expected = this.env.REMINDERS_TOKEN;
     // Without a token the hook does not exist.
     if (!expected) throw new AppException('NOT_FOUND', { message: 'Not found' });
@@ -37,8 +41,10 @@ export class RemindersController {
       throw new AppException('UNAUTHENTICATED', { message: 'Authentication required' });
     }
     const stats = await this.reminders.run();
+    // The same hourly hook also runs the automatic erasure of former employees (ADR 0027).
+    const erased = await this.retention.run();
     // The events just queued are delivered now, not at the next sweep.
     this.worker.wake();
-    return stats;
+    return { ...stats, erased };
   }
 }

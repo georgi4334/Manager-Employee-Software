@@ -60,6 +60,7 @@ model Tenant {
   aiConversations         AiConversation[]
   aiMessages              AiMessage[]
   workSchedules           WorkSchedule[]
+  retentionPolicy         RetentionPolicy?
   reviewCompetencies      ReviewCompetency[]
   reviewsAll              Review[]
   reviewRatings           ReviewRating[]
@@ -343,6 +344,9 @@ model Employee {
   erasedAt        DateTime? @map("erased_at") @db.Timestamptz(6)
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  /// Keeps the person out of the automatic retention erasure (docs/adr/0027-retention-bulgaria.md).
+  retentionHold Boolean @default(false) @map("retention_hold")
 
   /// docs/adr/0007-organization.md
   departmentId String? @map("department_id") @db.Uuid
@@ -1305,4 +1309,25 @@ model WorkSchedule {
   @@unique([tenantId, id])
   @@unique([tenantId, employeeId, validFrom])
   @@map("work_schedule")
+}
+
+// ----- Retention (docs/adr/0027-retention-bulgaria.md) ---------------------------------------------------
+
+/// One row per workspace; none means the country preset, switched off.
+model RetentionPolicy {
+  id                   String    @id @default(uuid(7)) @db.Uuid
+  tenantId             String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// BG only for now (a check constraint in the migration).
+  country              String    @default("BG")
+  enabled              Boolean   @default(false)
+  formerEmployeeMonths Int       @default(60) @map("former_employee_months")
+  lastRunAt            DateTime? @map("last_run_at") @db.Timestamptz(6)
+  lastRunErased        Int       @default(0) @map("last_run_erased")
+  updatedAt            DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId])
+  @@unique([tenantId, id])
+  @@map("retention_policy")
 }

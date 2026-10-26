@@ -112,7 +112,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Export is `GET /privacy/export` (own, `gdpr.export_own`) or `/privacy/export/:employeeId` (HR/Admin, `gdpr.export_employee`, audited). It is built from `PrivacyService.collect`: **add every new table that holds personal data of an employee to the export and to `ErasureService`** (and to the erasure test's "nothing of Dan is left" check).
 - Erasure anonymises an inactive employee irreversibly (`POST /privacy/erase/:employeeId`, `{ confirm: true }`): it clears identifying and free-text data and keeps statutory records (hire/termination dates, attendance times, leave days) detached from the person. It runs on the system connection, allowed only in `modules/privacy/erasure.service.ts` (ESLint); every statement there must be scoped by `tenantId`.
 - Audit entries and notifications carry only ids and non-identifying labels; names in notification params (`employeeName`) are replaced on erasure. Never put free text (titles, notes, reasons) into audit or notification params.
-- Automatic retention periods are not implemented (they need a per-country decision); `gdpr.manage_retention` is reserved for it.
+- Automatic retention exists for **Bulgaria only** (ADR 0027, below); other countries need a reviewed preset first.
 
 ## End-to-end and accessibility (docs/adr/0012-e2e-and-accessibility.md)
 
@@ -231,6 +231,14 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - **Overtime is informational**: per day `max(0, logged − available)`, summed (`overtimeMinutes`, `CapacityPerson.overtimeMinutes`); a day off counts in full. Never blocks, never approved, no statutory caps.
 - Read: `employee.view_profile_full` covering the person (else `404`); change: `employee.manage_schedule` (HR, Admin; audited with employee id and `valid_from`, never the minutes). `GET|PUT /employees/:id/schedule`, `DELETE /employees/:id/schedule/:scheduleId`. Export lists schedules; erasure deletes them.
 - Web: the "Working hours" card on the employee profile (only when the profile is visible, `h:mm`/`7,5` typed; empty = day off).
+
+## Retention, Bulgaria (docs/adr/0027-retention-bulgaria.md)
+
+- `retention_policy` (RLS, one row per workspace; no row = Bulgarian preset, **off**) and `employee.retention_hold`. Country is `BG` only (API and a check constraint); the period is 12–600 months, preset `RETENTION_PRESETS.BG` = 60. The numbers are product defaults, **not legal advice**; the page says so and the employer confirms them.
+- What it does: a former employee (`inactive`, termination date set, not on hold, not erased) is anonymised through the existing `ErasureService` (ADR 0011) once `isRetentionDue(termination, months, today)`; hire/termination dates, attendance times and leave days stay detached. People without a termination date are never erased automatically.
+- `RetentionRunner` (the only extra code allowed to use the system connection, to list workspaces) runs from the worker's hourly sweep and from `POST /internal/reminders/run` (which now also returns `erased`). Per workspace: checked once a day (`lastRunAt`), at most `RETENTION_BATCH` (25) people per run (a full batch leaves `lastRunAt` alone so the next hour continues). Audit: `privacy.erased` with **no actor** and `{ reason: 'retention' }`. A hold is also checked in the erasure's conditional update (reactivated or held people lose the race cleanly). HR can still erase a person on hold by hand.
+- `GET|PUT /privacy/retention`, `PUT /privacy/retention/holds/:employeeId` need `gdpr.manage_retention` (HR, Admin); changes are audited (policy values, hold set/released with ids only). The preview lists who is due now or within 90 days (names HR already sees).
+- Web: `/retention` (own `gdpr.manage_retention` guard; turning on asks for confirmation; hold buttons per person).
 
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 

@@ -16,14 +16,19 @@ const conflict = (field: string, message: string) =>
 export class ErasureService {
   constructor(private readonly system: SystemPrismaService) {}
 
-  async erase(tenantId: string, actorUserId: string, employeeId: string): Promise<void> {
+  /**
+   * `actorUserId` is null for the automatic retention run (ADR 0027): then people on hold are skipped and the audit entry
+   * says why it happened.
+   */
+  async erase(tenantId: string, actorUserId: string | null, employeeId: string): Promise<void> {
+    const automatic = actorUserId === null;
     await this.system.$transaction(async (tx) => {
       const employee = await tx.employee.findFirst({
         where: { id: employeeId, tenantId },
         select: { userId: true, status: true, erasedAt: true },
       });
       if (!employee) throw new AppException('NOT_FOUND', { message: 'Employee not found' });
-      if (employee.userId && employee.userId === actorUserId) {
+      if (actorUserId && employee.userId && employee.userId === actorUserId) {
         throw conflict('self', 'You cannot erase your own data');
       }
       if (employee.erasedAt) throw conflict('erased', 'The data was already erased');
@@ -33,7 +38,13 @@ export class ErasureService {
 
       // The condition makes a concurrent reactivation or a second erasure lose cleanly.
       const claimed = await tx.employee.updateMany({
-        where: { id: employeeId, tenantId, status: 'inactive', erasedAt: null },
+        where: {
+          id: employeeId,
+          tenantId,
+          status: 'inactive',
+          erasedAt: null,
+          ...(automatic ? { retentionHold: false } : {}),
+        },
         data: {
           firstName: PLACEHOLDER,
           lastName: `#${employeeId.slice(-6)}`,
@@ -144,6 +155,7 @@ export class ErasureService {
           action: 'privacy.erased',
           entity: 'employee',
           entityId: employeeId,
+          ...(automatic ? { after: { reason: 'retention' } } : {}),
         },
       });
     });

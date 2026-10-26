@@ -1,4 +1,5 @@
 import { Global, Module } from '@nestjs/common';
+import { PrivacyModule } from '../privacy/privacy.module.js';
 import { EmailDispatcher } from './delivery/email-dispatcher.service.js';
 import { NotificationProcessor } from './delivery/notification-processor.service.js';
 import { NotificationRetention } from './delivery/notification-retention.service.js';
@@ -11,6 +12,7 @@ import { OutboxService } from './outbox.service.js';
 
 @Global()
 @Module({
+  imports: [PrivacyModule],
   controllers: [NotificationsController, RemindersController],
   providers: [
     NotificationsService,

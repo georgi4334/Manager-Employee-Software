@@ -32,6 +32,7 @@ describe('export document', () => {
       department: null,
       manager: null,
       teams: [],
+      retentionHold: false,
     },
     leave: { requests: [], balances: [] },
     projects: { assignments: [], led: [] },
