@@ -2,7 +2,7 @@ import type { ProjectDetail } from '@intime/contracts';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/shared/lib/cn';
 import { formatDay } from '@/shared/lib/format';
-import { positionPct } from './timeline';
+import { positionPct } from './timelinePosition';
 
 /**
  * The project span as a bar with today and the milestones marked. The text below says the same in words, so the
