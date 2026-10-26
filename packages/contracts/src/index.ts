@@ -1,3 +1,4 @@
+export * from './analytics.js';
 export * from './attendance.js';
 export * from './calendar.js';
 export * from './capacity.js';

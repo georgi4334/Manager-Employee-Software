@@ -1,0 +1,96 @@
+{
+  "title": "Analytics",
+  "intro": "Figures for the people and projects you may see. Only totals are shown, never information about one person.",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "hours": "{{value}} h",
+  "none": "–",
+  "suppressed": "Not shown: the group is too small to show a breakdown without pointing at individuals.",
+  "noData": "Nothing in this period.",
+  "population_one": "The figures are about {{count}} active person.",
+  "population_other": "The figures are about {{count}} active people.",
+  "smallGroup": "Breakdowns are hidden for fewer than {{count}} people.",
+  "days_one": "{{formattedCount}} day",
+  "days_other": "{{formattedCount}} days",
+  "period": {
+    "label": "Period",
+    "lastDays_one": "Last day",
+    "lastDays_other": "Last {{count}} days",
+    "range": "{{from}} – {{to}}"
+  },
+  "people": {
+    "title": "People",
+    "headcount": "Active people",
+    "hires": "Joined in the period",
+    "leavers": "Left in the period",
+    "byDepartment": "By department",
+    "noDepartment": "No department",
+    "byEmploymentType": "By employment type"
+  },
+  "employmentType": {
+    "full_time": "Full-time",
+    "part_time": "Part-time",
+    "contractor": "Contractor",
+    "outsourced": "Outsourced"
+  },
+  "absence": {
+    "title": "Absence",
+    "days": "Approved leave days",
+    "perPerson": "Days per person",
+    "pending": "Requests waiting for a decision",
+    "byType": "By leave type"
+  },
+  "attendance": {
+    "title": "Attendance",
+    "records": "Finished records",
+    "worked": "Hours worked",
+    "byMode": "By place of work"
+  },
+  "mode": {
+    "office": "Office",
+    "remote": "Remote",
+    "field": "Field work"
+  },
+  "time": {
+    "title": "Time on projects",
+    "logged": "Hours logged",
+    "billable": "Billable share",
+    "approved": "Approved share",
+    "perWeek": "Hours per week",
+    "weekOf": "Week of {{date}}",
+    "topProjects": "Projects with most hours"
+  },
+  "projects": {
+    "title": "Projects and tasks",
+    "openTasks": "Open tasks",
+    "overdueTasks": "Overdue tasks",
+    "budgetWarning": "Projects near their budget",
+    "budgetOver": "Projects over their budget",
+    "byStatus": "Projects by status"
+  },
+  "projectStatus": {
+    "planned": "Planned",
+    "active": "Active",
+    "paused": "Paused",
+    "done": "Done"
+  },
+  "company": {
+    "title": "Company",
+    "goals": "Goals by status",
+    "goalsOverdue": "Overdue goals",
+    "reviews": "Reviews: {{name}}",
+    "reviewsNone": "Reviews: no cycle has been opened yet",
+    "review": {
+      "total": "Reviews in the cycle",
+      "selfSubmitted": "Self-review submitted",
+      "managerSubmitted": "Manager review submitted",
+      "released": "Released to employees"
+    }
+  },
+  "goalStatus": {
+    "draft": "Draft",
+    "active": "Active",
+    "done": "Done",
+    "cancelled": "Cancelled"
+  }
+}

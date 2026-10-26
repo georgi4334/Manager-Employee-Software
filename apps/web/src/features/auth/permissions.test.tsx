@@ -106,7 +106,7 @@ const sidebarLinks = () =>
 
 describe('navigation by permission', () => {
   it.each(['employee', 'manager', 'hr', 'admin'] as const)(
-    'a %s sees every current module',
+    'a %s sees every module the role has access to',
     async (role) => {
       server.use(...signedInHandlers(userWithRole(role)));
       await renderApp('/');
@@ -124,6 +124,7 @@ describe('navigation by permission', () => {
         'Feedback',
         'Skills',
         'Reviews',
+        ...(role === 'employee' ? [] : ['Analytics']),
         'Employees',
         'Organization',
       ]);

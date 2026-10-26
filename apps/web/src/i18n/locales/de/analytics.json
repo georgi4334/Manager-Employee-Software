@@ -1,0 +1,96 @@
+{
+  "title": "Analysen",
+  "intro": "Zahlen zu den Personen und Projekten, die Sie sehen dürfen. Es werden nur Summen angezeigt, nie Angaben zu einzelnen Personen.",
+  "loading": "Wird geladen…",
+  "retry": "Erneut versuchen",
+  "hours": "{{value}} Std.",
+  "none": "–",
+  "suppressed": "Nicht angezeigt: Die Gruppe ist zu klein, um eine Aufschlüsselung ohne Rückschluss auf einzelne Personen zu zeigen.",
+  "noData": "In diesem Zeitraum gibt es nichts.",
+  "population_one": "Die Zahlen beziehen sich auf {{count}} aktive Person.",
+  "population_other": "Die Zahlen beziehen sich auf {{count}} aktive Personen.",
+  "smallGroup": "Aufschlüsselungen werden bei weniger als {{count}} Personen ausgeblendet.",
+  "days_one": "{{formattedCount}} Tag",
+  "days_other": "{{formattedCount}} Tage",
+  "period": {
+    "label": "Zeitraum",
+    "lastDays_one": "Letzter Tag",
+    "lastDays_other": "Letzte {{count}} Tage",
+    "range": "{{from}} – {{to}}"
+  },
+  "people": {
+    "title": "Personen",
+    "headcount": "Aktive Personen",
+    "hires": "Im Zeitraum eingetreten",
+    "leavers": "Im Zeitraum ausgetreten",
+    "byDepartment": "Nach Abteilung",
+    "noDepartment": "Keine Abteilung",
+    "byEmploymentType": "Nach Beschäftigungsart"
+  },
+  "employmentType": {
+    "full_time": "Vollzeit",
+    "part_time": "Teilzeit",
+    "contractor": "Freiberufler",
+    "outsourced": "Extern"
+  },
+  "absence": {
+    "title": "Abwesenheit",
+    "days": "Genehmigte Urlaubstage",
+    "perPerson": "Tage pro Person",
+    "pending": "Anträge in Bearbeitung",
+    "byType": "Nach Abwesenheitsart"
+  },
+  "attendance": {
+    "title": "Anwesenheit",
+    "records": "Abgeschlossene Einträge",
+    "worked": "Gearbeitete Stunden",
+    "byMode": "Nach Arbeitsort"
+  },
+  "mode": {
+    "office": "Büro",
+    "remote": "Remote",
+    "field": "Außendienst"
+  },
+  "time": {
+    "title": "Zeit auf Projekten",
+    "logged": "Erfasste Stunden",
+    "billable": "Abrechenbarer Anteil",
+    "approved": "Genehmigter Anteil",
+    "perWeek": "Stunden pro Woche",
+    "weekOf": "Woche ab {{date}}",
+    "topProjects": "Projekte mit den meisten Stunden"
+  },
+  "projects": {
+    "title": "Projekte und Aufgaben",
+    "openTasks": "Offene Aufgaben",
+    "overdueTasks": "Überfällige Aufgaben",
+    "budgetWarning": "Projekte nahe am Budget",
+    "budgetOver": "Projekte über dem Budget",
+    "byStatus": "Projekte nach Status"
+  },
+  "projectStatus": {
+    "planned": "Geplant",
+    "active": "Aktiv",
+    "paused": "Pausiert",
+    "done": "Abgeschlossen"
+  },
+  "company": {
+    "title": "Unternehmen",
+    "goals": "Ziele nach Status",
+    "goalsOverdue": "Überfällige Ziele",
+    "reviews": "Beurteilungen: {{name}}",
+    "reviewsNone": "Beurteilungen: Es wurde noch kein Zyklus eröffnet",
+    "review": {
+      "total": "Beurteilungen im Zyklus",
+      "selfSubmitted": "Selbstbeurteilung abgegeben",
+      "managerSubmitted": "Beurteilung der Führungskraft abgegeben",
+      "released": "Den Mitarbeitenden freigegeben"
+    }
+  },
+  "goalStatus": {
+    "draft": "Entwurf",
+    "active": "Aktiv",
+    "done": "Erledigt",
+    "cancelled": "Abgebrochen"
+  }
+}

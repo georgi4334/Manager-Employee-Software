@@ -205,6 +205,8 @@ erDiagram
 **Capacity (computed, not stored):** for an employee and a date range =
 `schedule hours − public holidays − approved leave − Σ(allocation_pct × hours)`; actual load compares this plan with logged `time_entry` hours. Exposed through a service query (`GET /capacity`, ADR 0018): a standard 8-hour day, per-person working hours come later.
 
+**Analytics (computed, not stored):** counts and sums over existing tables for the people in the caller's scope (`GET /analytics`, ADR 0024); breakdowns are withheld for groups under 5 people. No table of its own.
+
 ## 7. AI assistant
 
 | Table             | Key columns                                                                                  |

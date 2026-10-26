@@ -1,12 +1,15 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
+import { server, signedInHandlers, userWithRole } from '@/tests/server';
 import { renderApp } from '@/tests/utils';
 import navEn from '@/i18n/locales/en/nav.json';
 import { NAV_ITEMS } from './nav';
 
 describe('AppShell navigation', () => {
   it('renders every module in the desktop sidebar', async () => {
+    // analytics is not for the default employee
+    server.use(...signedInHandlers(userWithRole('admin')));
     await renderApp('/');
     const sidebar = screen.getByRole('navigation', { name: 'Main navigation' });
     for (const item of NAV_ITEMS) {

@@ -24,6 +24,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module.js';
 import { SkillsModule } from './modules/skills/skills.module.js';
 import { FeedbackModule } from './modules/feedback/feedback.module.js';
 import { OneOnOnesModule } from './modules/one-on-ones/one-on-ones.module.js';
+import { AnalyticsModule } from './modules/analytics/analytics.module.js';
 import { CapacityModule } from './modules/capacity/capacity.module.js';
 import { ProjectsModule } from './modules/projects/projects.module.js';
 import { TimeModule } from './modules/time/time.module.js';
@@ -101,6 +102,7 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     PrivacyModule,
     ProjectsModule,
     TimeModule,
+    AnalyticsModule,
     CapacityModule,
     GoalsModule,
     OneOnOnesModule,
