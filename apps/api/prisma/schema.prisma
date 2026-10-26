@@ -59,6 +59,8 @@ model Tenant {
   aiUserSettings          AiUserSetting[]
   aiConversations         AiConversation[]
   aiMessages              AiMessage[]
+  workSchedules           WorkSchedule[]
+  retentionPolicy         RetentionPolicy?
   reviewCompetencies      ReviewCompetency[]
   reviewsAll              Review[]
   reviewRatings           ReviewRating[]
@@ -343,9 +345,14 @@ model Employee {
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
+  /// Keeps the person out of the automatic retention erasure (docs/adr/0027-retention-bulgaria.md).
+  retentionHold Boolean @default(false) @map("retention_hold")
+
   /// docs/adr/0007-organization.md
   departmentId String? @map("department_id") @db.Uuid
   managerId    String? @map("manager_id") @db.Uuid
+
+  workSchedules WorkSchedule[]
 
   tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user                User?                @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
@@ -1281,4 +1288,46 @@ model AiMessage {
   @@index([tenantId, conversationId, createdAt])
   @@index([tenantId, userId, role, createdAt])
   @@map("ai_message")
+}
+
+// ----- Working hours (docs/adr/0026-working-hours.md) ----------------------------------------------------
+
+/// Contractual minutes per weekday (Monday first) from `valid_from` on. No row = 8 hours Monday to Friday.
+model WorkSchedule {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  tenantId   String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  employeeId String   @map("employee_id") @db.Uuid
+  validFrom  DateTime @map("valid_from") @db.Date
+  /// Seven values, Monday first, each 0..960 (a check constraint in the migration).
+  minutes    Int[]
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [tenantId, employeeId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, employeeId, validFrom])
+  @@map("work_schedule")
+}
+
+// ----- Retention (docs/adr/0027-retention-bulgaria.md) ---------------------------------------------------
+
+/// One row per workspace; none means the country preset, switched off.
+model RetentionPolicy {
+  id                   String    @id @default(uuid(7)) @db.Uuid
+  tenantId             String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// BG only for now (a check constraint in the migration).
+  country              String    @default("BG")
+  enabled              Boolean   @default(false)
+  formerEmployeeMonths Int       @default(60) @map("former_employee_months")
+  lastRunAt            DateTime? @map("last_run_at") @db.Timestamptz(6)
+  lastRunErased        Int       @default(0) @map("last_run_erased")
+  updatedAt            DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId])
+  @@unique([tenantId, id])
+  @@map("retention_policy")
 }

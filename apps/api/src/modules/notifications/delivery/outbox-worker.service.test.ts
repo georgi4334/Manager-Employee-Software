@@ -7,6 +7,7 @@ import {
 import type { EmailDispatcher } from './email-dispatcher.service.js';
 import type { NotificationProcessor } from './notification-processor.service.js';
 import type { NotificationRetention } from './notification-retention.service.js';
+import type { RetentionRunner } from '../../privacy/retention.runner.js';
 import type { RemindersService } from './reminders.service.js';
 import { OutboxWorker } from './outbox-worker.service.js';
 
@@ -21,6 +22,7 @@ function build(options: { enabled?: boolean } = {}) {
   };
   const retention = { purge: vi.fn(async () => ({ notifications: 0, events: 0 })) };
   const reminders = { run: vi.fn(async () => ({ attendance: 0, timers: 0 })) };
+  const personalData = { run: vi.fn(async () => 0) };
   const activity = new ActivityTracker();
   const worker = new OutboxWorker(
     testEnv({ WORKER_ENABLED: String(options.enabled ?? true) }),
@@ -29,8 +31,9 @@ function build(options: { enabled?: boolean } = {}) {
     retention as unknown as NotificationRetention,
     activity,
     reminders as unknown as RemindersService,
+    personalData as unknown as RetentionRunner,
   );
-  return { worker, processor, emails, retention, activity, reminders };
+  return { worker, processor, emails, retention, activity, reminders, personalData };
 }
 
 describe('OutboxWorker.runOnce', () => {
@@ -191,5 +194,24 @@ describe('reminders in the worker', () => {
     await worker.runOnce(new Date('2026-10-26T10:00:00Z'));
     expect(processor.claim).toHaveBeenCalledTimes(2);
     expect(reminders.run).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('OutboxWorker: automatic retention of former employees', () => {
+  it('runs the personal data retention at most once an hour', async () => {
+    const { worker, personalData } = build();
+    await worker.runOnce(new Date('2026-10-23T10:00:00Z'));
+    await worker.runOnce(new Date('2026-10-23T10:30:00Z'));
+    expect(personalData.run).toHaveBeenCalledTimes(1);
+    await worker.runOnce(new Date('2026-10-23T11:00:01Z'));
+    expect(personalData.run).toHaveBeenCalledTimes(2);
+  });
+
+  it('survives a failure and tries again at the next run', async () => {
+    const { worker, personalData } = build();
+    personalData.run.mockRejectedValueOnce(new Error('db down'));
+    await expect(worker.runOnce(new Date('2026-10-23T10:00:00Z'))).resolves.toBeDefined();
+    await worker.runOnce(new Date('2026-10-23T10:01:00Z'));
+    expect(personalData.run).toHaveBeenCalledTimes(2);
   });
 });

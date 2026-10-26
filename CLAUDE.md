@@ -112,7 +112,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Export is `GET /privacy/export` (own, `gdpr.export_own`) or `/privacy/export/:employeeId` (HR/Admin, `gdpr.export_employee`, audited). It is built from `PrivacyService.collect`: **add every new table that holds personal data of an employee to the export and to `ErasureService`** (and to the erasure test's "nothing of Dan is left" check).
 - Erasure anonymises an inactive employee irreversibly (`POST /privacy/erase/:employeeId`, `{ confirm: true }`): it clears identifying and free-text data and keeps statutory records (hire/termination dates, attendance times, leave days) detached from the person. It runs on the system connection, allowed only in `modules/privacy/erasure.service.ts` (ESLint); every statement there must be scoped by `tenantId`.
 - Audit entries and notifications carry only ids and non-identifying labels; names in notification params (`employeeName`) are replaced on erasure. Never put free text (titles, notes, reasons) into audit or notification params.
-- Automatic retention periods are not implemented (they need a per-country decision); `gdpr.manage_retention` is reserved for it.
+- Automatic retention exists for **Bulgaria only** (ADR 0027, below); other countries need a reviewed preset first.
 
 ## End-to-end and accessibility (docs/adr/0012-e2e-and-accessibility.md)
 
@@ -164,7 +164,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 ## Capacity (docs/adr/0018-capacity.md)
 
 - Computed, never stored (no table, nothing to export or erase). The model is pure functions in `@intime/contracts` (`capacity.ts`): `workingMinutes` (weekends, holidays of the person's country, hire and termination dates), `availableMinutes` (minus approved leave; pending leave changes nothing), `plannedMinutes` (each covering assignment claims its percentage of the available time, rounded **per assignment** so project parts add up to the whole), `loadLevel` / `dayStatus`.
-- Everybody is measured against the same **8-hour day** (`WORKDAY_MINUTES`) for now; the page says so. Part-time schedules need a per-person working-time setting later.
+- Everybody without a schedule is measured against the standard **8-hour day** (`WORKDAY_MINUTES`); per-person hours override it (ADR 0026).
 - `GET /capacity` (`capacity.view`; people = active employees inside the scope via `allowedEmployees`; period at most 31 days). The per-project breakdown shows only projects the caller may see (`project.view`); the rest is one row without an id so totals still add up. A `projectId` the caller cannot see is `404`. Over-booking is information, never a block.
 - Web: `/capacity` has its own route guard (`capacity.view`); cards, a week at a time, no wide table.
 
@@ -223,6 +223,22 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - **The assistant acts as the user**: the model only calls read-only tools (`AiToolsService`) that run existing services with the caller's `RequestAuth`, so scopes, masking and 404s hold. Tools about other people are offered only when the person set `share_people_data`; unknown or not-offered tool names are answered with an error, not run. Tool results are trimmed to a few fields, capped (`toolResultMaxChars`) and never stored; only the question and the final answer are kept. Max 4 tool rounds, then one answer without tools. A new tool = definition + executor in `ai-tools.service.ts`, name in `AI_OWN_TOOLS` / `AI_PEOPLE_TOOLS`, label in `assistant.json` `tools`, and a test with the people-scope case.
 - The provider is behind `AiProviderClient` (DI token): tests and e2e never reach a real provider (tests use a fake; no e2e spec sends a question). Conversations are visible to their owner only (everybody else `404`), purged after the workspace retention on every chat; export lists them (never the key) and erasure deletes conversations, key and consent.
 - Web: `/assistant` (`ai.use` guard): Chat and Settings tabs; answers are rendered as plain text, never HTML.
+
+## Working hours (docs/adr/0026-working-hours.md)
+
+- `work_schedule` (RLS, composite foreign key): effective-dated weekly minutes, Monday first (`minutes` has exactly 7 values, 0–960). The schedule in force on a date is the row with the latest `valid_from` on or before it (`scheduleFor`, `scheduledMinutes` in contracts); **no row = the default week, 8 h Monday to Friday** (`DEFAULT_WEEK`), so nobody needs a migration. Changes are new rows (past weeks keep their hours); the same date replaces; at most 50 rows per person (`CONFLICT`, `field: limit`).
+- Capacity uses it: `workingMinutes(date, { scheduledMinutes })` (a weekend can be a working day; a half-day holiday halves the scheduled minutes), leave takes its fraction of **that day's** scheduled minutes (`availableMinutes(working, leave, dayMinutes)`). Leave day counting (ADR 0008) is unchanged (Monday to Friday).
+- **Overtime is informational**: per day `max(0, logged − available)`, summed (`overtimeMinutes`, `CapacityPerson.overtimeMinutes`); a day off counts in full. Never blocks, never approved, no statutory caps.
+- Read: `employee.view_profile_full` covering the person (else `404`); change: `employee.manage_schedule` (HR, Admin; audited with employee id and `valid_from`, never the minutes). `GET|PUT /employees/:id/schedule`, `DELETE /employees/:id/schedule/:scheduleId`. Export lists schedules; erasure deletes them.
+- Web: the "Working hours" card on the employee profile (only when the profile is visible, `h:mm`/`7,5` typed; empty = day off).
+
+## Retention, Bulgaria (docs/adr/0027-retention-bulgaria.md)
+
+- `retention_policy` (RLS, one row per workspace; no row = Bulgarian preset, **off**) and `employee.retention_hold`. Country is `BG` only (API and a check constraint); the period is 12–600 months, preset `RETENTION_PRESETS.BG` = 60. The numbers are product defaults, **not legal advice**; the page says so and the employer confirms them.
+- What it does: a former employee (`inactive`, termination date set, not on hold, not erased) is anonymised through the existing `ErasureService` (ADR 0011) once `isRetentionDue(termination, months, today)`; hire/termination dates, attendance times and leave days stay detached. People without a termination date are never erased automatically.
+- `RetentionRunner` (the only extra code allowed to use the system connection, to list workspaces) runs from the worker's hourly sweep and from `POST /internal/reminders/run` (which now also returns `erased`). Per workspace: checked once a day (`lastRunAt`), at most `RETENTION_BATCH` (25) people per run (a full batch leaves `lastRunAt` alone so the next hour continues). Audit: `privacy.erased` with **no actor** and `{ reason: 'retention' }`. A hold is also checked in the erasure's conditional update (reactivated or held people lose the race cleanly). HR can still erase a person on hold by hand.
+- `GET|PUT /privacy/retention`, `PUT /privacy/retention/holds/:employeeId` need `gdpr.manage_retention` (HR, Admin); changes are audited (policy values, hold set/released with ids only). The preview lists who is due now or within 90 days (names HR already sees).
+- Web: `/retention` (own `gdpr.manage_retention` guard; turning on asks for confirmation; hold buttons per person).
 
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 

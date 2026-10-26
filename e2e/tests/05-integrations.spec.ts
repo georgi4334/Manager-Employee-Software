@@ -59,5 +59,9 @@ test('the reminder hook answers only to the right token', async ({ request }) =>
   ).toBe(401);
   const ok = await request.post(url, { headers: { Authorization: `Bearer ${REMINDERS_TOKEN}` } });
   expect(ok.status()).toBe(200);
-  expect(await ok.json()).toEqual({ attendance: expect.any(Number), timers: expect.any(Number) });
+  expect(await ok.json()).toEqual({
+    attendance: expect.any(Number),
+    timers: expect.any(Number),
+    erased: expect.any(Number),
+  });
 });

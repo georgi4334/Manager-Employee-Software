@@ -3,7 +3,7 @@
   "loading": "Wird geladen…",
   "retry": "Erneut versuchen",
   "hours": "{{value}} Std.",
-  "standardDay": "Gemessen an einem Standardarbeitstag von 8 Stunden, ohne Feiertage und genehmigten Urlaub.",
+  "standardDay": "Gemessen an der eigenen Arbeitszeit jeder Person (8 Stunden, Montag bis Freitag, wenn nichts anderes festgelegt ist), ohne Feiertage und genehmigten Urlaub.",
   "search": "Nach Namen suchen",
   "project": "Projekt",
   "allProjects": "Alle Projekte",
@@ -47,5 +47,6 @@
     "days": "Tage von {{name}}",
     "projects": "Projekte von {{name}}",
     "otherProjects": "Andere Projekte"
-  }
+  },
+  "overtime": "Mehrarbeit {{overtime}}: über die verfügbare Zeit hinaus erfasst"
 }

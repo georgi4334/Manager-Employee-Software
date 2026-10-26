@@ -63,7 +63,8 @@
     "invalidScore": "Wähle eine Bewertung von 1 bis 5.",
     "invalidModel": "Nur Buchstaben, Ziffern und . _ : / - verwenden, zum Beispiel llama-3.3-70b-versatile.",
     "invalidApiKey": "Geben Sie den Schlüssel wie vom Anbieter angegeben ein (mindestens 8 Zeichen, keine Leerzeichen).",
-    "invalidRetention": "Geben Sie eine ganze Zahl von 1 bis 365 Tagen ein."
+    "invalidRetention": "Geben Sie eine ganze Zahl von 1 bis 365 Tagen ein.",
+    "invalidRetentionMonths": "Geben Sie eine ganze Zahl von 12 bis 600 Monaten ein."
   },
   "forbiddenTitle": "Kein Zugriff",
   "forbiddenText": "Sie haben keine Berechtigung, diese Seite zu öffnen. Wenden Sie sich an Ihre Administration, falls das ein Irrtum ist."

@@ -217,6 +217,9 @@ export class PrivacyService {
         ])
       : [[], [], []];
 
+    const schedules = employeeId
+      ? await tx.workSchedule.findMany({ where: { employeeId }, orderBy: { validFrom: 'asc' } })
+      : [];
     const [aiSetting, aiKeys, aiConversations] = userId
       ? await Promise.all([
           tx.aiUserSetting.findFirst({ where: { userId } }),
@@ -264,6 +267,7 @@ export class PrivacyService {
         department: employee.department?.name ?? null,
         manager: full(employee.manager),
         teams: employee.teamMemberships.map((m) => m.team.name),
+        retentionHold: employee.retentionHold,
       },
       leave: {
         requests: requests.map((r) => ({
@@ -330,6 +334,7 @@ export class PrivacyService {
               : null,
           };
         }),
+      workSchedules: schedules.map((w) => ({ validFrom: day(w.validFrom)!, minutes: w.minutes })),
       ai: {
         consentAt: iso(aiSetting?.consentAt ?? null),
         sharePeopleData: aiSetting?.sharePeopleData ?? false,

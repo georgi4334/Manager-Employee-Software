@@ -63,7 +63,8 @@
     "invalidScore": "Pick a score from 1 to 5.",
     "invalidModel": "Use letters, digits and . _ : / - only, for example llama-3.3-70b-versatile.",
     "invalidApiKey": "Enter the key as given by the provider (at least 8 characters, no spaces).",
-    "invalidRetention": "Enter a whole number of days from 1 to 365."
+    "invalidRetention": "Enter a whole number of days from 1 to 365.",
+    "invalidRetentionMonths": "Enter a whole number of months from 12 to 600."
   },
   "forbiddenTitle": "No access",
   "forbiddenText": "You do not have permission to open this page. Ask your administrator if you think this is a mistake."

@@ -182,6 +182,16 @@ describe.skipIf(!urls)('privacy: export and erasure over HTTP (real database)', 
       reason: 'Family trip',
     });
 
+    // Dan works part-time (ADR 0026)
+    await system.workSchedule.create({
+      data: {
+        tenantId: acme.tenantId,
+        employeeId: dan.employeeId,
+        validFrom: new Date('2026-01-05T00:00:00Z'),
+        minutes: [240, 240, 240, 240, 240, 0, 0],
+      },
+    });
+
     // Dan used the AI assistant (ADR 0025): a consent, a stored key and one conversation
     await system.aiUserSetting.create({
       data: {
@@ -265,6 +275,9 @@ describe.skipIf(!urls)('privacy: export and erasure over HTTP (real database)', 
       expect(doc.leave.requests[1]?.type).toBe('sick'); // a person sees their own sick leave type
       expect(doc.leave.balances.length).toBeGreaterThan(0);
       expect(doc.notifications.map((n) => n.type)).toContain('leave.decided');
+      expect(doc.workSchedules).toEqual([
+        { validFrom: '2026-01-05', minutes: [240, 240, 240, 240, 240, 0, 0] },
+      ]);
       expect(doc.ai.sharePeopleData).toBe(true);
       expect(doc.ai.consentAt).not.toBeNull();
       expect(doc.ai.keys).toEqual([
@@ -492,6 +505,9 @@ describe.skipIf(!urls)('privacy: export and erasure over HTTP (real database)', 
           where: { tenantId: acme.tenantId },
         }),
         aiMessages: await system.aiMessage.findMany({ where: { tenantId: acme.tenantId } }),
+        schedules: await system.workSchedule.findMany({
+          where: { tenantId: acme.tenantId, employeeId: dan.employeeId },
+        }),
         aiCredentials: await system.aiCredential.findMany({ where: { tenantId: acme.tenantId } }),
         aiSettings: await system.aiUserSetting.findMany({ where: { tenantId: acme.tenantId } }),
       });

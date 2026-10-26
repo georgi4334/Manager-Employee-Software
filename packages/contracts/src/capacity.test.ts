@@ -7,6 +7,7 @@ import {
   freeMinutes,
   loadLevel,
   plannedMinutes,
+  overtimeMinutes,
   workingMinutes,
 } from './capacity.js';
 
@@ -114,5 +115,56 @@ describe('capacityQuerySchema', () => {
     expect(capacityQuerySchema.safeParse({ ...ok, to: ok.from }).success).toBe(true);
     expect(capacityQuerySchema.safeParse({ ...ok, to: '2026-11-25' }).success).toBe(true); // 31 days
     expect(capacityQuerySchema.safeParse({ ...ok, to: '2026-11-26' }).success).toBe(false); // 32 days
+  });
+});
+
+describe('working hours per person (ADR 0026)', () => {
+  it('uses the scheduled minutes instead of the standard day', () => {
+    expect(workingMinutes('2026-10-26', { scheduledMinutes: 240 })).toBe(240); // part-time Monday
+    expect(workingMinutes('2026-10-26', { scheduledMinutes: 0 })).toBe(0); // a weekday off
+  });
+
+  it('lets a weekend day be a working day', () => {
+    expect(workingMinutes('2026-10-31', { scheduledMinutes: 480 })).toBe(480);
+    expect(workingMinutes('2026-10-31')).toBe(0); // without a schedule it is still off
+  });
+
+  it('halves the scheduled minutes on a half-day holiday and removes them on a full one', () => {
+    expect(
+      workingMinutes('2026-10-27', { scheduledMinutes: 360, holiday: { halfDay: true } }),
+    ).toBe(180);
+    expect(
+      workingMinutes('2026-10-27', { scheduledMinutes: 360, holiday: { halfDay: false } }),
+    ).toBe(0);
+    expect(
+      workingMinutes('2026-10-27', { scheduledMinutes: 361, holiday: { halfDay: true } }),
+    ).toBe(181);
+  });
+
+  it('still bounds the employment by hire and termination dates', () => {
+    const o = { scheduledMinutes: 480, hireDate: '2026-10-28', terminationDate: '2026-10-29' };
+    expect(workingMinutes('2026-10-27', o)).toBe(0);
+    expect(workingMinutes('2026-10-28', o)).toBe(480);
+    expect(workingMinutes('2026-10-30', o)).toBe(0);
+  });
+
+  it('takes a leave day as a share of the day that was scheduled', () => {
+    expect(availableMinutes(240, 1, 240)).toBe(0);
+    expect(availableMinutes(240, 0.5, 240)).toBe(120);
+    expect(availableMinutes(480, 0.5)).toBe(240); // the standard day, as before
+    expect(availableMinutes(0, 1, 240)).toBe(0);
+  });
+});
+
+describe('overtimeMinutes', () => {
+  it('is the logged time beyond the available time, never negative', () => {
+    expect(overtimeMinutes(600, 480)).toBe(120);
+    expect(overtimeMinutes(480, 480)).toBe(0);
+    expect(overtimeMinutes(300, 480)).toBe(0);
+  });
+  it('counts all time logged on a day off', () => {
+    expect(overtimeMinutes(90, 0)).toBe(90);
+    expect(overtimeMinutes(90, -10)).toBe(90);
+    expect(overtimeMinutes(0, 0)).toBe(0);
   });
 });

@@ -14,6 +14,7 @@ const person = (n: number, o: Partial<CapacityPerson> = {}): CapacityPerson => (
   availableMinutes: 1680,
   plannedMinutes: 600,
   loggedMinutes: 300,
+  overtimeMinutes: 0,
   freeMinutes: 1080,
   level: 'busy',
   days: [0, 1, 2, 3, 4, 5, 6].map((i) => ({
@@ -103,6 +104,17 @@ describe('access', () => {
   });
 });
 
+describe('overtime', () => {
+  it('is shown in words when there is some, and not otherwise', async () => {
+    serve([person(1, { overtimeMinutes: 270 }), person(2)]);
+    await renderApp('/capacity');
+    const first = (await screen.findByText('Person1 Test')).closest('li')!;
+    expect(first).toHaveTextContent('Overtime 4:30 h: logged beyond the available time');
+    const second = screen.getByText('Person2 Test').closest('li')!;
+    expect(second).not.toHaveTextContent('Overtime');
+  });
+});
+
 describe('the list', () => {
   it('asks for the current week and shows the numbers and the level in words', async () => {
     const calls = serve();
@@ -120,7 +132,7 @@ describe('the list', () => {
         .slice(0, 10),
     );
     expect(q.has('projectId')).toBe(false);
-    expect(screen.getByText(/standard working day of 8 hours/)).toBeInTheDocument();
+    expect(screen.getByText(/each person's own working hours/)).toBeInTheDocument();
   });
 
   it('shows days and projects on demand, with over-booking and leave in words', async () => {

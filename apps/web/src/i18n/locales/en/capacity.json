@@ -3,7 +3,7 @@
   "loading": "Loading…",
   "retry": "Try again",
   "hours": "{{value}} h",
-  "standardDay": "Measured against a standard working day of 8 hours, without public holidays and approved leave.",
+  "standardDay": "Measured against each person's own working hours (8 hours, Monday to Friday, unless set otherwise), without public holidays and approved leave.",
   "search": "Search by name",
   "project": "Project",
   "allProjects": "All projects",
@@ -47,5 +47,6 @@
     "days": "Days of {{name}}",
     "projects": "Projects of {{name}}",
     "otherProjects": "Other projects"
-  }
+  },
+  "overtime": "Overtime {{overtime}}: logged beyond the available time"
 }

@@ -5,7 +5,7 @@ import { ADMIN_EMAIL, EMPLOYEE_EMAIL } from '../support/constants';
 test('an administrator sees who has time and who is over-booked', async ({ page }) => {
   await signIn(page, ADMIN_EMAIL);
   await page.goto('/capacity');
-  await expect(page.getByText(/standard working day of 8 hours/)).toBeVisible();
+  await expect(page.getByText(/each person's own working hours/)).toBeVisible();
 
   // Eva is on two projects at 60 % each: over-booked
   const eva = page
