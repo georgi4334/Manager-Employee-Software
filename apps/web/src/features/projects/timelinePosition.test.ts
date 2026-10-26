@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { positionPct } from './timeline';
+import { positionPct } from './timelinePosition';
 
 describe('position on the timeline', () => {
   it('maps the start to 0 and the end to 100', () => {
