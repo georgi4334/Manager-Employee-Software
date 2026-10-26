@@ -123,5 +123,28 @@
     "account": "This person already has an active account.",
     "status": "This employee is not active.",
     "erased": "This employee's personal data was erased; the record cannot be changed."
+  },
+  "schedule": {
+    "title": "Working hours",
+    "loading": "Loading…",
+    "hours": "{{value}} h",
+    "default": "Standard week: 8 hours, Monday to Friday. No other hours have been set.",
+    "set": "Contractual hours per weekday.",
+    "week": "Hours per weekday",
+    "dayOff": "Day off",
+    "total": "Per week: {{value}} h",
+    "changes": "Changes",
+    "from": "From {{date}}",
+    "perWeek": "{{value}} h per week",
+    "inForce": "In force",
+    "remove": "Remove the change from {{date}}",
+    "removeShort": "Remove",
+    "change": "Change working hours",
+    "form": "Working hours",
+    "validFrom": "Valid from",
+    "validFromHint": "Past weeks keep the hours that applied then.",
+    "hint": "Type hours like 8, 7:30 or 7,5. Leave a day empty for a day off.",
+    "save": "Save working hours",
+    "cancel": "Cancel"
   }
 }

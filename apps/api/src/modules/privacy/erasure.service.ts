@@ -69,6 +69,8 @@ export class ErasureService {
       await tx.review.deleteMany({ where: { tenantId, employeeId } });
       // Skill levels are personal data; the catalog is not (ADR 0022).
       await tx.employeeSkill.deleteMany({ where: { tenantId, employeeId } });
+      // Working hours are not a statutory record (ADR 0026).
+      await tx.workSchedule.deleteMany({ where: { tenantId, employeeId } });
       // Feedback they gave or received is about people, in words: it goes with them (ADR 0021).
       await tx.feedback.deleteMany({
         where: { tenantId, OR: [{ fromEmployeeId: employeeId }, { toEmployeeId: employeeId }] },

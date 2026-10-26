@@ -33,6 +33,11 @@ export function PersonCard({ person }: { person: CapacityPerson }) {
           free: hours(person.freeMinutes),
         })}
       </p>
+      {person.overtimeMinutes > 0 && (
+        <p className="text-sm font-medium text-warning">
+          {t('overtime', { overtime: hours(person.overtimeMinutes) })}
+        </p>
+      )}
       <details className="text-sm">
         <summary
           className="flex min-h-11 cursor-pointer items-center text-primary underline"

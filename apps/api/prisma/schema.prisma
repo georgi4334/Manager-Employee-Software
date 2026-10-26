@@ -59,6 +59,7 @@ model Tenant {
   aiUserSettings          AiUserSetting[]
   aiConversations         AiConversation[]
   aiMessages              AiMessage[]
+  workSchedules           WorkSchedule[]
   reviewCompetencies      ReviewCompetency[]
   reviewsAll              Review[]
   reviewRatings           ReviewRating[]
@@ -346,6 +347,8 @@ model Employee {
   /// docs/adr/0007-organization.md
   departmentId String? @map("department_id") @db.Uuid
   managerId    String? @map("manager_id") @db.Uuid
+
+  workSchedules WorkSchedule[]
 
   tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user                User?                @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
@@ -1281,4 +1284,25 @@ model AiMessage {
   @@index([tenantId, conversationId, createdAt])
   @@index([tenantId, userId, role, createdAt])
   @@map("ai_message")
+}
+
+// ----- Working hours (docs/adr/0026-working-hours.md) ----------------------------------------------------
+
+/// Contractual minutes per weekday (Monday first) from `valid_from` on. No row = 8 hours Monday to Friday.
+model WorkSchedule {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  tenantId   String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  employeeId String   @map("employee_id") @db.Uuid
+  validFrom  DateTime @map("valid_from") @db.Date
+  /// Seven values, Monday first, each 0..960 (a check constraint in the migration).
+  minutes    Int[]
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [tenantId, employeeId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, employeeId, validFrom])
+  @@map("work_schedule")
 }

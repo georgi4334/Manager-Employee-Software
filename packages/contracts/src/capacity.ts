@@ -31,18 +31,31 @@ export function workingMinutes(
     holiday?: { halfDay: boolean } | undefined;
     hireDate?: DateString | null;
     terminationDate?: DateString | null;
+    /** The person's contractual minutes of this date (ADR 0026); without it the standard week applies. */
+    scheduledMinutes?: number | undefined;
   } = {},
 ): number {
-  if (isWeekend(date)) return 0;
+  const base = options.scheduledMinutes ?? (isWeekend(date) ? 0 : WORKDAY_MINUTES);
+  if (base <= 0) return 0;
   if (options.hireDate && date < options.hireDate) return 0;
   if (options.terminationDate && date > options.terminationDate) return 0;
-  if (options.holiday) return options.holiday.halfDay ? WORKDAY_MINUTES / 2 : 0;
-  return WORKDAY_MINUTES;
+  if (options.holiday) return options.holiday.halfDay ? Math.round(base / 2) : 0;
+  return base;
 }
 
-/** What is left of the working minutes after approved leave (1 = a whole day, 0.5 = half a day). */
-export const availableMinutes = (working: number, leaveFraction: number): number =>
-  Math.max(0, working - Math.round(leaveFraction * WORKDAY_MINUTES));
+/**
+ * What is left of the working minutes after approved leave (1 = a whole day, 0.5 = half a day). A leave day takes its
+ * share of the day's contractual minutes (`dayMinutes`, the standard day without a schedule).
+ */
+export const availableMinutes = (
+  working: number,
+  leaveFraction: number,
+  dayMinutes: number = WORKDAY_MINUTES,
+): number => Math.max(0, working - Math.round(leaveFraction * dayMinutes));
+
+/** Logged time beyond what was available on a day; a day off counts in full. Informational (ADR 0026). */
+export const overtimeMinutes = (logged: number, available: number): number =>
+  Math.max(0, logged - Math.max(0, available));
 
 /** The time one assignment claims of an available stretch. */
 export const assignmentMinutes = (available: number, allocationPercent: number): number =>
@@ -104,6 +117,8 @@ export const capacityPersonSchema = z.object({
   availableMinutes: z.number().int(),
   plannedMinutes: z.number().int(),
   loggedMinutes: z.number().int(),
+  /** Logged beyond available, summed per day (ADR 0026). */
+  overtimeMinutes: z.number().int().min(0),
   freeMinutes: z.number().int(),
   level: z.enum(CAPACITY_LEVELS),
   days: z.array(

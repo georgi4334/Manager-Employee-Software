@@ -6,6 +6,8 @@ import {
   eachDay,
   freeMinutes,
   loadLevel,
+  overtimeMinutes,
+  scheduledMinutes,
   workingMinutes,
   type Capacity,
   type CapacityPerson,
@@ -16,6 +18,7 @@ import { AuthorizationService } from '../../common/auth/authorization.service.js
 import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
 import { LeaveSettingsService } from '../leave/leave-settings.service.js';
 import { ProjectAccess } from '../projects/project-access.service.js';
+import { SchedulesService } from '../schedules/schedules.service.js';
 import { dateIn, dateOut, escapeLike, notFound } from '../projects/projects.shared.js';
 
 /**
@@ -29,6 +32,7 @@ export class CapacityService {
     private readonly authz: AuthorizationService,
     private readonly access: ProjectAccess,
     private readonly settings: LeaveSettingsService,
+    private readonly schedules: SchedulesService,
   ) {}
 
   overview(actor: RequestAuth, query: CapacityQuery): Promise<Capacity> {
@@ -105,6 +109,7 @@ export class CapacityService {
           holidays.set(country, await this.settings.holidayMap(tx, country, from, to));
         }
       }
+      const scheduleMap = await this.schedules.forEmployees(tx, ids);
       const leaveDays = await tx.leaveRequestDay.findMany({
         where: { day: range, request: { employeeId: { in: ids }, status: 'approved' } },
         select: { day: true, fraction: true, request: { select: { employeeId: true } } },
@@ -157,14 +162,18 @@ export class CapacityService {
           return found;
         };
 
+        const personSchedules = scheduleMap.get(person.id) ?? [];
+        let overtime = 0;
         const days = dates.map((date) => {
+          const scheduled = scheduledMinutes(personSchedules, date);
           const working = workingMinutes(date, {
             holiday: holidayMap?.get(date),
             hireDate: person.hireDate ? dateOut(person.hireDate) : null,
             terminationDate: person.terminationDate ? dateOut(person.terminationDate) : null,
+            scheduledMinutes: scheduled,
           });
           const leaveFraction = leave.get(`${person.id}|${date}`) ?? 0;
-          const available = availableMinutes(working, leaveFraction);
+          const available = availableMinutes(working, leaveFraction, scheduled);
           let planned = 0;
           for (const a of mine) {
             if (dateOut(a.fromDate) > date || (a.toDate && dateOut(a.toDate) < date)) continue;
@@ -178,6 +187,7 @@ export class CapacityService {
             logged += e.minutes ?? 0;
             bucket(e.projectId).logged += e.minutes ?? 0;
           }
+          overtime += overtimeMinutes(logged, available);
           return {
             date,
             availableMinutes: available,
@@ -196,6 +206,7 @@ export class CapacityService {
           availableMinutes: available,
           plannedMinutes: planned,
           loggedMinutes: sum((d) => d.loggedMinutes),
+          overtimeMinutes: overtime,
           freeMinutes: freeMinutes(available, planned),
           level: loadLevel(planned, available),
           days,

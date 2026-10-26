@@ -23,6 +23,7 @@ This table is **generated** from the permission catalog in `packages/contracts/s
 |  | `employee.create` | Create employees | — | — | all | all |
 |  | `employee.update` | Edit employees | — | — | all | all |
 |  | `employee.deactivate` | Deactivate employees | — | — | all | all |
+|  | `employee.manage_schedule` | Set working hours of employees | — | — | all | all |
 |  | `employee.update_self_basic` | Edit own phone, avatar and preferences | own | own | own | own |
 |  | `compensation.view` | View salary and compensation (module comes later) | — | — | all | all |
 |  | `compensation.manage` | Manage salary and compensation (module comes later) | — | — | all | all |

@@ -121,6 +121,13 @@ export const PERMISSIONS = [
     grants: g(null, null, 'all', 'all'),
   }),
   def({
+    code: 'employee.manage_schedule',
+    module: 'employees',
+    description: 'Set working hours of employees',
+    scopes: ALL,
+    grants: g(null, null, 'all', 'all'),
+  }),
+  def({
     code: 'employee.update_self_basic',
     module: 'employees',
     description: 'Edit own phone, avatar and preferences',

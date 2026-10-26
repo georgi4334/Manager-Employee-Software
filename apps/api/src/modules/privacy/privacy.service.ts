@@ -217,6 +217,9 @@ export class PrivacyService {
         ])
       : [[], [], []];
 
+    const schedules = employeeId
+      ? await tx.workSchedule.findMany({ where: { employeeId }, orderBy: { validFrom: 'asc' } })
+      : [];
     const [aiSetting, aiKeys, aiConversations] = userId
       ? await Promise.all([
           tx.aiUserSetting.findFirst({ where: { userId } }),
@@ -330,6 +333,7 @@ export class PrivacyService {
               : null,
           };
         }),
+      workSchedules: schedules.map((w) => ({ validFrom: day(w.validFrom)!, minutes: w.minutes })),
       ai: {
         consentAt: iso(aiSetting?.consentAt ?? null),
         sharePeopleData: aiSetting?.sharePeopleData ?? false,

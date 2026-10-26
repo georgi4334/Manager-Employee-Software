@@ -123,5 +123,28 @@
     "account": "Diese Person hat bereits ein aktives Konto.",
     "status": "Diese Person ist nicht aktiv.",
     "erased": "Die personenbezogenen Daten dieser Person wurden gelöscht; der Eintrag kann nicht mehr geändert werden."
+  },
+  "schedule": {
+    "title": "Arbeitszeit",
+    "loading": "Wird geladen…",
+    "hours": "{{value}} Std.",
+    "default": "Standardwoche: 8 Stunden, Montag bis Freitag. Es wurden keine anderen Zeiten festgelegt.",
+    "set": "Vertragliche Stunden pro Wochentag.",
+    "week": "Stunden pro Wochentag",
+    "dayOff": "Frei",
+    "total": "Pro Woche: {{value}} Std.",
+    "changes": "Änderungen",
+    "from": "Ab {{date}}",
+    "perWeek": "{{value}} Std. pro Woche",
+    "inForce": "Gilt aktuell",
+    "remove": "Änderung vom {{date}} entfernen",
+    "removeShort": "Entfernen",
+    "change": "Arbeitszeit ändern",
+    "form": "Arbeitszeit",
+    "validFrom": "Gültig ab",
+    "validFromHint": "Vergangene Wochen behalten die damals geltenden Stunden.",
+    "hint": "Stunden wie 8, 7:30 oder 7,5 eingeben. Einen Tag leer lassen, wenn frei ist.",
+    "save": "Arbeitszeit speichern",
+    "cancel": "Abbrechen"
   }
 }

@@ -137,6 +137,8 @@ for (const variant of variants) {
       await page.locator('main a[href^="/employees/"]').first().click(); // a person, not the nav entry
       await page.waitForLoadState('networkidle');
       found.push(...(await scan(page, 'employee detail')));
+      await page.getByRole('button', { name: 'Change working hours' }).click();
+      found.push(...(await scan(page, 'employee detail (working hours form open)')));
       await settle(page, '/projects');
       await page.getByRole('button', { name: 'New project' }).click();
       found.push(...(await scan(page, '/projects (new project form)')));

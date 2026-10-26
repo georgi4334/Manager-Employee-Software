@@ -154,6 +154,8 @@ export const personalDataExportSchema = z.object({
         .nullable(),
     }),
   ),
+  /** Their working hours: weekly minutes per weekday, Monday first, from a date on (ADR 0026). */
+  workSchedules: z.array(z.object({ validFrom: date, minutes: z.array(z.number().int()) })),
   /** The AI assistant: consent, the stored key's provider (never the key) and their conversations (ADR 0025). */
   ai: z.object({
     consentAt: dateTime.nullable(),
