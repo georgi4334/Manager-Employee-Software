@@ -55,7 +55,8 @@
     "invalidPercent": "Gib eine ganze Zahl von 0 bis 100 ein.",
     "invalidNumber": "Gib eine Zahl ein.",
     "sameAsStart": "Das Ziel muss sich vom Startwert unterscheiden.",
-    "invalidMinutes": "Gib ganze Minuten von 15 bis 240 ein."
+    "invalidMinutes": "Gib ganze Minuten von 15 bis 240 ein.",
+    "invalidScore": "Wähle eine Bewertung von 1 bis 5."
   },
   "forbiddenTitle": "Kein Zugriff",
   "forbiddenText": "Sie haben keine Berechtigung, diese Seite zu öffnen. Wenden Sie sich an Ihre Administration, falls das ein Irrtum ist."

@@ -107,6 +107,10 @@ export class PrivacyService {
       goals,
       checkIns,
       meetings,
+      feedbackGiven,
+      feedbackReceived,
+      skillRatings,
+      reviewRows,
     ] = employeeId
       ? await Promise.all([
           tx.leaveRequest.findMany({
@@ -166,8 +170,34 @@ export class PrivacyService {
             orderBy: [{ scheduledAt: 'asc' }, { id: 'asc' }],
             include: { actionItems: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } },
           }),
+          tx.feedback.findMany({
+            where: { fromEmployeeId: employeeId },
+            orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+            include: { to: { select: { firstName: true, lastName: true } } },
+          }),
+          tx.feedback.findMany({
+            where: { toEmployeeId: employeeId },
+            orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+            include: { from: { select: { firstName: true, lastName: true } } },
+          }),
+          tx.employeeSkill.findMany({
+            where: { employeeId },
+            orderBy: [{ skill: { name: 'asc' } }, { id: 'asc' }],
+            include: { skill: { select: { name: true, category: { select: { name: true } } } } },
+          }),
+          tx.review.findMany({
+            where: { employeeId },
+            orderBy: [{ cycle: { periodStart: 'asc' } }, { id: 'asc' }],
+            include: {
+              cycle: { select: { name: true, periodStart: true, periodEnd: true, status: true } },
+              ratings: {
+                include: { competency: { select: { name: true, position: true } } },
+                orderBy: [{ competency: { position: 'asc' } }, { id: 'asc' }],
+              },
+            },
+          }),
         ])
-      : [[], [], [], [], [], [], [], [], [], [], [], []];
+      : [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
     const [notifications, preferences, auditEntries] = userId
       ? await Promise.all([
           tx.notification.findMany({
@@ -258,6 +288,55 @@ export class PrivacyService {
         estimateHours: t.estimateHours === null ? null : Number(t.estimateHours),
         dueDate: iso(t.dueDate)?.slice(0, 10) ?? null,
       })),
+      // The manager part only once released: before that it is not the employee's to read (ADR 0023).
+      reviews: reviewRows
+        .filter((r) => r.cycle.status !== 'draft')
+        .map((r) => {
+          const part = (name: 'self' | 'manager') =>
+            r.ratings
+              .filter((x) => x.part === name)
+              .map((x) => ({ competency: x.competency.name, score: x.score, comment: x.comment }));
+          return {
+            cycle: r.cycle.name,
+            periodStart: day(r.cycle.periodStart)!,
+            periodEnd: day(r.cycle.periodEnd)!,
+            self: {
+              summary: r.selfSummary,
+              submittedAt: r.selfSubmittedAt?.toISOString() ?? null,
+              ratings: part('self'),
+            },
+            released: r.releasedAt
+              ? {
+                  summary: r.managerSummary,
+                  finalRating: r.calibratedRating ?? r.overallRating,
+                  ratings: part('manager'),
+                }
+              : null,
+          };
+        }),
+      skills: skillRatings.map((r) => ({
+        category: r.skill.category.name,
+        skill: r.skill.name,
+        level: r.level,
+        selfAssessed: r.assessedByEmployeeId === r.employeeId,
+        assessedAt: r.assessedAt.toISOString(),
+      })),
+      feedback: {
+        given: feedbackGiven.map((f) => ({
+          to: `${f.to.firstName} ${f.to.lastName}`,
+          kind: f.kind,
+          visibility: f.visibility,
+          body: f.body,
+          createdAt: f.createdAt.toISOString(),
+        })),
+        received: feedbackReceived.map((f) => ({
+          from: `${f.from.firstName} ${f.from.lastName}`,
+          kind: f.kind,
+          visibility: f.visibility,
+          body: f.body,
+          createdAt: f.createdAt.toISOString(),
+        })),
+      },
       // Only the person's own private notes: the other participant's stay theirs (ADR 0020).
       oneOnOnes: meetings.map((m) => {
         const asManager = m.managerEmployeeId === employeeId;

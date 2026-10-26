@@ -120,6 +120,71 @@ export const personalDataExportSchema = z.object({
       }),
     ),
   }),
+  /** Their performance reviews: their own self-review, and the manager part only once released (ADR 0023). */
+  reviews: z.array(
+    z.object({
+      cycle: z.string(),
+      periodStart: date,
+      periodEnd: date,
+      self: z
+        .object({
+          summary: z.string().nullable(),
+          submittedAt: dateTime.nullable(),
+          ratings: z.array(
+            z.object({
+              competency: z.string(),
+              score: z.number().int(),
+              comment: z.string().nullable(),
+            }),
+          ),
+        })
+        .nullable(),
+      released: z
+        .object({
+          summary: z.string().nullable(),
+          finalRating: z.number().int().nullable(),
+          ratings: z.array(
+            z.object({
+              competency: z.string(),
+              score: z.number().int(),
+              comment: z.string().nullable(),
+            }),
+          ),
+        })
+        .nullable(),
+    }),
+  ),
+  /** Their skill ratings (ADR 0022). */
+  skills: z.array(
+    z.object({
+      category: z.string(),
+      skill: z.string(),
+      level: z.number().int(),
+      selfAssessed: z.boolean(),
+      assessedAt: dateTime,
+    }),
+  ),
+  /** Feedback they gave and received, with the other person's name (ADR 0021). */
+  feedback: z.object({
+    given: z.array(
+      z.object({
+        to: z.string(),
+        kind: z.string(),
+        visibility: z.string(),
+        body: z.string(),
+        createdAt: dateTime,
+      }),
+    ),
+    received: z.array(
+      z.object({
+        from: z.string(),
+        kind: z.string(),
+        visibility: z.string(),
+        body: z.string(),
+        createdAt: dateTime,
+      }),
+    ),
+  }),
   /** Their 1:1 meetings: agenda, shared notes, their own private notes and action items (ADR 0020). */
   oneOnOnes: z.array(
     z.object({

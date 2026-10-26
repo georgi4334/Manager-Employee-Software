@@ -51,7 +51,7 @@ This table is **generated** from the permission catalog in `packages/contracts/s
 | **1:1 Meetings** | `one_on_one.manage` | Run 1:1 meetings as a participant (private notes stay between the two) | own | reports | reports | reports |
 | **Feedback** | `feedback.give` | Give feedback to any colleague | all | all | all | all |
 |  | `feedback.view_received` | View received feedback (managers and HR: only what was shared with the manager) | own | reports | all | — |
-|  | `feedback.moderate` | Moderate feedback | — | — | all | all |
+|  | `feedback.moderate` | Decide on feedback that a recipient reported (keep or remove it) | — | — | all | all |
 | **Skills Matrix** | `skill.view` | View skills | own | team | all | all |
 |  | `skill.update` | Update skill levels | own | team | all | all |
 |  | `skill.manage_catalog` | Manage the skill catalog | — | — | all | all |

@@ -115,6 +115,28 @@
         "settingsTitle": "Changes to your 1:1 meetings",
         "settingsHelp": "When the other person schedules, moves or cancels a 1:1."
       }
+    },
+    "feedback": {
+      "received": {
+        "title": "New feedback",
+        "text": "You received feedback. Open it to read it.",
+        "settingsTitle": "Feedback you receive",
+        "settingsHelp": "When a colleague gives you feedback."
+      }
+    },
+    "review": {
+      "cycle_opened": {
+        "title": "Review cycle opened",
+        "text": "A performance review cycle opened. Your review is waiting.",
+        "settingsTitle": "Review cycles",
+        "settingsHelp": "When a review cycle opens for you."
+      },
+      "released": {
+        "title": "Review released",
+        "text": "Your performance review was released. You can read it now.",
+        "settingsTitle": "Released reviews",
+        "settingsHelp": "When your performance review result is released."
+      }
     }
   },
   "unknown": {

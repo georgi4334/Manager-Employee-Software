@@ -1,0 +1,77 @@
+{
+  "title": "Skills",
+  "intro": "What you can do, and how well. Everybody rates themself; managers can rate their team, and HR keeps the list of skills.",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "search": "Search by name",
+  "total_one": "{{count}} person",
+  "total_other": "{{count}} people",
+  "empty": "Nobody matches.",
+  "pagination": "Pages",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{page}} of {{pages}}",
+  "tabs": {
+    "label": "Show skills",
+    "mine": "My skills",
+    "people": "People",
+    "catalog": "Catalog"
+  },
+  "filters": {
+    "category": "Category",
+    "allCategories": "All categories",
+    "skill": "Skill",
+    "anySkill": "Any skill",
+    "minLevel": "Level",
+    "anyLevel": "Any level",
+    "atLeast": "Level {{level}} or more"
+  },
+  "closeEditor": "Close",
+  "editSkills": "Edit the skills of {{name}}",
+  "noRatings": "No skills rated yet.",
+  "skillsOf": "Skills of {{name}}",
+  "noEmployee": "You have no employee record, so there are no skills to rate.",
+  "emptyCatalog": "There are no skills yet. HR can add them in the catalog.",
+  "archived": "archived",
+  "assessed": {
+    "self": "Rated by you on {{date}}",
+    "by": "Rated by {{name}} on {{date}}"
+  },
+  "levelOf": "Level of {{skill}}",
+  "notRated": "Not rated",
+  "level": {
+    "1": "Beginner",
+    "2": "Basic",
+    "3": "Proficient",
+    "4": "Advanced",
+    "5": "Expert"
+  },
+  "rule": {
+    "skill_archived": "This skill is archived and can no longer be rated.",
+    "unknown_category": "This category does not exist.",
+    "name": "This name is already in use.",
+    "in_use": "It is still in use: somebody has rated this skill, or the category holds skills."
+  },
+  "catalog": {
+    "newCategory": "New category",
+    "categoryName": "Category name",
+    "addCategory": "Add category",
+    "newSkill": "New skill",
+    "category": "Category",
+    "skillName": "Skill name",
+    "description": "Description (optional)",
+    "addSkill": "Add skill",
+    "renameCategory": "Rename {{name}}",
+    "save": "Save",
+    "cancel": "Cancel",
+    "rename": "Rename",
+    "deleteCategory": "Delete category {{name}}",
+    "delete": "Delete",
+    "noSkills": "No skills in this category.",
+    "restoreSkill": "Restore {{name}}",
+    "archiveSkill": "Archive {{name}}",
+    "restore": "Restore",
+    "archive": "Archive",
+    "deleteSkill": "Delete {{name}}"
+  }
+}

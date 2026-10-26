@@ -333,7 +333,7 @@ export const PERMISSIONS = [
   def({
     code: 'feedback.moderate',
     module: 'feedback',
-    description: 'Moderate feedback',
+    description: 'Decide on feedback that a recipient reported (keep or remove it)',
     scopes: ALL,
     grants: g(null, null, 'all', 'all'),
   }),

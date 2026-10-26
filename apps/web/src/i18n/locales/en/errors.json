@@ -55,7 +55,8 @@
     "invalidPercent": "Enter a whole number from 0 to 100.",
     "invalidNumber": "Enter a number.",
     "sameAsStart": "The target must differ from the start value.",
-    "invalidMinutes": "Enter whole minutes from 15 to 240."
+    "invalidMinutes": "Enter whole minutes from 15 to 240.",
+    "invalidScore": "Pick a score from 1 to 5."
   },
   "forbiddenTitle": "No access",
   "forbiddenText": "You do not have permission to open this page. Ask your administrator if you think this is a mistake."

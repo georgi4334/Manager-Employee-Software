@@ -42,6 +42,14 @@ const SIGNED_IN = [
   '/goals?scope=personal',
   '/one-on-ones',
   '/one-on-ones?status=all',
+  '/feedback',
+  '/feedback?box=given',
+  '/skills',
+  '/skills?tab=people',
+  '/skills?tab=catalog',
+  '/reviews',
+  '/reviews?tab=team',
+  '/reviews?tab=cycles',
   '/profile',
   '/does-not-exist',
 ];
@@ -166,6 +174,19 @@ for (const variant of variants) {
       await page.waitForLoadState('networkidle');
       await page.getByRole('button', { name: 'Change the time' }).click();
       found.push(...(await scan(page, '1:1 detail (time form open)')));
+      await settle(page, '/feedback');
+      await page.getByRole('button', { name: 'Give feedback' }).click();
+      found.push(...(await scan(page, '/feedback (give form)')));
+      await settle(page, '/skills?tab=people');
+      await page
+        .getByRole('button', { name: /^Edit the skills of/ })
+        .first()
+        .click();
+      found.push(...(await scan(page, '/skills (people, editor open)')));
+      await settle(page, '/reviews');
+      await page.locator('main a[href^="/reviews/"]').first().click();
+      await page.waitForLoadState('networkidle');
+      found.push(...(await scan(page, '/reviews/:id (own review, editor open)')));
       await settle(page, '/leave?tab=approvals');
       await page
         .getByRole('button', { name: /^Check the project impact/ })

@@ -65,6 +65,14 @@ export class ErasureService {
         where: { tenantId, authorEmployeeId: employeeId },
         data: { comment: null },
       });
+      // Reviews about the person go with them; what they wrote about others stays with the other person's file (ADR 0023).
+      await tx.review.deleteMany({ where: { tenantId, employeeId } });
+      // Skill levels are personal data; the catalog is not (ADR 0022).
+      await tx.employeeSkill.deleteMany({ where: { tenantId, employeeId } });
+      // Feedback they gave or received is about people, in words: it goes with them (ADR 0021).
+      await tx.feedback.deleteMany({
+        where: { tenantId, OR: [{ fromEmployeeId: employeeId }, { toEmployeeId: employeeId }] },
+      });
       // A 1:1 holds the other person's private notes about this one too: the whole meeting goes (ADR 0020).
       await tx.oneOnOne.deleteMany({
         where: { tenantId, OR: [{ managerEmployeeId: employeeId }, { employeeId }] },

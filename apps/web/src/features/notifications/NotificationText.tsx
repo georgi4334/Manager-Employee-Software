@@ -91,6 +91,18 @@ export function useNotificationText() {
         text: t('types.task.assigned.text', { taskKey: str(params.taskKey) }),
       };
     }
+    if (type === 'review.cycle_opened') {
+      return {
+        title: t('types.review.cycle_opened.title'),
+        text: t('types.review.cycle_opened.text'),
+      };
+    }
+    if (type === 'review.released') {
+      return { title: t('types.review.released.title'), text: t('types.review.released.text') };
+    }
+    if (type === 'feedback.received') {
+      return { title: t('types.feedback.received.title'), text: t('types.feedback.received.text') };
+    }
     if (type === 'one_on_one.changed') {
       const date = formatDay(str(params.date), language);
       return {

@@ -185,6 +185,30 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Deactivation and a manager change cancel `scheduled` meetings (`onEmployeeDeactivated`, and inline in `OrganizationService.assign`); held ones stay with the people who held them. Export lists the person's meetings with **their own** private notes; erasure deletes every meeting they took part in.
 - Web: `/one-on-ones` and `/one-on-ones/:id` with their own `one_on_one.manage` guard. Recurring series, calendar events and reminders come later (Phase 5).
 
+## Feedback (docs/adr/0021-feedback.md)
+
+- `feedback` (RLS, composite foreign keys): named, no anonymous feedback, no edits (take it back and write again). `kind` `praise` / `constructive`; the giver picks `visibility` `recipient` or `recipient_and_manager` and cannot widen it later.
+- Readers: the giver and the recipient; the recipient's manager (`feedback.view_received` at `reports`) and HR (`all`) read **only** `recipient_and_manager` items through `authz` on the recipient (`403` otherwise); Admin has no read grant. A moderator (`feedback.moderate`: HR, Admin) sees an item only after the **recipient reported it** (`reported_at`), and never decides on their own feedback (given or received). Moderators keep (`kept_at`, closes the report for good) or remove; removal is the only audited action (ids and kind, never the text).
+- One list endpoint (`GET /feedback?box=received|given|reported`) is `@Authenticated()` and checks the box's permission in the service. `feedback.received` notifies the recipient with the feedback id only (not who, not kind).
+- Export lists feedback given and received (with the other person's name); erasure deletes every item the person gave or received.
+- Web: `/feedback` with Received / Given / Reported tabs (the last for moderators), a give form, own guard (`feedback.give` or `feedback.view_received`); the recipient list comes from the org chart.
+
+## Skills matrix (docs/adr/0022-skills-matrix.md)
+
+- `skill_category`, `skill`, `employee_skill` (all RLS, composite foreign keys). Names belong to the workspace, are **not translated** and unique without regard to case (checked in the service in memory, plus a unique index). Levels 1–5 have fixed meanings translated in the web app; `assessed_by` shows a self-assessment (`selfAssessed`); the last writer wins, no history.
+- Catalog changes need `skill.manage_catalog` (HR, Admin; route permission) and are audited with ids and field names, never names. A skill is deleted only while nobody rated it, a category only while empty (`CONFLICT`, `field: in_use`); an archived skill keeps its ratings but cannot be newly rated (`skill_archived`).
+- Reading and rating go through `authz` on the **employee**: `skill.view` / `skill.update` at `own` (Employee), `team` (Manager: self, reports and their reports) or `all`. A person outside the scope is `404` for reads and rating; inactive people are not listed. Ratings are personal data: not audited, exported with category/skill/level, deleted on erasure.
+- `GET /skills/people` filters by category, skill + minimum level (`minLevel` needs `skillId`) and name; web shows cards, never a wide table. Project skill requirements and staffing suggestions are later.
+- Web: `/skills` with tabs My skills / People / Catalog (the last for catalog managers), own `skill.view` guard.
+
+## Performance reviews (docs/adr/0023-performance-reviews.md)
+
+- `review_cycle`, `review_competency` (belongs to a cycle, no global catalog), `review` (one per employee and cycle), `review_rating` (RLS, composite foreign keys; a trigger keeps a rating on a competency of the review's own cycle). Cycle status only moves forward, one step: `draft → open → calibration → closed` (`canMoveCycle`, claimed with a conditional update). Competencies and dates change only in `draft`; opening creates a review for every active employee who had started by `period_end` and queues `review.cycle_opened`; closing releases every review whose manager part is submitted (`released_at`, `review.released`).
+- Writing: the self part by the employee only (`review.write_self`), the manager part through `authz` on the employee with `review.write_for_report` — **nobody writes the manager part of, calibrates or reopens their own review**. Drafts may be partial; **submit** needs every competency scored (and an overall rating for the manager) and locks the part. Rows are locked (`FOR UPDATE`) while writing.
+- Visibility is the pure function `reviewVisibility` (contracts): the employee sees their own part always and the manager part, final rating **only after release**; reviewers see a part once submitted (their own manager draft too); calibrators (`review.calibrate`) see calibrated ratings. The final rating is `calibrated ?? overall`. `managerSubmitted` is `null` for an employee before release. Reviews the caller may not see are `404`; draft cycles are visible to `review.manage_cycles` only.
+- Audit has cycle steps, calibration (`cleared` only) and reopening (`part`) — never ratings or texts. Notifications carry the cycle or review id only. Export: own self part always, manager part only once released; erasure deletes the reviews about the person.
+- Web: `/reviews` (tabs My reviews / Team / All reviews / Cycles by scope and permission) and `/reviews/:id` (editor, read view, calibration, reopen), own `review.view` guard. Moving a cycle always asks for confirmation.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

@@ -1,0 +1,59 @@
+{
+  "title": "Feedback",
+  "intro": "Tell colleagues what went well and what could be better. You choose who may read it: only the person, or also their manager and HR.",
+  "new": "Give feedback",
+  "sent": "Feedback sent.",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "pagination": "Pages",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{page}} of {{pages}}",
+  "whose": "Whose feedback",
+  "mine": "My feedback",
+  "sharedWith": "Shared with the manager: {{name}}",
+  "tabs": {
+    "label": "Show feedback",
+    "received": "Received",
+    "given": "Given",
+    "reported": "Reported"
+  },
+  "empty": {
+    "received": "You have not received any feedback yet.",
+    "given": "You have not given any feedback yet.",
+    "reported": "No feedback is waiting for a decision."
+  },
+  "kind": {
+    "praise": "Praise",
+    "constructive": "Constructive"
+  },
+  "visibility": {
+    "recipient": "Only the recipient",
+    "recipient_and_manager": "Recipient, their manager and HR"
+  },
+  "card": {
+    "fromTo": "{{from}} to {{to}}",
+    "reported": "Reported to a moderator",
+    "kept": "Reviewed by a moderator and kept",
+    "report": "Report to a moderator",
+    "keep": "Keep it",
+    "remove": "Remove",
+    "confirmRemove": "Yes, remove it",
+    "cancel": "Cancel"
+  },
+  "form": {
+    "title": "Give feedback",
+    "to": "To",
+    "kind": "Kind",
+    "visibility": "Who may read it",
+    "visibilityHint": "You cannot change this later.",
+    "body": "Your feedback",
+    "send": "Send",
+    "cancel": "Cancel"
+  },
+  "rule": {
+    "self": "You cannot give feedback to yourself.",
+    "unknown_employee": "This person does not exist or is no longer active.",
+    "reported": "This feedback was already reported."
+  }
+}
