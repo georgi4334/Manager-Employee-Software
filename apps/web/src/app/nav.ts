@@ -9,6 +9,7 @@ import {
   MessageSquareText,
   Award,
   ClipboardCheck,
+  ChartColumn,
   ListChecks,
   Timer,
   LayoutDashboard,
@@ -116,6 +117,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: ClipboardCheck,
     primary: false,
     permission: 'review.view',
+  },
+  {
+    path: '/analytics',
+    labelKey: 'analytics',
+    icon: ChartColumn,
+    primary: false,
+    permission: 'analytics.view_team',
   },
   {
     path: '/employees',

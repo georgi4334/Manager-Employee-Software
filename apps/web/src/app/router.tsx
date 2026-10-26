@@ -21,6 +21,7 @@ import { FeedbackPage } from '@/features/feedback/FeedbackPage';
 import { MeetingDetailPage } from '@/features/one-on-ones/MeetingDetailPage';
 import { MeetingsPage } from '@/features/one-on-ones/MeetingsPage';
 import { GoalsPage } from '@/features/goals/GoalsPage';
+import { AnalyticsPage } from '@/features/analytics/AnalyticsPage';
 import { CapacityPage } from '@/features/capacity/CapacityPage';
 import { ProjectDetailPage } from '@/features/projects/ProjectDetailPage';
 import { ProjectsPage } from '@/features/projects/ProjectsPage';
@@ -52,6 +53,7 @@ const IMPLEMENTED_PATHS = [
   '/feedback',
   '/skills',
   '/reviews',
+  '/analytics',
 ];
 
 export const routes: RouteObject[] = [
@@ -138,6 +140,10 @@ export const routes: RouteObject[] = [
               { path: 'reviews', element: <ReviewsPage /> },
               { path: 'reviews/:id', element: <ReviewDetailPage /> },
             ],
+          },
+          {
+            element: <RequirePermission permission="analytics.view_team" />,
+            children: [{ path: 'analytics', element: <AnalyticsPage /> }],
           },
           {
             element: <RequirePermission permission="capacity.view" />,

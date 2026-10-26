@@ -13,6 +13,7 @@ import type privacy from './locales/en/privacy.json';
 import type projects from './locales/en/projects.json';
 import type tasks from './locales/en/tasks.json';
 import type time from './locales/en/time.json';
+import type analytics from './locales/en/analytics.json';
 import type capacity from './locales/en/capacity.json';
 import type goals from './locales/en/goals.json';
 import type meetings from './locales/en/meetings.json';
@@ -40,6 +41,7 @@ declare module 'i18next' {
       projects: typeof projects;
       tasks: typeof tasks;
       time: typeof time;
+      analytics: typeof analytics;
       capacity: typeof capacity;
       goals: typeof goals;
       meetings: typeof meetings;

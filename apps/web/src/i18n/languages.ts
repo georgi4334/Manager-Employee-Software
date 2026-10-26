@@ -35,6 +35,7 @@ export const NAMESPACES = [
   'tasks',
   'time',
   'capacity',
+  'analytics',
   'goals',
   'meetings',
   'feedback',

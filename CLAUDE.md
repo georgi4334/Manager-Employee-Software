@@ -209,6 +209,13 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Audit has cycle steps, calibration (`cleared` only) and reopening (`part`) — never ratings or texts. Notifications carry the cycle or review id only. Export: own self part always, manager part only once released; erasure deletes the reviews about the person.
 - Web: `/reviews` (tabs My reviews / Team / All reviews / Cycles by scope and permission) and `/reviews/:id` (editor, read view, calibration, reopen), own `review.view` guard. Moving a cycle always asks for confirmation.
 
+## Analytics (docs/adr/0024-analytics.md)
+
+- Read-only and computed, never stored (no table, nothing to export or erase). `GET /analytics?from&to` (`analytics.view_team`, period at most 366 days) returns **counts and sums only**: no names, no per-person rows, no ratings, no free text. Pure helpers in `@intime/contracts` (`analytics.ts`: `suppressSmallGroup`, `percentOf`, `weekStarts`, `bucketByWeek`).
+- Population = active employees inside the caller's `analytics.view_team` scope (`allowedEmployees`); activity figures include people who left during the period. **Breakdowns (department, employment type, leave type, attendance mode) are `null` when the population is below `MIN_GROUP_SIZE` (5)**; totals stay.
+- Projects and tasks are filtered through `ProjectAccess.visibleWhere` (`project.view` / `task.view`). The `company` block (goals by status, newest review cycle progress as counts) is `null` unless the caller holds `analytics.view_company` (HR, Admin).
+- Web: `/analytics` with its own `analytics.view_team` guard, a period select (7/30/90/365 days), stat cards and CSS bars that always carry the value in text (no chart library). A new figure must say in words when it is withheld.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).
