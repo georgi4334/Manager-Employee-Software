@@ -207,15 +207,17 @@ erDiagram
 
 **Analytics (computed, not stored):** counts and sums over existing tables for the people in the caller's scope (`GET /analytics`, ADR 0024); breakdowns are withheld for groups under 5 people. No table of its own.
 
-## 7. AI assistant
+## 7. AI assistant (ADR 0025)
 
-| Table             | Key columns                                                                                  |
-| ----------------- | -------------------------------------------------------------------------------------------- |
-| `ai_conversation` | user_id, title, provider, model, created_at                                                  |
-| `ai_message`      | conversation_id, role (`user/assistant/tool`), content, tool_name, tokens_in/out, created_at |
-| `ai_usage`        | user_id, day, requests, tokens (rate limiting)                                               |
+| Table                  | Key columns                                                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `ai_workspace_setting` | enabled (default off), retention_days (1–365, default 90); one row per workspace                                   |
+| `ai_credential`        | scope (`user`/`workspace`), user_id, provider, model, secret_enc (AES-256-GCM), key_version, last4                 |
+| `ai_user_setting`      | user_id, consent_at, consent_version, share_people_data (default off)                                              |
+| `ai_conversation`      | user_id, title, created_at, updated_at                                                                             |
+| `ai_message`           | conversation_id, user_id, role (`user`/`assistant`), content, tools_used (names only; tool results are not stored) |
 
-Retention: conversations auto-purged after N days (tenant setting, default 90).
+Retention: conversations older than the workspace's `retention_days` are purged on every chat request. The hourly limit is counted from `ai_message`.
 
 ## 8. GDPR support tables
 

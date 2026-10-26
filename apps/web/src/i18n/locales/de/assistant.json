@@ -1,0 +1,78 @@
+{
+  "title": "Assistent",
+  "intro": "Stellen Sie Fragen zu Urlaub, Aufgaben und Zielen. Der Assistent sieht nur, was Sie sehen dürfen, und kann nichts ändern.",
+  "loading": "Wird geladen…",
+  "tabs": { "label": "Bereiche des Assistenten", "chat": "Chat", "settings": "Einstellungen" },
+  "notReady": {
+    "disabled": "Der Assistent ist für Ihren Arbeitsbereich ausgeschaltet. Eine Administratorin oder ein Administrator kann ihn einschalten.",
+    "consent": "Bevor Sie fragen können, lesen und bestätigen Sie bitte den Hinweis in den Einstellungen.",
+    "key": "Der Assistent braucht einen Schlüssel eines KI-Anbieters. Hinterlegen Sie in den Einstellungen Ihren eigenen Schlüssel oder bitten Sie die Administration, einen für den Arbeitsbereich zu hinterlegen.",
+    "openSettings": "Einstellungen öffnen"
+  },
+  "chat": {
+    "new": "Neue Unterhaltung",
+    "delete": "Diese Unterhaltung löschen",
+    "log": "Unterhaltung",
+    "empty": "Fragen Sie etwas, zum Beispiel: Wie viele Urlaubstage habe ich noch?",
+    "from": { "user": "Sie", "assistant": "Assistent" },
+    "used": "Nachgeschlagen: {{tools}}",
+    "thinking": "Der Assistent denkt nach…",
+    "message": "Ihre Frage",
+    "placeholder": "Stellen Sie eine Frage",
+    "send": "Senden",
+    "privacy": "Ihre Frage und die zur Antwort nötigen Daten werden an den KI-Anbieter gesendet, den Sie oder Ihr Arbeitsbereich gewählt haben.",
+    "history": "Frühere Unterhaltungen"
+  },
+  "tools": {
+    "get_my_leave_balance": "Ihr Urlaubskonto",
+    "get_my_open_tasks": "Ihre offenen Aufgaben",
+    "get_my_goals": "Ihre Ziele",
+    "who_is_off": "wer abwesend ist",
+    "find_available_people": "wer Zeit hat"
+  },
+  "providers": {
+    "groq": "Groq",
+    "openrouter": "OpenRouter",
+    "mistral": "Mistral",
+    "gemini": "Google Gemini"
+  },
+  "consent": {
+    "title": "Hinweis und Einwilligung",
+    "notice": "Wenn Sie eine Frage stellen, werden der Text Ihrer Frage und die zur Antwort nötigen Daten (zum Beispiel Ihr Urlaubskonto) an einen KI-Anbieter gesendet. Kostenlose Anbieter können diese Daten speichern oder nutzen und außerhalb der EU verarbeiten.",
+    "dataSent": "Vor Ihrer Frage wird nichts gesendet, und es werden weder E-Mail-Adressen noch Telefonnummern oder Freitexte gesendet. Der Assistent kann nur lesen; er ändert nie etwas.",
+    "sharePeople": "Dem Assistenten erlauben, andere Personen nachzuschlagen (wer abwesend ist, wer Zeit hat)",
+    "sharePeopleHint": "Dann würden Namen und Daten von Kolleginnen und Kollegen, die Sie sehen dürfen, an den Anbieter gesendet. Standardmäßig aus.",
+    "accepted": "Sie haben den Hinweis bestätigt.",
+    "accept": "Bestätigen und speichern",
+    "update": "Auswahl speichern"
+  },
+  "key": {
+    "ownTitle": "Ihr KI-Schlüssel",
+    "ownIntro": "Nutzen Sie Ihren eigenen Schlüssel eines Anbieters mit kostenlosem Tarif. Er wird verschlüsselt gespeichert und nie wieder angezeigt.",
+    "workspaceTitle": "Schlüssel des Arbeitsbereichs",
+    "workspaceIntro": "Wird von allen im Arbeitsbereich genutzt, die keinen eigenen Schlüssel haben.",
+    "stored": "Gespeichert: {{provider}}, Modell {{model}}, Schlüssel endet auf {{last4}}.",
+    "none": "Kein Schlüssel gespeichert.",
+    "cannotStore": "Dieser Server kann derzeit keine Schlüssel speichern. Bitten Sie den Betreiber, das einzurichten.",
+    "form": { "me": "Ihr Schlüssel", "workspace": "Schlüssel des Arbeitsbereichs" },
+    "provider": "Anbieter",
+    "model": "Modell",
+    "modelHint": "Der Modellname des Anbieters, zum Beispiel llama-3.3-70b-versatile.",
+    "apiKey": "Schlüssel",
+    "apiKeyHint": "Fügen Sie den Schlüssel des Anbieters ein. Er wird nicht wieder angezeigt.",
+    "save": "Schlüssel speichern",
+    "replace": "Schlüssel ersetzen",
+    "test": "Schlüssel testen",
+    "testOk": "Der Schlüssel funktioniert.",
+    "remove": "Schlüssel entfernen"
+  },
+  "workspace": {
+    "title": "Arbeitsbereich",
+    "intro": "Der Assistent ist aus, bis Sie ihn einschalten. Fragen werden gespeichert, damit man sie fortsetzen kann, und nach der Aufbewahrungsdauer gelöscht.",
+    "enabled": "Assistent für diesen Arbeitsbereich einschalten",
+    "retention": "Unterhaltungen aufbewahren (Tage)",
+    "retentionHint": "1 bis {{max}} Tage.",
+    "retentionForm": "Aufbewahrung",
+    "saveRetention": "Aufbewahrung speichern"
+  }
+}

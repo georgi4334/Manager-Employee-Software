@@ -10,6 +10,7 @@ import {
   Award,
   ClipboardCheck,
   ChartColumn,
+  Sparkles,
   ListChecks,
   Timer,
   LayoutDashboard,
@@ -124,6 +125,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: ChartColumn,
     primary: false,
     permission: 'analytics.view_team',
+  },
+  {
+    path: '/assistant',
+    labelKey: 'assistant',
+    icon: Sparkles,
+    primary: false,
+    permission: 'ai.use',
   },
   {
     path: '/employees',

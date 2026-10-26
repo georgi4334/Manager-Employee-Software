@@ -23,7 +23,11 @@
     "CANNOT_DISABLE_SELF": "You cannot disable your own account.",
     "ORG_CYCLE": "This would put someone above themselves in the reporting structure.",
     "INSUFFICIENT_BALANCE": "You do not have enough leave days left for this request.",
-    "NO_WORKING_DAYS": "The chosen dates contain no working day."
+    "NO_WORKING_DAYS": "The chosen dates contain no working day.",
+    "AI_DISABLED": "The assistant is switched off for your workspace.",
+    "AI_CONSENT_REQUIRED": "Please accept the notice in the settings first.",
+    "AI_NOT_CONFIGURED": "No usable AI key is available. Add a key in the settings.",
+    "AI_PROVIDER_ERROR": "The AI provider could not answer. Check the key and the model, then try again."
   },
   "validation": {
     "required": "This field is required.",
@@ -56,7 +60,10 @@
     "invalidNumber": "Enter a number.",
     "sameAsStart": "The target must differ from the start value.",
     "invalidMinutes": "Enter whole minutes from 15 to 240.",
-    "invalidScore": "Pick a score from 1 to 5."
+    "invalidScore": "Pick a score from 1 to 5.",
+    "invalidModel": "Use letters, digits and . _ : / - only, for example llama-3.3-70b-versatile.",
+    "invalidApiKey": "Enter the key as given by the provider (at least 8 characters, no spaces).",
+    "invalidRetention": "Enter a whole number of days from 1 to 365."
   },
   "forbiddenTitle": "No access",
   "forbiddenText": "You do not have permission to open this page. Ask your administrator if you think this is a mistake."

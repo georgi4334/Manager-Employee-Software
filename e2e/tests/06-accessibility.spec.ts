@@ -39,6 +39,8 @@ const SIGNED_IN = [
   '/time?tab=reports',
   '/capacity',
   '/analytics',
+  '/assistant',
+  '/assistant?tab=settings',
   '/goals',
   '/goals?scope=personal',
   '/one-on-ones',

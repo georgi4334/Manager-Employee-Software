@@ -217,6 +217,22 @@ export class PrivacyService {
         ])
       : [[], [], []];
 
+    const [aiSetting, aiKeys, aiConversations] = userId
+      ? await Promise.all([
+          tx.aiUserSetting.findFirst({ where: { userId } }),
+          // Never the key itself: only what identifies it.
+          tx.aiCredential.findMany({
+            where: { scope: 'user', userId },
+            select: { provider: true, model: true, last4: true },
+          }),
+          tx.aiConversation.findMany({
+            where: { userId },
+            orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+            include: { messages: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } },
+          }),
+        ])
+      : [null, [], []];
+
     const typeName = (t: { key: string | null; name: string | null }) => t.name ?? t.key ?? '';
     return {
       schemaVersion: PRIVACY_EXPORT_VERSION,
@@ -314,6 +330,20 @@ export class PrivacyService {
               : null,
           };
         }),
+      ai: {
+        consentAt: iso(aiSetting?.consentAt ?? null),
+        sharePeopleData: aiSetting?.sharePeopleData ?? false,
+        keys: aiKeys,
+        conversations: aiConversations.map((c) => ({
+          title: c.title,
+          createdAt: c.createdAt.toISOString(),
+          messages: c.messages.map((m) => ({
+            role: m.role,
+            content: m.content,
+            createdAt: m.createdAt.toISOString(),
+          })),
+        })),
+      },
       skills: skillRatings.map((r) => ({
         category: r.skill.category.name,
         skill: r.skill.name,

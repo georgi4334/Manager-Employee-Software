@@ -2,6 +2,7 @@
 // creates the database, applies the migrations, creates the first workspace and then runs the API in the
 // foreground (Playwright stops it). The invitation link of the first administrator goes to .run/admin-invite.txt
 // and everything the API mails (log transport) ends up in .run/api.log, where the tests read their links.
+import { Buffer } from 'node:buffer';
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync, openSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -65,6 +66,8 @@ const env = {
   LOG_LEVEL: 'info',
   WORKER_ENABLED: 'true',
   REMINDERS_TOKEN: 'e2e-reminders-token-e2e-reminders-token-1234',
+  // 32 bytes, base64: lets the assistant specs store a (fake) provider key. No spec reaches a real provider.
+  AI_KEY_ENCRYPTION_KEY: Buffer.alloc(32, 7).toString('base64'),
 };
 
 // Always through turbo: a cache hit is instant, and a stale dist/ would test yesterday's API.

@@ -20,6 +20,10 @@ export const ERROR_CODES = [
   'ORG_CYCLE',
   'INSUFFICIENT_BALANCE',
   'NO_WORKING_DAYS',
+  'AI_DISABLED',
+  'AI_CONSENT_REQUIRED',
+  'AI_NOT_CONFIGURED',
+  'AI_PROVIDER_ERROR',
   'PAYLOAD_TOO_LARGE',
   'RATE_LIMITED',
   'INTERNAL_ERROR',
@@ -50,6 +54,14 @@ export const ERROR_STATUS: Record<ErrorCode, number> = {
   INSUFFICIENT_BALANCE: 409,
   /** The chosen dates contain no working day (only weekends and holidays). */
   NO_WORKING_DAYS: 400,
+  /** The workspace has switched the AI assistant off. */
+  AI_DISABLED: 403,
+  /** The person has not accepted the notice about sending data to an AI provider. */
+  AI_CONSENT_REQUIRED: 403,
+  /** No usable provider key (none stored, or the server cannot store keys). */
+  AI_NOT_CONFIGURED: 409,
+  /** The AI provider refused or failed; params.reason is a status class, never the provider's text. */
+  AI_PROVIDER_ERROR: 502,
   PAYLOAD_TOO_LARGE: 413,
   RATE_LIMITED: 429,
   INTERNAL_ERROR: 500,

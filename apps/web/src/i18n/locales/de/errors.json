@@ -23,7 +23,11 @@
     "CANNOT_DISABLE_SELF": "Sie können Ihr eigenes Konto nicht deaktivieren.",
     "ORG_CYCLE": "Damit würde jemand in der Berichtsstruktur über sich selbst stehen.",
     "INSUFFICIENT_BALANCE": "Für diesen Antrag haben Sie nicht genug Urlaubstage übrig.",
-    "NO_WORKING_DAYS": "Die gewählten Tage enthalten keinen Arbeitstag."
+    "NO_WORKING_DAYS": "Die gewählten Tage enthalten keinen Arbeitstag.",
+    "AI_DISABLED": "Der Assistent ist für Ihren Arbeitsbereich ausgeschaltet.",
+    "AI_CONSENT_REQUIRED": "Bitte bestätigen Sie zuerst den Hinweis in den Einstellungen.",
+    "AI_NOT_CONFIGURED": "Es ist kein nutzbarer KI-Schlüssel vorhanden. Hinterlegen Sie einen Schlüssel in den Einstellungen.",
+    "AI_PROVIDER_ERROR": "Der KI-Anbieter konnte nicht antworten. Prüfen Sie Schlüssel und Modell und versuchen Sie es erneut."
   },
   "validation": {
     "required": "Dieses Feld ist erforderlich.",
@@ -56,7 +60,10 @@
     "invalidNumber": "Gib eine Zahl ein.",
     "sameAsStart": "Das Ziel muss sich vom Startwert unterscheiden.",
     "invalidMinutes": "Gib ganze Minuten von 15 bis 240 ein.",
-    "invalidScore": "Wähle eine Bewertung von 1 bis 5."
+    "invalidScore": "Wähle eine Bewertung von 1 bis 5.",
+    "invalidModel": "Nur Buchstaben, Ziffern und . _ : / - verwenden, zum Beispiel llama-3.3-70b-versatile.",
+    "invalidApiKey": "Geben Sie den Schlüssel wie vom Anbieter angegeben ein (mindestens 8 Zeichen, keine Leerzeichen).",
+    "invalidRetention": "Geben Sie eine ganze Zahl von 1 bis 365 Tagen ein."
   },
   "forbiddenTitle": "Kein Zugriff",
   "forbiddenText": "Sie haben keine Berechtigung, diese Seite zu öffnen. Wenden Sie sich an Ihre Administration, falls das ein Irrtum ist."

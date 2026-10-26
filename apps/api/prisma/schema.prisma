@@ -54,6 +54,11 @@ model Tenant {
   skills                  Skill[]
   employeeSkills          EmployeeSkill[]
   reviewCycles            ReviewCycle[]
+  aiWorkspaceSetting      AiWorkspaceSetting?
+  aiCredentials           AiCredential[]
+  aiUserSettings          AiUserSetting[]
+  aiConversations         AiConversation[]
+  aiMessages              AiMessage[]
   reviewCompetencies      ReviewCompetency[]
   reviewsAll              Review[]
   reviewRatings           ReviewRating[]
@@ -85,6 +90,11 @@ model User {
   notifications           Notification[]
   notificationPreferences NotificationPreference[]
   employee                Employee?
+
+  aiCredentials   AiCredential[]
+  aiUserSetting   AiUserSetting?
+  aiConversations AiConversation[]
+  aiMessages      AiMessage[]
 
   @@unique([tenantId, email])
   @@unique([tenantId, id])
@@ -1171,4 +1181,104 @@ model ReviewRating {
   @@unique([tenantId, id])
   @@unique([tenantId, reviewId, competencyId, part])
   @@map("review_rating")
+}
+
+// ----- AI assistant (docs/adr/0025-ai-assistant.md) ------------------------------------------------------
+
+/// One row per workspace; AI is off until an administrator switches it on.
+model AiWorkspaceSetting {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  tenantId      String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  enabled       Boolean  @default(false)
+  retentionDays Int      @default(90) @map("retention_days")
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId])
+  @@unique([tenantId, id])
+  @@map("ai_workspace_setting")
+}
+
+/// A provider key, encrypted at rest (AES-256-GCM). Never returned by the API; only `last4` is shown.
+model AiCredential {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  tenantId   String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// user | workspace
+  scope      String
+  /// Set exactly for scope "user" (a check constraint in the migration).
+  userId     String?  @map("user_id") @db.Uuid
+  provider   String
+  model      String
+  /// base64(iv) "." base64(tag) "." base64(ciphertext)
+  secretEnc  String   @map("secret_enc")
+  keyVersion Int      @default(1) @map("key_version")
+  last4      String
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, userId])
+  @@map("ai_credential")
+}
+
+/// The consent record and the choice to let the assistant look up other people.
+model AiUserSetting {
+  id              String    @id @default(uuid(7)) @db.Uuid
+  tenantId        String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  consentAt       DateTime? @map("consent_at") @db.Timestamptz(6)
+  consentVersion  Int?      @map("consent_version")
+  sharePeopleData Boolean   @default(false) @map("share_people_data")
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, userId])
+  @@map("ai_user_setting")
+}
+
+model AiConversation {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  tenantId  String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  title     String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user     User        @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Cascade)
+  messages AiMessage[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, userId, updatedAt])
+  @@map("ai_conversation")
+}
+
+/// Only the visible turns are kept (the question and the final answer), never tool results.
+model AiMessage {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  tenantId       String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  conversationId String   @map("conversation_id") @db.Uuid
+  /// For the hourly limit.
+  userId         String   @map("user_id") @db.Uuid
+  /// user | assistant
+  role           String
+  content        String
+  toolsUsed      String[] @default([]) @map("tools_used")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  tenant       Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user         User           @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: Cascade)
+  conversation AiConversation @relation(fields: [tenantId, conversationId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, conversationId, createdAt])
+  @@index([tenantId, userId, role, createdAt])
+  @@map("ai_message")
 }

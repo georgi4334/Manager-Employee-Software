@@ -45,6 +45,7 @@ const document: PersonalDataExport = {
   goals: { personal: [], checkIns: [] },
   oneOnOnes: [],
   feedback: { given: [], received: [] },
+  ai: { consentAt: null, sharePeopleData: false, keys: [], conversations: [] },
   skills: [],
   reviews: [],
   attendance: [],

@@ -60,6 +60,16 @@ const envSchema = z
     RESEND_API_KEY: z.string().min(1).optional(),
     /** Sender shown to recipients, on a domain verified with the provider, e.g. "InTime <no-reply@example.eu>". */
     MAIL_FROM: z.string().min(3).optional(),
+    /**
+     * Master key for provider keys people store for the AI assistant (AES-256-GCM): 32 random bytes, base64.
+     * Without it, keys cannot be stored and the assistant answers AI_NOT_CONFIGURED. Generate: openssl rand -base64 32
+     */
+    AI_KEY_ENCRYPTION_KEY: z
+      .string()
+      .optional()
+      .refine((value) => !value || Buffer.from(value, 'base64').length === 32, {
+        message: 'must be 32 bytes, base64-encoded (openssl rand -base64 32)',
+      }),
     GOOGLE_CLIENT_ID: z.string().min(1).optional(),
     GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
     GOOGLE_REDIRECT_URL: z.url().optional(),
@@ -104,6 +114,9 @@ const envSchema = z
     COOKIE_SECURE: env.COOKIE_SECURE ?? env.NODE_ENV === 'production',
     TRUST_PROXY: env.TRUST_PROXY ?? env.NODE_ENV === 'production',
     WEB_APP_ORIGIN: new URL(env.WEB_APP_URL).origin,
+    AI_MASTER_KEY: env.AI_KEY_ENCRYPTION_KEY
+      ? Buffer.from(env.AI_KEY_ENCRYPTION_KEY, 'base64')
+      : null,
     GOOGLE:
       env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET && env.GOOGLE_REDIRECT_URL
         ? {

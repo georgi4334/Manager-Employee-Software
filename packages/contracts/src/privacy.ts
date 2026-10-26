@@ -154,6 +154,19 @@ export const personalDataExportSchema = z.object({
         .nullable(),
     }),
   ),
+  /** The AI assistant: consent, the stored key's provider (never the key) and their conversations (ADR 0025). */
+  ai: z.object({
+    consentAt: dateTime.nullable(),
+    sharePeopleData: z.boolean(),
+    keys: z.array(z.object({ provider: z.string(), model: z.string(), last4: z.string() })),
+    conversations: z.array(
+      z.object({
+        title: z.string(),
+        createdAt: dateTime,
+        messages: z.array(z.object({ role: z.string(), content: z.string(), createdAt: dateTime })),
+      }),
+    ),
+  }),
   /** Their skill ratings (ADR 0022). */
   skills: z.array(
     z.object({

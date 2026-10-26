@@ -113,6 +113,10 @@ export class ErasureService {
           tenantId,
           userId,
         );
+        // Questions to the assistant, the stored key and the consent record go with the person (ADR 0025).
+        await tx.aiConversation.deleteMany({ where: { tenantId, userId } }); // messages cascade
+        await tx.aiCredential.deleteMany({ where: { tenantId, userId } });
+        await tx.aiUserSetting.deleteMany({ where: { tenantId, userId } });
         await tx.notification.deleteMany({ where: { tenantId, recipientUserId: userId } });
         await tx.notificationPreference.deleteMany({ where: { tenantId, userId } });
         await tx.session.deleteMany({ where: { tenantId, userId } }); // refresh tokens cascade
