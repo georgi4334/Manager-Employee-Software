@@ -185,6 +185,14 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Deactivation and a manager change cancel `scheduled` meetings (`onEmployeeDeactivated`, and inline in `OrganizationService.assign`); held ones stay with the people who held them. Export lists the person's meetings with **their own** private notes; erasure deletes every meeting they took part in.
 - Web: `/one-on-ones` and `/one-on-ones/:id` with their own `one_on_one.manage` guard. Recurring series, calendar events and reminders come later (Phase 5).
 
+## Feedback (docs/adr/0021-feedback.md)
+
+- `feedback` (RLS, composite foreign keys): named, no anonymous feedback, no edits (take it back and write again). `kind` `praise` / `constructive`; the giver picks `visibility` `recipient` or `recipient_and_manager` and cannot widen it later.
+- Readers: the giver and the recipient; the recipient's manager (`feedback.view_received` at `reports`) and HR (`all`) read **only** `recipient_and_manager` items through `authz` on the recipient (`403` otherwise); Admin has no read grant. A moderator (`feedback.moderate`: HR, Admin) sees an item only after the **recipient reported it** (`reported_at`), and never decides on their own feedback (given or received). Moderators keep (`kept_at`, closes the report for good) or remove; removal is the only audited action (ids and kind, never the text).
+- One list endpoint (`GET /feedback?box=received|given|reported`) is `@Authenticated()` and checks the box's permission in the service. `feedback.received` notifies the recipient with the feedback id only (not who, not kind).
+- Export lists feedback given and received (with the other person's name); erasure deletes every item the person gave or received.
+- Web: `/feedback` with Received / Given / Reported tabs (the last for moderators), a give form, own guard (`feedback.give` or `feedback.view_received`); the recipient list comes from the org chart.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

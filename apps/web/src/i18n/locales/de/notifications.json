@@ -115,6 +115,14 @@
         "settingsTitle": "Änderungen an deinen 1:1-Gesprächen",
         "settingsHelp": "Wenn die andere Person ein 1:1 ansetzt, verschiebt oder absagt."
       }
+    },
+    "feedback": {
+      "received": {
+        "title": "Neues Feedback",
+        "text": "Du hast Feedback erhalten. Öffne es, um es zu lesen.",
+        "settingsTitle": "Feedback, das du erhältst",
+        "settingsHelp": "Wenn dir ein Kollege Feedback gibt."
+      }
     }
   },
   "unknown": {

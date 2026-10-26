@@ -1,0 +1,59 @@
+{
+  "title": "Feedback",
+  "intro": "Sag Kolleginnen und Kollegen, was gut lief und was besser sein könnte. Du entscheidest, wer es lesen darf: nur die Person oder auch ihre Führungskraft und HR.",
+  "new": "Feedback geben",
+  "sent": "Feedback gesendet.",
+  "loading": "Lädt…",
+  "retry": "Erneut versuchen",
+  "pagination": "Seiten",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "page": "Seite {{page}} von {{pages}}",
+  "whose": "Feedback von wem",
+  "mine": "Mein Feedback",
+  "sharedWith": "Mit der Führungskraft geteilt: {{name}}",
+  "tabs": {
+    "label": "Feedback anzeigen",
+    "received": "Erhalten",
+    "given": "Gegeben",
+    "reported": "Gemeldet"
+  },
+  "empty": {
+    "received": "Du hast noch kein Feedback erhalten.",
+    "given": "Du hast noch kein Feedback gegeben.",
+    "reported": "Kein Feedback wartet auf eine Entscheidung."
+  },
+  "kind": {
+    "praise": "Lob",
+    "constructive": "Konstruktiv"
+  },
+  "visibility": {
+    "recipient": "Nur die empfangende Person",
+    "recipient_and_manager": "Empfänger, Führungskraft und HR"
+  },
+  "card": {
+    "fromTo": "{{from}} an {{to}}",
+    "reported": "Einer Moderation gemeldet",
+    "kept": "Von einer Moderation geprüft und behalten",
+    "report": "Der Moderation melden",
+    "keep": "Behalten",
+    "remove": "Entfernen",
+    "confirmRemove": "Ja, entfernen",
+    "cancel": "Abbrechen"
+  },
+  "form": {
+    "title": "Feedback geben",
+    "to": "An",
+    "kind": "Art",
+    "visibility": "Wer es lesen darf",
+    "visibilityHint": "Das kannst du später nicht ändern.",
+    "body": "Dein Feedback",
+    "send": "Senden",
+    "cancel": "Abbrechen"
+  },
+  "rule": {
+    "self": "Du kannst dir selbst kein Feedback geben.",
+    "unknown_employee": "Diese Person existiert nicht oder ist nicht mehr aktiv.",
+    "reported": "Dieses Feedback wurde bereits gemeldet."
+  }
+}

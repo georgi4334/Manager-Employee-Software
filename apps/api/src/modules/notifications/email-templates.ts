@@ -67,6 +67,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\na 1:1 meeting with you in ${v.workspace} on InTime was scheduled, moved or cancelled.\n\n` +
         `Open InTime to see it:\n${v.link}`,
     },
+    'feedback.received': {
+      subject: (v) => `You received feedback in ${v.workspace}`,
+      text: (v) =>
+        `Hello,\n\nsomebody gave you feedback in ${v.workspace} on InTime.\n\n` +
+        `Open InTime to read it:\n${v.link}`,
+    },
     'goal.assigned': {
       subject: (v) => `A goal was set for you in ${v.workspace}`,
       text: (v) =>
@@ -142,6 +148,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hallo,\n\nein 1:1-Gespräch mit Ihnen wurde in ${v.workspace} auf InTime angesetzt, verschoben oder abgesagt.\n\n` +
         `Öffnen Sie InTime, um es zu sehen:\n${v.link}`,
     },
+    'feedback.received': {
+      subject: (v) => `Sie haben in ${v.workspace} Feedback erhalten`,
+      text: (v) =>
+        `Hallo,\n\njemand hat Ihnen in ${v.workspace} auf InTime Feedback gegeben.\n\n` +
+        `Öffnen Sie InTime, um es zu lesen:\n${v.link}`,
+    },
     'goal.assigned': {
       subject: (v) => `Für Sie wurde in ${v.workspace} ein Ziel gesetzt`,
       text: (v) =>
@@ -216,6 +228,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       text: (v) =>
         `Здравейте,\n\nсреща 1:1 с вас беше насрочена, преместена или отменена в ${v.workspace} в InTime.\n\n` +
         `Отворете InTime, за да я видите:\n${v.link}`,
+    },
+    'feedback.received': {
+      subject: (v) => `Получихте обратна връзка в ${v.workspace}`,
+      text: (v) =>
+        `Здравейте,\n\nнякой ви даде обратна връзка в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да я прочетете:\n${v.link}`,
     },
     'goal.assigned': {
       subject: (v) => `Зададена ви е цел в ${v.workspace}`,

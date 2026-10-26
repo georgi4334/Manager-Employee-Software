@@ -6,6 +6,7 @@ import {
   Gauge,
   Target,
   MessagesSquare,
+  MessageSquareText,
   ListChecks,
   Timer,
   LayoutDashboard,
@@ -92,6 +93,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: MessagesSquare,
     primary: false,
     permission: 'one_on_one.manage',
+  },
+  {
+    path: '/feedback',
+    labelKey: 'feedback',
+    icon: MessageSquareText,
+    primary: false,
+    permission: ['feedback.give', 'feedback.view_received'],
   },
   {
     path: '/employees',

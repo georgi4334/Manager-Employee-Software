@@ -120,6 +120,27 @@ export const personalDataExportSchema = z.object({
       }),
     ),
   }),
+  /** Feedback they gave and received, with the other person's name (ADR 0021). */
+  feedback: z.object({
+    given: z.array(
+      z.object({
+        to: z.string(),
+        kind: z.string(),
+        visibility: z.string(),
+        body: z.string(),
+        createdAt: dateTime,
+      }),
+    ),
+    received: z.array(
+      z.object({
+        from: z.string(),
+        kind: z.string(),
+        visibility: z.string(),
+        body: z.string(),
+        createdAt: dateTime,
+      }),
+    ),
+  }),
   /** Their 1:1 meetings: agenda, shared notes, their own private notes and action items (ADR 0020). */
   oneOnOnes: z.array(
     z.object({

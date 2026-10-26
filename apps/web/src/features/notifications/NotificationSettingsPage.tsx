@@ -35,6 +35,8 @@ function useTypeTitle() {
         return t('types.goal.assigned.settingsTitle');
       case 'one_on_one.changed':
         return t('types.one_on_one.changed.settingsTitle');
+      case 'feedback.received':
+        return t('types.feedback.received.settingsTitle');
       case 'timesheet.decided':
         return t('types.timesheet.decided.settingsTitle');
       case 'attendance.reminder':
@@ -149,6 +151,11 @@ function TypeHeading({ type }: { type: string }) {
         return [t('types.task.assigned.settingsTitle'), t('types.task.assigned.settingsHelp')];
       case 'goal.assigned':
         return [t('types.goal.assigned.settingsTitle'), t('types.goal.assigned.settingsHelp')];
+      case 'feedback.received':
+        return [
+          t('types.feedback.received.settingsTitle'),
+          t('types.feedback.received.settingsHelp'),
+        ];
       case 'one_on_one.changed':
         return [
           t('types.one_on_one.changed.settingsTitle'),

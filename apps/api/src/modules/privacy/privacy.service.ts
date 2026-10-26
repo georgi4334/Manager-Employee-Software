@@ -107,6 +107,8 @@ export class PrivacyService {
       goals,
       checkIns,
       meetings,
+      feedbackGiven,
+      feedbackReceived,
     ] = employeeId
       ? await Promise.all([
           tx.leaveRequest.findMany({
@@ -166,8 +168,18 @@ export class PrivacyService {
             orderBy: [{ scheduledAt: 'asc' }, { id: 'asc' }],
             include: { actionItems: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } },
           }),
+          tx.feedback.findMany({
+            where: { fromEmployeeId: employeeId },
+            orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+            include: { to: { select: { firstName: true, lastName: true } } },
+          }),
+          tx.feedback.findMany({
+            where: { toEmployeeId: employeeId },
+            orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+            include: { from: { select: { firstName: true, lastName: true } } },
+          }),
         ])
-      : [[], [], [], [], [], [], [], [], [], [], [], []];
+      : [[], [], [], [], [], [], [], [], [], [], [], [], [], []];
     const [notifications, preferences, auditEntries] = userId
       ? await Promise.all([
           tx.notification.findMany({
@@ -258,6 +270,22 @@ export class PrivacyService {
         estimateHours: t.estimateHours === null ? null : Number(t.estimateHours),
         dueDate: iso(t.dueDate)?.slice(0, 10) ?? null,
       })),
+      feedback: {
+        given: feedbackGiven.map((f) => ({
+          to: `${f.to.firstName} ${f.to.lastName}`,
+          kind: f.kind,
+          visibility: f.visibility,
+          body: f.body,
+          createdAt: f.createdAt.toISOString(),
+        })),
+        received: feedbackReceived.map((f) => ({
+          from: `${f.from.firstName} ${f.from.lastName}`,
+          kind: f.kind,
+          visibility: f.visibility,
+          body: f.body,
+          createdAt: f.createdAt.toISOString(),
+        })),
+      },
       // Only the person's own private notes: the other participant's stay theirs (ADR 0020).
       oneOnOnes: meetings.map((m) => {
         const asManager = m.managerEmployeeId === employeeId;

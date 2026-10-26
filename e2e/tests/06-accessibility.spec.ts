@@ -42,6 +42,8 @@ const SIGNED_IN = [
   '/goals?scope=personal',
   '/one-on-ones',
   '/one-on-ones?status=all',
+  '/feedback',
+  '/feedback?box=given',
   '/profile',
   '/does-not-exist',
 ];
@@ -166,6 +168,9 @@ for (const variant of variants) {
       await page.waitForLoadState('networkidle');
       await page.getByRole('button', { name: 'Change the time' }).click();
       found.push(...(await scan(page, '1:1 detail (time form open)')));
+      await settle(page, '/feedback');
+      await page.getByRole('button', { name: 'Give feedback' }).click();
+      found.push(...(await scan(page, '/feedback (give form)')));
       await settle(page, '/leave?tab=approvals');
       await page
         .getByRole('button', { name: /^Check the project impact/ })

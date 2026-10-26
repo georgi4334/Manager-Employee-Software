@@ -98,6 +98,16 @@ export const ONE_ON_ONE_EVENTS = {
   }),
 } as const;
 
+export const FEEDBACK_EVENTS = {
+  /** Somebody gave you feedback: the feedback id only (not who, not what, not which kind). */
+  'feedback.received': eventDef({
+    params: z.object({ recipientUserId: z.uuid(), feedbackId: z.uuid() }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'feedback.received' as const, params },
+    ],
+  }),
+} as const;
+
 export const REMINDER_EVENTS = {
   /** Something started and was never finished: the day only. */
   'attendance.reminder': eventDef({
@@ -184,6 +194,7 @@ export const EVENT_DEFINITIONS = {
   ...REMINDER_EVENTS,
   ...GOAL_EVENTS,
   ...ONE_ON_ONE_EVENTS,
+  ...FEEDBACK_EVENTS,
 } as const;
 
 export type EventType = keyof typeof EVENT_DEFINITIONS;

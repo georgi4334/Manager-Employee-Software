@@ -14,6 +14,7 @@ import { MyProfilePage } from '@/features/employees/MyProfilePage';
 import { AttendancePage } from '@/features/attendance/AttendancePage';
 import { CalendarPage } from '@/features/calendar/CalendarPage';
 import { GoalDetailPage } from '@/features/goals/GoalDetailPage';
+import { FeedbackPage } from '@/features/feedback/FeedbackPage';
 import { MeetingDetailPage } from '@/features/one-on-ones/MeetingDetailPage';
 import { MeetingsPage } from '@/features/one-on-ones/MeetingsPage';
 import { GoalsPage } from '@/features/goals/GoalsPage';
@@ -45,6 +46,7 @@ const IMPLEMENTED_PATHS = [
   '/capacity',
   '/goals',
   '/one-on-ones',
+  '/feedback',
 ];
 
 export const routes: RouteObject[] = [
@@ -116,6 +118,10 @@ export const routes: RouteObject[] = [
               { path: 'one-on-ones', element: <MeetingsPage /> },
               { path: 'one-on-ones/:id', element: <MeetingDetailPage /> },
             ],
+          },
+          {
+            element: <RequirePermission permission={['feedback.give', 'feedback.view_received']} />,
+            children: [{ path: 'feedback', element: <FeedbackPage /> }],
           },
           {
             element: <RequirePermission permission="capacity.view" />,

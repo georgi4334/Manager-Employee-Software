@@ -49,6 +49,7 @@ model Tenant {
   leaveApprovals          LeaveApproval[]
   oneOnOnes               OneOnOne[]
   oneOnOneActionItems     OneOnOneActionItem[]
+  feedback                Feedback[]
 
   @@map("tenant")
 }
@@ -353,6 +354,8 @@ model Employee {
   oneOnOnesAsManager  OneOnOne[]           @relation("OneOnOneManager")
   oneOnOnesAsEmployee OneOnOne[]           @relation("OneOnOneEmployee")
   actionItems         OneOnOneActionItem[] @relation("ActionItemOwner")
+  feedbackGiven       Feedback[]           @relation("FeedbackGiven")
+  feedbackReceived    Feedback[]           @relation("FeedbackReceived")
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -974,4 +977,32 @@ model OneOnOneActionItem {
   @@index([tenantId, oneOnOneId])
   @@index([tenantId, ownerEmployeeId])
   @@map("one_on_one_action_item")
+}
+
+// ----- Feedback (docs/adr/0021-feedback.md) -------------------------------------------------------------
+
+model Feedback {
+  id             String    @id @default(uuid(7)) @db.Uuid
+  tenantId       String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  fromEmployeeId String    @map("from_employee_id") @db.Uuid
+  toEmployeeId   String    @map("to_employee_id") @db.Uuid
+  /// praise | constructive
+  kind           String
+  /// recipient | recipient_and_manager
+  visibility     String    @default("recipient")
+  body           String
+  /// Set by the recipient; a moderator then keeps or removes the item.
+  reportedAt     DateTime? @map("reported_at") @db.Timestamptz(6)
+  keptAt         DateTime? @map("kept_at") @db.Timestamptz(6)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  tenant Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  from   Employee @relation("FeedbackGiven", fields: [tenantId, fromEmployeeId], references: [tenantId, id], onDelete: NoAction)
+  to     Employee @relation("FeedbackReceived", fields: [tenantId, toEmployeeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, toEmployeeId, createdAt])
+  @@index([tenantId, fromEmployeeId, createdAt])
+  @@index([tenantId, reportedAt])
+  @@map("feedback")
 }

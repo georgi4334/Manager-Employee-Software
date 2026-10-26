@@ -52,6 +52,13 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/one-on-ones',
   }),
+  // Feedback (docs/adr/0021-feedback.md): somebody gave you feedback. The id only: not who, not what, not which kind.
+  'feedback.received': typeDef({
+    params: z.object({ feedbackId: z.uuid() }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/feedback',
+  }),
   // Projects (docs/adr/0013-clients-and-projects.md): you were put on a project. Ids and the project name only.
   'project.assigned': typeDef({
     params: z.object({ projectId: z.uuid(), projectName: z.string().trim().min(1).max(120) }),

@@ -91,6 +91,9 @@ export function useNotificationText() {
         text: t('types.task.assigned.text', { taskKey: str(params.taskKey) }),
       };
     }
+    if (type === 'feedback.received') {
+      return { title: t('types.feedback.received.title'), text: t('types.feedback.received.text') };
+    }
     if (type === 'one_on_one.changed') {
       const date = formatDay(str(params.date), language);
       return {

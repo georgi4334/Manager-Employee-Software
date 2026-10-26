@@ -28,6 +28,7 @@ describe('event catalog', () => {
       'project.assigned': { recipientUserId: USER, projectId: USER, projectName: 'Website' },
       'task.assigned': { recipientUserId: USER, projectId: USER, taskKey: 'WEB-12' },
       'goal.assigned': { recipientUserId: USER, goalId: USER },
+      'feedback.received': { recipientUserId: USER, feedbackId: USER },
       'one_on_one.changed': {
         recipientUserId: USER,
         meetingId: USER,
@@ -332,5 +333,30 @@ describe('one_on_one.changed', () => {
     } else {
       expect(result.success).toBe(false);
     }
+  });
+});
+
+describe('feedback.received', () => {
+  const definition = EVENT_DEFINITIONS['feedback.received'];
+
+  it('tells the person the feedback id and nothing else', () => {
+    expect(
+      definition.notify(
+        definition.params.parse({
+          recipientUserId: USER,
+          feedbackId: USER,
+          body: 'secret',
+          kind: 'praise',
+        }),
+      ),
+    ).toEqual([{ recipientUserId: USER, type: 'feedback.received', params: { feedbackId: USER } }]);
+  });
+
+  it.each([
+    ['no recipient', { feedbackId: USER }],
+    ['no feedback', { recipientUserId: USER }],
+    ['a bad feedback id', { recipientUserId: USER, feedbackId: 'x' }],
+  ])('rejects %s', (_label, params) => {
+    expect(definition.params.safeParse(params).success).toBe(false);
   });
 });
