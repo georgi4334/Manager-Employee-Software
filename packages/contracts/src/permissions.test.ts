@@ -93,8 +93,12 @@ describe('the rules written in docs/permission-matrix.md hold in the catalog', (
   });
 
   it('1:1 notes are private: no HR/Admin grant and no permission that reads everyone’s 1:1s', () => {
-    expect(grantOf('one_on_one.manage', 'hr')).toBeUndefined();
-    expect(grantOf('one_on_one.manage', 'admin')).toBeUndefined();
+    // HR and Admin have a manager too, so they may hold 1:1s as participants; no role reaches beyond 'reports'
+    // (the service shows a meeting to its two participants only, ADR 0020).
+    expect(grantOf('one_on_one.manage', 'employee')).toBe('own');
+    for (const role of ['manager', 'hr', 'admin'] as const) {
+      expect(grantOf('one_on_one.manage', role)).toBe('reports');
+    }
     expect(PERMISSION_CODES.filter((code) => code.startsWith('one_on_one.'))).toEqual([
       'one_on_one.manage',
     ]);

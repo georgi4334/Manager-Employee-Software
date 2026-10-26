@@ -41,6 +41,17 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/attendance',
   }),
+  // 1:1 meetings (docs/adr/0020-one-on-ones.md): the other person scheduled, moved or cancelled one. Date only.
+  'one_on_one.changed': typeDef({
+    params: z.object({
+      meetingId: z.uuid(),
+      date: z.string().regex(DATE),
+      action: z.enum(['scheduled', 'rescheduled', 'cancelled']),
+    }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/one-on-ones',
+  }),
   // Projects (docs/adr/0013-clients-and-projects.md): you were put on a project. Ids and the project name only.
   'project.assigned': typeDef({
     params: z.object({ projectId: z.uuid(), projectName: z.string().trim().min(1).max(120) }),

@@ -105,6 +105,16 @@
         "settingsTitle": "Dir gesetzte Ziele",
         "settingsHelp": "Wenn dir jemand ein Ziel setzt."
       }
+    },
+    "one_on_one": {
+      "changed": {
+        "title": "1:1-Gespräch",
+        "textScheduled": "Ein 1:1-Gespräch wurde für den {{date}} angesetzt.",
+        "textRescheduled": "Ein 1:1-Gespräch wurde auf den {{date}} verschoben.",
+        "textCancelled": "Das 1:1-Gespräch vom {{date}} wurde abgesagt.",
+        "settingsTitle": "Änderungen an deinen 1:1-Gesprächen",
+        "settingsHelp": "Wenn die andere Person ein 1:1 ansetzt, verschiebt oder absagt."
+      }
     }
   },
   "unknown": {

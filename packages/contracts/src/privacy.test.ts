@@ -38,6 +38,7 @@ describe('export document', () => {
     tasks: [],
     time: { entries: [], timesheets: [] },
     goals: { personal: [], checkIns: [] },
+    oneOnOnes: [],
     attendance: [],
     calendarEvents: [],
     notifications: [],

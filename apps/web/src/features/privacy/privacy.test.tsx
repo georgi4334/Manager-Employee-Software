@@ -43,6 +43,7 @@ const document: PersonalDataExport = {
   tasks: [],
   time: { entries: [], timesheets: [] },
   goals: { personal: [], checkIns: [] },
+  oneOnOnes: [],
   attendance: [],
   calendarEvents: [],
   notifications: [],

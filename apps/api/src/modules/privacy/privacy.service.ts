@@ -106,6 +106,7 @@ export class PrivacyService {
       timesheets,
       goals,
       checkIns,
+      meetings,
     ] = employeeId
       ? await Promise.all([
           tx.leaveRequest.findMany({
@@ -160,8 +161,13 @@ export class PrivacyService {
             orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
             include: { goal: { select: { title: true, scope: true } } },
           }),
+          tx.oneOnOne.findMany({
+            where: { OR: [{ managerEmployeeId: employeeId }, { employeeId }] },
+            orderBy: [{ scheduledAt: 'asc' }, { id: 'asc' }],
+            include: { actionItems: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } },
+          }),
         ])
-      : [[], [], [], [], [], [], [], [], [], [], []];
+      : [[], [], [], [], [], [], [], [], [], [], [], []];
     const [notifications, preferences, auditEntries] = userId
       ? await Promise.all([
           tx.notification.findMany({
@@ -252,6 +258,23 @@ export class PrivacyService {
         estimateHours: t.estimateHours === null ? null : Number(t.estimateHours),
         dueDate: iso(t.dueDate)?.slice(0, 10) ?? null,
       })),
+      // Only the person's own private notes: the other participant's stay theirs (ADR 0020).
+      oneOnOnes: meetings.map((m) => {
+        const asManager = m.managerEmployeeId === employeeId;
+        return {
+          scheduledAt: m.scheduledAt.toISOString(),
+          status: m.status,
+          role: asManager ? ('manager' as const) : ('employee' as const),
+          agenda: m.agenda,
+          sharedNotes: m.sharedNotes,
+          privateNotes: asManager ? m.privateNotesManager : m.privateNotesEmployee,
+          actionItems: m.actionItems.map((i) => ({
+            title: i.title,
+            dueDate: i.dueDate ? day(i.dueDate)! : null,
+            done: i.doneAt !== null,
+          })),
+        };
+      }),
       goals: {
         personal: goals.map((g) => ({
           title: g.title,

@@ -120,6 +120,20 @@ export const personalDataExportSchema = z.object({
       }),
     ),
   }),
+  /** Their 1:1 meetings: agenda, shared notes, their own private notes and action items (ADR 0020). */
+  oneOnOnes: z.array(
+    z.object({
+      scheduledAt: dateTime,
+      status: z.string(),
+      role: z.enum(['manager', 'employee']),
+      agenda: z.string().nullable(),
+      sharedNotes: z.string().nullable(),
+      privateNotes: z.string().nullable(),
+      actionItems: z.array(
+        z.object({ title: z.string(), dueDate: date.nullable(), done: z.boolean() }),
+      ),
+    }),
+  ),
   /** Logged time and weekly timesheets (ADR 0015). */
   time: z.object({
     entries: z.array(
