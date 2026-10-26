@@ -123,6 +123,20 @@
         "settingsTitle": "Feedback, das du erhältst",
         "settingsHelp": "Wenn dir ein Kollege Feedback gibt."
       }
+    },
+    "review": {
+      "cycle_opened": {
+        "title": "Beurteilungsrunde eröffnet",
+        "text": "Eine Beurteilungsrunde hat begonnen. Deine Beurteilung wartet.",
+        "settingsTitle": "Beurteilungsrunden",
+        "settingsHelp": "Wenn eine Beurteilungsrunde für dich beginnt."
+      },
+      "released": {
+        "title": "Beurteilung freigegeben",
+        "text": "Deine Beurteilung wurde freigegeben. Du kannst sie jetzt lesen.",
+        "settingsTitle": "Freigegebene Beurteilungen",
+        "settingsHelp": "Wenn das Ergebnis deiner Beurteilung freigegeben wird."
+      }
     }
   },
   "unknown": {

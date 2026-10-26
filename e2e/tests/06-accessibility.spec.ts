@@ -47,6 +47,9 @@ const SIGNED_IN = [
   '/skills',
   '/skills?tab=people',
   '/skills?tab=catalog',
+  '/reviews',
+  '/reviews?tab=team',
+  '/reviews?tab=cycles',
   '/profile',
   '/does-not-exist',
 ];
@@ -180,6 +183,10 @@ for (const variant of variants) {
         .first()
         .click();
       found.push(...(await scan(page, '/skills (people, editor open)')));
+      await settle(page, '/reviews');
+      await page.locator('main a[href^="/reviews/"]').first().click();
+      await page.waitForLoadState('networkidle');
+      found.push(...(await scan(page, '/reviews/:id (own review, editor open)')));
       await settle(page, '/leave?tab=approvals');
       await page
         .getByRole('button', { name: /^Check the project impact/ })

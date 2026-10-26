@@ -8,6 +8,7 @@ import {
   MessagesSquare,
   MessageSquareText,
   Award,
+  ClipboardCheck,
   ListChecks,
   Timer,
   LayoutDashboard,
@@ -108,6 +109,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Award,
     primary: false,
     permission: 'skill.view',
+  },
+  {
+    path: '/reviews',
+    labelKey: 'reviews',
+    icon: ClipboardCheck,
+    primary: false,
+    permission: 'review.view',
   },
   {
     path: '/employees',

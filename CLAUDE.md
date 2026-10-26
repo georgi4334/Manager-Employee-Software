@@ -201,6 +201,14 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - `GET /skills/people` filters by category, skill + minimum level (`minLevel` needs `skillId`) and name; web shows cards, never a wide table. Project skill requirements and staffing suggestions are later.
 - Web: `/skills` with tabs My skills / People / Catalog (the last for catalog managers), own `skill.view` guard.
 
+## Performance reviews (docs/adr/0023-performance-reviews.md)
+
+- `review_cycle`, `review_competency` (belongs to a cycle, no global catalog), `review` (one per employee and cycle), `review_rating` (RLS, composite foreign keys; a trigger keeps a rating on a competency of the review's own cycle). Cycle status only moves forward, one step: `draft → open → calibration → closed` (`canMoveCycle`, claimed with a conditional update). Competencies and dates change only in `draft`; opening creates a review for every active employee who had started by `period_end` and queues `review.cycle_opened`; closing releases every review whose manager part is submitted (`released_at`, `review.released`).
+- Writing: the self part by the employee only (`review.write_self`), the manager part through `authz` on the employee with `review.write_for_report` — **nobody writes the manager part of, calibrates or reopens their own review**. Drafts may be partial; **submit** needs every competency scored (and an overall rating for the manager) and locks the part. Rows are locked (`FOR UPDATE`) while writing.
+- Visibility is the pure function `reviewVisibility` (contracts): the employee sees their own part always and the manager part, final rating **only after release**; reviewers see a part once submitted (their own manager draft too); calibrators (`review.calibrate`) see calibrated ratings. The final rating is `calibrated ?? overall`. `managerSubmitted` is `null` for an employee before release. Reviews the caller may not see are `404`; draft cycles are visible to `review.manage_cycles` only.
+- Audit has cycle steps, calibration (`cleared` only) and reopening (`part`) — never ratings or texts. Notifications carry the cycle or review id only. Export: own self part always, manager part only once released; erasure deletes the reviews about the person.
+- Web: `/reviews` (tabs My reviews / Team / All reviews / Cycles by scope and permission) and `/reviews/:id` (editor, read view, calibration, reopen), own `review.view` guard. Moving a cycle always asks for confirmation.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

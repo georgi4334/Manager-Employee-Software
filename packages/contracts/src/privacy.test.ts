@@ -41,6 +41,7 @@ describe('export document', () => {
     oneOnOnes: [],
     feedback: { given: [], received: [] },
     skills: [],
+    reviews: [],
     attendance: [],
     calendarEvents: [],
     notifications: [],

@@ -20,6 +20,7 @@ import { AuthModule } from './modules/auth/auth.module.js';
 import { AttendanceModule } from './modules/attendance/attendance.module.js';
 import { CalendarModule } from './modules/calendar/calendar.module.js';
 import { GoalsModule } from './modules/goals/goals.module.js';
+import { ReviewsModule } from './modules/reviews/reviews.module.js';
 import { SkillsModule } from './modules/skills/skills.module.js';
 import { FeedbackModule } from './modules/feedback/feedback.module.js';
 import { OneOnOnesModule } from './modules/one-on-ones/one-on-ones.module.js';
@@ -105,6 +106,7 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     OneOnOnesModule,
     FeedbackModule,
     SkillsModule,
+    ReviewsModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },

@@ -1,0 +1,151 @@
+{
+  "title": "Performance reviews",
+  "intro": "Look back on a period, write your self-review, and read your result once it is released. Managers assess their people; HR runs the cycles.",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "notFound": "This review does not exist or you cannot see it.",
+  "back": "Back to reviews",
+  "pagination": "Pages",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{page}} of {{pages}}",
+  "total_one": "{{count}} review",
+  "total_other": "{{count}} reviews",
+  "submit": "Submit",
+  "saveDraft": "Save draft",
+  "draftSaved": "Draft saved.",
+  "submitHint": "After you submit, this part is locked. HR can reopen it if something needs to change.",
+  "tabs": {
+    "label": "Show reviews",
+    "mine": "My reviews",
+    "team": "Team",
+    "all": "All reviews",
+    "cycles": "Cycles"
+  },
+  "empty": {
+    "mine": "You have no reviews yet.",
+    "team": "None of your people have a review yet.",
+    "all": "There are no reviews yet."
+  },
+  "filters": {
+    "cycle": "Cycle",
+    "allCycles": "All cycles"
+  },
+  "status": {
+    "draft": "Draft",
+    "open": "Open",
+    "calibration": "In calibration",
+    "closed": "Closed"
+  },
+  "state": {
+    "unknown": "not shown yet",
+    "submitted": "submitted",
+    "overdue": "overdue",
+    "open": "open"
+  },
+  "card": {
+    "of": "{{name}} · {{cycle}}",
+    "self": "Self-review {{state}}",
+    "manager": "Manager review {{state}}",
+    "final": "Final rating: {{rating}} of 5"
+  },
+  "detail": {
+    "title": "{{name}} · {{cycle}}",
+    "period": "{{from}} to {{to}}",
+    "dues": "Self-review due {{self}}, manager review due {{manager}}",
+    "final": "Final rating: {{rating}} of 5 ({{words}})"
+  },
+  "score": {
+    "1": "Needs improvement",
+    "2": "Partly meets expectations",
+    "3": "Meets expectations",
+    "4": "Exceeds expectations",
+    "5": "Outstanding",
+    "none": "No score",
+    "label": "Score for {{name}}"
+  },
+  "comment": {
+    "label": "Comment on {{name}} (optional)"
+  },
+  "summary": {
+    "label": "Summary (optional)"
+  },
+  "self": {
+    "heading": "Self-review",
+    "editTitle": "Write your self-review",
+    "notSubmitted": "The self-review has not been submitted yet."
+  },
+  "manager": {
+    "heading": "Manager review",
+    "editTitle": "Write the manager review",
+    "overall": "Overall rating",
+    "overallHint": "Needed to submit.",
+    "overallIs": "Overall rating: {{rating}} of 5",
+    "author": "Written by {{name}}",
+    "afterRelease": "The manager review is shown here once the results are released.",
+    "notSubmitted": "The manager review has not been submitted yet."
+  },
+  "calibration": {
+    "heading": "Calibration",
+    "managerRating": "Manager's overall rating: {{rating}}",
+    "rating": "Calibrated rating",
+    "hint": "The employee receives this as the final rating. Leave empty to keep the manager's rating.",
+    "none": "No calibration",
+    "save": "Save calibration",
+    "current": "Calibrated rating: {{rating}}"
+  },
+  "reopen": {
+    "heading": "Corrections",
+    "self": "Reopen the self-review",
+    "manager": "Reopen the manager review"
+  },
+  "rule": {
+    "incomplete": "Give every competency a score before you submit.",
+    "required": "An overall rating is needed to submit.",
+    "unknown_competency": "A score names a competency that is not part of this cycle.",
+    "no_competencies": "Add at least one competency before opening the cycle.",
+    "too_many": "A cycle has at most 12 competencies.",
+    "end_before_start": "An end date cannot be before its start date.",
+    "unknown_cycle": "The cycle to copy from does not exist.",
+    "status": "The cycle is in another state now, so this is not possible.",
+    "submitted": "This part is already submitted.",
+    "name": "This competency exists already."
+  },
+  "cycles": {
+    "new": "New cycle",
+    "newTitle": "New review cycle",
+    "name": "Name",
+    "periodStart": "Period starts",
+    "periodEnd": "Period ends",
+    "selfDue": "Self-reviews due",
+    "managerDue": "Manager reviews due",
+    "copyFrom": "Copy the competencies of",
+    "copyHint": "Optional.",
+    "copyNone": "Start empty",
+    "create": "Create",
+    "cancel": "Cancel",
+    "empty": "There are no cycles yet.",
+    "progress": "Progress",
+    "progressText": "{{selfSubmitted}} of {{total}} self-reviews and {{managerSubmitted}} manager reviews submitted; {{calibrated}} calibrated, {{released}} released.",
+    "competencies": "Competencies of {{name}}",
+    "newCompetency": "New competency",
+    "competencyName": "Competency",
+    "competencyDescription": "Description (optional)",
+    "addCompetency": "Add competency",
+    "removeCompetency": "Remove {{name}}",
+    "remove": "Remove",
+    "showReviews": "Show the reviews of {{name}}",
+    "step": {
+      "open": "Open {{name}}",
+      "calibrate": "Start calibration of {{name}}",
+      "close": "Close {{name}} and release results"
+    },
+    "confirm": {
+      "open": "Yes, open it and create a review for everybody",
+      "calibrate": "Yes, stop writing and start calibration",
+      "close": "Yes, close it and release the results"
+    },
+    "delete": "Delete {{name}}",
+    "confirmDelete": "Yes, delete this draft"
+  }
+}

@@ -46,6 +46,7 @@ const document: PersonalDataExport = {
   oneOnOnes: [],
   feedback: { given: [], received: [] },
   skills: [],
+  reviews: [],
   attendance: [],
   calendarEvents: [],
   notifications: [],

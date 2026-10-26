@@ -63,7 +63,7 @@ Goals (personal/team/company, key results) (ADR 0019) — **done**; 1:1 meetings
 
 ## Phase 4 — Insight & performance (~15–20 days)
 
-Performance reviews (cycles, self/manager review, ratings), Analytics dashboards (management view across HR + projects + time).
+Performance reviews (cycles, self/manager review, ratings, calibration) (ADR 0023) — **done**; Analytics dashboards (management view across HR + projects + time).
 
 ## Phase 5 — Advanced (~20+ days)
 

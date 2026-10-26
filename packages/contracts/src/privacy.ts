@@ -120,6 +120,40 @@ export const personalDataExportSchema = z.object({
       }),
     ),
   }),
+  /** Their performance reviews: their own self-review, and the manager part only once released (ADR 0023). */
+  reviews: z.array(
+    z.object({
+      cycle: z.string(),
+      periodStart: date,
+      periodEnd: date,
+      self: z
+        .object({
+          summary: z.string().nullable(),
+          submittedAt: dateTime.nullable(),
+          ratings: z.array(
+            z.object({
+              competency: z.string(),
+              score: z.number().int(),
+              comment: z.string().nullable(),
+            }),
+          ),
+        })
+        .nullable(),
+      released: z
+        .object({
+          summary: z.string().nullable(),
+          finalRating: z.number().int().nullable(),
+          ratings: z.array(
+            z.object({
+              competency: z.string(),
+              score: z.number().int(),
+              comment: z.string().nullable(),
+            }),
+          ),
+        })
+        .nullable(),
+    }),
+  ),
   /** Their skill ratings (ADR 0022). */
   skills: z.array(
     z.object({

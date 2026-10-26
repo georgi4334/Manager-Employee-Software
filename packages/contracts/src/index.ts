@@ -24,3 +24,4 @@ export * from './zoned-time.js';
 export * from './one-on-ones.js';
 export * from './feedback.js';
 export * from './skills.js';
+export * from './reviews.js';

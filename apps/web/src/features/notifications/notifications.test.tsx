@@ -346,6 +346,8 @@ const SAMPLES: Record<NotificationType, Record<string, unknown>> = {
   'task.assigned': { projectId: uuid(9), taskKey: 'WEB-12' },
   'goal.assigned': { goalId: uuid(9) },
   'feedback.received': { feedbackId: uuid(9) },
+  'review.cycle_opened': { cycleId: uuid(9) },
+  'review.released': { reviewId: uuid(9) },
   'one_on_one.changed': { meetingId: uuid(9), date: '2026-11-02', action: 'rescheduled' },
   'time.timer_reminder': { date: '2026-10-26' },
   'timesheet.decided': { weekStart: '2026-10-26', decision: 'approved' },

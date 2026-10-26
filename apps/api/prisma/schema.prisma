@@ -53,6 +53,10 @@ model Tenant {
   skillCategories         SkillCategory[]
   skills                  Skill[]
   employeeSkills          EmployeeSkill[]
+  reviewCycles            ReviewCycle[]
+  reviewCompetencies      ReviewCompetency[]
+  reviewsAll              Review[]
+  reviewRatings           ReviewRating[]
 
   @@map("tenant")
 }
@@ -361,6 +365,8 @@ model Employee {
   feedbackReceived    Feedback[]           @relation("FeedbackReceived")
   skillRatings        EmployeeSkill[]      @relation("SkillOwner")
   skillsAssessed      EmployeeSkill[]      @relation("SkillAssessor")
+  reviews             Review[]             @relation("ReviewSubject")
+  reviewsAuthored     Review[]             @relation("ReviewAuthor")
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -1070,4 +1076,99 @@ model EmployeeSkill {
   @@unique([tenantId, employeeId, skillId])
   @@index([tenantId, skillId, level])
   @@map("employee_skill")
+}
+
+// ----- Performance reviews (docs/adr/0023-performance-reviews.md) ---------------------------------------
+
+model ReviewCycle {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  tenantId    String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  name        String
+  periodStart DateTime  @map("period_start") @db.Date
+  periodEnd   DateTime  @map("period_end") @db.Date
+  selfDue     DateTime  @map("self_due") @db.Date
+  managerDue  DateTime  @map("manager_due") @db.Date
+  /// draft | open | calibration | closed (only forward)
+  status      String    @default("draft")
+  openedAt    DateTime? @map("opened_at") @db.Timestamptz(6)
+  closedAt    DateTime? @map("closed_at") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant       Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  competencies ReviewCompetency[]
+  reviews      Review[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, status])
+  @@map("review_cycle")
+}
+
+model ReviewCompetency {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  tenantId    String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  cycleId     String   @map("cycle_id") @db.Uuid
+  name        String
+  description String?
+  position    Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  tenant  Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cycle   ReviewCycle    @relation(fields: [tenantId, cycleId], references: [tenantId, id], onDelete: Cascade)
+  ratings ReviewRating[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, cycleId])
+  @@map("review_competency")
+}
+
+model Review {
+  id                 String    @id @default(uuid(7)) @db.Uuid
+  tenantId           String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  cycleId            String    @map("cycle_id") @db.Uuid
+  employeeId         String    @map("employee_id") @db.Uuid
+  selfSummary        String?   @map("self_summary")
+  selfSubmittedAt    DateTime? @map("self_submitted_at") @db.Timestamptz(6)
+  managerSummary     String?   @map("manager_summary")
+  /// The manager's overall rating, 1-5.
+  overallRating      Int?      @map("overall_rating")
+  managerSubmittedAt DateTime? @map("manager_submitted_at") @db.Timestamptz(6)
+  managerAuthorId    String?   @map("manager_author_id") @db.Uuid
+  /// HR's rating after calibration, 1-5; the final rating is this, else the overall rating.
+  calibratedRating   Int?      @map("calibrated_rating")
+  releasedAt         DateTime? @map("released_at") @db.Timestamptz(6)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  cycle         ReviewCycle    @relation(fields: [tenantId, cycleId], references: [tenantId, id], onDelete: Cascade)
+  employee      Employee       @relation("ReviewSubject", fields: [tenantId, employeeId], references: [tenantId, id], onDelete: Cascade)
+  managerAuthor Employee?      @relation("ReviewAuthor", fields: [tenantId, managerAuthorId], references: [tenantId, id], onDelete: NoAction)
+  ratings       ReviewRating[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, cycleId, employeeId])
+  @@index([tenantId, employeeId])
+  @@map("review")
+}
+
+model ReviewRating {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  tenantId     String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  reviewId     String   @map("review_id") @db.Uuid
+  competencyId String   @map("competency_id") @db.Uuid
+  /// self | manager
+  part         String
+  score        Int
+  comment      String?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant     Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  review     Review           @relation(fields: [tenantId, reviewId], references: [tenantId, id], onDelete: Cascade)
+  competency ReviewCompetency @relation(fields: [tenantId, competencyId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, reviewId, competencyId, part])
+  @@map("review_rating")
 }

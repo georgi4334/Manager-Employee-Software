@@ -59,6 +59,19 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/feedback',
   }),
+  // Performance reviews (docs/adr/0023-performance-reviews.md): a cycle opened for you, and your result was released.
+  'review.cycle_opened': typeDef({
+    params: z.object({ cycleId: z.uuid() }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/reviews',
+  }),
+  'review.released': typeDef({
+    params: z.object({ reviewId: z.uuid() }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/reviews',
+  }),
   // Projects (docs/adr/0013-clients-and-projects.md): you were put on a project. Ids and the project name only.
   'project.assigned': typeDef({
     params: z.object({ projectId: z.uuid(), projectName: z.string().trim().min(1).max(120) }),

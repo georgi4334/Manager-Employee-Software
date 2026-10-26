@@ -29,6 +29,8 @@ describe('event catalog', () => {
       'task.assigned': { recipientUserId: USER, projectId: USER, taskKey: 'WEB-12' },
       'goal.assigned': { recipientUserId: USER, goalId: USER },
       'feedback.received': { recipientUserId: USER, feedbackId: USER },
+      'review.cycle_opened': { recipientUserId: USER, cycleId: USER },
+      'review.released': { recipientUserId: USER, reviewId: USER },
       'one_on_one.changed': {
         recipientUserId: USER,
         meetingId: USER,
@@ -358,5 +360,29 @@ describe('feedback.received', () => {
     ['a bad feedback id', { recipientUserId: USER, feedbackId: 'x' }],
   ])('rejects %s', (_label, params) => {
     expect(definition.params.safeParse(params).success).toBe(false);
+  });
+});
+
+describe('review notifications', () => {
+  it('tell the person the cycle or review id and nothing else', () => {
+    const opened = EVENT_DEFINITIONS['review.cycle_opened'];
+    expect(
+      opened.notify(opened.params.parse({ recipientUserId: USER, cycleId: USER, name: 'H2 2026' })),
+    ).toEqual([{ recipientUserId: USER, type: 'review.cycle_opened', params: { cycleId: USER } }]);
+    const released = EVENT_DEFINITIONS['review.released'];
+    expect(
+      released.notify(released.params.parse({ recipientUserId: USER, reviewId: USER, rating: 5 })),
+    ).toEqual([{ recipientUserId: USER, type: 'review.released', params: { reviewId: USER } }]);
+  });
+
+  it.each([
+    ['review.cycle_opened', { cycleId: USER }],
+    ['review.cycle_opened', { recipientUserId: USER }],
+    ['review.cycle_opened', { recipientUserId: USER, cycleId: 'x' }],
+    ['review.released', { reviewId: USER }],
+    ['review.released', { recipientUserId: USER }],
+    ['review.released', { recipientUserId: USER, reviewId: 'x' }],
+  ] as const)('rejects %s with %j', (type, params) => {
+    expect(EVENT_DEFINITIONS[type].params.safeParse(params).success).toBe(false);
   });
 });

@@ -108,6 +108,23 @@ export const FEEDBACK_EVENTS = {
   }),
 } as const;
 
+export const REVIEW_EVENTS = {
+  /** A review cycle opened and there is a review for you: the cycle id only. */
+  'review.cycle_opened': eventDef({
+    params: z.object({ recipientUserId: z.uuid(), cycleId: z.uuid() }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'review.cycle_opened' as const, params },
+    ],
+  }),
+  /** Your review result was released: the review id only. */
+  'review.released': eventDef({
+    params: z.object({ recipientUserId: z.uuid(), reviewId: z.uuid() }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'review.released' as const, params },
+    ],
+  }),
+} as const;
+
 export const REMINDER_EVENTS = {
   /** Something started and was never finished: the day only. */
   'attendance.reminder': eventDef({
@@ -195,6 +212,7 @@ export const EVENT_DEFINITIONS = {
   ...GOAL_EVENTS,
   ...ONE_ON_ONE_EVENTS,
   ...FEEDBACK_EVENTS,
+  ...REVIEW_EVENTS,
 } as const;
 
 export type EventType = keyof typeof EVENT_DEFINITIONS;

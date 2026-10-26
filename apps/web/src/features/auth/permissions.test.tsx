@@ -123,6 +123,7 @@ describe('navigation by permission', () => {
         '1:1 meetings',
         'Feedback',
         'Skills',
+        'Reviews',
         'Employees',
         'Organization',
       ]);
