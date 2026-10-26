@@ -50,6 +50,9 @@ model Tenant {
   oneOnOnes               OneOnOne[]
   oneOnOneActionItems     OneOnOneActionItem[]
   feedback                Feedback[]
+  skillCategories         SkillCategory[]
+  skills                  Skill[]
+  employeeSkills          EmployeeSkill[]
 
   @@map("tenant")
 }
@@ -356,6 +359,8 @@ model Employee {
   actionItems         OneOnOneActionItem[] @relation("ActionItemOwner")
   feedbackGiven       Feedback[]           @relation("FeedbackGiven")
   feedbackReceived    Feedback[]           @relation("FeedbackReceived")
+  skillRatings        EmployeeSkill[]      @relation("SkillOwner")
+  skillsAssessed      EmployeeSkill[]      @relation("SkillAssessor")
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -1005,4 +1010,64 @@ model Feedback {
   @@index([tenantId, fromEmployeeId, createdAt])
   @@index([tenantId, reportedAt])
   @@map("feedback")
+}
+
+// ----- Skills matrix (docs/adr/0022-skills-matrix.md) ---------------------------------------------------
+
+model SkillCategory {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  tenantId  String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  name      String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  skills Skill[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, name])
+  @@map("skill_category")
+}
+
+model Skill {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  tenantId    String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  categoryId  String    @map("category_id") @db.Uuid
+  name        String
+  description String?
+  /// An archived skill keeps its ratings but cannot be newly rated.
+  archivedAt  DateTime? @map("archived_at") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  category SkillCategory   @relation(fields: [tenantId, categoryId], references: [tenantId, id], onDelete: NoAction)
+  ratings  EmployeeSkill[]
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, name])
+  @@index([tenantId, categoryId])
+  @@map("skill")
+}
+
+model EmployeeSkill {
+  id                   String   @id @default(uuid(7)) @db.Uuid
+  tenantId             String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  employeeId           String   @map("employee_id") @db.Uuid
+  skillId              String   @map("skill_id") @db.Uuid
+  /// 1 (beginner) to 5 (expert)
+  level                Int
+  /// Who set the level last; the employee themself for a self-assessment.
+  assessedByEmployeeId String?  @map("assessed_by_employee_id") @db.Uuid
+  assessedAt           DateTime @default(now()) @map("assessed_at") @db.Timestamptz(6)
+
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee   Employee  @relation("SkillOwner", fields: [tenantId, employeeId], references: [tenantId, id], onDelete: Cascade)
+  skill      Skill     @relation(fields: [tenantId, skillId], references: [tenantId, id], onDelete: NoAction)
+  assessedBy Employee? @relation("SkillAssessor", fields: [tenantId, assessedByEmployeeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, employeeId, skillId])
+  @@index([tenantId, skillId, level])
+  @@map("employee_skill")
 }

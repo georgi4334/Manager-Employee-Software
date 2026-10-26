@@ -120,6 +120,16 @@ export const personalDataExportSchema = z.object({
       }),
     ),
   }),
+  /** Their skill ratings (ADR 0022). */
+  skills: z.array(
+    z.object({
+      category: z.string(),
+      skill: z.string(),
+      level: z.number().int(),
+      selfAssessed: z.boolean(),
+      assessedAt: dateTime,
+    }),
+  ),
   /** Feedback they gave and received, with the other person's name (ADR 0021). */
   feedback: z.object({
     given: z.array(

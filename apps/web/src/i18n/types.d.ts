@@ -17,6 +17,7 @@ import type capacity from './locales/en/capacity.json';
 import type goals from './locales/en/goals.json';
 import type meetings from './locales/en/meetings.json';
 import type feedback from './locales/en/feedback.json';
+import type skills from './locales/en/skills.json';
 import type notifications from './locales/en/notifications.json';
 
 declare module 'i18next' {
@@ -42,6 +43,7 @@ declare module 'i18next' {
       goals: typeof goals;
       meetings: typeof meetings;
       feedback: typeof feedback;
+      skills: typeof skills;
     };
   }
 }

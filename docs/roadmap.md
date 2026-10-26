@@ -59,7 +59,7 @@ Out of scope: payroll calculation, screenshots/activity monitoring, sprints/sub-
 
 ## Phase 3 — People growth (~20 days)
 
-Goals (personal/team/company, key results) (ADR 0019) — **done**; 1:1 meetings (+ action items) (ADR 0020) — **done**; Feedback (ADR 0021) — **done**; Skills Matrix.
+Goals (personal/team/company, key results) (ADR 0019) — **done**; 1:1 meetings (+ action items) (ADR 0020) — **done**; Feedback (ADR 0021) — **done**; Skills Matrix (ADR 0022) — **done**.
 
 ## Phase 4 — Insight & performance (~15–20 days)
 

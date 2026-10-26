@@ -65,6 +65,8 @@ export class ErasureService {
         where: { tenantId, authorEmployeeId: employeeId },
         data: { comment: null },
       });
+      // Skill levels are personal data; the catalog is not (ADR 0022).
+      await tx.employeeSkill.deleteMany({ where: { tenantId, employeeId } });
       // Feedback they gave or received is about people, in words: it goes with them (ADR 0021).
       await tx.feedback.deleteMany({
         where: { tenantId, OR: [{ fromEmployeeId: employeeId }, { toEmployeeId: employeeId }] },

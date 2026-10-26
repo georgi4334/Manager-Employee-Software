@@ -40,6 +40,7 @@ describe('export document', () => {
     goals: { personal: [], checkIns: [] },
     oneOnOnes: [],
     feedback: { given: [], received: [] },
+    skills: [],
     attendance: [],
     calendarEvents: [],
     notifications: [],

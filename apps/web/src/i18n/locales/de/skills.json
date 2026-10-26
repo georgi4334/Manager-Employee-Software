@@ -1,0 +1,77 @@
+{
+  "title": "Skills",
+  "intro": "Was du kannst und wie gut. Alle bewerten sich selbst; Führungskräfte können ihr Team bewerten, und HR pflegt die Liste der Skills.",
+  "loading": "Lädt…",
+  "retry": "Erneut versuchen",
+  "search": "Nach Namen suchen",
+  "total_one": "{{count}} Person",
+  "total_other": "{{count}} Personen",
+  "empty": "Niemand passt.",
+  "pagination": "Seiten",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "page": "Seite {{page}} von {{pages}}",
+  "tabs": {
+    "label": "Skills anzeigen",
+    "mine": "Meine Skills",
+    "people": "Personen",
+    "catalog": "Katalog"
+  },
+  "filters": {
+    "category": "Kategorie",
+    "allCategories": "Alle Kategorien",
+    "skill": "Skill",
+    "anySkill": "Beliebiger Skill",
+    "minLevel": "Stufe",
+    "anyLevel": "Beliebige Stufe",
+    "atLeast": "Stufe {{level}} oder mehr"
+  },
+  "closeEditor": "Schließen",
+  "editSkills": "Skills von {{name}} bearbeiten",
+  "noRatings": "Noch keine Skills bewertet.",
+  "skillsOf": "Skills von {{name}}",
+  "noEmployee": "Du hast keinen Mitarbeitendeneintrag, daher gibt es nichts zu bewerten.",
+  "emptyCatalog": "Es gibt noch keine Skills. HR kann sie im Katalog anlegen.",
+  "archived": "archiviert",
+  "assessed": {
+    "self": "Von dir bewertet am {{date}}",
+    "by": "Bewertet von {{name}} am {{date}}"
+  },
+  "levelOf": "Stufe von {{skill}}",
+  "notRated": "Nicht bewertet",
+  "level": {
+    "1": "Anfänger",
+    "2": "Grundkenntnisse",
+    "3": "Solide",
+    "4": "Fortgeschritten",
+    "5": "Experte"
+  },
+  "rule": {
+    "skill_archived": "Dieser Skill ist archiviert und kann nicht mehr bewertet werden.",
+    "unknown_category": "Diese Kategorie existiert nicht.",
+    "name": "Dieser Name wird bereits verwendet.",
+    "in_use": "Noch in Benutzung: Jemand hat diesen Skill bewertet, oder die Kategorie enthält Skills."
+  },
+  "catalog": {
+    "newCategory": "Neue Kategorie",
+    "categoryName": "Name der Kategorie",
+    "addCategory": "Kategorie hinzufügen",
+    "newSkill": "Neuer Skill",
+    "category": "Kategorie",
+    "skillName": "Name des Skills",
+    "description": "Beschreibung (optional)",
+    "addSkill": "Skill hinzufügen",
+    "renameCategory": "{{name}} umbenennen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "rename": "Umbenennen",
+    "deleteCategory": "Kategorie {{name}} löschen",
+    "delete": "Löschen",
+    "noSkills": "Keine Skills in dieser Kategorie.",
+    "restoreSkill": "{{name}} wiederherstellen",
+    "archiveSkill": "{{name}} archivieren",
+    "restore": "Wiederherstellen",
+    "archive": "Archivieren",
+    "deleteSkill": "{{name}} löschen"
+  }
+}

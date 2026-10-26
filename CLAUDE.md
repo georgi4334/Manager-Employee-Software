@@ -193,6 +193,14 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Export lists feedback given and received (with the other person's name); erasure deletes every item the person gave or received.
 - Web: `/feedback` with Received / Given / Reported tabs (the last for moderators), a give form, own guard (`feedback.give` or `feedback.view_received`); the recipient list comes from the org chart.
 
+## Skills matrix (docs/adr/0022-skills-matrix.md)
+
+- `skill_category`, `skill`, `employee_skill` (all RLS, composite foreign keys). Names belong to the workspace, are **not translated** and unique without regard to case (checked in the service in memory, plus a unique index). Levels 1–5 have fixed meanings translated in the web app; `assessed_by` shows a self-assessment (`selfAssessed`); the last writer wins, no history.
+- Catalog changes need `skill.manage_catalog` (HR, Admin; route permission) and are audited with ids and field names, never names. A skill is deleted only while nobody rated it, a category only while empty (`CONFLICT`, `field: in_use`); an archived skill keeps its ratings but cannot be newly rated (`skill_archived`).
+- Reading and rating go through `authz` on the **employee**: `skill.view` / `skill.update` at `own` (Employee), `team` (Manager: self, reports and their reports) or `all`. A person outside the scope is `404` for reads and rating; inactive people are not listed. Ratings are personal data: not audited, exported with category/skill/level, deleted on erasure.
+- `GET /skills/people` filters by category, skill + minimum level (`minLevel` needs `skillId`) and name; web shows cards, never a wide table. Project skill requirements and staffing suggestions are later.
+- Web: `/skills` with tabs My skills / People / Catalog (the last for catalog managers), own `skill.view` guard.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

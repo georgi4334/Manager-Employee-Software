@@ -109,6 +109,7 @@ export class PrivacyService {
       meetings,
       feedbackGiven,
       feedbackReceived,
+      skillRatings,
     ] = employeeId
       ? await Promise.all([
           tx.leaveRequest.findMany({
@@ -178,8 +179,13 @@ export class PrivacyService {
             orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
             include: { from: { select: { firstName: true, lastName: true } } },
           }),
+          tx.employeeSkill.findMany({
+            where: { employeeId },
+            orderBy: [{ skill: { name: 'asc' } }, { id: 'asc' }],
+            include: { skill: { select: { name: true, category: { select: { name: true } } } } },
+          }),
         ])
-      : [[], [], [], [], [], [], [], [], [], [], [], [], [], []];
+      : [[], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
     const [notifications, preferences, auditEntries] = userId
       ? await Promise.all([
           tx.notification.findMany({
@@ -269,6 +275,13 @@ export class PrivacyService {
         status: t.status,
         estimateHours: t.estimateHours === null ? null : Number(t.estimateHours),
         dueDate: iso(t.dueDate)?.slice(0, 10) ?? null,
+      })),
+      skills: skillRatings.map((r) => ({
+        category: r.skill.category.name,
+        skill: r.skill.name,
+        level: r.level,
+        selfAssessed: r.assessedByEmployeeId === r.employeeId,
+        assessedAt: r.assessedAt.toISOString(),
       })),
       feedback: {
         given: feedbackGiven.map((f) => ({

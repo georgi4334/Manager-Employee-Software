@@ -44,6 +44,9 @@ const SIGNED_IN = [
   '/one-on-ones?status=all',
   '/feedback',
   '/feedback?box=given',
+  '/skills',
+  '/skills?tab=people',
+  '/skills?tab=catalog',
   '/profile',
   '/does-not-exist',
 ];
@@ -171,6 +174,12 @@ for (const variant of variants) {
       await settle(page, '/feedback');
       await page.getByRole('button', { name: 'Give feedback' }).click();
       found.push(...(await scan(page, '/feedback (give form)')));
+      await settle(page, '/skills?tab=people');
+      await page
+        .getByRole('button', { name: /^Edit the skills of/ })
+        .first()
+        .click();
+      found.push(...(await scan(page, '/skills (people, editor open)')));
       await settle(page, '/leave?tab=approvals');
       await page
         .getByRole('button', { name: /^Check the project impact/ })

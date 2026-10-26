@@ -7,6 +7,7 @@ import {
   Target,
   MessagesSquare,
   MessageSquareText,
+  Award,
   ListChecks,
   Timer,
   LayoutDashboard,
@@ -100,6 +101,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: MessageSquareText,
     primary: false,
     permission: ['feedback.give', 'feedback.view_received'],
+  },
+  {
+    path: '/skills',
+    labelKey: 'skills',
+    icon: Award,
+    primary: false,
+    permission: 'skill.view',
   },
   {
     path: '/employees',
