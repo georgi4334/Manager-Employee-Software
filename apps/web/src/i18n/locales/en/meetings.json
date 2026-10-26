@@ -1,0 +1,89 @@
+{
+  "title": "1:1 meetings",
+  "intro": "One-to-one talks with your manager or your people: an agenda, shared notes, private notes and action items.",
+  "new": "Schedule a 1:1",
+  "nobody": "You have no manager and no direct reports, so there is nobody to schedule a 1:1 with yet.",
+  "loading": "Loading…",
+  "retry": "Try again",
+  "empty": "No meetings to show.",
+  "pagination": "Pages",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{page}} of {{pages}}",
+  "back": "Back to 1:1 meetings",
+  "notFound": "This meeting does not exist or you are not part of it.",
+  "markDone": "Mark as done",
+  "cancelMeeting": "Cancel the meeting",
+  "confirmCancel": "Yes, cancel it",
+  "tabs": {
+    "label": "Show meetings",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "all": "All"
+  },
+  "status": {
+    "scheduled": "Planned",
+    "done": "Held",
+    "cancelled": "Cancelled"
+  },
+  "role": {
+    "manager": "You are the manager",
+    "employee": "You are the employee"
+  },
+  "card": {
+    "with": "1:1 with {{name}}",
+    "minutes_one": "{{count}} minute",
+    "minutes_other": "{{count}} minutes",
+    "openItems_one": "{{count}} open action item",
+    "openItems_other": "{{count}} open action items"
+  },
+  "form": {
+    "title": "Schedule a 1:1",
+    "with": "With",
+    "myManager": "My manager ({{name}})",
+    "date": "Date",
+    "time": "Time",
+    "minutes": "Length in minutes",
+    "agenda": "Agenda (optional)",
+    "schedule": "Schedule",
+    "cancel": "Cancel"
+  },
+  "when": {
+    "title": "Change the time",
+    "change": "Change the time",
+    "save": "Save"
+  },
+  "notes": {
+    "title": "Notes",
+    "agenda": "Agenda",
+    "shared": "Shared notes",
+    "sharedHint": "Both of you can read and write these.",
+    "private": "Your private notes",
+    "privateHint": "Only you can see these. Not the other person, not HR, not an administrator.",
+    "save": "Save notes",
+    "saved": "Saved."
+  },
+  "items": {
+    "heading": "Action items",
+    "none": "No action items yet.",
+    "newTitle": "New action item",
+    "title": "What needs to be done",
+    "owner": "Who",
+    "me": "Me",
+    "dueDate": "Due date (optional)",
+    "add": "Add",
+    "done": "Done: {{title}}",
+    "due": "due {{date}}",
+    "overdue": "overdue",
+    "remove": "Remove {{title}}",
+    "removeShort": "Remove"
+  },
+  "rule": {
+    "no_manager": "You have no manager to meet. Ask HR to set your manager.",
+    "unknown_employee": "This person cannot be met in a 1:1.",
+    "nonexistent_time": "This time does not exist on that day (the clocks change).",
+    "not_participant": "An action item belongs to one of the two people in the meeting.",
+    "too_many": "A meeting holds at most 20 action items.",
+    "cancelled": "This meeting was cancelled and can no longer be changed."
+  }
+}

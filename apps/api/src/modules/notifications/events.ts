@@ -83,6 +83,21 @@ export const GOAL_EVENTS = {
   }),
 } as const;
 
+export const ONE_ON_ONE_EVENTS = {
+  /** The other person scheduled, moved or cancelled a 1:1: the meeting id, the date and the kind only. */
+  'one_on_one.changed': eventDef({
+    params: z.object({
+      recipientUserId: z.uuid(),
+      meetingId: z.uuid(),
+      date: z.string().regex(DATE),
+      action: z.enum(['scheduled', 'rescheduled', 'cancelled']),
+    }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'one_on_one.changed' as const, params },
+    ],
+  }),
+} as const;
+
 export const REMINDER_EVENTS = {
   /** Something started and was never finished: the day only. */
   'attendance.reminder': eventDef({
@@ -168,6 +183,7 @@ export const EVENT_DEFINITIONS = {
   ...TIME_EVENTS,
   ...REMINDER_EVENTS,
   ...GOAL_EVENTS,
+  ...ONE_ON_ONE_EVENTS,
 } as const;
 
 export type EventType = keyof typeof EVENT_DEFINITIONS;

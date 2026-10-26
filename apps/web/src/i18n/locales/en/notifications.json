@@ -105,6 +105,16 @@
         "settingsTitle": "Goals set for you",
         "settingsHelp": "When somebody sets a goal for you."
       }
+    },
+    "one_on_one": {
+      "changed": {
+        "title": "1:1 meeting",
+        "textScheduled": "A 1:1 meeting was scheduled for {{date}}.",
+        "textRescheduled": "A 1:1 meeting was moved to {{date}}.",
+        "textCancelled": "The 1:1 meeting of {{date}} was cancelled.",
+        "settingsTitle": "Changes to your 1:1 meetings",
+        "settingsHelp": "When the other person schedules, moves or cancels a 1:1."
+      }
     }
   },
   "unknown": {

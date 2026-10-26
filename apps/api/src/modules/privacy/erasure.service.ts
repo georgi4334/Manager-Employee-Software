@@ -65,6 +65,10 @@ export class ErasureService {
         where: { tenantId, authorEmployeeId: employeeId },
         data: { comment: null },
       });
+      // A 1:1 holds the other person's private notes about this one too: the whole meeting goes (ADR 0020).
+      await tx.oneOnOne.deleteMany({
+        where: { tenantId, OR: [{ managerEmployeeId: employeeId }, { employeeId }] },
+      });
       await tx.calendarEvent.deleteMany({
         where: { tenantId, ownerEmployeeId: employeeId, scope: 'personal' },
       });

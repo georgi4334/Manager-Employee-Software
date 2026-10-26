@@ -348,6 +348,17 @@ export class OrganizationService {
         where: { id: employeeId },
         data: { managerId: body.managerId, departmentId: body.departmentId },
       });
+      if (employee.managerId !== body.managerId) {
+        // A new manager does not inherit planned 1:1s of the old one (docs/adr/0020-one-on-ones.md).
+        await tx.oneOnOne.updateMany({
+          where: {
+            status: 'scheduled',
+            employeeId,
+            ...(body.managerId ? { managerEmployeeId: { not: body.managerId } } : {}),
+          },
+          data: { status: 'cancelled' },
+        });
+      }
       await this.audit.record(tx, {
         actorUserId: actor.userId,
         action: 'org.employee_assigned',

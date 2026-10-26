@@ -47,6 +47,8 @@ model Tenant {
   leaveRequests           LeaveRequest[]
   leaveRequestDays        LeaveRequestDay[]
   leaveApprovals          LeaveApproval[]
+  oneOnOnes               OneOnOne[]
+  oneOnOneActionItems     OneOnOneActionItem[]
 
   @@map("tenant")
 }
@@ -327,27 +329,30 @@ model Employee {
   departmentId String? @map("department_id") @db.Uuid
   managerId    String? @map("manager_id") @db.Uuid
 
-  tenant             Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user               User?               @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
-  department         Department?         @relation("EmployeeDepartment", fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
-  manager            Employee?           @relation("Reporting", fields: [tenantId, managerId], references: [tenantId, id], onDelete: NoAction)
-  reports            Employee[]          @relation("Reporting")
-  headedDepartments  Department[]        @relation("DepartmentHead")
-  ledTeams           Team[]              @relation("TeamLead")
-  teamMemberships    TeamMember[]
-  leaveBalances      LeaveBalance[]
-  leaveRequests      LeaveRequest[]
-  leaveApprovals     LeaveApproval[]
-  attendanceRecords  AttendanceRecord[]
-  calendarEvents     CalendarEvent[]
-  ledProjects        Project[]           @relation("ProjectLead")
-  projectAssignments ProjectAssignment[]
-  tasksAssigned      Task[]
-  timeEntries        TimeEntry[]
-  timesheets         Timesheet[]         @relation("TimesheetOwner")
-  timesheetsDecided  Timesheet[]         @relation("TimesheetDecider")
-  goalsOwned         Goal[]              @relation("GoalOwner")
-  goalUpdates        GoalUpdate[]
+  tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user                User?                @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
+  department          Department?          @relation("EmployeeDepartment", fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
+  manager             Employee?            @relation("Reporting", fields: [tenantId, managerId], references: [tenantId, id], onDelete: NoAction)
+  reports             Employee[]           @relation("Reporting")
+  headedDepartments   Department[]         @relation("DepartmentHead")
+  ledTeams            Team[]               @relation("TeamLead")
+  teamMemberships     TeamMember[]
+  leaveBalances       LeaveBalance[]
+  leaveRequests       LeaveRequest[]
+  leaveApprovals      LeaveApproval[]
+  attendanceRecords   AttendanceRecord[]
+  calendarEvents      CalendarEvent[]
+  ledProjects         Project[]            @relation("ProjectLead")
+  projectAssignments  ProjectAssignment[]
+  tasksAssigned       Task[]
+  timeEntries         TimeEntry[]
+  timesheets          Timesheet[]          @relation("TimesheetOwner")
+  timesheetsDecided   Timesheet[]          @relation("TimesheetDecider")
+  goalsOwned          Goal[]               @relation("GoalOwner")
+  goalUpdates         GoalUpdate[]
+  oneOnOnesAsManager  OneOnOne[]           @relation("OneOnOneManager")
+  oneOnOnesAsEmployee OneOnOne[]           @relation("OneOnOneEmployee")
+  actionItems         OneOnOneActionItem[] @relation("ActionItemOwner")
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -918,4 +923,55 @@ model GoalUpdate {
   @@unique([tenantId, id])
   @@index([tenantId, goalId, createdAt])
   @@map("goal_update")
+}
+
+// ----- 1:1 meetings (docs/adr/0020-one-on-ones.md) ---------------------------------------------------------
+
+model OneOnOne {
+  id                   String   @id @default(uuid(7)) @db.Uuid
+  tenantId             String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  managerEmployeeId    String   @map("manager_employee_id") @db.Uuid
+  employeeId           String   @map("employee_id") @db.Uuid
+  scheduledAt          DateTime @map("scheduled_at") @db.Timestamptz(6)
+  durationMinutes      Int      @default(30) @map("duration_minutes")
+  /// scheduled | done | cancelled
+  status               String   @default("scheduled")
+  agenda               String?
+  sharedNotes          String?  @map("shared_notes")
+  /// Readable by the manager only; the employee's own are in privateNotesEmployee.
+  privateNotesManager  String?  @map("private_notes_manager")
+  privateNotesEmployee String?  @map("private_notes_employee")
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant      Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  manager     Employee             @relation("OneOnOneManager", fields: [tenantId, managerEmployeeId], references: [tenantId, id], onDelete: NoAction)
+  employee    Employee             @relation("OneOnOneEmployee", fields: [tenantId, employeeId], references: [tenantId, id], onDelete: NoAction)
+  actionItems OneOnOneActionItem[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, managerEmployeeId, scheduledAt])
+  @@index([tenantId, employeeId, scheduledAt])
+  @@map("one_on_one")
+}
+
+model OneOnOneActionItem {
+  id              String    @id @default(uuid(7)) @db.Uuid
+  tenantId        String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  oneOnOneId      String    @map("one_on_one_id") @db.Uuid
+  ownerEmployeeId String    @map("owner_employee_id") @db.Uuid
+  title           String
+  dueDate         DateTime? @map("due_date") @db.Date
+  doneAt          DateTime? @map("done_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  meeting OneOnOne @relation(fields: [tenantId, oneOnOneId], references: [tenantId, id], onDelete: Cascade)
+  owner   Employee @relation("ActionItemOwner", fields: [tenantId, ownerEmployeeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, oneOnOneId])
+  @@index([tenantId, ownerEmployeeId])
+  @@map("one_on_one_action_item")
 }

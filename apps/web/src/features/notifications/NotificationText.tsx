@@ -91,6 +91,18 @@ export function useNotificationText() {
         text: t('types.task.assigned.text', { taskKey: str(params.taskKey) }),
       };
     }
+    if (type === 'one_on_one.changed') {
+      const date = formatDay(str(params.date), language);
+      return {
+        title: t('types.one_on_one.changed.title'),
+        text:
+          params.action === 'cancelled'
+            ? t('types.one_on_one.changed.textCancelled', { date })
+            : params.action === 'rescheduled'
+              ? t('types.one_on_one.changed.textRescheduled', { date })
+              : t('types.one_on_one.changed.textScheduled', { date }),
+      };
+    }
     if (type === 'goal.assigned') {
       return { title: t('types.goal.assigned.title'), text: t('types.goal.assigned.text') };
     }

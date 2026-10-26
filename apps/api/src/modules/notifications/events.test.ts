@@ -28,6 +28,12 @@ describe('event catalog', () => {
       'project.assigned': { recipientUserId: USER, projectId: USER, projectName: 'Website' },
       'task.assigned': { recipientUserId: USER, projectId: USER, taskKey: 'WEB-12' },
       'goal.assigned': { recipientUserId: USER, goalId: USER },
+      'one_on_one.changed': {
+        recipientUserId: USER,
+        meetingId: USER,
+        date: '2026-11-02',
+        action: 'scheduled',
+      },
       'attendance.reminder': { recipientUserId: USER, date: '2026-10-26' },
       'time.timer_reminder': { recipientUserId: USER, date: '2026-10-26' },
       'timesheet.decided': { recipientUserId: USER, weekStart: '2026-10-26', decision: 'approved' },
@@ -290,5 +296,41 @@ describe('goal.assigned', () => {
     ['a bad goal id', { recipientUserId: USER, goalId: 'x' }],
   ])('rejects %s', (_label, params) => {
     expect(definition.params.safeParse(params).success).toBe(false);
+  });
+});
+
+describe('one_on_one.changed', () => {
+  const definition = EVENT_DEFINITIONS['one_on_one.changed'];
+  const params = {
+    recipientUserId: USER,
+    meetingId: USER,
+    date: '2026-11-02',
+    action: 'rescheduled',
+  };
+
+  it('tells the person the meeting, the date and the kind, and nothing else', () => {
+    expect(definition.notify(definition.params.parse(params))).toEqual([
+      {
+        recipientUserId: USER,
+        type: 'one_on_one.changed',
+        params: { meetingId: USER, date: '2026-11-02', action: 'rescheduled' },
+      },
+    ]);
+  });
+
+  it.each([
+    ['no recipient', { ...params, recipientUserId: undefined }],
+    ['no meeting', { ...params, meetingId: undefined }],
+    ['a bad date', { ...params, date: '2.11.2026' }],
+    ['an unknown action', { ...params, action: 'moved' }],
+    ['an extra agenda field leaks nothing (stripped)', { ...params, agenda: 'secret' }],
+  ])('handles %s', (label, body) => {
+    const result = definition.params.safeParse(body);
+    if (label.startsWith('an extra')) {
+      expect(result.success).toBe(true);
+      expect(JSON.stringify(definition.notify(result.data as never))).not.toContain('secret');
+    } else {
+      expect(result.success).toBe(false);
+    }
   });
 });

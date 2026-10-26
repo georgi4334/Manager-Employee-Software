@@ -5,6 +5,7 @@ import {
   Clock,
   Gauge,
   Target,
+  MessagesSquare,
   ListChecks,
   Timer,
   LayoutDashboard,
@@ -84,6 +85,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Target,
     primary: false,
     permission: 'goal.view',
+  },
+  {
+    path: '/one-on-ones',
+    labelKey: 'oneOnOnes',
+    icon: MessagesSquare,
+    primary: false,
+    permission: 'one_on_one.manage',
   },
   {
     path: '/employees',

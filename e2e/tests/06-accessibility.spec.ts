@@ -40,9 +40,36 @@ const SIGNED_IN = [
   '/capacity',
   '/goals',
   '/goals?scope=personal',
+  '/one-on-ones',
+  '/one-on-ones?status=all',
   '/profile',
   '/does-not-exist',
 ];
+
+/** Earlier specs erase the employee of the 1:1 spec, so the scan makes sure there is one meeting to open. */
+async function ensureMeeting(page: Page): Promise<void> {
+  const api = '/api/v1';
+  const existing = await (await page.request.get(`${api}/one-on-ones?status=all`)).json();
+  if (existing.total > 0) return;
+  const created = await page.request.post(`${api}/employees`, {
+    data: { firstName: 'Olga', lastName: 'Scan', employmentType: 'full_time' },
+  });
+  const olga = (await created.json()) as { id: string };
+  const me = (await (await page.request.get(`${api}/employees/me`)).json()) as { id: string };
+  expect(
+    (
+      await page.request.put(`${api}/org/employees/${olga.id}/assignment`, {
+        data: { managerId: me.id, departmentId: null },
+      })
+    ).status(),
+  ).toBe(204);
+  const day = new Date();
+  day.setUTCDate(day.getUTCDate() + 5);
+  const made = await page.request.post(`${api}/one-on-ones`, {
+    data: { employeeId: olga.id, date: day.toISOString().slice(0, 10), time: '09:00' },
+  });
+  expect(made.status()).toBe(201);
+}
 
 async function scan(page: Page, label: string): Promise<string[]> {
   const result = await new AxeBuilder({ page }).withTags(TAGS).analyze();
@@ -130,6 +157,15 @@ for (const variant of variants) {
       await page.waitForLoadState('networkidle');
       await page.getByRole('button', { name: 'Add a key result' }).click();
       found.push(...(await scan(page, 'goal detail (key result form open)')));
+      await ensureMeeting(page);
+      await settle(page, '/one-on-ones');
+      await page.getByRole('button', { name: 'Schedule a 1:1' }).click();
+      found.push(...(await scan(page, '/one-on-ones (schedule form)')));
+      await settle(page, '/one-on-ones?status=all');
+      await page.locator('main a[href^="/one-on-ones/"]').first().click();
+      await page.waitForLoadState('networkidle');
+      await page.getByRole('button', { name: 'Change the time' }).click();
+      found.push(...(await scan(page, '1:1 detail (time form open)')));
       await settle(page, '/leave?tab=approvals');
       await page
         .getByRole('button', { name: /^Check the project impact/ })

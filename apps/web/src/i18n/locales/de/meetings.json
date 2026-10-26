@@ -1,0 +1,89 @@
+{
+  "title": "1:1-Gespräche",
+  "intro": "Einzelgespräche mit deiner Führungskraft oder deinen Mitarbeitenden: Agenda, gemeinsame Notizen, private Notizen und Aufgaben.",
+  "new": "1:1 ansetzen",
+  "nobody": "Du hast keine Führungskraft und keine direkten Mitarbeitenden, daher gibt es noch niemanden für ein 1:1.",
+  "loading": "Lädt…",
+  "retry": "Erneut versuchen",
+  "empty": "Keine Gespräche vorhanden.",
+  "pagination": "Seiten",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "page": "Seite {{page}} von {{pages}}",
+  "back": "Zurück zu den 1:1-Gesprächen",
+  "notFound": "Dieses Gespräch existiert nicht oder du nimmst nicht daran teil.",
+  "markDone": "Als geführt markieren",
+  "cancelMeeting": "Gespräch absagen",
+  "confirmCancel": "Ja, absagen",
+  "tabs": {
+    "label": "Gespräche anzeigen",
+    "upcoming": "Kommende",
+    "past": "Vergangene",
+    "all": "Alle"
+  },
+  "status": {
+    "scheduled": "Geplant",
+    "done": "Geführt",
+    "cancelled": "Abgesagt"
+  },
+  "role": {
+    "manager": "Du bist die Führungskraft",
+    "employee": "Du bist der Mitarbeitende"
+  },
+  "card": {
+    "with": "1:1 mit {{name}}",
+    "minutes_one": "{{count}} Minute",
+    "minutes_other": "{{count}} Minuten",
+    "openItems_one": "{{count}} offene Aufgabe",
+    "openItems_other": "{{count}} offene Aufgaben"
+  },
+  "form": {
+    "title": "1:1 ansetzen",
+    "with": "Mit",
+    "myManager": "Meine Führungskraft ({{name}})",
+    "date": "Datum",
+    "time": "Uhrzeit",
+    "minutes": "Dauer in Minuten",
+    "agenda": "Agenda (optional)",
+    "schedule": "Ansetzen",
+    "cancel": "Abbrechen"
+  },
+  "when": {
+    "title": "Zeit ändern",
+    "change": "Zeit ändern",
+    "save": "Speichern"
+  },
+  "notes": {
+    "title": "Notizen",
+    "agenda": "Agenda",
+    "shared": "Gemeinsame Notizen",
+    "sharedHint": "Ihr beide könnt sie lesen und schreiben.",
+    "private": "Deine privaten Notizen",
+    "privateHint": "Nur du siehst sie. Nicht die andere Person, nicht HR, nicht ein Administrator.",
+    "save": "Notizen speichern",
+    "saved": "Gespeichert."
+  },
+  "items": {
+    "heading": "Aufgaben",
+    "none": "Noch keine Aufgaben.",
+    "newTitle": "Neue Aufgabe",
+    "title": "Was zu tun ist",
+    "owner": "Wer",
+    "me": "Ich",
+    "dueDate": "Fällig am (optional)",
+    "add": "Hinzufügen",
+    "done": "Erledigt: {{title}}",
+    "due": "fällig {{date}}",
+    "overdue": "überfällig",
+    "remove": "{{title}} entfernen",
+    "removeShort": "Entfernen"
+  },
+  "rule": {
+    "no_manager": "Du hast keine Führungskraft für ein Gespräch. Bitte HR, sie einzutragen.",
+    "unknown_employee": "Mit dieser Person ist kein 1:1 möglich.",
+    "nonexistent_time": "Diese Uhrzeit gibt es an diesem Tag nicht (Zeitumstellung).",
+    "not_participant": "Eine Aufgabe gehört einer der beiden Personen im Gespräch.",
+    "too_many": "Ein Gespräch enthält höchstens 20 Aufgaben.",
+    "cancelled": "Dieses Gespräch wurde abgesagt und kann nicht mehr geändert werden."
+  }
+}

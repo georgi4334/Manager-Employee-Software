@@ -18,6 +18,7 @@ import type { TenantTx } from '../../infrastructure/tenancy/tenant-context.js';
 import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
 import { AuditService } from '../audit/audit.service.js';
 import { GoalsService } from '../goals/goals.service.js';
+import { OneOnOnesService } from '../one-on-ones/one-on-ones.service.js';
 import { TimeService } from '../time/time.service.js';
 import { AssignmentsService } from '../projects/assignments.service.js';
 import { InvitationService } from '../auth/invitation.service.js';
@@ -79,6 +80,7 @@ export class EmployeesService {
     private readonly projects: AssignmentsService,
     private readonly time: TimeService,
     private readonly goals: GoalsService,
+    private readonly oneOnOnes: OneOnOnesService,
     private readonly audit: AuditService,
   ) {}
 
@@ -268,6 +270,7 @@ export class EmployeesService {
       await this.projects.onEmployeeDeactivated(tx, id, terminationDate);
       await this.time.onEmployeeDeactivated(tx, id);
       await this.goals.onEmployeeDeactivated(tx, id);
+      await this.oneOnOnes.onEmployeeDeactivated(tx, id);
       await tx.employee.update({
         where: { id },
         data: { status: 'inactive', terminationDate: dateIn(terminationDate) },

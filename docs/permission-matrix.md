@@ -48,7 +48,7 @@ This table is **generated** from the permission catalog in `packages/contracts/s
 |  | `review.view` | View reviews (employees: own, after release) | own | reports | all | all |
 |  | `review.manage_cycles` | Manage review cycles | — | — | all | all |
 |  | `review.calibrate` | Calibrate ratings | — | — | all | all |
-| **1:1 Meetings** | `one_on_one.manage` | Run 1:1 meetings as a participant (private notes stay between the two) | own | reports | — | — |
+| **1:1 Meetings** | `one_on_one.manage` | Run 1:1 meetings as a participant (private notes stay between the two) | own | reports | reports | reports |
 | **Feedback** | `feedback.give` | Give feedback to any colleague | all | all | all | all |
 |  | `feedback.view_received` | View received feedback (managers and HR: only what was shared with the manager) | own | reports | all | — |
 |  | `feedback.moderate` | Moderate feedback | — | — | all | all |

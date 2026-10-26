@@ -105,6 +105,16 @@
         "settingsTitle": "Цели, поставени на теб",
         "settingsHelp": "Когато някой ти постави цел."
       }
+    },
+    "one_on_one": {
+      "changed": {
+        "title": "Среща 1:1",
+        "textScheduled": "Насрочена е среща 1:1 за {{date}}.",
+        "textRescheduled": "Среща 1:1 беше преместена за {{date}}.",
+        "textCancelled": "Срещата 1:1 от {{date}} беше отменена.",
+        "settingsTitle": "Промени в срещите ти 1:1",
+        "settingsHelp": "Когато другият човек насрочи, премести или отмени среща 1:1."
+      }
     }
   },
   "unknown": {

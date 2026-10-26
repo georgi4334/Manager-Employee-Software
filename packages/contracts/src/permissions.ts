@@ -312,7 +312,7 @@ export const PERMISSIONS = [
     module: 'one_on_one',
     description: 'Run 1:1 meetings as a participant (private notes stay between the two)',
     scopes: PEOPLE,
-    grants: g('own', 'reports', null, null),
+    grants: g('own', 'reports', 'reports', 'reports'),
   }),
 
   // Feedback

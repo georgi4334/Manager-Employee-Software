@@ -14,6 +14,8 @@ import { MyProfilePage } from '@/features/employees/MyProfilePage';
 import { AttendancePage } from '@/features/attendance/AttendancePage';
 import { CalendarPage } from '@/features/calendar/CalendarPage';
 import { GoalDetailPage } from '@/features/goals/GoalDetailPage';
+import { MeetingDetailPage } from '@/features/one-on-ones/MeetingDetailPage';
+import { MeetingsPage } from '@/features/one-on-ones/MeetingsPage';
 import { GoalsPage } from '@/features/goals/GoalsPage';
 import { CapacityPage } from '@/features/capacity/CapacityPage';
 import { ProjectDetailPage } from '@/features/projects/ProjectDetailPage';
@@ -42,6 +44,7 @@ const IMPLEMENTED_PATHS = [
   '/time',
   '/capacity',
   '/goals',
+  '/one-on-ones',
 ];
 
 export const routes: RouteObject[] = [
@@ -105,6 +108,13 @@ export const routes: RouteObject[] = [
             children: [
               { path: 'goals', element: <GoalsPage /> },
               { path: 'goals/:id', element: <GoalDetailPage /> },
+            ],
+          },
+          {
+            element: <RequirePermission permission="one_on_one.manage" />,
+            children: [
+              { path: 'one-on-ones', element: <MeetingsPage /> },
+              { path: 'one-on-ones/:id', element: <MeetingDetailPage /> },
             ],
           },
           {

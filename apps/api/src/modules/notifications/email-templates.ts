@@ -61,6 +61,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\na task was assigned to you in ${v.workspace} on InTime.\n\n` +
         `Open InTime to see it:\n${v.link}`,
     },
+    'one_on_one.changed': {
+      subject: (v) => `A 1:1 meeting in ${v.workspace} changed`,
+      text: (v) =>
+        `Hello,\n\na 1:1 meeting with you in ${v.workspace} on InTime was scheduled, moved or cancelled.\n\n` +
+        `Open InTime to see it:\n${v.link}`,
+    },
     'goal.assigned': {
       subject: (v) => `A goal was set for you in ${v.workspace}`,
       text: (v) =>
@@ -130,6 +136,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hallo,\n\nIhnen wurde in ${v.workspace} auf InTime eine Aufgabe zugewiesen.\n\n` +
         `Öffnen Sie InTime, um sie zu sehen:\n${v.link}`,
     },
+    'one_on_one.changed': {
+      subject: (v) => `Ein 1:1-Gespräch in ${v.workspace} wurde geändert`,
+      text: (v) =>
+        `Hallo,\n\nein 1:1-Gespräch mit Ihnen wurde in ${v.workspace} auf InTime angesetzt, verschoben oder abgesagt.\n\n` +
+        `Öffnen Sie InTime, um es zu sehen:\n${v.link}`,
+    },
     'goal.assigned': {
       subject: (v) => `Für Sie wurde in ${v.workspace} ein Ziel gesetzt`,
       text: (v) =>
@@ -197,6 +209,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       subject: (v) => `Възложена ви е задача в ${v.workspace}`,
       text: (v) =>
         `Здравейте,\n\nвъзложена ви е задача в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да я видите:\n${v.link}`,
+    },
+    'one_on_one.changed': {
+      subject: (v) => `Среща 1:1 в ${v.workspace} беше променена`,
+      text: (v) =>
+        `Здравейте,\n\nсреща 1:1 с вас беше насрочена, преместена или отменена в ${v.workspace} в InTime.\n\n` +
         `Отворете InTime, за да я видите:\n${v.link}`,
     },
     'goal.assigned': {

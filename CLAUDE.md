@@ -174,7 +174,16 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Alignment only goes to a strictly wider scope (personal → team/company, team → company), checked in the service (`parent_not_wider`, `parent_not_found`) and by a DB trigger; the parent must be visible to the caller. A goal that others align to cannot be deleted (`CONFLICT`, `field: children`).
 - Visibility in `GoalsService.visibleWhere`: company = everybody with `goal.view`; team = members and lead (scope `all` sees all); personal = owner and whoever's `goal.view` scope reaches the owner. Invisible = `404`. Manage rights: personal through `authz` on the owner; team only the **lead** or scope `all` (members cannot); company only `goal.manage_company`. Key results and check-ins follow manage rights; a key result is always looked up through its own goal.
 - Setting a goal for someone else notifies them (`goal.assigned`, goal id only). Audit has ids, scope and field names, never titles. Deactivation cancels open personal goals; deleting a team deletes its team goals (aligned goals are released first); the export lists personal goals and check-ins, erasure deletes personal goals and clears check-in comments.
-- Web: `/goals` (scope chips, status filter, search) and `/goals/:id` (key results with inline current value, check-ins, alignment), own `goal.view` guard. 1:1s, Feedback and Skills follow in Phase 3.
+- Web: `/goals` (scope chips, status filter, search) and `/goals/:id` (key results with inline current value, check-ins, alignment), own `goal.view` guard. Feedback and Skills follow in Phase 3.
+
+## 1:1 meetings (docs/adr/0020-one-on-ones.md)
+
+- `one_on_one` and `one_on_one_action_item` (RLS, composite foreign keys). Two participants only, fixed at creation: the employee and their **direct manager at that moment**. Everybody else, HR and Admin included, gets `404`; every lookup goes through the caller's own participation (`OneOnOnesService.find`). `one_on_one.manage` is `own` (Employee) or `reports` (Manager, HR, Admin) and never wider.
+- **Private notes** live in `private_notes_manager` / `private_notes_employee`; a response carries only the caller's own (`privateNotes`). Agenda, shared notes, time, duration and status are shared. A cancelled meeting is locked (`CONFLICT`, `field: status`).
+- An employee schedules with their own manager (`no_manager` if none), a manager with a direct report. Times are `HH:MM` in the workspace time zone (`nonexistent_time`). `one_on_one.changed` (meeting id, date, action only) goes to the other person on schedule, reschedule and cancel; notes and action items notify nobody. **No audit entries**: a 1:1 is a conversation, not an admin action.
+- An action item belongs to one of the two participants (DB trigger plus `not_participant`), at most 20 per meeting under an advisory lock, always looked up through its own meeting.
+- Deactivation and a manager change cancel `scheduled` meetings (`onEmployeeDeactivated`, and inline in `OrganizationService.assign`); held ones stay with the people who held them. Export lists the person's meetings with **their own** private notes; erasure deletes every meeting they took part in.
+- Web: `/one-on-ones` and `/one-on-ones/:id` with their own `one_on_one.manage` guard. Recurring series, calendar events and reminders come later (Phase 5).
 
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
