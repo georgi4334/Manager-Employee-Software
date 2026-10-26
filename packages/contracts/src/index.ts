@@ -1,3 +1,4 @@
+export * from './ai.js';
 export * from './analytics.js';
 export * from './attendance.js';
 export * from './calendar.js';

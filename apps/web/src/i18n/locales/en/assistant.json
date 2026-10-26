@@ -1,0 +1,78 @@
+{
+  "title": "Assistant",
+  "intro": "Ask questions about your leave, tasks and goals. The assistant only sees what you are allowed to see and cannot change anything.",
+  "loading": "Loading…",
+  "tabs": { "label": "Assistant sections", "chat": "Chat", "settings": "Settings" },
+  "notReady": {
+    "disabled": "The assistant is switched off for your workspace. An administrator can switch it on.",
+    "consent": "Before you can ask, please read and accept the notice in the settings.",
+    "key": "The assistant needs an AI provider key. Add your own key in the settings, or ask an administrator to add one for the workspace.",
+    "openSettings": "Open settings"
+  },
+  "chat": {
+    "new": "New conversation",
+    "delete": "Delete this conversation",
+    "log": "Conversation",
+    "empty": "Ask something, for example: How many leave days do I have left?",
+    "from": { "user": "You", "assistant": "Assistant" },
+    "used": "Looked up: {{tools}}",
+    "thinking": "The assistant is thinking…",
+    "message": "Your question",
+    "placeholder": "Ask a question",
+    "send": "Send",
+    "privacy": "Your question and the data needed to answer it are sent to the AI provider you or your workspace chose.",
+    "history": "Earlier conversations"
+  },
+  "tools": {
+    "get_my_leave_balance": "your leave balance",
+    "get_my_open_tasks": "your open tasks",
+    "get_my_goals": "your goals",
+    "who_is_off": "who is off",
+    "find_available_people": "who has time"
+  },
+  "providers": {
+    "groq": "Groq",
+    "openrouter": "OpenRouter",
+    "mistral": "Mistral",
+    "gemini": "Google Gemini"
+  },
+  "consent": {
+    "title": "Notice and consent",
+    "notice": "When you ask a question, the text of your question and the data needed to answer it (for example your leave balance) are sent to an AI provider. Free providers may keep or use this data and may process it outside the EU.",
+    "dataSent": "Nothing is sent before you ask, and no emails, phone numbers or free texts are sent. The assistant can only read; it never changes anything.",
+    "sharePeople": "Let the assistant look up other people (who is off, who has time)",
+    "sharePeopleHint": "Names and dates of colleagues you are allowed to see would then be sent to the provider. Off by default.",
+    "accepted": "You accepted the notice.",
+    "accept": "Accept and save",
+    "update": "Save choice"
+  },
+  "key": {
+    "ownTitle": "Your AI key",
+    "ownIntro": "Use your own key from a provider with a free plan. It is stored encrypted and never shown again.",
+    "workspaceTitle": "Workspace key",
+    "workspaceIntro": "Used by everybody in the workspace who has no key of their own.",
+    "stored": "Stored: {{provider}}, model {{model}}, key ending in {{last4}}.",
+    "none": "No key stored.",
+    "cannotStore": "This server cannot store keys at the moment. Ask the operator to configure it.",
+    "form": { "me": "Your key", "workspace": "Workspace key" },
+    "provider": "Provider",
+    "model": "Model",
+    "modelHint": "The model name from the provider, for example llama-3.3-70b-versatile.",
+    "apiKey": "Key",
+    "apiKeyHint": "Paste the key from the provider. It is not shown again.",
+    "save": "Store key",
+    "replace": "Replace key",
+    "test": "Test key",
+    "testOk": "The key works.",
+    "remove": "Remove key"
+  },
+  "workspace": {
+    "title": "Workspace",
+    "intro": "The assistant is off until you switch it on. Questions are kept so people can continue them, and removed after the retention period.",
+    "enabled": "Switch the assistant on for this workspace",
+    "retention": "Keep conversations for (days)",
+    "retentionHint": "1 to {{max}} days.",
+    "retentionForm": "Retention",
+    "saveRetention": "Save retention"
+  }
+}

@@ -41,6 +41,9 @@ services:
         sync: false
       - key: MAIL_FROM
         sync: false
+      # Optional: lets people store AI provider keys (docs/adr/0025-ai-assistant.md); openssl rand -base64 32.
+      - key: AI_KEY_ENCRYPTION_KEY
+        sync: false
       # Optional Google sign-in (all three or none):
       - key: GOOGLE_CLIENT_ID
         sync: false

@@ -8,5 +8,6 @@ import { CapacityService } from './capacity.service.js';
   imports: [LeaveModule, ProjectsModule],
   controllers: [CapacityController],
   providers: [CapacityService],
+  exports: [CapacityService],
 })
 export class CapacityModule {}

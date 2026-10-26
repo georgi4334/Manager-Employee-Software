@@ -52,6 +52,8 @@ describe.skipIf(!urls)('privacy: export and erasure over HTTP (real database)', 
     'Dentist for Dan',
     'Hospital Alpha',
     'Family trip',
+    'Ask about my back pain',
+    'You should see a doctor',
   ];
 
   async function onboard(
@@ -179,6 +181,49 @@ describe.skipIf(!urls)('privacy: export and erasure over HTTP (real database)', 
       event: 'Dentist for Dan',
       reason: 'Family trip',
     });
+
+    // Dan used the AI assistant (ADR 0025): a consent, a stored key and one conversation
+    await system.aiUserSetting.create({
+      data: {
+        tenantId: acme.tenantId,
+        userId: dan.id,
+        consentAt: new Date(),
+        consentVersion: 1,
+        sharePeopleData: true,
+      },
+    });
+    await system.aiCredential.create({
+      data: {
+        tenantId: acme.tenantId,
+        scope: 'user',
+        userId: dan.id,
+        provider: 'groq',
+        model: 'llama-3.3-70b-versatile',
+        secretEnc: 'iv.tag.cipher',
+        last4: '4321',
+      },
+    });
+    const conversation = await system.aiConversation.create({
+      data: { tenantId: acme.tenantId, userId: dan.id, title: 'Ask about my back pain' },
+    });
+    await system.aiMessage.createMany({
+      data: [
+        {
+          tenantId: acme.tenantId,
+          conversationId: conversation.id,
+          userId: dan.id,
+          role: 'user',
+          content: 'Ask about my back pain',
+        },
+        {
+          tenantId: acme.tenantId,
+          conversationId: conversation.id,
+          userId: dan.id,
+          role: 'assistant',
+          content: 'You should see a doctor',
+        },
+      ],
+    });
   });
   afterAll(async () => {
     await system.tenant.deleteMany();
@@ -220,6 +265,14 @@ describe.skipIf(!urls)('privacy: export and erasure over HTTP (real database)', 
       expect(doc.leave.requests[1]?.type).toBe('sick'); // a person sees their own sick leave type
       expect(doc.leave.balances.length).toBeGreaterThan(0);
       expect(doc.notifications.map((n) => n.type)).toContain('leave.decided');
+      expect(doc.ai.sharePeopleData).toBe(true);
+      expect(doc.ai.consentAt).not.toBeNull();
+      expect(doc.ai.keys).toEqual([
+        { provider: 'groq', model: 'llama-3.3-70b-versatile', last4: '4321' },
+      ]);
+      expect(doc.ai.conversations).toHaveLength(1);
+      expect(doc.ai.conversations[0]?.messages.map((m) => m.role)).toEqual(['user', 'assistant']);
+      expect(res.text).not.toContain('iv.tag.cipher'); // never the stored key
       const recorded = await system.auditLog.count({ where: { actorUserId: dan.id } });
       expect(doc.auditEntries).toHaveLength(recorded); // what Dan caused (e.g. accepting the invitation), nothing more
       expect(res.text).not.toMatch(/passwordHash|tokenHash|argon2|refresh/i);
@@ -435,8 +488,23 @@ describe.skipIf(!urls)('privacy: export and erasure over HTTP (real database)', 
         notifications: await system.notification.findMany({ where: { tenantId: acme.tenantId } }),
         outbox: await system.outboxEvent.findMany({ where: { tenantId: acme.tenantId } }),
         audit: await system.auditLog.findMany({ where: { tenantId: acme.tenantId } }),
+        aiConversations: await system.aiConversation.findMany({
+          where: { tenantId: acme.tenantId },
+        }),
+        aiMessages: await system.aiMessage.findMany({ where: { tenantId: acme.tenantId } }),
+        aiCredentials: await system.aiCredential.findMany({ where: { tenantId: acme.tenantId } }),
+        aiSettings: await system.aiUserSetting.findMany({ where: { tenantId: acme.tenantId } }),
       });
       for (const secret of DAN_SECRETS) expect(everything, secret).not.toContain(secret);
+      expect(
+        await system.aiConversation.count({ where: { tenantId: acme.tenantId, userId: user.id } }),
+      ).toBe(0);
+      expect(
+        await system.aiCredential.count({ where: { tenantId: acme.tenantId, userId: user.id } }),
+      ).toBe(0);
+      expect(
+        await system.aiUserSetting.count({ where: { tenantId: acme.tenantId, userId: user.id } }),
+      ).toBe(0);
       expect(everything).not.toContain('Enjoy, Dan!');
       expect(everything).not.toContain('dan Test');
 

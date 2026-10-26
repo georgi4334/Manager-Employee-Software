@@ -37,7 +37,7 @@ Rotating a password = re-run the script with a new one and update the Render var
 `DATABASE_URL`, `SYSTEM_DATABASE_URL` (above), `JWT_ACCESS_SECRET` (`openssl rand -base64 48`, different from every
 other environment), `WEB_APP_URL` (= `WEB_ORIGIN`), `RESEND_API_KEY`, `MAIL_FROM`. Optional Google sign-in: create an
 OAuth client, redirect URL `<WEB_ORIGIN>/api/v1/auth/google/callback`, set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
-`GOOGLE_REDIRECT_URL`. Optional reminders (forgotten check-outs and timers): `REMINDERS_TOKEN`
+`GOOGLE_REDIRECT_URL`. Optional AI assistant: `AI_KEY_ENCRYPTION_KEY` (32 random bytes, base64: `openssl rand -base64 32`) lets people and admins store provider keys; keep a copy, losing it makes stored keys unreadable (they must be entered again). Optional reminders (forgotten check-outs and timers): `REMINDERS_TOKEN`
 (`openssl rand -base64 48`); without it the hook does not exist. The other variables come from `render.yaml`.
 
 ## 4. GitHub
