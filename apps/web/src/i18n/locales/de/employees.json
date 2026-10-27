@@ -146,5 +146,33 @@
     "hint": "Stunden wie 8, 7:30 oder 7,5 eingeben. Einen Tag leer lassen, wenn frei ist.",
     "save": "Arbeitszeit speichern",
     "cancel": "Abbrechen"
+  },
+  "compensation": {
+    "title": "Vergütung",
+    "note": "Nur für HR und Administratoren sichtbar. Nur Aufzeichnungen: InTime berechnet keine Gehälter.",
+    "loading": "Wird geladen…",
+    "none": "Es wurde noch keine Vergütung erfasst.",
+    "list": "Vergütungseinträge",
+    "amount": "{{amount}} {{basis}}",
+    "from": "ab {{date}}",
+    "inForce": "Gültig",
+    "basis": {
+      "monthly": "pro Monat",
+      "yearly": "pro Jahr",
+      "hourly": "pro Stunde"
+    },
+    "remove": "Eintrag vom {{date}} entfernen",
+    "removeShort": "Entfernen",
+    "own": "Die eigene Vergütung kann nur ein anderes HR- oder Administratorkonto ändern.",
+    "change": "Vergütung hinzufügen oder ändern",
+    "form": "Vergütung",
+    "validFrom": "Gültig ab",
+    "validFromHint": "Frühere Einträge bleiben als Verlauf erhalten.",
+    "basisLabel": "Bezahlt",
+    "amountLabel": "Betrag",
+    "amountHint": "Zum Beispiel 3500 oder 3.500,50 (höchstens zwei Nachkommastellen).",
+    "currency": "Währung",
+    "save": "Vergütung speichern",
+    "cancel": "Abbrechen"
   }
 }

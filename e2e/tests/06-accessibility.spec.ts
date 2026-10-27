@@ -83,6 +83,21 @@ async function ensureMeeting(page: Page): Promise<void> {
   expect(made.status()).toBe(201);
 }
 
+/** An employee to scan, created once (earlier specs erase the others). Returns the id. */
+async function ensureEmployee(page: Page, firstName: string, lastName: string): Promise<string> {
+  const api = '/api/v1';
+  const found = (await (await page.request.get(`${api}/employees?q=${lastName}`)).json()) as {
+    items: { id: string; lastName: string }[];
+  };
+  const existing = found.items.find((e) => e.lastName === lastName);
+  if (existing) return existing.id;
+  const created = await page.request.post(`${api}/employees`, {
+    data: { firstName, lastName, employmentType: 'full_time' },
+  });
+  expect(created.status()).toBe(201);
+  return ((await created.json()) as { id: string }).id;
+}
+
 async function scan(page: Page, label: string): Promise<string[]> {
   const result = await new AxeBuilder({ page }).withTags(TAGS).analyze();
   return result.violations.map(
@@ -155,6 +170,11 @@ for (const variant of variants) {
         .click();
       await page.getByRole('button', { name: 'Change working hours' }).click();
       found.push(...(await scan(page, 'employee detail (working hours form open)')));
+      // somebody else's pay: the card with its editor (nobody edits their own)
+      const pia = await ensureEmployee(page, 'Pia', 'Pay');
+      await settle(page, `/employees/${pia}`);
+      await page.getByRole('button', { name: 'Add or change pay' }).click();
+      found.push(...(await scan(page, 'employee detail (compensation form open)')));
       await settle(page, '/projects');
       await page.getByRole('button', { name: 'New project' }).click();
       found.push(...(await scan(page, '/projects (new project form)')));

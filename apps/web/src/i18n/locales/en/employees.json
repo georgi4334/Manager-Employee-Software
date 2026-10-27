@@ -146,5 +146,33 @@
     "hint": "Type hours like 8, 7:30 or 7,5. Leave a day empty for a day off.",
     "save": "Save working hours",
     "cancel": "Cancel"
+  },
+  "compensation": {
+    "title": "Compensation",
+    "note": "Visible to HR and administrators only. Records only: InTime does not calculate pay.",
+    "loading": "Loading…",
+    "none": "No pay has been recorded yet.",
+    "list": "Pay records",
+    "amount": "{{amount}} {{basis}}",
+    "from": "from {{date}}",
+    "inForce": "In force",
+    "basis": {
+      "monthly": "per month",
+      "yearly": "per year",
+      "hourly": "per hour"
+    },
+    "remove": "Remove the record from {{date}}",
+    "removeShort": "Remove",
+    "own": "Your own pay can only be changed by another HR or administrator account.",
+    "change": "Add or change pay",
+    "form": "Compensation",
+    "validFrom": "Valid from",
+    "validFromHint": "Earlier records stay as history.",
+    "basisLabel": "Paid",
+    "amountLabel": "Amount",
+    "amountHint": "For example 3500 or 3 500,50 (two decimals at most).",
+    "currency": "Currency",
+    "save": "Save pay",
+    "cancel": "Cancel"
   }
 }

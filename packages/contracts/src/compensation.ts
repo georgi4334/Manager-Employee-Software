@@ -35,11 +35,16 @@ export function compensationFor<T extends CompensationRecord>(
 export function parseMoney(text: string): number | null {
   const cleaned = text.trim().replace(/[\s']/g, '');
   if (!/^\d[\d.,]*$/.test(cleaned)) return null;
-  // The last separator is the decimal one when 1 or 2 digits follow it; otherwise separators group thousands.
+  // The last separator is the decimal one when 1 or 2 digits follow it; otherwise separators only group thousands.
   const match = /^(.*?)([.,])(\d{1,2})$/.exec(cleaned);
   const whole = match ? match[1]! : cleaned;
   const decimals = match ? match[3]! : '';
   if (!/^(\d+|\d{1,3}([.,]\d{3})+)$/.test(whole)) return null;
+  const separators: string[] = whole.match(/[.,]/g) ?? [];
+  // The decimal separator must not also be used for grouping ("1.234.5"), and a single separator followed by
+  // exactly three digits ("1.234") is ambiguous between 1234 and 1.234: a wrong guess is a hundredfold error.
+  if (match && separators.includes(match[2]!)) return null;
+  if (!match && separators.length === 1) return null;
   const major = Number(whole.replace(/[.,]/g, ''));
   const minor = major * 100 + Number(decimals.padEnd(2, '0') || '0');
   if (!Number.isSafeInteger(minor) || minor < 1 || minor > MAX_AMOUNT_MINOR) return null;
