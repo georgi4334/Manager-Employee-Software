@@ -33,6 +33,11 @@ export function formatNumber(
   return new Intl.NumberFormat(intlLocale(language), options).format(value);
 }
 
+/** An amount in minor units (cents) as money in the language's own style: 3 500,00 € / €3,500.00. */
+export function formatMoney(minor: number, currency: string, language: string): string {
+  return formatNumber(minor / 100, language, { style: 'currency', currency });
+}
+
 /** "HR, Manager and Employee" / "HR, Manager und Employee": a list in the language's own style. */
 export function formatList(items: readonly string[], language: string): string {
   return new Intl.ListFormat(intlLocale(language), { style: 'long', type: 'conjunction' }).format(

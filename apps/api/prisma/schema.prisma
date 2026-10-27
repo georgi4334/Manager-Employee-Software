@@ -60,6 +60,7 @@ model Tenant {
   aiConversations         AiConversation[]
   aiMessages              AiMessage[]
   workSchedules           WorkSchedule[]
+  compensations           Compensation[]
   calendarEventExceptions CalendarEventException[]
   calendarReminders       CalendarReminder[]
   calendarAttendees       CalendarAttendee[]
@@ -357,6 +358,7 @@ model Employee {
 
   calendarAttendances CalendarAttendee[]
   workSchedules       WorkSchedule[]
+  compensations       Compensation[]
 
   tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user                User?                @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
@@ -1325,6 +1327,29 @@ model WorkSchedule {
   @@unique([tenantId, id])
   @@unique([tenantId, employeeId, validFrom])
   @@map("work_schedule")
+}
+
+// ----- Compensation (docs/adr/0030-compensation.md) ----------------------------------------------------
+
+/// Pay records, effective-dated like work_schedule. Amounts are whole minor units; never logged or audited.
+model Compensation {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  tenantId    String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  employeeId  String   @map("employee_id") @db.Uuid
+  validFrom   DateTime @map("valid_from") @db.Date
+  /// monthly | yearly | hourly
+  basis       String
+  amountMinor BigInt   @map("amount_minor")
+  currency    String   @default("EUR")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee Employee @relation(fields: [tenantId, employeeId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, employeeId, validFrom])
+  @@map("compensation")
 }
 
 // ----- Retention (docs/adr/0027-retention-bulgaria.md) ---------------------------------------------------

@@ -47,6 +47,7 @@ describe.skipIf(!urls)('privacy: export and erasure over HTTP (real database)', 
   })();
   const DAN_SECRETS = [
     'dan@acme.eu',
+    '424242',
     '+359881234567',
     '1990-05-17',
     'Dentist for Dan',
@@ -180,6 +181,17 @@ describe.skipIf(!urls)('privacy: export and erasure over HTTP (real database)', 
       note: 'Hospital Alpha',
       event: 'Dentist for Dan',
       reason: 'Family trip',
+    });
+
+    // Dan's pay (ADR 0030)
+    await system.compensation.create({
+      data: {
+        tenantId: acme.tenantId,
+        employeeId: dan.employeeId,
+        validFrom: new Date('2026-01-05T00:00:00Z'),
+        basis: 'monthly',
+        amountMinor: BigInt(424_242),
+      },
     });
 
     // Dan works part-time (ADR 0026)
@@ -506,6 +518,9 @@ describe.skipIf(!urls)('privacy: export and erasure over HTTP (real database)', 
         }),
         aiMessages: await system.aiMessage.findMany({ where: { tenantId: acme.tenantId } }),
         schedules: await system.workSchedule.findMany({
+          where: { tenantId: acme.tenantId, employeeId: dan.employeeId },
+        }),
+        compensation: await system.compensation.findMany({
           where: { tenantId: acme.tenantId, employeeId: dan.employeeId },
         }),
         aiCredentials: await system.aiCredential.findMany({ where: { tenantId: acme.tenantId } }),

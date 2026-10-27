@@ -64,7 +64,7 @@ erDiagram
 | `employment_history` | _(later: changes are in the audit log for now)_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
 - Reporting tree: `manager_id` + recursive CTE (`WITH RECURSIVE`) to resolve `direct_reports` / `all subordinates`; cycle check on write.
-- Compensation (salary) is **deferred** — separate `compensation` table later, permission `compensation.view` (HR + Admin only).
+- Compensation (salary, hourly rate) is the effective-dated `compensation` table (ADR 0030): basis `monthly/yearly/hourly`, `amount_minor` in minor units, currency, `valid_from`. Permissions `compensation.view` / `compensation.manage` (HR + Admin only); nobody changes their own; payroll is out of scope.
 
 ## 3. Attendance & leave
 

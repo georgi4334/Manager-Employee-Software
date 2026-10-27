@@ -35,7 +35,12 @@ export class PrivacyService {
           select: { id: true, userId: true },
         });
         if (!employee) throw new AppException('NOT_FOUND', { message: 'Employee not found' });
-        const data = await this.collect(tx, employee.id, employee.userId);
+        const data = await this.collect(
+          tx,
+          employee.id,
+          employee.userId,
+          Boolean(actor.permissions['compensation.view']),
+        );
         await this.audit.record(tx, {
           actorUserId: actor.userId,
           action: 'privacy.exported',
@@ -49,7 +54,7 @@ export class PrivacyService {
         where: { userId: actor.userId },
         select: { id: true },
       });
-      return this.collect(tx, own?.id ?? null, actor.userId);
+      return this.collect(tx, own?.id ?? null, actor.userId, true);
     });
   }
 
@@ -67,6 +72,7 @@ export class PrivacyService {
     tx: TenantTx,
     employeeId: string | null,
     userId: string | null,
+    withCompensation: boolean,
   ): Promise<PersonalDataExport> {
     const user = userId
       ? await tx.user.findUnique({
@@ -241,6 +247,11 @@ export class PrivacyService {
     const schedules = employeeId
       ? await tx.workSchedule.findMany({ where: { employeeId }, orderBy: { validFrom: 'asc' } })
       : [];
+    // Pay: the person always gets their own records; an HR export only when the caller may see pay.
+    const pay =
+      employeeId && withCompensation
+        ? await tx.compensation.findMany({ where: { employeeId }, orderBy: { validFrom: 'asc' } })
+        : [];
     const [aiSetting, aiKeys, aiConversations] = userId
       ? await Promise.all([
           tx.aiUserSetting.findFirst({ where: { userId } }),
@@ -355,6 +366,12 @@ export class PrivacyService {
               : null,
           };
         }),
+      compensation: pay.map((c) => ({
+        validFrom: day(c.validFrom)!,
+        basis: c.basis,
+        amountMinor: Number(c.amountMinor),
+        currency: c.currency,
+      })),
       workSchedules: schedules.map((w) => ({ validFrom: day(w.validFrom)!, minutes: w.minutes })),
       ai: {
         consentAt: iso(aiSetting?.consentAt ?? null),

@@ -156,6 +156,15 @@ export const personalDataExportSchema = z.object({
         .nullable(),
     }),
   ),
+  /** Their pay records: basis, amount in minor units and currency from a date on (ADR 0030). */
+  compensation: z.array(
+    z.object({
+      validFrom: date,
+      basis: z.string(),
+      amountMinor: z.number().int(),
+      currency: z.string(),
+    }),
+  ),
   /** Their working hours: weekly minutes per weekday, Monday first, from a date on (ADR 0026). */
   workSchedules: z.array(z.object({ validFrom: date, minutes: z.array(z.number().int()) })),
   /** The AI assistant: consent, the stored key's provider (never the key) and their conversations (ADR 0025). */

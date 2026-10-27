@@ -251,6 +251,14 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - `GET|PUT /privacy/retention`, `PUT /privacy/retention/holds/:employeeId` need `gdpr.manage_retention` (HR, Admin); changes are audited (policy values, hold set/released with ids only). The preview lists who is due now or within 90 days (names HR already sees).
 - Web: `/retention` (own `gdpr.manage_retention` guard; turning on asks for confirmation; hold buttons per person).
 
+## Compensation (docs/adr/0030-compensation.md) — security critical
+
+- `compensation` (RLS, composite foreign key): effective-dated records like working hours (`compensationFor`: latest `valid_from` on or before a date; the same date replaces; at most 50 per person). `basis` monthly/yearly/hourly, `amount_minor` a whole number of minor units (1 to 100 000 000 000, never floating point), `currency` from a fixed list (default EUR). **Records only: nothing computes pay, and no other module reads these numbers** (time reports, capacity and analytics stay in hours).
+- Money text goes through the pure `parseMoney`/`moneyInput` in contracts (and `formatMoney` in `shared/lib/format.ts` for display). `parseMoney` refuses what is ambiguous (`1.234`, `10.505`: a lone separator with three digits) because a wrong guess is a hundredfold error.
+- `GET|PUT /employees/:id/compensation`, `DELETE …/:rowId` need `compensation.view` / `compensation.manage` (HR and Admin, scope `all`, route permission **and** `authz.assert` on the owner); everybody else gets `403` and never sees the card. **Nobody changes their own pay** (`FORBIDDEN`, also Admin and HR); another HR/Admin does. Responses are `Cache-Control: no-store`; the employee profile response carries no pay.
+- Audit (`compensation.set` / `compensation.removed`) has the employee id, `valid_from`, basis and currency, **never the amount**; no notification; amounts are never logged or put in an error. Export: the person always gets their own rows; an HR export (`gdpr.export_employee`) includes them only when the caller also holds `compensation.view`. Erasure deletes the rows; deactivation keeps them.
+- Web: `CompensationCard` on the employee profile, rendered only with `compensation.view` (and not requested otherwise), `gcTime: 0` so pay is not kept in the cache; editing hidden on one's own profile (cosmetic).
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

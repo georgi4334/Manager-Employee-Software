@@ -15,6 +15,7 @@ import { Field } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
 import { AssignmentPanel } from '@/features/organization/AssignmentPanel';
 import { EmployeeSummary } from './EmployeeSummary';
+import { CompensationCard } from './CompensationCard';
 import { WorkingHoursCard } from './WorkingHoursCard';
 import {
   deactivateFormSchema,
@@ -67,6 +68,7 @@ export function EmployeeDetailPage() {
           <EmployeeActions employee={query.data} />
           <EmployeeSummary employee={query.data} />
           <WorkingHoursCard employee={query.data} />
+          <CompensationCard employee={query.data} />
           <EmployeeDataPanel employee={query.data} />
         </>
       )}
