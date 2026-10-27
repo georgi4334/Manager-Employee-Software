@@ -21,6 +21,7 @@ import type meetings from './locales/en/meetings.json';
 import type feedback from './locales/en/feedback.json';
 import type skills from './locales/en/skills.json';
 import type reviews from './locales/en/reviews.json';
+import type roles from './locales/en/roles.json';
 import type notifications from './locales/en/notifications.json';
 
 declare module 'i18next' {
@@ -50,6 +51,7 @@ declare module 'i18next' {
       feedback: typeof feedback;
       skills: typeof skills;
       reviews: typeof reviews;
+      roles: typeof roles;
     };
   }
 }

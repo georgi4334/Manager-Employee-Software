@@ -22,6 +22,9 @@ import { MeetingDetailPage } from '@/features/one-on-ones/MeetingDetailPage';
 import { MeetingsPage } from '@/features/one-on-ones/MeetingsPage';
 import { GoalsPage } from '@/features/goals/GoalsPage';
 import { RetentionPage } from '@/features/retention/RetentionPage';
+import { NewRolePage } from '@/features/roles/NewRolePage';
+import { RoleDetailPage } from '@/features/roles/RoleDetailPage';
+import { RolesPage } from '@/features/roles/RolesPage';
 import { AssistantPage } from '@/features/assistant/AssistantPage';
 import { AnalyticsPage } from '@/features/analytics/AnalyticsPage';
 import { CapacityPage } from '@/features/capacity/CapacityPage';
@@ -58,6 +61,7 @@ const IMPLEMENTED_PATHS = [
   '/analytics',
   '/assistant',
   '/retention',
+  '/roles',
 ];
 
 export const routes: RouteObject[] = [
@@ -148,6 +152,17 @@ export const routes: RouteObject[] = [
           {
             element: <RequirePermission permission="gdpr.manage_retention" />,
             children: [{ path: 'retention', element: <RetentionPage /> }],
+          },
+          {
+            element: <RequirePermission permission="admin.role.view" />,
+            children: [
+              { path: 'roles', element: <RolesPage /> },
+              { path: 'roles/:id', element: <RoleDetailPage /> },
+            ],
+          },
+          {
+            element: <RequirePermission permission="admin.role.manage" />,
+            children: [{ path: 'roles/new', element: <NewRolePage /> }],
           },
           {
             element: <RequirePermission permission="ai.use" />,

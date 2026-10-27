@@ -29,7 +29,7 @@ change**. The server is the only authority; the UI only hides things. Any mistak
   at workspace creation, and for all workspaces by `pnpm --filter @intime/api roles:sync` (run after every
   deploy that changes the catalog). Not synced yet ⇒ permission missing ⇒ **denied** (fail closed).
 - System roles cannot be edited or deleted through the API. Custom roles (`is_system = false`, no `key`)
-  arrive with the role editor UI; they use the same tables and the same resolution path.
+  are created in the role editor ([ADR 0031](0031-role-editor.md)); they use the same tables and the same resolution path.
 
 ### 3. Scopes
 

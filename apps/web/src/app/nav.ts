@@ -12,6 +12,7 @@ import {
   ChartColumn,
   Sparkles,
   Archive,
+  ShieldCheck,
   ListChecks,
   Timer,
   LayoutDashboard,
@@ -140,6 +141,13 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Archive,
     primary: false,
     permission: 'gdpr.manage_retention',
+  },
+  {
+    path: '/roles',
+    labelKey: 'roles',
+    icon: ShieldCheck,
+    primary: false,
+    permission: 'admin.role.view',
   },
   {
     path: '/employees',
