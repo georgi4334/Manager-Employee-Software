@@ -97,6 +97,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\na guest answered an event of yours in ${v.workspace} on InTime.\n\n` +
         `Open InTime to see it:\n${v.link}`,
     },
+    'calendar.reminder': {
+      subject: (v) => `An event in ${v.workspace} starts soon`,
+      text: (v) =>
+        `Hello,\n\nan event in ${v.workspace} on InTime starts soon.\n\n` +
+        `Open InTime to see it:\n${v.link}`,
+    },
     'calendar.changed': {
       subject: (v) => `An event in ${v.workspace} changed`,
       text: (v) =>
@@ -208,6 +214,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hallo,\n\neine eingeladene Person hat auf einen Ihrer Termine in ${v.workspace} auf InTime geantwortet.\n\n` +
         `Öffnen Sie InTime, um es zu sehen:\n${v.link}`,
     },
+    'calendar.reminder': {
+      subject: (v) => `Ein Termin in ${v.workspace} beginnt bald`,
+      text: (v) =>
+        `Hallo,\n\nein Termin in ${v.workspace} auf InTime beginnt bald.\n\n` +
+        `Öffnen Sie InTime, um es zu sehen:\n${v.link}`,
+    },
     'calendar.changed': {
       subject: (v) => `Ein Termin in ${v.workspace} wurde geändert`,
       text: (v) =>
@@ -317,6 +329,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       subject: (v) => `Отговор на ваше събитие в ${v.workspace}`,
       text: (v) =>
         `Здравейте,\n\nпоканен гост отговори на ваше събитие в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да го видите:\n${v.link}`,
+    },
+    'calendar.reminder': {
+      subject: (v) => `Събитие в ${v.workspace} започва скоро`,
+      text: (v) =>
+        `Здравейте,\n\nсъбитие в ${v.workspace} в InTime започва скоро.\n\n` +
         `Отворете InTime, за да го видите:\n${v.link}`,
     },
     'calendar.changed': {

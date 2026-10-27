@@ -35,6 +35,7 @@ describe('event catalog', () => {
         date: '2026-11-02',
         response: 'accepted',
       },
+      'calendar.reminder': { recipientUserId: USER, eventId: USER, date: '2026-11-02' },
       'calendar.changed': {
         recipientUserId: USER,
         eventId: USER,

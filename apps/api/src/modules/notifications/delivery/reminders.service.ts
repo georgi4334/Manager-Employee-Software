@@ -5,6 +5,7 @@ import { TenantContext } from '../../../infrastructure/tenancy/tenant-context.js
 import { TenantDb } from '../../../infrastructure/tenancy/tenant-db.service.js';
 import type { TenantTx } from '../../../infrastructure/tenancy/tenant-context.js';
 import { EVENT_DEFINITIONS } from '../events.js';
+import { remindEvents } from './calendar-reminders.js';
 
 const HOUR_MS = 3_600_000;
 /** Per workspace and run; what is left is picked up by the next run. */
@@ -13,6 +14,7 @@ const BATCH = 500;
 export interface ReminderStats {
   attendance: number;
   timers: number;
+  events: number;
 }
 
 /**
@@ -30,13 +32,14 @@ export class RemindersService {
   ) {}
 
   async run(now = new Date()): Promise<ReminderStats> {
-    const stats: ReminderStats = { attendance: 0, timers: 0 };
+    const stats: ReminderStats = { attendance: 0, timers: 0, events: 0 };
     const tenants = await this.system.tenant.findMany({ select: { id: true } });
     for (const { id } of tenants) {
       try {
-        const done = await this.context.run(id, () => this.forTenant(now));
+        const done = await this.context.run(id, () => this.forTenant(id, now));
         stats.attendance += done.attendance;
         stats.timers += done.timers;
+        stats.events += done.events;
       } catch (error) {
         this.logger.error({ err: error, tenantId: id }, 'Reminders failed for a workspace');
       }
@@ -50,14 +53,14 @@ export class RemindersService {
    */
   private async queue(
     tx: TenantTx,
-    type: 'attendance.reminder' | 'time.timer_reminder',
-    params: { recipientUserId: string; date: string },
+    type: 'attendance.reminder' | 'time.timer_reminder' | 'calendar.reminder',
+    params: { recipientUserId: string; date: string; eventId?: string },
   ): Promise<void> {
     const parsed = EVENT_DEFINITIONS[type].params.parse(params);
     await tx.outboxEvent.createMany({ data: [{ type, params: parsed }] });
   }
 
-  private forTenant(now: Date): Promise<ReminderStats> {
+  private forTenant(tenantId: string, now: Date): Promise<ReminderStats> {
     return this.db.tx(async (tx) => {
       const day = (date: Date) => date.toISOString().slice(0, 10);
       let attendance = 0;
@@ -114,7 +117,10 @@ export class RemindersService {
           });
         }
       }
-      return { attendance, timers };
+      const events = await remindEvents(tx, tenantId, now, (r) =>
+        this.queue(tx, 'calendar.reminder', r),
+      );
+      return { attendance, timers, events };
     });
   }
 }

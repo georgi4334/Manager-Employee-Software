@@ -35,6 +35,8 @@ function useTypeTitle() {
         return t('types.calendar.invited.settingsTitle');
       case 'calendar.response':
         return t('types.calendar.response.settingsTitle');
+      case 'calendar.reminder':
+        return t('types.calendar.reminder.settingsTitle');
       case 'calendar.changed':
         return t('types.calendar.changed.settingsTitle');
       case 'goal.assigned':
@@ -168,6 +170,11 @@ function TypeHeading({ type }: { type: string }) {
         return [
           t('types.calendar.response.settingsTitle'),
           t('types.calendar.response.settingsHelp'),
+        ];
+      case 'calendar.reminder':
+        return [
+          t('types.calendar.reminder.settingsTitle'),
+          t('types.calendar.reminder.settingsHelp'),
         ];
       case 'calendar.changed':
         return [

@@ -130,6 +130,13 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/calendar',
   }),
+  // Event reminder (docs/adr/0029-event-reminders.md): the event and the occurrence date, never the title.
+  'calendar.reminder': typeDef({
+    params: z.object({ eventId: z.uuid(), date: z.string().regex(DATE) }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/calendar',
+  }),
   // Reminders (docs/adr/0017-integrations.md): something started and was never finished. The day only.
   'attendance.reminder': typeDef({
     params: z.object({ date: z.string().regex(DATE) }),

@@ -347,6 +347,7 @@ const SAMPLES: Record<NotificationType, Record<string, unknown>> = {
   'goal.assigned': { goalId: uuid(9) },
   'calendar.invited': { eventId: uuid(9), date: '2026-11-02' },
   'calendar.response': { eventId: uuid(9), date: '2026-11-02', response: 'accepted' },
+  'calendar.reminder': { eventId: uuid(9), date: '2026-11-02' },
   'calendar.changed': { eventId: uuid(9), date: '2026-11-02', action: 'updated' },
   'feedback.received': { feedbackId: uuid(9) },
   'review.cycle_opened': { cycleId: uuid(9) },

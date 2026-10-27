@@ -159,6 +159,12 @@
         "textCancelled": "The event of {{date}} you were invited to was cancelled.",
         "settingsTitle": "Changes to events you are invited to",
         "settingsHelp": "When the organizer changes or cancels an event."
+      },
+      "reminder": {
+        "title": "Event starting soon",
+        "text": "An event starts on {{date}}.",
+        "settingsTitle": "Event reminders",
+        "settingsHelp": "An event of yours or your team starts soon (reminders go out with the hourly check)."
       }
     }
   },

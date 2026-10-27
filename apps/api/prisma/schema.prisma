@@ -61,6 +61,7 @@ model Tenant {
   aiMessages              AiMessage[]
   workSchedules           WorkSchedule[]
   calendarEventExceptions CalendarEventException[]
+  calendarReminders       CalendarReminder[]
   calendarAttendees       CalendarAttendee[]
   retentionPolicy         RetentionPolicy?
   reviewCompetencies      ReviewCompetency[]
@@ -670,6 +671,8 @@ model CalendarEvent {
   recurrenceWeekdays Int[]     @default([]) @map("recurrence_weekdays")
   recurrenceUntil    DateTime? @map("recurrence_until") @db.Date
   recurrenceCount    Int?      @map("recurrence_count")
+  /// Reminder lead in minutes (60 or 1440; personal and team events only; docs/adr/0029-event-reminders.md).
+  reminderMinutes    Int?      @map("reminder_minutes")
   createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
@@ -678,6 +681,7 @@ model CalendarEvent {
   team       Team?                    @relation(fields: [tenantId, teamId], references: [tenantId, id], onDelete: Cascade)
   exceptions CalendarEventException[]
   attendees  CalendarAttendee[]
+  reminders  CalendarReminder[]
 
   @@unique([tenantId, id])
   @@index([tenantId, startDate, endDate])
@@ -1360,6 +1364,22 @@ model CalendarEventException {
   @@unique([tenantId, id])
   @@unique([tenantId, eventId, originalDate])
   @@map("calendar_event_exception")
+}
+
+/// Claims one occurrence's reminder so it is sent once (docs/adr/0029-event-reminders.md); no personal data.
+model CalendarReminder {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  tenantId       String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  eventId        String   @map("event_id") @db.Uuid
+  occurrenceDate DateTime @map("occurrence_date") @db.Date
+  sentAt         DateTime @default(now()) @map("sent_at") @db.Timestamptz(6)
+
+  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  event  CalendarEvent @relation(fields: [tenantId, eventId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@unique([tenantId, eventId, occurrenceDate])
+  @@map("calendar_reminder")
 }
 
 /// A guest of a personal event (the organizer is the event's owner and has no row).

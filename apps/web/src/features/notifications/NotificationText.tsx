@@ -133,6 +133,12 @@ export function useNotificationText() {
               : t('types.calendar.response.textAccepted', { date }),
       };
     }
+    if (type === 'calendar.reminder') {
+      return {
+        title: t('types.calendar.reminder.title'),
+        text: t('types.calendar.reminder.text', { date: formatDay(str(params.date), language) }),
+      };
+    }
     if (type === 'calendar.changed') {
       const date = formatDay(str(params.date), language);
       return {
