@@ -55,6 +55,10 @@ function serve(person: Employee, initial: WorkSchedules): Backend {
   const backend: Backend = { state: initial, calls: [], schedulesRequested: 0 };
   server.use(
     http.get(`${API}/employees/${person.id}`, () => HttpResponse.json(person)),
+    // HR also sees the compensation card (ADR 0030); this file is about working hours
+    http.get(`${API}/employees/${person.id}/compensation`, () =>
+      HttpResponse.json({ employeeId: person.id, items: [], canManage: false }),
+    ),
     http.get(`${API}/employees/${person.id}/schedule`, () => {
       backend.schedulesRequested++;
       return HttpResponse.json(backend.state);

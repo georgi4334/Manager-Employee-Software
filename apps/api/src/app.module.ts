@@ -39,6 +39,7 @@ import { HealthModule } from './modules/health/health.module.js';
 import { NotificationsModule } from './modules/notifications/notifications.module.js';
 import { RolesModule } from './modules/roles/roles.module.js';
 import { TenantsModule } from './modules/tenants/tenants.module.js';
+import { RolesAdminModule } from './modules/roles/roles-admin.module.js';
 import { UsersModule } from './modules/users/users.module.js';
 
 const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
@@ -97,6 +98,7 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     AuthModule,
     TenantsModule,
     UsersModule,
+    RolesAdminModule,
     EmployeesModule,
     OrganizationModule,
     LeaveModule,

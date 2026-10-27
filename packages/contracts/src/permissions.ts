@@ -608,7 +608,7 @@ export const PERMISSIONS = [
   def({
     code: 'admin.role.manage',
     module: 'admin',
-    description: 'Create and edit roles (editor comes later)',
+    description: 'Create, change and delete custom roles',
     scopes: ALL,
     grants: g(null, null, null, 'all'),
   }),
