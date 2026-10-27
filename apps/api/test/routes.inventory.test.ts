@@ -94,8 +94,11 @@ describe('route inventory', () => {
 
   it('account administration requires specific permissions, not just a login', () => {
     const users = routes.filter((r) => r.route.startsWith('UsersController'));
-    expect(users.length).toBe(6);
-    for (const route of users)
+    expect(users.length).toBe(5);
+    // the role editor (ADR 0031): list, one role, create, replace, delete
+    const roles = routes.filter((r) => r.route.startsWith('RolesController'));
+    expect(roles.length).toBe(5);
+    for (const route of [...users, ...roles])
       expect(route.declaration, route.route).toMatch(/^permission:admin\./);
   });
 });
