@@ -24,7 +24,36 @@
  * Motion. Enter/exit pieces carry data-state="open|closed" (see usePresence) and transition;
  * one-shot entrances are keyframes. Everything is switched off for people who ask for less motion.
  */
+@layer base {
+  /* Scrollbars stay out of the way: thin, no track, only a faint thumb. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 9999px;
+  }
+}
+
 @layer components {
+  /* On the dark side panel the thumb is barely lighter than the panel. */
+  .scrollbar-subtle {
+    scrollbar-color: var(--sidebar-border) transparent;
+  }
+  .scrollbar-subtle::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-subtle::-webkit-scrollbar-thumb {
+    background: var(--sidebar-border);
+  }
   /* The selected entry of the dark side panel: a soft raised pill. */
   .nav-active {
     background: linear-gradient(180deg, var(--sidebar-active-from), var(--sidebar-active-to));

@@ -7,8 +7,8 @@ export function Sidebar() {
   const { t } = useTranslation(['common', 'nav']);
   const items = useNavItems();
   return (
-    <aside className="hidden bg-sidebar text-sidebar-foreground md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:overflow-y-auto">
-      <div className="flex items-center gap-3 px-6 py-6">
+    <aside className="hidden bg-sidebar text-sidebar-foreground scrollbar-subtle md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:overflow-y-auto">
+      <div className="flex items-center gap-3 px-6 pb-9 pt-10">
         <span
           aria-hidden="true"
           className="grid size-9 place-items-center rounded-xl bg-brand text-lg font-bold text-sidebar"
@@ -20,7 +20,7 @@ export function Sidebar() {
       <p className="px-6 pb-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">
         {t('nav:menu')}
       </p>
-      <nav aria-label={t('common:mainNavigation')} className="flex flex-col gap-1 px-3 pb-6">
+      <nav aria-label={t('common:mainNavigation')} className="flex flex-col gap-1 px-3 pb-12">
         {items.map(({ path, labelKey, icon: Icon }) => (
           <NavLink
             key={path}
