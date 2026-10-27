@@ -97,7 +97,7 @@ export function ThemeMenu() {
           aria-label={t('themeTitle')}
           data-state={presence.state}
           onKeyDown={onMenuKeyDown}
-          className="motion-pop absolute inset-x-0 top-full z-10 mt-1 rounded-md border border-border bg-surface p-1 shadow-card"
+          className="motion-pop absolute inset-x-0 top-full z-10 mt-1 rounded-xl border border-border bg-surface p-1 shadow-card"
         >
           {OPTIONS.map((option, index) => {
             const Icon = ICONS[option];

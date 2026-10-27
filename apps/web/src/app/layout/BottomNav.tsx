@@ -25,14 +25,14 @@ export function BottomNav() {
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
       'flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium transition-colors duration-300 active:scale-95',
-      isActive ? 'text-primary' : 'text-muted-foreground',
+      isActive ? 'text-brand' : 'text-sidebar-muted',
     );
 
   return (
     <div className="md:hidden">
       <nav
         aria-label={t('common:mobileNavigation')}
-        className="fixed inset-x-0 bottom-0 z-30 flex border-t border-border bg-surface pb-[env(safe-area-inset-bottom)]"
+        className="fixed inset-x-0 bottom-0 z-30 flex rounded-t-3xl border-t border-sidebar-border bg-sidebar pb-[env(safe-area-inset-bottom)]"
       >
         {items
           .filter((item) => item.primary)
@@ -48,7 +48,7 @@ export function BottomNav() {
             aria-expanded={menuOpen}
             aria-controls="more-menu"
             onClick={() => setMenuOpen((open) => !open)}
-            className="flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium text-muted-foreground"
+            className="flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-xs font-medium text-sidebar-muted"
           >
             <span className="relative size-5">
               <Menu
@@ -85,7 +85,7 @@ export function BottomNav() {
             aria-modal="true"
             aria-label={t('common:moreNavigation')}
             data-state={presence.state}
-            className="motion-sheet-up fixed inset-x-0 bottom-14 z-20 rounded-t-2xl border-t border-border bg-surface p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-card"
+            className="motion-sheet-up fixed inset-x-0 bottom-14 z-20 rounded-t-3xl border-t border-border bg-surface p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-card"
           >
             <ul className="motion-stagger grid gap-1">
               {moreItems.map(({ path, labelKey, icon: Icon }, index) => (

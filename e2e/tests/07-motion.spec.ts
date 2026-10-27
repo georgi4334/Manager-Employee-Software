@@ -30,10 +30,14 @@ test('the tab highlight glides to the chosen tab', async ({ page }) => {
   const thumb = list.locator('span[aria-hidden="true"]');
   await thumb.waitFor();
   const before = await transformOf(thumb);
-  await list.getByRole('tab').nth(1).click();
+  const second = list.getByRole('tab').nth(1);
+  await second.click();
   await expect.poll(() => transformOf(thumb), { timeout: 3000 }).not.toBe(before);
-  const after = await transformOf(thumb);
-  await expect.poll(() => transformOf(thumb), { timeout: 3000 }).toBe(after);
+  // it ends exactly under the chosen tab
+  const left = await second.evaluate((element) => (element as HTMLElement).offsetLeft);
+  await expect
+    .poll(() => transformOf(thumb), { timeout: 3000 })
+    .toBe(`matrix(1, 0, 0, 1, ${left}, 0)`);
   await expect(list.getByRole('tab').nth(1)).toHaveAttribute('aria-selected', 'true');
 });
 

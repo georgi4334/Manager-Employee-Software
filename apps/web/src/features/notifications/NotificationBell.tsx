@@ -22,7 +22,7 @@ export function NotificationBell() {
     <Link
       to="/notifications"
       aria-label={t('bell', { count: unread })}
-      className="relative flex size-11 items-center justify-center rounded-md text-foreground transition-colors hover:bg-surface-muted active:bg-surface-muted"
+      className="relative flex size-11 items-center justify-center rounded-xl border border-border bg-surface-muted text-foreground transition-colors hover:bg-secondary active:bg-secondary"
     >
       <Bell
         key={rings}

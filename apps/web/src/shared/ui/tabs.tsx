@@ -39,13 +39,13 @@ export function TabList({ label, tabs, value, onChange, idPrefix }: TabListProps
       ref={list}
       role="tablist"
       aria-label={label}
-      className="relative flex gap-1 overflow-x-auto rounded-lg bg-secondary p-1"
+      className="relative flex gap-1 overflow-x-auto rounded-xl border border-border bg-surface p-1"
     >
       {thumb && (
         <span
           aria-hidden="true"
           // Mounted already in place, so it only moves when the selection changes.
-          className="motion-tab-thumb absolute inset-y-1 left-0 rounded-md bg-surface shadow-card"
+          className="motion-tab-thumb absolute inset-y-1 left-0 rounded-lg bg-primary"
           style={{ width: thumb.width, transform: `translate3d(${thumb.left}px,0,0)` }}
         />
       )}
@@ -59,8 +59,10 @@ export function TabList({ label, tabs, value, onChange, idPrefix }: TabListProps
           aria-controls={idPrefix ? `${idPrefix}-panel` : undefined}
           onClick={() => onChange(name)}
           className={cn(
-            'relative min-h-11 flex-1 whitespace-nowrap rounded-md px-3 text-sm font-medium transition-colors duration-300',
-            value === name ? 'text-foreground' : 'text-muted-foreground',
+            'relative min-h-11 flex-1 whitespace-nowrap rounded-lg px-3 text-sm font-medium transition-colors duration-300',
+            value === name
+              ? 'text-primary-foreground'
+              : 'text-muted-foreground hover:text-foreground',
           )}
         >
           {text}

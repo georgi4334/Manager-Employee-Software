@@ -274,6 +274,11 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Reduced motion is honoured in CSS and in `usePresence`; unit tests run without motion; Playwright specs run with `reducedMotion: 'reduce'` (only `07-motion.spec.ts` turns motion on).
 - The notification toast says how many, never what; it skips the first answer and the inbox page.
 
+## Visual style (docs/adr/0033-visual-style.md)
+
+- Colours and radii live only in `tokens.css`. Dark side panel (`bg-sidebar`, `text-sidebar-*`) with a curved content panel; cards outlined (`rounded-xl border`), secondary buttons outlined, tabs an orange pill. `--primary` carries text (AA); `--brand` is for fills without text.
+- A new colour pair must be checked for 4.5:1 in light and dark before it is used for text.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).

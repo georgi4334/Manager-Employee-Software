@@ -25,6 +25,12 @@
  * one-shot entrances are keyframes. Everything is switched off for people who ask for less motion.
  */
 @layer components {
+  /* The selected entry of the dark side panel: a soft raised pill. */
+  .nav-active {
+    background: linear-gradient(180deg, var(--sidebar-active-from), var(--sidebar-active-to));
+    box-shadow: inset 0 0 0 1px var(--sidebar-border);
+  }
+
   .motion-fade {
     opacity: 0;
     transition: opacity var(--dur-base) var(--ease-standard);

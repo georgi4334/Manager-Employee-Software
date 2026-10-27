@@ -203,7 +203,7 @@ export function PickerInput({
           data-state={presence.state}
           style={{ '--pop-origin': alignRight ? 'top right' : 'top left' } as CSSProperties}
           className={cn(
-            'motion-pop absolute top-full z-40 mt-1 w-[19.5rem] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface p-3 shadow-lg',
+            'motion-pop absolute top-full z-40 mt-1 w-[19.5rem] max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-surface p-3 shadow-lg',
             alignRight ? 'right-0' : 'left-0',
           )}
         >
@@ -360,7 +360,7 @@ function Calendar({ value, onPick, onDone }: PanelProps) {
                   }}
                   className={cn(
                     'mx-auto flex size-11 items-center justify-center rounded-md text-sm hover:bg-surface-muted',
-                    !inMonth && 'text-muted-foreground/60',
+                    !inMonth && 'text-muted-foreground',
                     day === today && !selected && 'border border-primary',
                     selected &&
                       'bg-primary font-semibold text-primary-foreground hover:bg-primary/90',

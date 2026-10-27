@@ -1,4 +1,4 @@
-import { CircleUser, LogOut, UserRound, X } from 'lucide-react';
+import { ChevronDown, LogOut, UserRound, X } from 'lucide-react';
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -57,24 +57,40 @@ export function ProfileDrawer() {
     }
   };
 
+  const name = user.email.split('@')[0] ?? user.email;
+  const role = user.roles[0]?.name;
   const who = [user.workspace.name, user.roles.map((role) => role.name).join(', ')]
     .filter(Boolean)
     .join(' · ');
 
   return (
     <>
-      <Button
+      <button
         ref={trigger}
-        variant="ghost"
-        size="icon"
+        type="button"
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label={t('accountMenu')}
         title={t('accountMenu')}
         onClick={() => setOpen(true)}
+        className="flex min-h-11 items-center gap-3 rounded-xl p-1 transition-colors hover:bg-surface-muted active:scale-[0.97] md:pr-2"
       >
-        <CircleUser className="size-5" aria-hidden="true" />
-      </Button>
+        <span
+          aria-hidden="true"
+          className="grid size-9 place-items-center rounded-full bg-accent text-sm font-semibold text-accent-foreground"
+        >
+          {name.slice(0, 2).toUpperCase()}
+        </span>
+        <span aria-hidden="true" className="hidden text-left md:block">
+          <span className="block max-w-44 truncate text-sm font-semibold leading-tight">
+            {name}
+          </span>
+          {role && (
+            <span className="block max-w-44 truncate text-xs text-muted-foreground">{role}</span>
+          )}
+        </span>
+        <ChevronDown className="hidden size-4 text-muted-foreground md:block" aria-hidden="true" />
+      </button>
       {presence.mounted &&
         // On the page body, not inside the header: the header is its own stacking context and the
         // bottom navigation would otherwise cover the drawer on phones.
@@ -93,7 +109,7 @@ export function ProfileDrawer() {
               aria-labelledby={titleId}
               data-state={presence.state}
               onKeyDown={trapTab}
-              className="motion-sheet-right fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col bg-surface shadow-card"
+              className="motion-sheet-right fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col rounded-l-3xl bg-surface shadow-card"
             >
               <div className="flex items-start justify-between gap-3 border-b border-border p-4">
                 <div className="min-w-0">
