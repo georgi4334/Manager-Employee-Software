@@ -28,5 +28,18 @@
   "accountMenu": "Profil und Einstellungen",
   "close": "Schließen",
   "profile": "Profil",
-  "themeTitle": "Design"
+  "themeTitle": "Design",
+  "chooseDate": "Kalender öffnen",
+  "chooseTime": "Uhr öffnen",
+  "today": "Heute",
+  "clear": "Löschen",
+  "done": "Fertig",
+  "previousMonth": "Voriger Monat",
+  "nextMonth": "Nächster Monat",
+  "previousYear": "Voriges Jahr",
+  "nextYear": "Nächstes Jahr",
+  "hour": "Stunde",
+  "minute": "Minute",
+  "datePlaceholder": "JJJJ-MM-TT",
+  "timePlaceholder": "HH:MM"
 }

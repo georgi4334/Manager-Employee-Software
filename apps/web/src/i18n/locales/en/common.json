@@ -28,5 +28,18 @@
   "accountMenu": "Profile and settings",
   "close": "Close",
   "profile": "Profile",
-  "themeTitle": "Theme"
+  "themeTitle": "Theme",
+  "chooseDate": "Open calendar",
+  "chooseTime": "Open clock",
+  "today": "Today",
+  "clear": "Clear",
+  "done": "Done",
+  "previousMonth": "Previous month",
+  "nextMonth": "Next month",
+  "previousYear": "Previous year",
+  "nextYear": "Next year",
+  "hour": "Hour",
+  "minute": "Minute",
+  "datePlaceholder": "YYYY-MM-DD",
+  "timePlaceholder": "HH:MM"
 }

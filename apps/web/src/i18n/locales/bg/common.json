@@ -28,5 +28,18 @@
   "accountMenu": "Профил и настройки",
   "close": "Затвори",
   "profile": "Профил",
-  "themeTitle": "Тема"
+  "themeTitle": "Тема",
+  "chooseDate": "Отваряне на календар",
+  "chooseTime": "Отваряне на часовник",
+  "today": "Днес",
+  "clear": "Изчисти",
+  "done": "Готово",
+  "previousMonth": "Предишен месец",
+  "nextMonth": "Следващ месец",
+  "previousYear": "Предишна година",
+  "nextYear": "Следваща година",
+  "hour": "Час",
+  "minute": "Минута",
+  "datePlaceholder": "ГГГГ-ММ-ДД",
+  "timePlaceholder": "ЧЧ:ММ"
 }
