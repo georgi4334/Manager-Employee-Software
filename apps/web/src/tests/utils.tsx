@@ -1,5 +1,6 @@
 import type { QueryClient } from '@tanstack/react-query';
-import { render, waitFor, type RenderResult } from '@testing-library/react';
+import { render, screen, waitFor, within, type RenderResult } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { RouterProvider } from 'react-router';
 import { Providers, createQueryClient } from '@/app/providers';
 import { createTestRouter } from '@/app/router';
@@ -23,4 +24,10 @@ export async function renderApp(
   );
   await waitFor(() => expect(client.isFetching()).toBe(0));
   return { ...result, client, router };
+}
+
+/** Opens the profile drawer of the header and returns queries scoped to it. */
+export async function openAccountMenu(user = userEvent.setup()) {
+  await user.click(screen.getByRole('button', { name: 'Profile and settings' }));
+  return within(await screen.findByRole('dialog', { name: /@/ }));
 }

@@ -144,6 +144,14 @@ for (const variant of variants) {
         await settle(page, path);
         found.push(...(await scan(page, path)));
       }
+      // the profile drawer and its theme menu
+      await settle(page, '/');
+      await page.getByRole('button', { name: 'Profile and settings' }).click();
+      found.push(...(await scan(page, '/ (profile drawer)')));
+      await page.getByRole('button', { name: /^Theme / }).click();
+      found.push(...(await scan(page, '/ (profile drawer, theme menu open)')));
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('Escape');
       // forms and panels that only exist after an action
       await settle(page, '/calendar?view=agenda');
       await page.getByRole('button', { name: 'New event' }).click();

@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { initTestI18n } from '@/tests/i18n';
-import { renderApp } from '@/tests/utils';
+import { openAccountMenu, renderApp } from '@/tests/utils';
 import { formatDate, formatNumber } from '@/shared/lib/format';
 import { changeLanguage, i18n } from '.';
 import { LANGUAGE_STORAGE_KEY } from './languages';
@@ -10,7 +10,7 @@ import { LANGUAGE_STORAGE_KEY } from './languages';
 describe('language switcher', () => {
   it('lists the three languages by their native names', async () => {
     await renderApp('/');
-    const select = screen.getByRole('combobox', { name: 'Language' });
+    const select = (await openAccountMenu()).getByRole('combobox', { name: 'Language' });
     const names = within(select)
       .getAllByRole('option')
       .map((option) => option.textContent);
@@ -19,7 +19,8 @@ describe('language switcher', () => {
 
   it('switches the UI to German and updates <html lang>, persisting the choice', async () => {
     await renderApp('/');
-    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Language' }), 'de');
+    const drawer = await openAccountMenu();
+    await userEvent.selectOptions(drawer.getByRole('combobox', { name: 'Language' }), 'de');
     expect(await screen.findByRole('heading', { level: 1, name: 'Übersicht' })).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Sprache' })).toHaveValue('de');
     expect(document.documentElement.lang).toBe('de');
@@ -28,7 +29,8 @@ describe('language switcher', () => {
 
   it('switches the UI to Bulgarian including navigation labels', async () => {
     await renderApp('/');
-    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Language' }), 'bg');
+    const drawer = await openAccountMenu();
+    await userEvent.selectOptions(drawer.getByRole('combobox', { name: 'Language' }), 'bg');
     const sidebar = await screen.findByRole('navigation', { name: 'Основна навигация' });
     expect(within(sidebar).getByRole('link', { name: 'Присъствие' })).toBeInTheDocument();
   });

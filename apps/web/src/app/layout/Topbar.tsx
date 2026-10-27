@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { NotificationBell } from '@/features/notifications/NotificationBell';
-import { LanguageSwitcher } from '@/shared/components/LanguageSwitcher';
-import { ThemeToggle } from '@/shared/components/ThemeToggle';
-import { UserMenu } from './UserMenu';
+import { ProfileDrawer } from './ProfileDrawer';
 
+/** Only the notifications stay in the header; everything personal is in the profile drawer. */
 export function Topbar() {
   const { t } = useTranslation('common');
   return (
@@ -11,9 +10,7 @@ export function Topbar() {
       <span className="text-lg font-bold text-primary md:hidden">{t('appName')}</span>
       <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
         <NotificationBell />
-        <LanguageSwitcher />
-        <ThemeToggle />
-        <UserMenu />
+        <ProfileDrawer />
       </div>
     </header>
   );

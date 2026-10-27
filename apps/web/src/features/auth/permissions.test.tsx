@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { initTestI18n } from '@/tests/i18n';
 import { server, signedInHandlers, userWithPermissions, userWithRole } from '@/tests/server';
-import { renderApp } from '@/tests/utils';
+import { openAccountMenu, renderApp } from '@/tests/utils';
 import { Can } from './Can';
 import { userHasPermission } from './permissions';
 import { Providers } from '@/app/providers';
@@ -221,7 +221,7 @@ describe('who is signed in', () => {
   it('shows the role names next to the workspace', async () => {
     server.use(...signedInHandlers(userWithRole('admin')));
     await renderApp('/');
-    expect(within(screen.getByRole('banner')).getByText('Acme GmbH · Admin')).toBeInTheDocument();
+    expect((await openAccountMenu()).getByText('Acme GmbH · Admin')).toBeInTheDocument();
   });
 
   it.each([

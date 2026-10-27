@@ -24,5 +24,9 @@
   "serverWaking": "Der Server wird gestartet. Nach längerer Inaktivität kann das bis zu einer Minute dauern.",
   "connectionProblemTitle": "Server nicht erreichbar",
   "connectionProblemText": "Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
-  "myProfile": "Mein Profil"
+  "myProfile": "Mein Profil",
+  "accountMenu": "Profil und Einstellungen",
+  "close": "Schließen",
+  "profile": "Profil",
+  "themeTitle": "Design"
 }

@@ -18,7 +18,7 @@ import {
   userWithPermissions,
   userWithRole,
 } from '@/tests/server';
-import { renderApp } from '@/tests/utils';
+import { openAccountMenu, renderApp } from '@/tests/utils';
 import { notificationKeys } from './api';
 import { UNREAD_POLL_MS } from './hooks';
 
@@ -324,7 +324,9 @@ describe('notifications page', () => {
     const { client, router } = await renderApp('/notifications');
     await screen.findByText('Your roles were changed');
     expect(client.getQueryData(notificationKeys.list)).toBeDefined();
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Sign out' }));
+    await userEvent
+      .setup()
+      .click((await openAccountMenu()).getByRole('button', { name: 'Sign out' }));
     await waitFor(() => expect(router.state.location.pathname).toBe('/login'));
     expect(client.getQueryCache().findAll({ queryKey: notificationKeys.all })).toHaveLength(0);
   });
