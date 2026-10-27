@@ -23,7 +23,9 @@
   },
   "month": {
     "count_one": "{{count}} Eintrag",
-    "count_other": "{{count}} Einträge"
+    "count_other": "{{count}} Einträge",
+    "more_one": "+{{count}} weiterer",
+    "more_other": "+{{count}} weitere"
   },
   "agenda": {
     "empty": "In diesem Zeitraum gibt es nichts."

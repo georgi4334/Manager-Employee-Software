@@ -19,6 +19,9 @@ import { ITEM_KINDS, itemFromEvent, type CalendarItem, type ItemKind } from './i
 import { MonthGrid } from './MonthGrid';
 import { useCalendarErrors } from './use-calendar-errors';
 import { TabList } from '@/shared/ui/tabs';
+import { useMediaQuery } from '@/shared/lib/use-media-query';
+import { TimeGrid } from './TimeGrid';
+import { useNowMinutes } from './use-now';
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const isView = (value: string | null): value is CalendarView =>
@@ -46,6 +49,8 @@ export function CalendarPage() {
   // Dates follow the user's own time zone setting when there is one, else the browser's.
   const zone = user?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
   const today = todayIn(zone);
+  const now = useNowMinutes(zone);
+  const wide = useMediaQuery('(min-width: 768px)');
   const requestedView = params.get('view');
   const view: CalendarView = isView(requestedView) ? requestedView : defaultView();
   const requestedDate = params.get('date');
@@ -129,7 +134,7 @@ export function CalendarPage() {
   const selected = anchor;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-4">
+    <div className="mx-auto max-w-6xl space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-semibold">{t('title')}</h1>
         <Button onClick={() => setCreating(true)} disabled={creating}>
@@ -211,6 +216,19 @@ export function CalendarPage() {
             selected={selected}
             today={today}
             items={items}
+            onSelect={(date) => go({ date })}
+            wide={wide}
+          />
+          <DayList days={[selected]} items={items} today={today} />
+        </div>
+      ) : wide && (view === 'week' || view === 'day') ? (
+        <div className="space-y-4">
+          <TimeGrid
+            days={days}
+            items={items}
+            today={today}
+            now={now}
+            selected={selected}
             onSelect={(date) => go({ date })}
           />
           <DayList days={[selected]} items={items} today={today} />
