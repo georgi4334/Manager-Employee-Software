@@ -34,7 +34,7 @@ describe.skipIf(!urls)('roles, permissions and audit log (real database)', () =>
   let systemRoles: SystemRolesService;
   const permissions = new PermissionsService();
   const audit = new AuditService();
-  const userRoles = new UserRolesService();
+  const userRoles = new UserRolesService(context);
   let sync: RoleSyncService;
   let grantRole: RoleGrantService;
   let tenantA: string;

@@ -4,7 +4,6 @@ import {
   inviteUserRequestSchema,
   setUserRolesRequestSchema,
   type InviteUserRequest,
-  type RoleListItem,
   type SetUserRolesRequest,
   type UserSummary,
 } from '@intime/contracts';
@@ -20,13 +19,6 @@ const idParam = new ZodValidationPipe(z.uuid());
 @Controller()
 export class UsersController {
   constructor(private readonly users: UsersService) {}
-
-  @Get('roles')
-  @RequirePermission('admin.role.view')
-  @ApiOperation({ summary: 'Roles of the workspace' })
-  roles(): Promise<RoleListItem[]> {
-    return this.users.listRoles();
-  }
 
   @Get('users')
   @RequirePermission('admin.user.view')

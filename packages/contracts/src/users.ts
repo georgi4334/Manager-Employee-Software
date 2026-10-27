@@ -20,6 +20,9 @@ export const roleListItemSchema = z.object({
   key: z.string().nullable(),
   name: z.string(),
   isSystem: z.boolean(),
+  description: z.string().nullable(),
+  permissionCount: z.number().int(),
+  userCount: z.number().int(),
 });
 export type RoleListItem = z.infer<typeof roleListItemSchema>;
 

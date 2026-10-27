@@ -88,7 +88,7 @@ This table is **generated** from the permission catalog in `packages/contracts/s
 |  | `admin.user.disable` | Disable and re-enable user accounts | — | — | all | all |
 |  | `admin.role.view` | List roles | — | — | all | all |
 |  | `admin.role.assign` | Assign roles to users | — | — | — | all |
-|  | `admin.role.manage` | Create and edit roles (editor comes later) | — | — | — | all |
+|  | `admin.role.manage` | Create, change and delete custom roles | — | — | — | all |
 |  | `admin.tenant.settings` | Workspace settings | — | — | — | all |
 |  | `admin.audit_log.view` | View the audit log (HR sees HR-related events only) | — | — | all | all |
 | **GDPR** | `gdpr.export_own` | Export own data | own | own | own | own |

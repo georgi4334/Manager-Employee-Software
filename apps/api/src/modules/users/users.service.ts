@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { RoleListItem, UserSummary } from '@intime/contracts';
+import type { UserSummary } from '@intime/contracts';
 import type { RequestAuth } from '../../common/auth/auth.types.js';
 import { AuthorizationService } from '../../common/auth/authorization.service.js';
 import { AppException } from '../../common/errors/app-exception.js';
@@ -10,7 +10,7 @@ import { InvitationService } from '../auth/invitation.service.js';
 import { OutboxService } from '../notifications/outbox.service.js';
 import { SessionService } from '../auth/session.service.js';
 import { PermissionsService } from '../roles/permissions.service.js';
-import { UserRolesService } from '../roles/user-roles.service.js';
+import { ADMIN_POWER, UserRolesService } from '../roles/user-roles.service.js';
 
 const USER_SELECT = {
   id: true,
@@ -42,9 +42,6 @@ const toSummary = (user: UserRow): UserSummary => ({
   createdAt: user.createdAt.toISOString(),
 });
 
-/** The permission that makes someone an administrator: whoever holds it can hand out any role. */
-const ADMIN_POWER = 'admin.role.assign';
-
 const notFound = () => new AppException('NOT_FOUND', { message: 'User not found' });
 
 /** Account administration: who exists, what roles they hold, who is disabled (docs/adr/0003). */
@@ -61,16 +58,6 @@ export class UsersService {
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
   ) {}
-
-  listRoles(): Promise<RoleListItem[]> {
-    return this.db.tx(async (tx) => {
-      const roles = await tx.role.findMany({
-        select: { id: true, key: true, name: true, isSystem: true },
-        orderBy: [{ isSystem: 'desc' }, { name: 'asc' }],
-      });
-      return roles;
-    });
-  }
 
   listUsers(): Promise<UserSummary[]> {
     return this.db.tx(async (tx) => {
@@ -233,10 +220,8 @@ export class UsersService {
     return toSummary(await this.findUser(tx, userId));
   }
 
-  /** Serializes everything that can remove an administrator, so two admins cannot remove each other at once. */
-  private async lockAdministrators(tx: TenantTx): Promise<void> {
-    const tenantId = this.context.requireTenantId();
-    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`administrators:${tenantId}`}))`;
+  private lockAdministrators(tx: TenantTx): Promise<void> {
+    return this.userRoles.lockAdministrators(tx);
   }
 
   private async holdsAdminPower(tx: TenantTx, userId: string): Promise<boolean> {
@@ -246,14 +231,7 @@ export class UsersService {
 
   /** Active users, other than the given one, who can still assign roles. */
   private async assertAnotherAdministrator(tx: TenantTx, excludeUserId: string): Promise<void> {
-    const others = await tx.user.count({
-      where: {
-        id: { not: excludeUserId },
-        status: 'active',
-        roles: { some: { role: { permissions: { some: { permissionCode: ADMIN_POWER } } } } },
-      },
-    });
-    if (others === 0) {
+    if ((await this.userRoles.countAdministrators(tx, excludeUserId)) === 0) {
       throw new AppException('LAST_ADMIN', {
         message: 'The workspace must keep at least one active administrator',
       });
