@@ -12,10 +12,12 @@ test('an administrator creates, changes and deletes a custom role', async ({ bro
 
   await ada.getByRole('link', { name: 'New role' }).click();
   const form = ada.getByRole('form', { name: 'New role' });
-  await form.getByLabel('Name').fill('Contractor');
+  await form.getByLabel('Name', { exact: true }).fill('Contractor');
   await form.getByLabel('Description (optional)').fill('Outsourced staff');
+  // modules without permissions start collapsed
+  await form.getByText('Organization', { exact: true }).click();
   await form
-    .getByLabel('See the organization chart, departments and teams')
+    .getByLabel('See the organization chart, departments and teams', { exact: true })
     .selectOption({ label: 'Everyone' });
   await form.getByRole('button', { name: 'Save role' }).click();
   await expect(ada.getByRole('heading', { name: 'Contractor' })).toBeVisible();
@@ -25,10 +27,12 @@ test('an administrator creates, changes and deletes a custom role', async ({ bro
   await expect(list).toContainText('Contractor');
   await ada.getByRole('link', { name: /Contractor/ }).click();
   const edit = ada.getByRole('form', { name: 'Change role' });
-  await edit.getByLabel('Name').fill('External contractor');
-  await edit.getByLabel('See the organization chart, departments and teams').selectOption({
-    label: 'No access',
-  });
+  await edit.getByLabel('Name', { exact: true }).fill('External contractor');
+  await edit
+    .getByLabel('See the organization chart, departments and teams', { exact: true })
+    .selectOption({
+      label: 'No access',
+    });
   await edit.getByRole('button', { name: 'Save role' }).click();
   await expect(ada.getByText(/The role was saved/)).toBeVisible();
   await expect(ada.getByRole('heading', { name: 'External contractor' })).toBeVisible();
