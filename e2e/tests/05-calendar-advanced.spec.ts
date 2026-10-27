@@ -16,11 +16,13 @@ test('a repeating event with a guest: the guest answers, the organizer sees it',
   await form.getByLabel('Repeats').selectOption('weekly');
   await form.getByLabel('Ends').selectOption('count');
   await form.getByLabel('Number of times').fill('3');
+  await form.getByLabel('Reminder').selectOption({ label: '1 hour before' });
   await form.getByLabel('Invite colleagues (type a name)').fill('Eva');
   await form.getByRole('button', { name: 'Invite Eva Employee' }).click();
   await form.getByRole('button', { name: 'Save' }).click();
   const mine = ada.getByText('Weekly sync').first().locator('xpath=ancestor::li');
   await expect(mine).toContainText('Repeats weekly');
+  await expect(mine).toContainText('Reminder: 1 hour before');
   await expect(mine).toContainText('Eva Employee · No answer yet');
 
   const eva = await (await browser.newContext({ viewport: { width: 375, height: 800 } })).newPage();

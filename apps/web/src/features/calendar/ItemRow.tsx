@@ -90,6 +90,11 @@ export function ItemRow({ item, date }: { item: CalendarItem; date: string }) {
               {t(`repeat.summary.${event.recurrence.freq}`, { count: event.recurrence.interval })}
             </p>
           )}
+          {event?.reminderMinutes && (
+            <p className="text-sm text-muted-foreground">
+              {t(`reminder.shown.${event.reminderMinutes === 1440 ? 1440 : 60}`)}
+            </p>
+          )}
           {event?.location && <p className="text-sm">{event.location}</p>}
           {event?.description && (
             <p className="text-sm text-muted-foreground">{event.description}</p>

@@ -39,6 +39,7 @@ const stored = (o: Partial<CalendarEvent> = {}): CalendarEvent => ({
   isOrganizer: true,
   attendees: [],
   myResponse: null,
+  reminderMinutes: null,
   ...o,
 });
 
@@ -218,6 +219,41 @@ describe('event form', () => {
       expect(issues(eventFormSchema.safeParse({ ...base, attendeeIds: many }))).toEqual([
         'attendeeIds:tooMany',
       ]);
+    });
+  });
+
+  describe('reminders', () => {
+    it('maps the choice to what the API accepts, never for company events', () => {
+      const body = toCreateRequest({ ...base, reminder: '1440' });
+      expect(body.reminderMinutes).toBe(1440);
+      expect(createEventRequestSchema.safeParse(body).success).toBe(true);
+      expect(toCreateRequest({ ...base, reminder: '' })).not.toHaveProperty('reminderMinutes');
+      const company = toCreateRequest({ ...base, scope: 'company', reminder: '60' });
+      expect(company).not.toHaveProperty('reminderMinutes');
+    });
+
+    it('refuses anything but none, one hour or one day', () => {
+      for (const reminder of ['', '60', '1440']) {
+        expect(eventFormSchema.safeParse({ ...base, reminder }).success).toBe(true);
+      }
+      for (const reminder of ['15', '0', 'x', '120']) {
+        expect(eventFormSchema.safeParse({ ...base, reminder }).success).toBe(false);
+      }
+    });
+
+    it('sends a change on update, null to remove, and nothing when it is unchanged', () => {
+      const event = stored({ reminderMinutes: 60 });
+      expect(valuesOf(event).reminder).toBe('60');
+      expect(toUpdateRequest(valuesOf(event), event)).not.toHaveProperty('reminderMinutes');
+      const longer = toUpdateRequest({ ...valuesOf(event), reminder: '1440' }, event);
+      expect(longer.reminderMinutes).toBe(1440);
+      const none = toUpdateRequest({ ...valuesOf(event), reminder: '' }, event);
+      expect(none.reminderMinutes).toBeNull();
+      expect(updateEventRequestSchema.safeParse(none).success).toBe(true);
+      const company = stored({ scope: 'company', reminderMinutes: null });
+      expect(toUpdateRequest({ ...valuesOf(company), reminder: '60' }, company)).not.toHaveProperty(
+        'reminderMinutes',
+      );
     });
   });
 });

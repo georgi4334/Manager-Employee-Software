@@ -146,5 +146,18 @@
     "none": "In diesem Zeitraum sind nicht alle frei. Versuche ein anderes Startdatum.",
     "results": "Vorgeschlagene Zeiten",
     "slot": "{{date}}, {{start}}–{{end}}"
+  },
+  "reminder": {
+    "label": "Erinnerung",
+    "none": "Keine Erinnerung",
+    "hint": "Erinnerungen werden mit der stündlichen Prüfung versendet und können daher etwas später eintreffen.",
+    "choice": {
+      "60": "1 Stunde vorher",
+      "1440": "1 Tag vorher"
+    },
+    "shown": {
+      "60": "Erinnerung: 1 Stunde vorher",
+      "1440": "Erinnerung: 1 Tag vorher"
+    }
   }
 }

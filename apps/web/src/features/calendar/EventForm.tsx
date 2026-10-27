@@ -1,5 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { CalendarEvent, CalendarScope, SeriesMode } from '@intime/contracts';
+import {
+  EVENT_REMINDER_CHOICES,
+  type CalendarEvent,
+  type CalendarScope,
+  type SeriesMode,
+} from '@intime/contracts';
 import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -181,6 +186,20 @@ export function EventForm({ event, defaultDate, onDone }: EventFormProps) {
         </div>
       )}
       {mode !== 'this' && <RepeatFields form={form} />}
+      {scope !== 'company' && (
+        <Field label={t('reminder.label')} hint={t('reminder.hint')}>
+          {(field) => (
+            <Select {...field} {...form.register('reminder')}>
+              <option value="">{t('reminder.none')}</option>
+              {EVENT_REMINDER_CHOICES.map((minutes) => (
+                <option key={minutes} value={String(minutes)}>
+                  {t(`reminder.choice.${minutes}`)}
+                </option>
+              ))}
+            </Select>
+          )}
+        </Field>
+      )}
       <div className="sm:col-span-2">
         <Field label={t('form.location')} error={messages.validation(fieldErrors.location)}>
           {(field) => (

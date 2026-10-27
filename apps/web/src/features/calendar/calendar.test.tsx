@@ -55,6 +55,7 @@ const event = (n: number, o: Partial<CalendarEvent> = {}): CalendarEvent => ({
   isOrganizer: true,
   attendees: [],
   myResponse: null,
+  reminderMinutes: null,
   ...o,
 });
 
@@ -846,6 +847,90 @@ describe('repeating events, guests and answers', () => {
     await renderApp(AGENDA);
     await screen.findByText('Mine');
     expect(screen.queryByRole('button', { name: 'Accept' })).not.toBeInTheDocument();
+  });
+
+  describe('reminders', () => {
+    it('sends the chosen reminder with a new event', async () => {
+      serveWithPeople();
+      const bodies: unknown[] = [];
+      server.use(
+        http.post(`${API}/calendar/events`, async ({ request: r }) => {
+          bodies.push(await r.json());
+          return HttpResponse.json(event(1), { status: 201 });
+        }),
+      );
+      await renderApp(AGENDA);
+      const { user, form } = await openNew();
+      await user.type(form.getByLabelText('Title'), 'Sync');
+      await user.type(form.getByLabelText('Start time'), '09:00');
+      await user.type(form.getByLabelText('End time'), '09:30');
+      expect(form.getByLabelText('Reminder')).toHaveValue('');
+      await user.selectOptions(form.getByLabelText('Reminder'), '1 day before');
+      await user.click(form.getByRole('button', { name: 'Save' }));
+      await waitFor(() => expect(bodies).toHaveLength(1));
+      expect(bodies[0]).toMatchObject({ reminderMinutes: 1440 });
+    });
+
+    it('sends no reminder by default, and offers none for company events', async () => {
+      serveWithPeople({ teams: [] });
+      as('hr');
+      const bodies: unknown[] = [];
+      server.use(
+        http.post(`${API}/calendar/events`, async ({ request: r }) => {
+          bodies.push(await r.json());
+          return HttpResponse.json(event(1), { status: 201 });
+        }),
+      );
+      await renderApp(AGENDA);
+      const { user, form } = await openNew();
+      await user.type(form.getByLabelText('Title'), 'Plain');
+      await user.type(form.getByLabelText('Start time'), '09:00');
+      await user.type(form.getByLabelText('End time'), '09:30');
+      await user.click(form.getByRole('button', { name: 'Save' }));
+      await waitFor(() => expect(bodies).toHaveLength(1));
+      expect(bodies[0]).not.toHaveProperty('reminderMinutes');
+      await user.click(await screen.findByRole('button', { name: 'New event' }));
+      const again = within(await screen.findByRole('form', { name: 'New event' }));
+      await user.selectOptions(again.getByLabelText('Calendar'), 'company');
+      expect(again.queryByLabelText('Reminder')).not.toBeInTheDocument();
+    });
+
+    it('shows the reminder on the event, changes it and removes it', async () => {
+      serveWithPeople({ events: [event(1, { title: 'Dentist', ...day, reminderMinutes: 60 })] });
+      const bodies: unknown[] = [];
+      server.use(
+        http.patch(`${API}/calendar/events/${uuid(101)}`, async ({ request: r }) => {
+          bodies.push(await r.json());
+          return HttpResponse.json(event(1));
+        }),
+      );
+      await renderApp(AGENDA);
+      expect(await screen.findByText('Reminder: 1 hour before')).toBeInTheDocument();
+      const user = userEvent.setup();
+      await user.click(screen.getByRole('button', { name: 'Edit' }));
+      const form = within(screen.getByRole('form', { name: 'Change event' }));
+      expect(form.getByLabelText('Reminder')).toHaveValue('60');
+      await user.click(form.getByRole('button', { name: 'Save' }));
+      await waitFor(() => expect(bodies).toHaveLength(1));
+      expect(bodies[0]).not.toHaveProperty('reminderMinutes');
+      await user.click(await screen.findByRole('button', { name: 'Edit' }));
+      const again = within(await screen.findByRole('form', { name: 'Change event' }));
+      await user.selectOptions(again.getByLabelText('Reminder'), 'No reminder');
+      await user.click(again.getByRole('button', { name: 'Save' }));
+      await waitFor(() => expect(bodies).toHaveLength(2));
+      expect(bodies[1]).toMatchObject({ reminderMinutes: null });
+    });
+
+    it('is shown in German and Bulgarian', async () => {
+      serveWithPeople({ events: [event(1, { title: 'X', ...day, reminderMinutes: 1440 })] });
+      await initTestI18n('de');
+      const { unmount } = await renderApp(AGENDA);
+      expect(await screen.findByText('Erinnerung: 1 Tag vorher')).toBeInTheDocument();
+      unmount();
+      await initTestI18n('bg');
+      await renderApp(AGENDA);
+      expect(await screen.findByText('Напомняне: 1 ден преди')).toBeInTheDocument();
+    });
   });
 
   describe('editing and deleting a series', () => {
