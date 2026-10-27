@@ -130,6 +130,12 @@ export class PrivacyService {
           tx.calendarEvent.findMany({
             where: { ownerEmployeeId: employeeId },
             orderBy: { startDate: 'asc' },
+            include: {
+              attendees: {
+                orderBy: { createdAt: 'asc' },
+                include: { employee: { select: { firstName: true, lastName: true } } },
+              },
+            },
           }),
           tx.projectAssignment.findMany({
             where: { employeeId },
@@ -217,6 +223,21 @@ export class PrivacyService {
         ])
       : [[], [], []];
 
+    const invitations = employeeId
+      ? await tx.calendarAttendee.findMany({
+          where: { employeeId },
+          orderBy: { createdAt: 'asc' },
+          include: {
+            event: {
+              select: {
+                title: true,
+                startDate: true,
+                owner: { select: { firstName: true, lastName: true } },
+              },
+            },
+          },
+        })
+      : [];
     const schedules = employeeId
       ? await tx.workSchedule.findMany({ where: { employeeId }, orderBy: { validFrom: 'asc' } })
       : [];
@@ -442,6 +463,17 @@ export class PrivacyService {
         endDate: day(e.endDate)!,
         startsAt: iso(e.startsAt),
         endsAt: iso(e.endsAt),
+        repeats: e.recurrenceFreq,
+        guests: e.attendees.map((a) => ({
+          name: `${a.employee.firstName} ${a.employee.lastName}`,
+          response: a.response,
+        })),
+      })),
+      calendarInvitations: invitations.map((i) => ({
+        title: i.event.title,
+        organizer: `${i.event.owner.firstName} ${i.event.owner.lastName}`,
+        startDate: day(i.event.startDate)!,
+        response: i.response,
       })),
       notifications: notifications.map((n) => ({
         type: n.type,

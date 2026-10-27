@@ -67,7 +67,7 @@ Performance reviews (cycles, self/manager review, ratings, calibration) (ADR 002
 
 ## Phase 5 — Advanced (~20+ days)
 
-AI assistant (BYOK, tool-calling, read-only) (ADR 0025) — **done**; calendar advanced (recurrence, sharing, invitations/RSVP, find-a-time), per-person working hours + overtime (ADR 0026) — **done**; automatic GDPR retention for Bulgaria (ADR 0027) — **done**; role editor UI, compensation / hourly rates (HR + Admin), polish.
+AI assistant (BYOK, tool-calling, read-only) (ADR 0025) — **done**; calendar advanced (recurrence, invitations/RSVP, find-a-time; ADR 0028) — **done**, event reminders next; per-person working hours + overtime (ADR 0026) — **done**; automatic GDPR retention for Bulgaria (ADR 0027) — **done**; role editor UI, compensation / hourly rates (HR + Admin), polish.
 
 ## Free-tier stack (EU) — to verify at setup time
 

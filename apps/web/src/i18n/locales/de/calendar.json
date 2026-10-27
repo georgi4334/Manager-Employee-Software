@@ -69,5 +69,82 @@
   },
   "rule": {
     "nonexistent_time": "Diese Uhrzeit gibt es an dem Tag nicht (Zeitumstellung)."
+  },
+  "repeat": {
+    "label": "Wiederholung",
+    "none": "Keine Wiederholung",
+    "freq": {
+      "daily": "Jeden Tag",
+      "weekly": "Jede Woche",
+      "monthly": "Jeden Monat",
+      "yearly": "Jedes Jahr"
+    },
+    "interval": "Abstand in {{unit}}",
+    "unit": {
+      "daily": "Tagen",
+      "weekly": "Wochen",
+      "monthly": "Monaten",
+      "yearly": "Jahren"
+    },
+    "weekdays": "An diesen Tagen",
+    "weekdaysHint": "Ohne Auswahl gilt der Wochentag des Starttags.",
+    "ends": "Endet",
+    "endsNever": "Nie",
+    "endsUntil": "An einem Datum",
+    "endsCount": "Nach einer Anzahl",
+    "until": "Letzter Tag",
+    "count": "Anzahl der Termine",
+    "summary": {
+      "daily_one": "Wiederholt sich täglich",
+      "daily_other": "Wiederholt sich alle {{count}} Tage",
+      "weekly_one": "Wiederholt sich wöchentlich",
+      "weekly_other": "Wiederholt sich alle {{count}} Wochen",
+      "monthly_one": "Wiederholt sich monatlich",
+      "monthly_other": "Wiederholt sich alle {{count}} Monate",
+      "yearly_one": "Wiederholt sich jährlich",
+      "yearly_other": "Wiederholt sich alle {{count}} Jahre"
+    }
+  },
+  "guests": {
+    "label": "Gäste",
+    "search": "Kolleginnen und Kollegen einladen (Namen eingeben)",
+    "results": "Passende Personen",
+    "add": "{{name}} einladen",
+    "remove": "{{name}} entfernen",
+    "none": "Noch keine Gäste.",
+    "noMatch": "Niemand gefunden.",
+    "limit": "Höchstens {{count}} Gäste.",
+    "organizer": "Organisation: {{name}}",
+    "response": {
+      "needs_action": "Noch keine Antwort",
+      "accepted": "Zugesagt",
+      "declined": "Abgesagt",
+      "tentative": "Vielleicht"
+    }
+  },
+  "rsvp": {
+    "label": "Deine Antwort",
+    "current": "Deine Antwort: {{answer}}",
+    "accepted": "Zusagen",
+    "tentative": "Vielleicht",
+    "declined": "Absagen"
+  },
+  "series": {
+    "legend": "Gilt für",
+    "this": "Nur diesen Termin",
+    "following": "Diesen und alle folgenden Termine",
+    "all": "Alle Termine"
+  },
+  "findTime": {
+    "open": "Zeit finden",
+    "title": "Zeit finden",
+    "hint": "Sucht in den nächsten {{count}} Tagen zwischen 09:00 und 18:00 Uhr nach Zeiten, zu denen du und deine Gäste frei seid.",
+    "duration": "Dauer",
+    "minutes": "{{count}} Min.",
+    "search": "Suchen",
+    "searching": "Suche läuft…",
+    "none": "In diesem Zeitraum sind nicht alle frei. Versuche ein anderes Startdatum.",
+    "results": "Vorgeschlagene Zeiten",
+    "slot": "{{date}}, {{start}}–{{end}}"
   }
 }

@@ -83,6 +83,44 @@ export const GOAL_EVENTS = {
   }),
 } as const;
 
+export const CALENDAR_EVENTS = {
+  /** You were invited to an event: the event id and the date only (never the title). */
+  'calendar.invited': eventDef({
+    params: z.object({
+      recipientUserId: z.uuid(),
+      eventId: z.uuid(),
+      date: z.string().regex(DATE),
+    }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'calendar.invited' as const, params },
+    ],
+  }),
+  /** A guest answered: the event, the date and the answer, not who. */
+  'calendar.response': eventDef({
+    params: z.object({
+      recipientUserId: z.uuid(),
+      eventId: z.uuid(),
+      date: z.string().regex(DATE),
+      response: z.enum(['accepted', 'declined', 'tentative']),
+    }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'calendar.response' as const, params },
+    ],
+  }),
+  /** The organizer moved or cancelled an event you were invited to. */
+  'calendar.changed': eventDef({
+    params: z.object({
+      recipientUserId: z.uuid(),
+      eventId: z.uuid(),
+      date: z.string().regex(DATE),
+      action: z.enum(['updated', 'cancelled']),
+    }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'calendar.changed' as const, params },
+    ],
+  }),
+} as const;
+
 export const ONE_ON_ONE_EVENTS = {
   /** The other person scheduled, moved or cancelled a 1:1: the meeting id, the date and the kind only. */
   'one_on_one.changed': eventDef({
@@ -210,6 +248,7 @@ export const EVENT_DEFINITIONS = {
   ...TIME_EVENTS,
   ...REMINDER_EVENTS,
   ...GOAL_EVENTS,
+  ...CALENDAR_EVENTS,
   ...ONE_ON_ONE_EVENTS,
   ...FEEDBACK_EVENTS,
   ...REVIEW_EVENTS,

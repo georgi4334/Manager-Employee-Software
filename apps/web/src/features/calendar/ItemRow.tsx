@@ -1,3 +1,4 @@
+import type { AttendeeResponse, SeriesMode } from '@intime/contracts';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from '@/shared/ui/alert';
@@ -5,8 +6,9 @@ import { Button } from '@/shared/ui/button';
 import { cn } from '@/shared/lib/cn';
 import { formatDay } from '@/shared/lib/format';
 import { EventForm } from './EventForm';
-import { useDeleteEvent } from './hooks';
+import { useDeleteEvent, useRespond } from './hooks';
 import type { CalendarItem, ItemKind } from './items';
+import { SeriesScope } from './SeriesScope';
 import { useCalendarErrors } from './use-calendar-errors';
 
 export const KIND_DOT: Record<ItemKind, string> = {
@@ -25,7 +27,14 @@ export function ItemRow({ item, date }: { item: CalendarItem; date: string }) {
   const remove = useDeleteEvent();
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [mode, setMode] = useState<SeriesMode>('all');
   const event = item.event;
+  const respond = useRespond(event?.id ?? '');
+  const answers: Exclude<AttendeeResponse, 'needs_action'>[] = [
+    'accepted',
+    'tentative',
+    'declined',
+  ];
 
   if (editing && event) {
     return (
@@ -76,12 +85,55 @@ export function ItemRow({ item, date }: { item: CalendarItem; date: string }) {
             {span && ` · ${span}`}
           </p>
           {event?.team && <p className="text-sm text-muted-foreground">{event.team.name}</p>}
+          {event?.recurrence && (
+            <p className="text-sm text-muted-foreground">
+              {t(`repeat.summary.${event.recurrence.freq}`, { count: event.recurrence.interval })}
+            </p>
+          )}
           {event?.location && <p className="text-sm">{event.location}</p>}
           {event?.description && (
             <p className="text-sm text-muted-foreground">{event.description}</p>
           )}
         </div>
       </div>
+      {event && !event.isOrganizer && event.scope === 'personal' && (
+        <p className="text-sm text-muted-foreground">
+          {t('guests.organizer', { name: `${event.owner.firstName} ${event.owner.lastName}` })}
+        </p>
+      )}
+      {event && event.attendees.length > 0 && (
+        <div className="space-y-1">
+          <p className="text-sm font-medium">{t('guests.label')}</p>
+          <ul className="space-y-0.5 text-sm text-muted-foreground">
+            {event.attendees.map((a) => (
+              <li key={a.employee.id}>
+                {a.employee.firstName} {a.employee.lastName} · {t(`guests.response.${a.response}`)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {event?.myResponse && (
+        <div className="space-y-1" role="group" aria-label={t('rsvp.label')}>
+          <p className="text-sm">
+            {t('rsvp.current', { answer: t(`guests.response.${event.myResponse}`) })}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {answers.map((answer) => (
+              <Button
+                key={answer}
+                variant={event.myResponse === answer ? 'primary' : 'secondary'}
+                aria-pressed={event.myResponse === answer}
+                disabled={respond.isPending}
+                onClick={() => respond.mutate(answer)}
+              >
+                {t(`rsvp.${answer}`)}
+              </Button>
+            ))}
+          </div>
+          {respond.isError && <Alert tone="danger">{errors.apiError(respond.error)}</Alert>}
+        </div>
+      )}
       {remove.isError && <Alert tone="danger">{errors.apiError(remove.error)}</Alert>}
       {event?.canEdit && !confirming && (
         <div className="flex flex-wrap gap-2">
@@ -96,11 +148,20 @@ export function ItemRow({ item, date }: { item: CalendarItem; date: string }) {
       {event && confirming && (
         <div className="space-y-2" role="group" aria-label={t('event.confirmDelete')}>
           <p className="text-sm">{t('event.confirmDelete')}</p>
+          {event.recurrence && <SeriesScope value={mode} onChange={setMode} />}
           <div className="flex flex-wrap gap-2">
             <Button
               variant="danger"
               disabled={remove.isPending}
-              onClick={() => remove.mutate(event.id, { onSuccess: () => setConfirming(false) })}
+              onClick={() =>
+                remove.mutate(
+                  {
+                    id: event.id,
+                    scope: mode === 'all' ? undefined : { mode, occurrence: event.occurrenceDate },
+                  },
+                  { onSuccess: () => setConfirming(false) },
+                )
+              }
             >
               {t('event.deleteConfirm')}
             </Button>

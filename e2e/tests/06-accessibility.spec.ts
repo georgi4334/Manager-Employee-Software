@@ -131,6 +131,14 @@ for (const variant of variants) {
       await settle(page, '/calendar?view=agenda');
       await page.getByRole('button', { name: 'New event' }).click();
       found.push(...(await scan(page, '/calendar (new event form)')));
+      // the repeat and find-a-time parts of the same form
+      const eventForm = page.getByRole('form', { name: 'New event' });
+      await eventForm.getByLabel('Repeats').selectOption('weekly');
+      await eventForm.getByLabel('Ends').selectOption('count');
+      await eventForm.getByRole('button', { name: 'Find a time' }).click();
+      await eventForm.getByRole('button', { name: 'Search' }).click();
+      await eventForm.getByRole('list', { name: 'Suggested times' }).waitFor();
+      found.push(...(await scan(page, '/calendar (repeat, find a time)')));
       await settle(page, '/attendance');
       await page.getByRole('button', { name: 'Add a period' }).click();
       found.push(...(await scan(page, '/attendance (period form)')));

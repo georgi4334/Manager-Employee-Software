@@ -69,5 +69,82 @@
   },
   "rule": {
     "nonexistent_time": "That time does not exist on that day (clocks change)."
+  },
+  "repeat": {
+    "label": "Repeats",
+    "none": "Does not repeat",
+    "freq": {
+      "daily": "Every day",
+      "weekly": "Every week",
+      "monthly": "Every month",
+      "yearly": "Every year"
+    },
+    "interval": "Interval in {{unit}}",
+    "unit": {
+      "daily": "days",
+      "weekly": "weeks",
+      "monthly": "months",
+      "yearly": "years"
+    },
+    "weekdays": "On these days",
+    "weekdaysHint": "Leave all unselected to use the weekday of the start date.",
+    "ends": "Ends",
+    "endsNever": "Never",
+    "endsUntil": "On a date",
+    "endsCount": "After a number of times",
+    "until": "Last day",
+    "count": "Number of times",
+    "summary": {
+      "daily_one": "Repeats daily",
+      "daily_other": "Repeats every {{count}} days",
+      "weekly_one": "Repeats weekly",
+      "weekly_other": "Repeats every {{count}} weeks",
+      "monthly_one": "Repeats monthly",
+      "monthly_other": "Repeats every {{count}} months",
+      "yearly_one": "Repeats yearly",
+      "yearly_other": "Repeats every {{count}} years"
+    }
+  },
+  "guests": {
+    "label": "Guests",
+    "search": "Invite colleagues (type a name)",
+    "results": "Matching colleagues",
+    "add": "Invite {{name}}",
+    "remove": "Remove {{name}}",
+    "none": "No guests yet.",
+    "noMatch": "Nobody found.",
+    "limit": "At most {{count}} guests.",
+    "organizer": "Organizer: {{name}}",
+    "response": {
+      "needs_action": "No answer yet",
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "tentative": "Maybe"
+    }
+  },
+  "rsvp": {
+    "label": "Your answer",
+    "current": "Your answer: {{answer}}",
+    "accepted": "Accept",
+    "tentative": "Maybe",
+    "declined": "Decline"
+  },
+  "series": {
+    "legend": "Apply to",
+    "this": "This event only",
+    "following": "This and the following events",
+    "all": "All events"
+  },
+  "findTime": {
+    "open": "Find a time",
+    "title": "Find a time",
+    "hint": "Looks for the next {{count}} days, between 09:00 and 18:00, when you and your guests are free.",
+    "duration": "Length",
+    "minutes": "{{count}} min",
+    "search": "Search",
+    "searching": "Searching…",
+    "none": "Nobody is free in this period. Try another start date.",
+    "results": "Suggested times",
+    "slot": "{{date}}, {{start}}–{{end}}"
   }
 }

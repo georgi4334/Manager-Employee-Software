@@ -47,6 +47,7 @@ describe('export document', () => {
     reviews: [],
     attendance: [],
     calendarEvents: [],
+    calendarInvitations: [],
     notifications: [],
     notificationPreferences: [],
     auditEntries: [],

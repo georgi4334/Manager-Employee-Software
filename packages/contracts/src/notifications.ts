@@ -103,6 +103,33 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/goals',
   }),
+  // Calendar (docs/adr/0028-calendar-advanced.md): a guest list changed or somebody answered. Ids and the date only.
+  'calendar.invited': typeDef({
+    params: z.object({ eventId: z.uuid(), date: z.string().regex(DATE) }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/calendar',
+  }),
+  'calendar.response': typeDef({
+    params: z.object({
+      eventId: z.uuid(),
+      date: z.string().regex(DATE),
+      response: z.enum(['accepted', 'declined', 'tentative']),
+    }),
+    defaults: { in_app: true, email: false },
+    locked: {},
+    link: '/calendar',
+  }),
+  'calendar.changed': typeDef({
+    params: z.object({
+      eventId: z.uuid(),
+      date: z.string().regex(DATE),
+      action: z.enum(['updated', 'cancelled']),
+    }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/calendar',
+  }),
   // Reminders (docs/adr/0017-integrations.md): something started and was never finished. The day only.
   'attendance.reminder': typeDef({
     params: z.object({ date: z.string().regex(DATE) }),

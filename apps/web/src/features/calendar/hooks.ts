@@ -1,7 +1,15 @@
-import type { LeaveRequest } from '@intime/contracts';
+import type { AttendeeResponse, LeaveRequest, SeriesScopeQuery } from '@intime/contracts';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchRequests } from '@/features/leave/api';
-import { calendarKeys, createEvent, deleteEvent, fetchEvents, updateEvent } from './api';
+import {
+  calendarKeys,
+  createEvent,
+  deleteEvent,
+  fetchEvents,
+  findTime,
+  respondToEvent,
+  updateEvent,
+} from './api';
 
 const LEAVE_PAGE_SIZE = 100;
 const LEAVE_MAX_PAGES = 5;
@@ -46,12 +54,32 @@ export function useCreateEvent() {
 export function useUpdateEvent(id: string) {
   const refresh = useRefresh();
   return useMutation({
-    mutationFn: (body: Parameters<typeof updateEvent>[1]) => updateEvent(id, body),
+    mutationFn: ({
+      body,
+      scope,
+    }: {
+      body: Parameters<typeof updateEvent>[1];
+      scope?: SeriesScopeQuery;
+    }) => updateEvent(id, body, scope),
     onSuccess: refresh,
   });
 }
 
 export function useDeleteEvent() {
   const refresh = useRefresh();
-  return useMutation({ mutationFn: deleteEvent, onSuccess: refresh });
+  return useMutation({
+    mutationFn: ({ id, scope }: { id: string; scope?: SeriesScopeQuery }) => deleteEvent(id, scope),
+    onSuccess: refresh,
+  });
 }
+
+export function useRespond(id: string) {
+  const refresh = useRefresh();
+  return useMutation({
+    mutationFn: (response: Exclude<AttendeeResponse, 'needs_action'>) =>
+      respondToEvent(id, response),
+    onSuccess: refresh,
+  });
+}
+
+export const useFindTime = () => useMutation({ mutationFn: findTime });

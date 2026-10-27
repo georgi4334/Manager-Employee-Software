@@ -21,7 +21,7 @@ export interface CalendarItem {
 }
 
 export const itemFromEvent = (event: CalendarEvent): CalendarItem => ({
-  key: `event:${event.id}`,
+  key: `event:${event.id}:${event.occurrenceDate}`,
   kind: event.scope,
   title: event.title,
   startDate: event.startDate,

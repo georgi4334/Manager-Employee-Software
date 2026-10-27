@@ -252,6 +252,19 @@ export const personalDataExportSchema = z.object({
       endDate: date,
       startsAt: dateTime.nullable(),
       endsAt: dateTime.nullable(),
+      /** "weekly", "daily" … or null for a one-off event (ADR 0028). */
+      repeats: z.string().nullable(),
+      /** The guests of the event and their answers. */
+      guests: z.array(z.object({ name: z.string(), response: z.string() })),
+    }),
+  ),
+  /** Events of other people they were invited to, with their own answer (ADR 0028). */
+  calendarInvitations: z.array(
+    z.object({
+      title: z.string(),
+      organizer: z.string(),
+      startDate: date,
+      response: z.string(),
     }),
   ),
   notifications: z.array(

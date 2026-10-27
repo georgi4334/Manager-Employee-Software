@@ -4,6 +4,7 @@ import {
   createEventRequestSchema,
   eventQuerySchema,
   eventShapeIssues,
+  respondRequestSchema,
   updateEventRequestSchema,
 } from './calendar.js';
 
@@ -111,5 +112,87 @@ describe('listing events', () => {
       false,
     );
     expect(eventQuerySchema.safeParse({ from: '2026-11-01' }).success).toBe(false);
+  });
+});
+
+describe('recurrence and guests on events (ADR 0028)', () => {
+  const base = {
+    scope: 'personal',
+    title: 'Standup',
+    allDay: false,
+    startDate: '2026-10-27',
+    endDate: '2026-10-27',
+    startTime: '09:00',
+    endTime: '09:15',
+  };
+
+  it('accepts a repeating personal event with guests', () => {
+    const parsed = createEventRequestSchema.safeParse({
+      ...base,
+      recurrence: { freq: 'weekly', weekdays: [1, 3], count: 10 },
+      attendeeIds: [ID],
+    });
+    expect(parsed.success).toBe(true);
+  });
+
+  it('refuses guests on team and company events', () => {
+    for (const scope of ['team', 'company'] as const) {
+      const r = createEventRequestSchema.safeParse({
+        ...base,
+        scope,
+        ...(scope === 'team' ? { teamId: ID } : {}),
+        attendeeIds: [ID],
+      });
+      expect(r.success, scope).toBe(false);
+    }
+  });
+
+  it('accepts an empty guest list on any scope', () => {
+    expect(
+      createEventRequestSchema.safeParse({ ...base, scope: 'company', attendeeIds: [] }).success,
+    ).toBe(true);
+  });
+
+  it('refuses duplicate guests, too many guests and a repeat that ends before the start', () => {
+    expect(createEventRequestSchema.safeParse({ ...base, attendeeIds: [ID, ID] }).success).toBe(
+      false,
+    );
+    const many = Array.from(
+      { length: 51 },
+      (_, i) => `0192f5a0-0000-7000-8000-${String(i).padStart(12, '0')}`,
+    );
+    expect(createEventRequestSchema.safeParse({ ...base, attendeeIds: many }).success).toBe(false);
+    expect(
+      createEventRequestSchema.safeParse({
+        ...base,
+        recurrence: { freq: 'daily', until: '2026-10-26' },
+      }).success,
+    ).toBe(false);
+    expect(
+      createEventRequestSchema.safeParse({
+        ...base,
+        recurrence: { freq: 'daily', until: '2026-10-27' },
+      }).success,
+    ).toBe(true);
+  });
+
+  it('lets an update remove the repeat with null and replace the guest list', () => {
+    expect(updateEventRequestSchema.safeParse({ recurrence: null }).success).toBe(true);
+    expect(updateEventRequestSchema.safeParse({ attendeeIds: [] }).success).toBe(true);
+    expect(updateEventRequestSchema.safeParse({ attendeeIds: [ID, ID] }).success).toBe(false);
+    expect(
+      updateEventRequestSchema.safeParse({ recurrence: { freq: 'monthly', interval: 2 } }).success,
+    ).toBe(true);
+  });
+
+  it('accepts only three answers', () => {
+    for (const response of ['accepted', 'declined', 'tentative']) {
+      expect(respondRequestSchema.safeParse({ response }).success).toBe(true);
+    }
+    for (const response of ['needs_action', 'yes', '']) {
+      expect(respondRequestSchema.safeParse({ response }).success).toBe(false);
+    }
+    expect(respondRequestSchema.safeParse({}).success).toBe(false);
+    expect(respondRequestSchema.safeParse({ response: 'accepted', extra: 1 }).success).toBe(false);
   });
 });

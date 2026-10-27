@@ -3,6 +3,8 @@ export * from './analytics.js';
 export * from './attendance.js';
 export * from './calendar.js';
 export * from './capacity.js';
+export * from './find-time.js';
+export * from './recurrence.js';
 export * from './auth.js';
 export * from './dates.js';
 export * from './employees.js';
