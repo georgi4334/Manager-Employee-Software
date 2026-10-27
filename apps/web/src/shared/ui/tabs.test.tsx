@@ -31,6 +31,19 @@ describe('TabList', () => {
   });
 });
 
+describe('TabList as a toggle', () => {
+  it('is a group of pressed buttons, not tabs', async () => {
+    const onChange = vi.fn();
+    render(<TabList mode="toggle" label="Views" tabs={tabs} value="a" onChange={onChange} />);
+    expect(screen.getByRole('group', { name: 'Views' })).toBeInTheDocument();
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Alpha', pressed: true })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Beta', pressed: false })).toBeInTheDocument();
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Beta' }));
+    expect(onChange).toHaveBeenCalledWith('b');
+  });
+});
+
 describe('TabPanel', () => {
   it('is labelled by the selected tab and replaces its content when the tab changes', () => {
     const { rerender } = render(

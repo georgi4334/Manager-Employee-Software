@@ -13,10 +13,16 @@ interface TabListProps {
   onChange: (name: string) => void;
   /** Gives each tab `<prefix>-tab-<name>` and `aria-controls="<prefix>-panel"`. */
   idPrefix?: string;
+  /**
+   * `tabs` (default): a tablist that controls a panel. `toggle`: a group of buttons with
+   * `aria-pressed`, for filters and views that look the same but are not tabs of a panel.
+   */
+  mode?: 'tabs' | 'toggle';
 }
 
 /** A segmented control: the highlight slides from tab to tab like the iOS one. */
-export function TabList({ label, tabs, value, onChange, idPrefix }: TabListProps) {
+export function TabList({ label, tabs, value, onChange, idPrefix, mode = 'tabs' }: TabListProps) {
+  const toggle = mode === 'toggle';
   const list = useRef<HTMLDivElement>(null);
   const [thumb, setThumb] = useState<{ left: number; width: number } | null>(null);
 
@@ -24,7 +30,9 @@ export function TabList({ label, tabs, value, onChange, idPrefix }: TabListProps
     const element = list.current;
     if (!element) return;
     const measure = () => {
-      const active = element.querySelector<HTMLElement>('[aria-selected="true"]');
+      const active = element.querySelector<HTMLElement>(
+        toggle ? '[aria-pressed="true"]' : '[aria-selected="true"]',
+      );
       if (active) setThumb({ left: active.offsetLeft, width: active.offsetWidth });
     };
     measure();
@@ -32,12 +40,12 @@ export function TabList({ label, tabs, value, onChange, idPrefix }: TabListProps
     const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
     observer?.observe(element);
     return () => observer?.disconnect();
-  }, [value, tabs]);
+  }, [value, tabs, toggle]);
 
   return (
     <div
       ref={list}
-      role="tablist"
+      role={toggle ? 'group' : 'tablist'}
       aria-label={label}
       className="relative flex gap-1 overflow-x-auto rounded-xl border border-border bg-surface p-1"
     >
@@ -53,10 +61,14 @@ export function TabList({ label, tabs, value, onChange, idPrefix }: TabListProps
         <button
           key={name}
           type="button"
-          role="tab"
-          id={idPrefix ? `${idPrefix}-tab-${name}` : undefined}
-          aria-selected={value === name}
-          aria-controls={idPrefix ? `${idPrefix}-panel` : undefined}
+          {...(toggle
+            ? { 'aria-pressed': value === name }
+            : {
+                role: 'tab',
+                id: idPrefix ? `${idPrefix}-tab-${name}` : undefined,
+                'aria-selected': value === name,
+                'aria-controls': idPrefix ? `${idPrefix}-panel` : undefined,
+              })}
           onClick={() => onChange(name)}
           className={cn(
             'relative min-h-11 flex-1 whitespace-nowrap rounded-lg px-3 text-sm font-medium transition-colors duration-300',
@@ -89,6 +101,15 @@ export function TabPanel({ value, idPrefix, children }: TabPanelProps) {
       <div key={value} className="motion-enter">
         {children}
       </div>
+    </div>
+  );
+}
+
+/** The content under a toggle: replays the entrance when the choice changes. */
+export function TabContent({ value, children }: { value: string; children: ReactNode }) {
+  return (
+    <div key={value} className="motion-enter space-y-4">
+      {children}
     </div>
   );
 }
