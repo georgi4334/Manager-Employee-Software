@@ -28,6 +28,7 @@ export const EVENT_SELECT = {
   recurrenceWeekdays: true,
   recurrenceUntil: true,
   recurrenceCount: true,
+  reminderMinutes: true,
   owner: { select: { id: true, firstName: true, lastName: true, userId: true } },
   team: { select: { id: true, name: true } },
   exceptions: { select: { originalDate: true } },

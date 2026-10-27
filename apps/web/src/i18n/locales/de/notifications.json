@@ -159,6 +159,12 @@
         "textCancelled": "Der Termin am {{date}}, zu dem Sie eingeladen waren, wurde abgesagt.",
         "settingsTitle": "Änderungen an Terminen, zu denen Sie eingeladen sind",
         "settingsHelp": "Wenn die einladende Person einen Termin ändert oder absagt."
+      },
+      "reminder": {
+        "title": "Termin beginnt bald",
+        "text": "Ein Termin beginnt am {{date}}.",
+        "settingsTitle": "Terminerinnerungen",
+        "settingsHelp": "Ein Termin von Ihnen oder Ihrem Team beginnt bald (Erinnerungen werden mit der stündlichen Prüfung versendet)."
       }
     }
   },

@@ -16,6 +16,15 @@ export const MAX_ATTENDEES = 50;
 export const ATTENDEE_RESPONSES = ['needs_action', 'accepted', 'declined', 'tentative'] as const;
 export type AttendeeResponse = (typeof ATTENDEE_RESPONSES)[number];
 
+/** One hour or one day before (ADR 0029); the hourly sweep is the finest granularity. */
+export const EVENT_REMINDER_CHOICES = [60, 1440] as const;
+const reminderMinutes = z.union([z.literal(60), z.literal(1440)]);
+
+/** A reminder is due from `lead` minutes before the start until the start; never after it. */
+export function eventReminderDue(startMs: number, leadMinutes: number, nowMs: number): boolean {
+  return startMs - leadMinutes * 60_000 <= nowMs && nowMs < startMs;
+}
+
 const attendeeIds = z
   .array(z.uuid())
   .max(MAX_ATTENDEES, { error: 'tooMany' })
@@ -101,6 +110,8 @@ export const createEventRequestSchema = z
     recurrence: recurrenceRequestSchema.optional(),
     /** Guests, personal events only. */
     attendeeIds: attendeeIds.optional(),
+    /** Minutes before the start; personal and team events only. */
+    reminderMinutes: reminderMinutes.optional(),
   })
   .strict()
   .superRefine((value, ctx) => {
@@ -109,6 +120,9 @@ export const createEventRequestSchema = z
     }
     if (value.attendeeIds?.length && value.scope !== 'personal') {
       ctx.addIssue({ code: 'custom', path: ['attendeeIds'], message: 'guests_not_allowed' });
+    }
+    if (value.reminderMinutes !== undefined && value.scope === 'company') {
+      ctx.addIssue({ code: 'custom', path: ['reminderMinutes'], message: 'reminder_not_allowed' });
     }
     if (value.recurrence?.until && value.recurrence.until < value.startDate) {
       ctx.addIssue({ code: 'custom', path: ['recurrence', 'until'], message: 'end_before_start' });
@@ -135,6 +149,8 @@ export const updateEventRequestSchema = z
     recurrence: recurrenceRequestSchema.nullable(),
     /** The complete guest list (replaces the current one). */
     attendeeIds,
+    /** `null` removes the reminder. */
+    reminderMinutes: reminderMinutes.nullable(),
   })
   .partial()
   .strict()
@@ -183,6 +199,7 @@ export const calendarEventSchema = z.object({
   attendees: z.array(attendeeSchema),
   /** The viewer's answer when they are a guest, else null. */
   myResponse: z.enum(ATTENDEE_RESPONSES).nullable(),
+  reminderMinutes: z.number().int().nullable(),
 });
 export type CalendarEvent = z.infer<typeof calendarEventSchema>;
 

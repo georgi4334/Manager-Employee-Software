@@ -107,6 +107,17 @@ export const CALENDAR_EVENTS = {
       { recipientUserId, type: 'calendar.response' as const, params },
     ],
   }),
+  /** An event starts soon (ADR 0029): the event id and the occurrence date only. */
+  'calendar.reminder': eventDef({
+    params: z.object({
+      recipientUserId: z.uuid(),
+      eventId: z.uuid(),
+      date: z.string().regex(DATE),
+    }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'calendar.reminder' as const, params },
+    ],
+  }),
   /** The organizer moved or cancelled an event you were invited to. */
   'calendar.changed': eventDef({
     params: z.object({

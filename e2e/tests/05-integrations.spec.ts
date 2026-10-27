@@ -62,6 +62,7 @@ test('the reminder hook answers only to the right token', async ({ request }) =>
   expect(await ok.json()).toEqual({
     attendance: expect.any(Number),
     timers: expect.any(Number),
+    events: expect.any(Number),
     erased: expect.any(Number),
   });
 });

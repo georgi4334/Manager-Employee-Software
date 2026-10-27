@@ -139,7 +139,7 @@ export class OutboxWorker implements OnApplicationBootstrap, OnModuleDestroy {
       try {
         const sent = await this.reminders.run(now);
         // Their events are delivered right away, in one more round of this run.
-        if (sent.attendance + sent.timers > 0) this.rerun = true;
+        if (sent.attendance + sent.timers + sent.events > 0) this.rerun = true;
         this.lastReminderAt = now.getTime();
       } catch (error) {
         this.logger.error({ err: error }, 'Reminders failed');

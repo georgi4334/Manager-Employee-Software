@@ -146,5 +146,18 @@
     "none": "Nobody is free in this period. Try another start date.",
     "results": "Suggested times",
     "slot": "{{date}}, {{start}}–{{end}}"
+  },
+  "reminder": {
+    "label": "Reminder",
+    "none": "No reminder",
+    "hint": "Reminders go out with the hourly check, so they can arrive a little late.",
+    "choice": {
+      "60": "1 hour before",
+      "1440": "1 day before"
+    },
+    "shown": {
+      "60": "Reminder: 1 hour before",
+      "1440": "Reminder: 1 day before"
+    }
   }
 }

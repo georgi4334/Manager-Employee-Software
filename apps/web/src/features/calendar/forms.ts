@@ -1,5 +1,6 @@
 import {
   CALENDAR_SCOPES,
+  EVENT_REMINDER_CHOICES,
   MAX_ATTENDEES,
   MAX_EVENT_DESCRIPTION,
   MAX_EVENT_LOCATION,
@@ -47,6 +48,8 @@ export const eventFormSchema = z
     until: z.string(),
     count: z.string(),
     attendeeIds: z.array(z.string()).max(MAX_ATTENDEES, { error: 'tooMany' }),
+    /** '' = none, else minutes before the start. */
+    reminder: z.enum(['', ...EVENT_REMINDER_CHOICES.map(String)] as [string, ...string[]]),
   })
   .superRefine((value, ctx) => {
     const fail = (path: string, message: string) =>
@@ -86,6 +89,8 @@ export const eventFormSchema = z
   });
 export type EventFormValues = z.input<typeof eventFormSchema>;
 
+const reminderOf = (value: string): 60 | 1440 => (value === '1440' ? 1440 : 60);
+
 /** The repeat rule the form describes; `null` when the event does not repeat. */
 export function recurrenceOf(v: EventFormValues): RecurrenceRequest | null {
   if (v.repeat === 'none') return null;
@@ -110,6 +115,7 @@ export const toCreateRequest = (v: EventFormValues): CreateEventRequest => ({
   ...(v.allDay ? {} : { startTime: v.startTime, endTime: v.endTime }),
   ...(v.repeat === 'none' ? {} : { recurrence: recurrenceOf(v) ?? undefined }),
   ...(v.scope === 'personal' && v.attendeeIds.length > 0 ? { attendeeIds: v.attendeeIds } : {}),
+  ...(v.scope !== 'company' && v.reminder ? { reminderMinutes: reminderOf(v.reminder) } : {}),
 });
 
 const sameRule = (a: RecurrenceRequest | null, b: CalendarEvent['recurrence']): boolean =>
@@ -147,8 +153,14 @@ export const toUpdateRequest = (
     ...(event.isOrganizer && event.scope === 'personal' && guests.join() !== before.join()
       ? { attendeeIds: guests }
       : {}),
+    ...(event.scope !== 'company' && v.reminder !== reminderValue(event)
+      ? { reminderMinutes: v.reminder ? reminderOf(v.reminder) : null }
+      : {}),
   };
 };
+
+const reminderValue = (event: CalendarEvent): string =>
+  event.reminderMinutes ? String(event.reminderMinutes) : '';
 
 export const emptyEvent = (date: string): EventFormValues => ({
   scope: 'personal',
@@ -168,6 +180,7 @@ export const emptyEvent = (date: string): EventFormValues => ({
   until: '',
   count: '',
   attendeeIds: [],
+  reminder: '',
 });
 
 export const valuesOf = (event: CalendarEvent): EventFormValues => ({
@@ -188,4 +201,5 @@ export const valuesOf = (event: CalendarEvent): EventFormValues => ({
   until: event.recurrence?.until ?? '',
   count: event.recurrence?.count ? String(event.recurrence.count) : '',
   attendeeIds: event.attendees.map((a) => a.employee.id),
+  reminder: reminderValue(event),
 });

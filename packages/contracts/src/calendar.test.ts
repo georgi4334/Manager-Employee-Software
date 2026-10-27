@@ -4,6 +4,7 @@ import {
   createEventRequestSchema,
   eventQuerySchema,
   eventShapeIssues,
+  eventReminderDue,
   respondRequestSchema,
   updateEventRequestSchema,
 } from './calendar.js';
@@ -194,5 +195,59 @@ describe('recurrence and guests on events (ADR 0028)', () => {
     }
     expect(respondRequestSchema.safeParse({}).success).toBe(false);
     expect(respondRequestSchema.safeParse({ response: 'accepted', extra: 1 }).success).toBe(false);
+  });
+
+  describe('reminders', () => {
+    it('accepts one hour or one day on personal and team events', () => {
+      for (const reminderMinutes of [60, 1440]) {
+        expect(createEventRequestSchema.safeParse({ ...timed, reminderMinutes }).success).toBe(
+          true,
+        );
+      }
+      expect(
+        createEventRequestSchema.safeParse({
+          ...timed,
+          scope: 'team',
+          teamId: ID,
+          reminderMinutes: 60,
+        }).success,
+      ).toBe(true);
+    });
+
+    it.each([0, 5, 30, 61, -60, 1.5, '60', null])(
+      'refuses %s minutes on create',
+      (reminderMinutes) => {
+        expect(createEventRequestSchema.safeParse({ ...timed, reminderMinutes }).success).toBe(
+          false,
+        );
+      },
+    );
+
+    it('refuses a reminder on a company event', () => {
+      const res = createEventRequestSchema.safeParse({ ...allDay, reminderMinutes: 60 });
+      expect(res.success).toBe(false);
+      expect(res.error?.issues[0]).toMatchObject({
+        path: ['reminderMinutes'],
+        message: 'reminder_not_allowed',
+      });
+    });
+
+    it('lets an update set or remove the reminder', () => {
+      expect(updateEventRequestSchema.safeParse({ reminderMinutes: 1440 }).success).toBe(true);
+      expect(updateEventRequestSchema.safeParse({ reminderMinutes: null }).success).toBe(true);
+      expect(updateEventRequestSchema.safeParse({ reminderMinutes: 15 }).success).toBe(false);
+    });
+
+    it('is due from the lead until the start, and never after it', () => {
+      const start = Date.UTC(2026, 10, 3, 9, 0);
+      const min = 60_000;
+      expect(eventReminderDue(start, 60, start - 61 * min)).toBe(false);
+      expect(eventReminderDue(start, 60, start - 60 * min)).toBe(true);
+      expect(eventReminderDue(start, 60, start - 1)).toBe(true);
+      expect(eventReminderDue(start, 60, start)).toBe(false);
+      expect(eventReminderDue(start, 60, start + min)).toBe(false);
+      expect(eventReminderDue(start, 1440, start - 1440 * min)).toBe(true);
+      expect(eventReminderDue(start, 1440, start - 1441 * min)).toBe(false);
+    });
   });
 });

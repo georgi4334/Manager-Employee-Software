@@ -152,6 +152,7 @@ export class CalendarService {
           endDate: dateIn(body.endDate),
           ...times,
           ...ruleColumns(rule),
+          reminderMinutes: body.reminderMinutes ?? null,
         },
         select: { id: true },
       });
@@ -311,6 +312,9 @@ export class CalendarService {
     if (rule && daysBetween(merged.startDate, merged.endDate) + 1 > 31) {
       throw invalid('endDate', 'too_long', 'The event is too long');
     }
+    if (body.reminderMinutes && row.scope === 'company') {
+      throw invalid('reminderMinutes', 'reminder_not_allowed', 'Company events have no reminder');
+    }
     const scheduleChanged =
       merged.allDay !== current.allDay ||
       merged.startDate !== current.startDate ||
@@ -330,8 +334,16 @@ export class CalendarService {
         endDate: dateIn(merged.endDate),
         ...this.times(merged, zone),
         ...ruleColumns(rule),
+        ...(body.reminderMinutes !== undefined ? { reminderMinutes: body.reminderMinutes } : {}),
       },
     });
+    // A new time or lead gets its own reminder (ADR 0029).
+    if (
+      scheduleChanged ||
+      (body.reminderMinutes !== undefined && body.reminderMinutes !== row.reminderMinutes)
+    ) {
+      await tx.calendarReminder.deleteMany({ where: { eventId: row.id } });
+    }
     // A moved series cancels nothing by itself, but dates that no longer exist in it make no sense.
     if (scheduleChanged && merged.startDate !== current.startDate) {
       await tx.calendarEventException.deleteMany({ where: { eventId: row.id } });
@@ -517,6 +529,8 @@ export class CalendarService {
         endDate: dateIn(shape.endDate),
         ...this.times(shape, zone),
         ...ruleColumns(rule),
+        reminderMinutes:
+          body.reminderMinutes === undefined ? row.reminderMinutes : body.reminderMinutes,
       },
       select: { id: true },
     });
@@ -813,6 +827,7 @@ export class CalendarService {
       isOrganizer: row.ownerEmployeeId === viewer.employeeId,
       attendees,
       myResponse: mine ? (mine.response as AttendeeResponse) : null,
+      reminderMinutes: row.reminderMinutes,
     };
   }
 
