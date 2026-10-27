@@ -17,7 +17,7 @@ export function Sidebar() {
             end={path === '/'}
             className={({ isActive }) =>
               cn(
-                'flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium',
+                'flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition-[background-color,color,transform] duration-300 ease-[var(--ease-standard)] active:scale-[0.98]',
                 isActive
                   ? 'bg-accent text-accent-foreground'
                   : 'text-muted-foreground hover:bg-surface-muted hover:text-foreground',

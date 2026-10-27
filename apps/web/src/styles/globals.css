@@ -19,3 +19,159 @@
     outline-offset: 2px;
   }
 }
+
+/*
+ * Motion. Enter/exit pieces carry data-state="open|closed" (see usePresence) and transition;
+ * one-shot entrances are keyframes. Everything is switched off for people who ask for less motion.
+ */
+@layer components {
+  .motion-fade {
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-standard);
+  }
+  .motion-fade[data-state='open'] {
+    opacity: 1;
+  }
+
+  .motion-sheet-right,
+  .motion-sheet-up {
+    transition: transform var(--dur-sheet) var(--ease-ios);
+    will-change: transform;
+  }
+  .motion-sheet-right {
+    transform: translate3d(100%, 0, 0);
+  }
+  .motion-sheet-up {
+    transform: translate3d(0, 100%, 0);
+  }
+  .motion-sheet-right[data-state='open'],
+  .motion-sheet-up[data-state='open'] {
+    transform: none;
+  }
+  .motion-sheet-right[data-state='closed'],
+  .motion-sheet-up[data-state='closed'],
+  .motion-fade[data-state='closed'] {
+    transition-duration: var(--dur-exit);
+  }
+
+  .motion-pop {
+    opacity: 0;
+    transform: scale(0.94) translate3d(0, -6px, 0);
+    transform-origin: var(--pop-origin, top);
+    transition:
+      opacity var(--dur-fast) var(--ease-standard),
+      transform var(--dur-base) var(--ease-spring);
+  }
+  .motion-pop[data-state='open'] {
+    opacity: 1;
+    transform: none;
+  }
+  .motion-pop[data-state='closed'] {
+    transition-duration: 120ms;
+  }
+
+  .motion-toast {
+    opacity: 0;
+    transform: translate3d(0, -1.75rem, 0) scale(0.95);
+    transition:
+      opacity var(--dur-base) var(--ease-standard),
+      transform var(--dur-sheet) var(--ease-spring);
+  }
+  .motion-toast[data-state='open'] {
+    opacity: 1;
+    transform: none;
+  }
+  .motion-toast[data-state='closed'] {
+    transition-duration: var(--dur-exit);
+    transition-timing-function: var(--ease-ios);
+  }
+
+  .motion-enter {
+    animation: motion-enter var(--dur-base) var(--ease-ios) both;
+  }
+  .motion-route {
+    animation: motion-route 380ms var(--ease-ios) both;
+  }
+  /* Children appear one after the other (set --i on each child). */
+  .motion-stagger > * {
+    animation: motion-enter var(--dur-base) var(--ease-ios) both;
+    animation-delay: calc(var(--i, 0) * 35ms);
+  }
+  .motion-bell-ring {
+    transform-origin: 50% 0;
+    animation: motion-bell 900ms var(--ease-standard) both;
+  }
+  .motion-badge-pop {
+    animation: motion-pop var(--dur-sheet) var(--ease-spring) both;
+  }
+  .motion-tab-thumb {
+    transition:
+      transform var(--dur-base) var(--ease-ios),
+      width var(--dur-base) var(--ease-ios);
+  }
+  details[open] > :not(summary) {
+    animation: motion-enter var(--dur-base) var(--ease-ios) both;
+  }
+}
+
+@keyframes motion-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes motion-route {
+  from {
+    opacity: 0;
+    transform: translate3d(16px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes motion-pop {
+  0% {
+    transform: scale(0.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes motion-bell {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(16deg);
+  }
+  30% {
+    transform: rotate(-13deg);
+  }
+  45% {
+    transform: rotate(9deg);
+  }
+  60% {
+    transform: rotate(-6deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

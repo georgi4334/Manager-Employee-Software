@@ -18,7 +18,11 @@ export function Alert({
   return (
     <div
       role={tone === 'danger' ? 'alert' : 'status'}
-      className={cn('rounded-md border bg-surface px-3 py-2 text-sm', TONES[tone], className)}
+      className={cn(
+        'motion-enter rounded-md border bg-surface px-3 py-2 text-sm',
+        TONES[tone],
+        className,
+      )}
       {...props}
     />
   );

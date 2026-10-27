@@ -18,6 +18,7 @@ import { KIND_DOT } from './ItemRow';
 import { ITEM_KINDS, itemFromEvent, type CalendarItem, type ItemKind } from './items';
 import { MonthGrid } from './MonthGrid';
 import { useCalendarErrors } from './use-calendar-errors';
+import { TabList } from '@/shared/ui/tabs';
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const isView = (value: string | null): value is CalendarView =>
@@ -143,27 +144,12 @@ export function CalendarPage() {
         </section>
       )}
 
-      <div
-        role="tablist"
-        aria-label={t('views.label')}
-        className="flex gap-1 overflow-x-auto rounded-lg bg-secondary p-1"
-      >
-        {CALENDAR_VIEWS.map((name) => (
-          <button
-            key={name}
-            type="button"
-            role="tab"
-            aria-selected={view === name}
-            onClick={() => go({ view: name })}
-            className={cn(
-              'min-h-11 flex-1 whitespace-nowrap rounded-md px-3 text-sm font-medium',
-              view === name ? 'bg-surface text-foreground shadow-card' : 'text-muted-foreground',
-            )}
-          >
-            {t(`views.${name}`)}
-          </button>
-        ))}
-      </div>
+      <TabList
+        label={t('views.label')}
+        tabs={CALENDAR_VIEWS.map((name) => ({ name, label: t(`views.${name}`) }))}
+        value={view}
+        onChange={(name) => go({ view: name as (typeof CALENDAR_VIEWS)[number] })}
+      />
 
       <div className="flex items-center justify-between gap-2">
         <Button

@@ -6,6 +6,7 @@ import { Link } from 'react-router';
 import { useCurrentUser, useSignOut } from '@/features/auth/use-auth';
 import { LanguageSwitcher } from '@/shared/components/LanguageSwitcher';
 import { ThemeMenu } from '@/shared/components/ThemeMenu';
+import { usePresence } from '@/shared/lib/motion';
 import { Button } from '@/shared/ui/button';
 
 const FOCUSABLE =
@@ -21,6 +22,7 @@ export function ProfileDrawer() {
   const panel = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const titleId = useId();
+  const presence = usePresence(open);
 
   // Keyboard and focus: move into the drawer, give the focus back to the button when it closes.
   useEffect(() => {
@@ -73,14 +75,15 @@ export function ProfileDrawer() {
       >
         <CircleUser className="size-5" aria-hidden="true" />
       </Button>
-      {open &&
+      {presence.mounted &&
         // On the page body, not inside the header: the header is its own stacking context and the
         // bottom navigation would otherwise cover the drawer on phones.
         createPortal(
           <>
             <div
               aria-hidden="true"
-              className="fixed inset-0 z-40 bg-foreground/40"
+              data-state={presence.state}
+              className="motion-fade fixed inset-0 z-40 bg-foreground/40"
               onClick={() => setOpen(false)}
             />
             <div
@@ -88,8 +91,9 @@ export function ProfileDrawer() {
               role="dialog"
               aria-modal="true"
               aria-labelledby={titleId}
+              data-state={presence.state}
               onKeyDown={trapTab}
-              className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col bg-surface shadow-card"
+              className="motion-sheet-right fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col bg-surface shadow-card"
             >
               <div className="flex items-start justify-between gap-3 border-b border-border p-4">
                 <div className="min-w-0">

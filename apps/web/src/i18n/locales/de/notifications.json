@@ -171,5 +171,9 @@
   "unknown": {
     "title": "Neue Benachrichtigung",
     "text": "Öffnen Sie die App, um die Details zu sehen."
-  }
+  },
+  "toast_one": "Du hast eine neue Benachrichtigung",
+  "toast_other": "Du hast {{count}} neue Benachrichtigungen",
+  "toastView": "Ansehen",
+  "toastDismiss": "Schließen"
 }

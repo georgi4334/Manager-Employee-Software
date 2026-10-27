@@ -171,5 +171,9 @@
   "unknown": {
     "title": "New notification",
     "text": "Open the app to see the details."
-  }
+  },
+  "toast_one": "You have a new notification",
+  "toast_other": "You have {{count}} new notifications",
+  "toastView": "View",
+  "toastDismiss": "Dismiss"
 }

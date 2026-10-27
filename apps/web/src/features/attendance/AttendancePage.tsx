@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
 import { useCurrentUser } from '@/features/auth/use-auth';
 import { usePermission } from '@/features/auth/permissions';
-import { cn } from '@/shared/lib/cn';
 import { HistoryTab } from './HistoryTab';
 import { TeamTab } from './TeamTab';
 import { TodayTab } from './TodayTab';
+import { TabList, TabPanel } from '@/shared/ui/tabs';
 
 type Tab = 'today' | 'history' | 'team';
 
@@ -33,39 +33,19 @@ export function AttendancePage() {
     <div className="mx-auto max-w-4xl space-y-4">
       <h1 className="text-2xl font-semibold">{t('title')}</h1>
       {tabs.length > 1 && (
-        <div
-          role="tablist"
-          aria-label={t('tabs.label')}
-          className="flex gap-1 overflow-x-auto rounded-lg bg-secondary p-1"
-        >
-          {tabs.map((name) => (
-            <button
-              key={name}
-              type="button"
-              role="tab"
-              id={`attendance-tab-${name}`}
-              aria-selected={tab === name}
-              aria-controls="attendance-panel"
-              onClick={() => setParams(name === tabs[0] ? {} : { tab: name }, { replace: true })}
-              className={cn(
-                'min-h-11 flex-1 whitespace-nowrap rounded-md px-3 text-sm font-medium',
-                tab === name ? 'bg-surface text-foreground shadow-card' : 'text-muted-foreground',
-              )}
-            >
-              {t(`tabs.${name}`)}
-            </button>
-          ))}
-        </div>
+        <TabList
+          label={t('tabs.label')}
+          idPrefix="attendance"
+          tabs={tabs.map((name) => ({ name, label: t(`tabs.${name}`) }))}
+          value={tab ?? ''}
+          onChange={(name) => setParams(name === tabs[0] ? {} : { tab: name }, { replace: true })}
+        />
       )}
-      <div
-        role="tabpanel"
-        id="attendance-panel"
-        aria-labelledby={tab ? `attendance-tab-${tab}` : undefined}
-      >
+      <TabPanel value={tab ?? ''} idPrefix="attendance">
         {tab === 'today' && <TodayTab />}
         {tab === 'history' && <HistoryTab today={today} />}
         {tab === 'team' && <TeamTab today={today} />}
-      </div>
+      </TabPanel>
     </div>
   );
 }

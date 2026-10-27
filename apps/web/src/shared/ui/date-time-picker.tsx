@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   type ChangeEvent,
+  type CSSProperties,
   type InputHTMLAttributes,
   type KeyboardEvent,
   type Ref,
@@ -13,6 +14,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { formatDay } from '@/shared/lib/format';
 import { cn } from '@/shared/lib/cn';
+import { usePresence } from '@/shared/lib/motion';
 
 type Kind = 'date' | 'time';
 
@@ -72,6 +74,7 @@ export function PickerInput({
   const trigger = useRef<HTMLButtonElement>(null);
   const popoverId = useId();
   const [open, setOpen] = useState(false);
+  const presence = usePresence(open, 140);
   const [alignRight, setAlignRight] = useState(false);
   const [current, setCurrent] = useState('');
   const lastValid = useRef('');
@@ -182,7 +185,6 @@ export function PickerInput({
         ref={trigger}
         type="button"
         disabled={disabled}
-        aria-label={t(kind === 'date' ? 'chooseDate' : 'chooseTime')}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={open ? popoverId : undefined}
@@ -190,14 +192,18 @@ export function PickerInput({
         className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-md text-muted-foreground hover:text-foreground disabled:opacity-60"
       >
         <Icon className="size-5" aria-hidden="true" />
+        {/* text content, not aria-label: a field label like "Calendar" must not match the button */}
+        <span className="sr-only">{t(kind === 'date' ? 'chooseDate' : 'chooseTime')}</span>
       </button>
-      {open && (
+      {presence.mounted && (
         <div
           id={popoverId}
           role="dialog"
           aria-label={t(kind === 'date' ? 'chooseDate' : 'chooseTime')}
+          data-state={presence.state}
+          style={{ '--pop-origin': alignRight ? 'top right' : 'top left' } as CSSProperties}
           className={cn(
-            'absolute top-full z-40 mt-1 w-[19.5rem] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface p-3 shadow-lg',
+            'motion-pop absolute top-full z-40 mt-1 w-[19.5rem] max-w-[calc(100vw-2rem)] rounded-lg border border-border bg-surface p-3 shadow-lg',
             alignRight ? 'right-0' : 'left-0',
           )}
         >

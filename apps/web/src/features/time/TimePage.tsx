@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
 import { usePermission } from '@/features/auth/permissions';
 import { useCurrentUser } from '@/features/auth/use-auth';
-import { cn } from '@/shared/lib/cn';
 import { ApprovalsTab } from './ApprovalsTab';
 import { ReportsTab } from './ReportsTab';
 import { WeekTab } from './WeekTab';
+import { TabList, TabPanel } from '@/shared/ui/tabs';
 
 type Tab = 'week' | 'approvals' | 'reports';
 
@@ -32,35 +32,19 @@ export function TimePage() {
     <div className="mx-auto max-w-4xl space-y-4">
       <h1 className="text-2xl font-semibold">{t('title')}</h1>
       {tabs.length > 1 && (
-        <div
-          role="tablist"
-          aria-label={t('tabs.label')}
-          className="flex gap-1 overflow-x-auto rounded-lg bg-secondary p-1"
-        >
-          {tabs.map((name) => (
-            <button
-              key={name}
-              type="button"
-              role="tab"
-              id={`time-tab-${name}`}
-              aria-selected={tab === name}
-              aria-controls="time-panel"
-              onClick={() => setParams(name === tabs[0] ? {} : { tab: name }, { replace: true })}
-              className={cn(
-                'min-h-11 flex-1 whitespace-nowrap rounded-md px-3 text-sm font-medium',
-                tab === name ? 'bg-surface text-foreground shadow-card' : 'text-muted-foreground',
-              )}
-            >
-              {t(`tabs.${name}`)}
-            </button>
-          ))}
-        </div>
+        <TabList
+          label={t('tabs.label')}
+          idPrefix="time"
+          tabs={tabs.map((name) => ({ name, label: t(`tabs.${name}`) }))}
+          value={tab ?? ''}
+          onChange={(name) => setParams(name === tabs[0] ? {} : { tab: name }, { replace: true })}
+        />
       )}
-      <div role="tabpanel" id="time-panel" aria-labelledby={tab ? `time-tab-${tab}` : undefined}>
+      <TabPanel value={tab ?? ''} idPrefix="time">
         {tab === 'week' && <WeekTab today={today} />}
         {tab === 'approvals' && <ApprovalsTab />}
         {tab === 'reports' && <ReportsTab today={today} />}
-      </div>
+      </TabPanel>
     </div>
   );
 }

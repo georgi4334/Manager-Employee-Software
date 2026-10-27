@@ -16,6 +16,8 @@ export default defineConfig({
     actionTimeout: 15_000,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    // Animations are covered by unit tests; the specs and axe scans must not catch a page mid-motion.
+    contextOptions: { reducedMotion: 'reduce' },
     ...devices['Pixel 5'],
     viewport: { width: 375, height: 800 },
     launchOptions: executablePath ? { executablePath } : {},

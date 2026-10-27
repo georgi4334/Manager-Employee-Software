@@ -10,7 +10,6 @@ import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 import { Select } from '@/shared/ui/select';
-import { cn } from '@/shared/lib/cn';
 import { formatDay } from '@/shared/lib/format';
 import { PAGE_SIZE, type ListParams } from './api';
 import { ClientsTab } from './ClientsTab';
@@ -18,6 +17,7 @@ import { HealthBadge } from './HealthBadge';
 import { useClients, useProjects } from './hooks';
 import { ProjectForm } from './ProjectForm';
 import { useProjectErrors } from './use-project-errors';
+import { TabList, TabPanel } from '@/shared/ui/tabs';
 
 type Tab = 'projects' | 'clients';
 
@@ -34,31 +34,17 @@ export function ProjectsPage() {
     <div className="mx-auto max-w-4xl space-y-4">
       <h1 className="text-2xl font-semibold">{t('title')}</h1>
       {tabs.length > 1 && (
-        <div
-          role="tablist"
-          aria-label={t('tabs.label')}
-          className="flex gap-1 overflow-x-auto rounded-lg bg-secondary p-1"
-        >
-          {tabs.map((name) => (
-            <button
-              key={name}
-              type="button"
-              role="tab"
-              id={`projects-tab-${name}`}
-              aria-selected={tab === name}
-              aria-controls="projects-panel"
-              onClick={() => setParams(name === 'projects' ? {} : { tab: name }, { replace: true })}
-              className={cn(
-                'min-h-11 flex-1 whitespace-nowrap rounded-md px-3 text-sm font-medium',
-                tab === name ? 'bg-surface text-foreground shadow-card' : 'text-muted-foreground',
-              )}
-            >
-              {t(`tabs.${name}`)}
-            </button>
-          ))}
-        </div>
+        <TabList
+          label={t('tabs.label')}
+          idPrefix="projects"
+          tabs={tabs.map((name) => ({ name, label: t(`tabs.${name}`) }))}
+          value={tab ?? ''}
+          onChange={(name) =>
+            setParams(name === 'projects' ? {} : { tab: name }, { replace: true })
+          }
+        />
       )}
-      <div role="tabpanel" id="projects-panel" aria-labelledby={`projects-tab-${tab}`}>
+      <TabPanel value={tab ?? ''} idPrefix="projects">
         {tab === 'projects' ? (
           <ProjectsList
             today={todayIn(user?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone)}
@@ -66,7 +52,7 @@ export function ProjectsPage() {
         ) : (
           <ClientsTab />
         )}
-      </div>
+      </TabPanel>
     </div>
   );
 }

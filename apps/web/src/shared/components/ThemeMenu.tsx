@@ -2,6 +2,7 @@ import { Check, ChevronDown, Monitor, Moon, Sun } from 'lucide-react';
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/shared/lib/cn';
+import { usePresence } from '@/shared/lib/motion';
 import { useThemeStore, type ThemePreference } from '@/shared/stores/theme.store';
 
 const OPTIONS: ThemePreference[] = ['light', 'dark', 'system'];
@@ -13,6 +14,7 @@ export function ThemeMenu() {
   const preference = useThemeStore((s) => s.preference);
   const setPreference = useThemeStore((s) => s.setPreference);
   const [open, setOpen] = useState(false);
+  const presence = usePresence(open, 140);
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const items = useRef<(HTMLButtonElement | null)[]>([]);
@@ -88,13 +90,14 @@ export function ThemeMenu() {
           aria-hidden="true"
         />
       </button>
-      {open && (
+      {presence.mounted && (
         <div
           id={menuId}
           role="menu"
           aria-label={t('themeTitle')}
+          data-state={presence.state}
           onKeyDown={onMenuKeyDown}
-          className="absolute inset-x-0 top-full z-10 mt-1 rounded-md border border-border bg-surface p-1 shadow-card"
+          className="motion-pop absolute inset-x-0 top-full z-10 mt-1 rounded-md border border-border bg-surface p-1 shadow-card"
         >
           {OPTIONS.map((option, index) => {
             const Icon = ICONS[option];

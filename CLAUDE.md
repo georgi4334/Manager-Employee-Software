@@ -267,6 +267,13 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Audit `role.created|updated|deleted` has the role id and `code:scope` strings of what changed, **never the name or description**. Changes apply to the next request of everybody holding the role.
 - Web: `/roles` (list cards), `/roles/:id` (read-only grid for system roles and viewers; editor + delete for custom roles with `admin.role.manage`), `/roles/new` (can start from a copy: only what the user may hand out is copied). The permission grid disables scopes the user does not hold (cosmetic). **Every permission, module and scope needs a text in `roles.json` (en/de/bg)**: `labels.test.ts` walks the catalog and fails otherwise. Editing system roles, per-user overrides and role history are out of scope.
 
+## Motion (docs/adr/0032-motion.md)
+
+- CSS only (transform/opacity); curves and durations are tokens in `tokens.css` (`--ease-ios`, `--ease-spring`, `--dur-*`). Never animate width, height, top or left.
+- Anything that appears and disappears (drawer, sheet, menu, popover, toast) uses `usePresence(open, exitMs)` and a `motion-*` class from `globals.css` with `data-state`, not a bare `{open && …}`. Tabs are `TabList`/`TabPanel` (`shared/ui/tabs.tsx`), never hand-written.
+- Reduced motion is honoured in CSS and in `usePresence`; unit tests run without motion; Playwright specs run with `reducedMotion: 'reduce'` (only `07-motion.spec.ts` turns motion on).
+- The notification toast says how many, never what; it skips the first answer and the inbox page.
+
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 
 - Free EU stack: Cloudflare Pages (web + `/api` proxy function in `apps/web/functions`, logic in `apps/web/edge`), Render (API, `render.yaml`), Neon (Postgres), Resend (email). Releases only through `.github/workflows/deploy.yml` on `main` after CI (gated by repo variable `DEPLOY_ENABLED`).
