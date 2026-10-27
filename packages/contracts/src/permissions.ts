@@ -137,14 +137,14 @@ export const PERMISSIONS = [
   def({
     code: 'compensation.view',
     module: 'employees',
-    description: 'View salary and compensation (module comes later)',
+    description: 'View salary and hourly rates of employees (HR and Admin only)',
     scopes: ALL,
     grants: g(null, null, 'all', 'all'),
   }),
   def({
     code: 'compensation.manage',
     module: 'employees',
-    description: 'Manage salary and compensation (module comes later)',
+    description: 'Set salary and hourly rates of employees (HR and Admin only)',
     scopes: ALL,
     grants: g(null, null, 'all', 'all'),
   }),

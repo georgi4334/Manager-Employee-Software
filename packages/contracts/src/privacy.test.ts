@@ -41,6 +41,7 @@ describe('export document', () => {
     goals: { personal: [], checkIns: [] },
     oneOnOnes: [],
     feedback: { given: [], received: [] },
+    compensation: [],
     workSchedules: [],
     ai: { consentAt: null, sharePeopleData: false, keys: [], conversations: [] },
     skills: [],

@@ -82,6 +82,8 @@ export class ErasureService {
       await tx.employeeSkill.deleteMany({ where: { tenantId, employeeId } });
       // Working hours are not a statutory record (ADR 0026).
       await tx.workSchedule.deleteMany({ where: { tenantId, employeeId } });
+      // Pay records are not kept by InTime, which holds no payroll (ADR 0030).
+      await tx.compensation.deleteMany({ where: { tenantId, employeeId } });
       // Feedback they gave or received is about people, in words: it goes with them (ADR 0021).
       await tx.feedback.deleteMany({
         where: { tenantId, OR: [{ fromEmployeeId: employeeId }, { toEmployeeId: employeeId }] },
