@@ -50,6 +50,11 @@ const event = (n: number, o: Partial<CalendarEvent> = {}): CalendarEvent => ({
   startTime: '09:00',
   endTime: '10:00',
   canEdit: true,
+  recurrence: null,
+  occurrenceDate: o.startDate ?? '2030-03-10',
+  isOrganizer: true,
+  attendees: [],
+  myResponse: null,
   ...o,
 });
 
@@ -609,6 +614,419 @@ describe('changing and deleting events', () => {
     await user.click(await screen.findByRole('button', { name: 'Delete' }));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
     expect(await screen.findByText('You are not allowed to do this.')).toBeInTheDocument();
+  });
+});
+
+describe('repeating events, guests and answers', () => {
+  const DAN = uuid(61);
+  const day = { startDate: '2030-03-04', endDate: '2030-03-04' };
+  const weekly: NonNullable<CalendarEvent['recurrence']> = {
+    freq: 'weekly',
+    interval: 1,
+    weekdays: [],
+    until: null,
+    count: null,
+  };
+  const dan = { id: DAN, firstName: 'Dan', lastName: 'Dimitrov' };
+  const serveWithPeople = (o: Served = {}) => {
+    serve(o);
+    server.use(
+      http.get(`${API}/org/chart`, () =>
+        HttpResponse.json({
+          nodes: [
+            {
+              id: ME,
+              firstName: 'Maria',
+              lastName: 'Ivanova',
+              jobTitle: null,
+              managerId: null,
+              departmentId: null,
+            },
+            {
+              id: DAN,
+              firstName: 'Dan',
+              lastName: 'Dimitrov',
+              jobTitle: null,
+              managerId: null,
+              departmentId: null,
+            },
+            {
+              id: uuid(62),
+              firstName: 'Eve',
+              lastName: 'Evans',
+              jobTitle: null,
+              managerId: null,
+              departmentId: null,
+            },
+          ],
+        }),
+      ),
+    );
+  };
+  const openNew = async () => {
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole('button', { name: 'New event' }));
+    return { user, form: within(await screen.findByRole('form', { name: 'New event' })) };
+  };
+
+  it('creates a repeating event with a guest', async () => {
+    serveWithPeople();
+    const bodies: unknown[] = [];
+    server.use(
+      http.post(`${API}/calendar/events`, async ({ request: r }) => {
+        bodies.push(await r.json());
+        return HttpResponse.json(event(1), { status: 201 });
+      }),
+    );
+    await renderApp(AGENDA);
+    const { user, form } = await openNew();
+    await user.type(form.getByLabelText('Title'), 'Sync');
+    await user.type(form.getByLabelText('Start time'), '09:00');
+    await user.type(form.getByLabelText('End time'), '09:30');
+    await user.selectOptions(form.getByLabelText('Repeats'), 'weekly');
+    await user.clear(form.getByLabelText('Interval in weeks'));
+    await user.type(form.getByLabelText('Interval in weeks'), '2');
+    await user.click(form.getByRole('checkbox', { name: /Wed/ }));
+    await user.selectOptions(form.getByLabelText('Ends'), 'count');
+    await user.type(form.getByLabelText('Number of times'), '4');
+    await user.type(form.getByLabelText('Invite colleagues (type a name)'), 'dan');
+    await user.click(await form.findByRole('button', { name: 'Invite Dan Dimitrov' }));
+    expect(form.getByRole('button', { name: 'Remove Dan Dimitrov' })).toBeInTheDocument();
+    await user.click(form.getByRole('button', { name: 'Save' }));
+    await waitFor(() =>
+      expect(bodies).toEqual([
+        {
+          scope: 'personal',
+          title: 'Sync',
+          allDay: false,
+          startDate: '2030-03-04',
+          endDate: '2030-03-04',
+          startTime: '09:00',
+          endTime: '09:30',
+          recurrence: { freq: 'weekly', interval: 2, weekdays: [2], until: null, count: 4 },
+          attendeeIds: [DAN],
+        },
+      ]),
+    );
+  });
+
+  it('removes a guest again and checks the repeat fields before sending', async () => {
+    serveWithPeople();
+    const bodies: unknown[] = [];
+    server.use(
+      http.post(`${API}/calendar/events`, async ({ request: r }) => {
+        bodies.push(await r.json());
+        return HttpResponse.json(event(1), { status: 201 });
+      }),
+    );
+    await renderApp(AGENDA);
+    const { user, form } = await openNew();
+    await user.type(form.getByLabelText('Title'), 'Sync');
+    await user.type(form.getByLabelText('Start time'), '09:00');
+    await user.type(form.getByLabelText('End time'), '09:30');
+    await user.type(form.getByLabelText('Invite colleagues (type a name)'), 'dan');
+    await user.click(await form.findByRole('button', { name: 'Invite Dan Dimitrov' }));
+    await user.click(form.getByRole('button', { name: 'Remove Dan Dimitrov' }));
+    expect(form.getByText('No guests yet.')).toBeInTheDocument();
+    await user.type(form.getByLabelText('Invite colleagues (type a name)'), 'zzz');
+    expect(await form.findByText('Nobody found.')).toBeInTheDocument();
+    await user.selectOptions(form.getByLabelText('Repeats'), 'daily');
+    await user.clear(form.getByLabelText('Interval in days'));
+    await user.type(form.getByLabelText('Interval in days'), '0');
+    await user.click(form.getByRole('button', { name: 'Save' }));
+    expect(await form.findByText('Enter a whole number from 1 to 30.')).toBeInTheDocument();
+    expect(bodies).toEqual([]);
+  });
+
+  it('offers guests only on personal events', async () => {
+    serveWithPeople({ teams: [team(TEAM_A, 'Alpha', ME, [ME])] });
+    as('manager');
+    await renderApp(AGENDA);
+    const { user, form } = await openNew();
+    expect(form.getByLabelText('Invite colleagues (type a name)')).toBeInTheDocument();
+    await user.selectOptions(form.getByLabelText('Calendar'), 'team');
+    expect(form.queryByLabelText('Invite colleagues (type a name)')).not.toBeInTheDocument();
+    expect(form.queryByRole('button', { name: 'Find a time' })).not.toBeInTheDocument();
+  });
+
+  it('shows every occurrence of a series, the repeat, the guests and their answers', async () => {
+    const series = {
+      recurrence: { ...weekly, interval: 2 },
+      attendees: [
+        { employee: dan, response: 'accepted' as const },
+        {
+          employee: { id: uuid(62), firstName: 'Eve', lastName: 'Evans' },
+          response: 'needs_action' as const,
+        },
+      ],
+    };
+    serveWithPeople({
+      events: [
+        event(1, { title: 'Sync', ...day, occurrenceDate: '2030-03-04', ...series }),
+        event(1, {
+          title: 'Sync',
+          startDate: '2030-03-18',
+          endDate: '2030-03-18',
+          occurrenceDate: '2030-03-18',
+          ...series,
+        }),
+      ],
+    });
+    await renderApp('/calendar?view=agenda&date=2030-03-04');
+    expect(await screen.findAllByText('Sync')).toHaveLength(2);
+    expect(screen.getAllByText('Repeats every 2 weeks')).toHaveLength(2);
+    expect(screen.getAllByText('Dan Dimitrov · Accepted')).toHaveLength(2);
+    expect(screen.getAllByText('Eve Evans · No answer yet')).toHaveLength(2);
+  });
+
+  it('lets a guest answer, and offers no editing', async () => {
+    serveWithPeople({
+      events: [
+        event(1, {
+          title: 'Lunch',
+          ...day,
+          scope: 'personal',
+          canEdit: false,
+          isOrganizer: false,
+          owner: dan,
+          myResponse: 'needs_action',
+          attendees: [
+            {
+              employee: { id: ME, firstName: 'Maria', lastName: 'Ivanova' },
+              response: 'needs_action',
+            },
+          ],
+        }),
+      ],
+    });
+    const answers: unknown[] = [];
+    server.use(
+      http.put(`${API}/calendar/events/${uuid(101)}/response`, async ({ request: r }) => {
+        answers.push(await r.json());
+        return HttpResponse.json(event(1));
+      }),
+    );
+    await renderApp(AGENDA);
+    expect(await screen.findByText('Organizer: Dan Dimitrov')).toBeInTheDocument();
+    expect(screen.getByText('Your answer: No answer yet')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: 'Decline' }));
+    await waitFor(() => expect(answers).toEqual([{ response: 'declined' }]));
+  });
+
+  it('marks the current answer and shows the error when answering fails', async () => {
+    serveWithPeople({
+      events: [
+        event(1, {
+          title: 'Lunch',
+          ...day,
+          canEdit: false,
+          isOrganizer: false,
+          owner: dan,
+          myResponse: 'accepted',
+        }),
+      ],
+    });
+    server.use(
+      http.put(`${API}/calendar/events/${uuid(101)}/response`, () =>
+        errorResponse('NOT_FOUND', 404),
+      ),
+    );
+    await renderApp(AGENDA);
+    const accept = await screen.findByRole('button', { name: 'Accept' });
+    expect(accept).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'Maybe' })).toHaveAttribute('aria-pressed', 'false');
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Maybe' }));
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+  });
+
+  it('does not show answer buttons to the organizer', async () => {
+    serveWithPeople({ events: [event(1, { title: 'Mine', ...day })] });
+    await renderApp(AGENDA);
+    await screen.findByText('Mine');
+    expect(screen.queryByRole('button', { name: 'Accept' })).not.toBeInTheDocument();
+  });
+
+  describe('editing and deleting a series', () => {
+    const occurrence = event(1, {
+      title: 'Sync',
+      ...day,
+      occurrenceDate: '2030-03-04',
+      recurrence: weekly,
+    });
+    const capture = () => {
+      const calls: { url: URL; body?: unknown }[] = [];
+      server.use(
+        http.patch(`${API}/calendar/events/${uuid(101)}`, async ({ request: r }) => {
+          calls.push({ url: new URL(r.url), body: await r.json() });
+          return HttpResponse.json(event(1));
+        }),
+        http.delete(`${API}/calendar/events/${uuid(101)}`, ({ request: r }) => {
+          calls.push({ url: new URL(r.url) });
+          return new HttpResponse(null, { status: 204 });
+        }),
+      );
+      return calls;
+    };
+
+    it('changes only this occurrence, without sending the rule', async () => {
+      serveWithPeople({ events: [occurrence] });
+      const calls = capture();
+      await renderApp(AGENDA);
+      const user = userEvent.setup();
+      await user.click(await screen.findByRole('button', { name: 'Edit' }));
+      const form = within(screen.getByRole('form', { name: 'Change event' }));
+      expect(form.getByRole('radio', { name: 'All events' })).toBeChecked();
+      await user.click(form.getByRole('radio', { name: 'This event only' }));
+      expect(form.queryByLabelText('Repeats')).not.toBeInTheDocument();
+      await user.clear(form.getByLabelText('Title'));
+      await user.type(form.getByLabelText('Title'), 'Sync (moved)');
+      await user.click(form.getByRole('button', { name: 'Save' }));
+      await waitFor(() => expect(calls).toHaveLength(1));
+      expect(calls[0]!.url.search).toBe('?mode=this&occurrence=2030-03-04');
+      expect(calls[0]!.body).toMatchObject({ title: 'Sync (moved)' });
+      expect(calls[0]!.body).not.toHaveProperty('recurrence');
+    });
+
+    it('sends no scope for the whole series and keeps an unchanged rule out of the request', async () => {
+      serveWithPeople({ events: [occurrence] });
+      const calls = capture();
+      await renderApp(AGENDA);
+      const user = userEvent.setup();
+      await user.click(await screen.findByRole('button', { name: 'Edit' }));
+      const form = within(screen.getByRole('form', { name: 'Change event' }));
+      expect(form.getByLabelText('Repeats')).toHaveValue('weekly');
+      await user.click(form.getByRole('button', { name: 'Save' }));
+      await waitFor(() => expect(calls).toHaveLength(1));
+      expect(calls[0]!.url.search).toBe('');
+      expect(calls[0]!.body).not.toHaveProperty('recurrence');
+      expect(calls[0]!.body).not.toHaveProperty('attendeeIds');
+    });
+
+    it('stops a series from repeating by sending null', async () => {
+      serveWithPeople({ events: [occurrence] });
+      const calls = capture();
+      await renderApp(AGENDA);
+      const user = userEvent.setup();
+      await user.click(await screen.findByRole('button', { name: 'Edit' }));
+      const form = within(screen.getByRole('form', { name: 'Change event' }));
+      await user.selectOptions(form.getByLabelText('Repeats'), 'none');
+      await user.click(form.getByRole('button', { name: 'Save' }));
+      await waitFor(() => expect(calls).toHaveLength(1));
+      expect(calls[0]!.body).toMatchObject({ recurrence: null });
+    });
+
+    it('asks which events to delete and sends the chosen scope', async () => {
+      serveWithPeople({ events: [occurrence] });
+      const calls = capture();
+      await renderApp(AGENDA);
+      const user = userEvent.setup();
+      await user.click(await screen.findByRole('button', { name: 'Delete' }));
+      await user.click(screen.getByRole('radio', { name: 'This and the following events' }));
+      await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+      await waitFor(() => expect(calls).toHaveLength(1));
+      expect(calls[0]!.url.search).toBe('?mode=following&occurrence=2030-03-04');
+    });
+
+    it('does not ask for a scope when the event does not repeat', async () => {
+      serveWithPeople({ events: [event(1, { title: 'Once', ...day })] });
+      const calls = capture();
+      await renderApp(AGENDA);
+      const user = userEvent.setup();
+      await user.click(await screen.findByRole('button', { name: 'Delete' }));
+      expect(screen.queryByRole('radio')).not.toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+      await waitFor(() => expect(calls).toHaveLength(1));
+      expect(calls[0]!.url.search).toBe('');
+    });
+
+    it('does not let a guest change the guest list of an event they do not organize', async () => {
+      serveWithPeople({
+        events: [
+          event(1, { title: 'Theirs', ...day, canEdit: true, isOrganizer: false, owner: dan }),
+        ],
+      });
+      await renderApp(AGENDA);
+      await userEvent.setup().click(await screen.findByRole('button', { name: 'Edit' }));
+      const form = within(screen.getByRole('form', { name: 'Change event' }));
+      expect(form.queryByLabelText('Invite colleagues (type a name)')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('finding a time', () => {
+    it('suggests times for you and the guests and fills the form from the chosen one', async () => {
+      serveWithPeople();
+      const asked: unknown[] = [];
+      server.use(
+        http.post(`${API}/calendar/find-time`, async ({ request: r }) => {
+          asked.push(await r.json());
+          return HttpResponse.json({
+            slots: [
+              { date: '2030-03-05', startTime: '10:00', endTime: '11:00' },
+              { date: '2030-03-06', startTime: '14:30', endTime: '15:30' },
+            ],
+          });
+        }),
+      );
+      await renderApp(AGENDA);
+      const { user, form } = await openNew();
+      await user.type(form.getByLabelText('Invite colleagues (type a name)'), 'dan');
+      await user.click(await form.findByRole('button', { name: 'Invite Dan Dimitrov' }));
+      await user.click(form.getByRole('button', { name: 'Find a time' }));
+      await user.selectOptions(form.getByLabelText('Length'), '90');
+      await user.click(form.getByRole('button', { name: 'Search' }));
+      await waitFor(() =>
+        expect(asked).toEqual([
+          { employeeIds: [ME, DAN], from: '2030-03-04', to: '2030-03-10', durationMinutes: 90 },
+        ]),
+      );
+      const list = await form.findByRole('list', { name: 'Suggested times' });
+      expect(within(list).getAllByRole('button')).toHaveLength(2);
+      await user.click(within(list).getByRole('button', { name: /14:30–15:30/ }));
+      expect(form.getByLabelText('Start date')).toHaveValue('2030-03-06');
+      expect(form.getByLabelText('End date')).toHaveValue('2030-03-06');
+      expect(form.getByLabelText('Start time')).toHaveValue('14:30');
+      expect(form.getByLabelText('End time')).toHaveValue('15:30');
+    });
+
+    it('says when nobody is free, and shows an error when the search fails', async () => {
+      serveWithPeople();
+      server.use(http.post(`${API}/calendar/find-time`, () => HttpResponse.json({ slots: [] })));
+      await renderApp(AGENDA);
+      const { user, form } = await openNew();
+      await user.click(form.getByRole('button', { name: 'Find a time' }));
+      await user.click(form.getByRole('button', { name: 'Search' }));
+      expect(await form.findByText(/Nobody is free in this period/)).toBeInTheDocument();
+      server.use(http.post(`${API}/calendar/find-time`, () => errorResponse('FORBIDDEN', 403)));
+      await user.click(form.getByRole('button', { name: 'Search' }));
+      expect(await form.findByText('You are not allowed to do this.')).toBeInTheDocument();
+    });
+  });
+
+  it('is available in German and Bulgarian', async () => {
+    serveWithPeople({
+      events: [
+        event(1, {
+          title: 'Sync',
+          ...day,
+          recurrence: { ...weekly, interval: 2 },
+          canEdit: false,
+          isOrganizer: false,
+          owner: dan,
+          myResponse: 'needs_action',
+        }),
+      ],
+    });
+    await initTestI18n('de');
+    const { unmount } = await renderApp(AGENDA);
+    expect(await screen.findByText('Wiederholt sich alle 2 Wochen')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Zusagen' })).toBeInTheDocument();
+    unmount();
+    await initTestI18n('bg');
+    await renderApp(AGENDA);
+    expect(await screen.findByText('Повтаря се на всеки 2 седмици')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Приемам' })).toBeInTheDocument();
   });
 });
 

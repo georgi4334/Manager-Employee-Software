@@ -115,6 +115,34 @@ export function useNotificationText() {
               : t('types.one_on_one.changed.textScheduled', { date }),
       };
     }
+    if (type === 'calendar.invited') {
+      return {
+        title: t('types.calendar.invited.title'),
+        text: t('types.calendar.invited.text', { date: formatDay(str(params.date), language) }),
+      };
+    }
+    if (type === 'calendar.response') {
+      const date = formatDay(str(params.date), language);
+      return {
+        title: t('types.calendar.response.title'),
+        text:
+          params.response === 'declined'
+            ? t('types.calendar.response.textDeclined', { date })
+            : params.response === 'tentative'
+              ? t('types.calendar.response.textTentative', { date })
+              : t('types.calendar.response.textAccepted', { date }),
+      };
+    }
+    if (type === 'calendar.changed') {
+      const date = formatDay(str(params.date), language);
+      return {
+        title: t('types.calendar.changed.title'),
+        text:
+          params.action === 'cancelled'
+            ? t('types.calendar.changed.textCancelled', { date })
+            : t('types.calendar.changed.textUpdated', { date }),
+      };
+    }
     if (type === 'goal.assigned') {
       return { title: t('types.goal.assigned.title'), text: t('types.goal.assigned.text') };
     }

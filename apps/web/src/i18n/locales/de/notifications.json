@@ -137,6 +137,29 @@
         "settingsTitle": "Freigegebene Beurteilungen",
         "settingsHelp": "Wenn das Ergebnis deiner Beurteilung freigegeben wird."
       }
+    },
+    "calendar": {
+      "invited": {
+        "title": "Einladung zu einem Termin",
+        "text": "Sie wurden zu einem Termin am {{date}} eingeladen.",
+        "settingsTitle": "Einladungen zu Terminen",
+        "settingsHelp": "Wenn Sie jemand zu einem Termin einlädt."
+      },
+      "response": {
+        "title": "Antwort auf Ihren Termin",
+        "textAccepted": "Eine eingeladene Person hat Ihren Termin am {{date}} angenommen.",
+        "textDeclined": "Eine eingeladene Person hat Ihren Termin am {{date}} abgelehnt.",
+        "textTentative": "Eine eingeladene Person hat auf Ihren Termin am {{date}} mit „vielleicht“ geantwortet.",
+        "settingsTitle": "Antworten auf Ihre Termine",
+        "settingsHelp": "Wenn jemand auf eine Ihrer Einladungen antwortet."
+      },
+      "changed": {
+        "title": "Termin geändert",
+        "textUpdated": "Ein Termin am {{date}}, zu dem Sie eingeladen sind, wurde geändert.",
+        "textCancelled": "Der Termin am {{date}}, zu dem Sie eingeladen waren, wurde abgesagt.",
+        "settingsTitle": "Änderungen an Terminen, zu denen Sie eingeladen sind",
+        "settingsHelp": "Wenn die einladende Person einen Termin ändert oder absagt."
+      }
     }
   },
   "unknown": {

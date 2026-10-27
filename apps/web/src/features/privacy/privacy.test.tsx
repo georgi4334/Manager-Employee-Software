@@ -51,6 +51,7 @@ const document: PersonalDataExport = {
   reviews: [],
   attendance: [],
   calendarEvents: [],
+  calendarInvitations: [],
   notifications: [],
   notificationPreferences: [],
   auditEntries: [],

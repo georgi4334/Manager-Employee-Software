@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { daysBetween } from './dates.js';
 import { dateOnlySchema } from './employees.js';
+import { recurrenceRequestSchema, recurrenceSchema } from './recurrence.js';
 
 export const CALENDAR_SCOPES = ['personal', 'team', 'company'] as const;
 export type CalendarScope = (typeof CALENDAR_SCOPES)[number];
@@ -11,6 +12,14 @@ export const MAX_EVENT_LOCATION = 200;
 /** Longest event in days (end date inclusive). */
 export const MAX_EVENT_DAYS = 31;
 export const MAX_CALENDAR_RANGE_DAYS = 93;
+export const MAX_ATTENDEES = 50;
+export const ATTENDEE_RESPONSES = ['needs_action', 'accepted', 'declined', 'tentative'] as const;
+export type AttendeeResponse = (typeof ATTENDEE_RESPONSES)[number];
+
+const attendeeIds = z
+  .array(z.uuid())
+  .max(MAX_ATTENDEES, { error: 'tooMany' })
+  .refine((ids) => new Set(ids).size === ids.length, { error: 'duplicate' });
 
 const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, { error: 'invalidTime' });
 const text = (max: number) =>
@@ -88,11 +97,21 @@ export const createEventRequestSchema = z
     endDate: dateOnlySchema,
     startTime: time.optional(),
     endTime: time.optional(),
+    /** Repeats the event (ADR 0028). */
+    recurrence: recurrenceRequestSchema.optional(),
+    /** Guests, personal events only. */
+    attendeeIds: attendeeIds.optional(),
   })
   .strict()
   .superRefine((value, ctx) => {
     for (const issue of eventShapeIssues(value)) {
       ctx.addIssue({ code: 'custom', path: [issue.path], message: issue.code });
+    }
+    if (value.attendeeIds?.length && value.scope !== 'personal') {
+      ctx.addIssue({ code: 'custom', path: ['attendeeIds'], message: 'guests_not_allowed' });
+    }
+    if (value.recurrence?.until && value.recurrence.until < value.startDate) {
+      ctx.addIssue({ code: 'custom', path: ['recurrence', 'until'], message: 'end_before_start' });
     }
   });
 export type CreateEventRequest = z.infer<typeof createEventRequestSchema>;
@@ -112,6 +131,10 @@ export const updateEventRequestSchema = z
     endDate: dateOnlySchema,
     startTime: time.nullable(),
     endTime: time.nullable(),
+    /** `null` makes it a one-off event. */
+    recurrence: recurrenceRequestSchema.nullable(),
+    /** The complete guest list (replaces the current one). */
+    attendeeIds,
   })
   .partial()
   .strict()
@@ -126,6 +149,16 @@ export const eventQuerySchema = z
     error: 'too_long',
   });
 export type EventQuery = z.infer<typeof eventQuerySchema>;
+
+export const respondRequestSchema = z
+  .object({ response: z.enum(['accepted', 'declined', 'tentative']) })
+  .strict();
+export type RespondRequest = z.infer<typeof respondRequestSchema>;
+
+export const attendeeSchema = z.object({
+  employee: z.object({ id: z.uuid(), firstName: z.string(), lastName: z.string() }),
+  response: z.enum(ATTENDEE_RESPONSES),
+});
 
 export const calendarEventSchema = z.object({
   id: z.uuid(),
@@ -142,6 +175,14 @@ export const calendarEventSchema = z.object({
   startTime: z.string().nullable(),
   endTime: z.string().nullable(),
   canEdit: z.boolean(),
+  /** The series rule; null for a one-off event. */
+  recurrence: recurrenceSchema.nullable(),
+  /** The start date of this occurrence (the event's own start date when it does not repeat). */
+  occurrenceDate: z.string(),
+  isOrganizer: z.boolean(),
+  attendees: z.array(attendeeSchema),
+  /** The viewer's answer when they are a guest, else null. */
+  myResponse: z.enum(ATTENDEE_RESPONSES).nullable(),
 });
 export type CalendarEvent = z.infer<typeof calendarEventSchema>;
 

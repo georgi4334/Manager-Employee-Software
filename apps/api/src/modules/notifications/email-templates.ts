@@ -85,6 +85,24 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\nyour performance review in ${v.workspace} on InTime was released.\n\n` +
         `Open InTime to read it:\n${v.link}`,
     },
+    'calendar.invited': {
+      subject: (v) => `You were invited to an event in ${v.workspace}`,
+      text: (v) =>
+        `Hello,\n\nyou were invited to an event in ${v.workspace} on InTime.\n\n` +
+        `Open InTime to answer:\n${v.link}`,
+    },
+    'calendar.response': {
+      subject: (v) => `A guest answered your event in ${v.workspace}`,
+      text: (v) =>
+        `Hello,\n\na guest answered an event of yours in ${v.workspace} on InTime.\n\n` +
+        `Open InTime to see it:\n${v.link}`,
+    },
+    'calendar.changed': {
+      subject: (v) => `An event in ${v.workspace} changed`,
+      text: (v) =>
+        `Hello,\n\nan event you were invited to in ${v.workspace} on InTime was changed or cancelled.\n\n` +
+        `Open InTime to see it:\n${v.link}`,
+    },
     'goal.assigned': {
       subject: (v) => `A goal was set for you in ${v.workspace}`,
       text: (v) =>
@@ -178,6 +196,24 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hallo,\n\nIhre Beurteilung in ${v.workspace} auf InTime wurde freigegeben.\n\n` +
         `Öffnen Sie InTime, um sie zu lesen:\n${v.link}`,
     },
+    'calendar.invited': {
+      subject: (v) => `Sie wurden in ${v.workspace} zu einem Termin eingeladen`,
+      text: (v) =>
+        `Hallo,\n\nSie wurden in ${v.workspace} auf InTime zu einem Termin eingeladen.\n\n` +
+        `Öffnen Sie InTime, um zu antworten:\n${v.link}`,
+    },
+    'calendar.response': {
+      subject: (v) => `Eine Antwort auf Ihren Termin in ${v.workspace}`,
+      text: (v) =>
+        `Hallo,\n\neine eingeladene Person hat auf einen Ihrer Termine in ${v.workspace} auf InTime geantwortet.\n\n` +
+        `Öffnen Sie InTime, um es zu sehen:\n${v.link}`,
+    },
+    'calendar.changed': {
+      subject: (v) => `Ein Termin in ${v.workspace} wurde geändert`,
+      text: (v) =>
+        `Hallo,\n\nein Termin, zu dem Sie in ${v.workspace} auf InTime eingeladen wurden, wurde geändert oder abgesagt.\n\n` +
+        `Öffnen Sie InTime, um es zu sehen:\n${v.link}`,
+    },
     'goal.assigned': {
       subject: (v) => `Für Sie wurde in ${v.workspace} ein Ziel gesetzt`,
       text: (v) =>
@@ -270,6 +306,24 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       text: (v) =>
         `Здравейте,\n\nвашата оценка в ${v.workspace} в InTime беше публикувана.\n\n` +
         `Отворете InTime, за да я прочетете:\n${v.link}`,
+    },
+    'calendar.invited': {
+      subject: (v) => `Поканени сте на събитие в ${v.workspace}`,
+      text: (v) =>
+        `Здравейте,\n\nпоканени сте на събитие в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да отговорите:\n${v.link}`,
+    },
+    'calendar.response': {
+      subject: (v) => `Отговор на ваше събитие в ${v.workspace}`,
+      text: (v) =>
+        `Здравейте,\n\nпоканен гост отговори на ваше събитие в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да го видите:\n${v.link}`,
+    },
+    'calendar.changed': {
+      subject: (v) => `Събитие в ${v.workspace} беше променено`,
+      text: (v) =>
+        `Здравейте,\n\nсъбитие, на което сте поканени в ${v.workspace} в InTime, беше променено или отменено.\n\n` +
+        `Отворете InTime, за да го видите:\n${v.link}`,
     },
     'goal.assigned': {
       subject: (v) => `Зададена ви е цел в ${v.workspace}`,

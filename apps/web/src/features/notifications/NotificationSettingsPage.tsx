@@ -31,6 +31,12 @@ function useTypeTitle() {
         return t('types.project.assigned.settingsTitle');
       case 'task.assigned':
         return t('types.task.assigned.settingsTitle');
+      case 'calendar.invited':
+        return t('types.calendar.invited.settingsTitle');
+      case 'calendar.response':
+        return t('types.calendar.response.settingsTitle');
+      case 'calendar.changed':
+        return t('types.calendar.changed.settingsTitle');
       case 'goal.assigned':
         return t('types.goal.assigned.settingsTitle');
       case 'one_on_one.changed':
@@ -153,6 +159,21 @@ function TypeHeading({ type }: { type: string }) {
         ];
       case 'task.assigned':
         return [t('types.task.assigned.settingsTitle'), t('types.task.assigned.settingsHelp')];
+      case 'calendar.invited':
+        return [
+          t('types.calendar.invited.settingsTitle'),
+          t('types.calendar.invited.settingsHelp'),
+        ];
+      case 'calendar.response':
+        return [
+          t('types.calendar.response.settingsTitle'),
+          t('types.calendar.response.settingsHelp'),
+        ];
+      case 'calendar.changed':
+        return [
+          t('types.calendar.changed.settingsTitle'),
+          t('types.calendar.changed.settingsHelp'),
+        ];
       case 'goal.assigned':
         return [t('types.goal.assigned.settingsTitle'), t('types.goal.assigned.settingsHelp')];
       case 'review.cycle_opened':

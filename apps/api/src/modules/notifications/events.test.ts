@@ -28,6 +28,19 @@ describe('event catalog', () => {
       'project.assigned': { recipientUserId: USER, projectId: USER, projectName: 'Website' },
       'task.assigned': { recipientUserId: USER, projectId: USER, taskKey: 'WEB-12' },
       'goal.assigned': { recipientUserId: USER, goalId: USER },
+      'calendar.invited': { recipientUserId: USER, eventId: USER, date: '2026-11-02' },
+      'calendar.response': {
+        recipientUserId: USER,
+        eventId: USER,
+        date: '2026-11-02',
+        response: 'accepted',
+      },
+      'calendar.changed': {
+        recipientUserId: USER,
+        eventId: USER,
+        date: '2026-11-02',
+        action: 'cancelled',
+      },
       'feedback.received': { recipientUserId: USER, feedbackId: USER },
       'review.cycle_opened': { recipientUserId: USER, cycleId: USER },
       'review.released': { recipientUserId: USER, reviewId: USER },
@@ -384,5 +397,57 @@ describe('review notifications', () => {
     ['review.released', { recipientUserId: USER, reviewId: 'x' }],
   ] as const)('rejects %s with %j', (type, params) => {
     expect(EVENT_DEFINITIONS[type].params.safeParse(params).success).toBe(false);
+  });
+});
+
+describe('calendar events (ADR 0028)', () => {
+  it('invites with the event id and the date, never the title', () => {
+    const params = { recipientUserId: USER, eventId: USER, date: '2026-11-02' };
+    expect(EVENT_DEFINITIONS['calendar.invited'].notify(params)).toEqual([
+      {
+        recipientUserId: USER,
+        type: 'calendar.invited',
+        params: { eventId: USER, date: '2026-11-02' },
+      },
+    ]);
+  });
+
+  it('tells the organizer the answer but not who gave it', () => {
+    const [note] = EVENT_DEFINITIONS['calendar.response'].notify({
+      recipientUserId: USER,
+      eventId: USER,
+      date: '2026-11-02',
+      response: 'declined',
+    });
+    expect(note?.params).toEqual({ eventId: USER, date: '2026-11-02', response: 'declined' });
+  });
+
+  it('refuses an answer that is not accepted, declined or tentative, and an unknown action', () => {
+    const response = EVENT_DEFINITIONS['calendar.response'].params;
+    expect(
+      response.safeParse({
+        recipientUserId: USER,
+        eventId: USER,
+        date: '2026-11-02',
+        response: 'needs_action',
+      }).success,
+    ).toBe(false);
+    const changed = EVENT_DEFINITIONS['calendar.changed'].params;
+    expect(
+      changed.safeParse({
+        recipientUserId: USER,
+        eventId: USER,
+        date: '2026-11-02',
+        action: 'moved',
+      }).success,
+    ).toBe(false);
+    expect(
+      changed.safeParse({
+        recipientUserId: USER,
+        eventId: USER,
+        date: '2026-11-02',
+        action: 'cancelled',
+      }).success,
+    ).toBe(true);
   });
 });

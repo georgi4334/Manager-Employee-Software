@@ -137,6 +137,29 @@
         "settingsTitle": "Released reviews",
         "settingsHelp": "When your performance review result is released."
       }
+    },
+    "calendar": {
+      "invited": {
+        "title": "Event invitation",
+        "text": "You were invited to an event on {{date}}.",
+        "settingsTitle": "Invitations to events",
+        "settingsHelp": "When somebody invites you to an event."
+      },
+      "response": {
+        "title": "Answer to your event",
+        "textAccepted": "A guest accepted your event of {{date}}.",
+        "textDeclined": "A guest declined your event of {{date}}.",
+        "textTentative": "A guest answered “maybe” to your event of {{date}}.",
+        "settingsTitle": "Answers to your events",
+        "settingsHelp": "When a guest answers an invitation of yours."
+      },
+      "changed": {
+        "title": "Event changed",
+        "textUpdated": "An event you were invited to on {{date}} was changed.",
+        "textCancelled": "The event of {{date}} you were invited to was cancelled.",
+        "settingsTitle": "Changes to events you are invited to",
+        "settingsHelp": "When the organizer changes or cancels an event."
+      }
     }
   },
   "unknown": {

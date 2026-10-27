@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { CalendarEvent, CalendarScope } from '@intime/contracts';
+import type { CalendarEvent, CalendarScope, SeriesMode } from '@intime/contracts';
+import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useMessages } from '@/features/auth/messages';
@@ -20,6 +21,10 @@ import {
   type EventFormValues,
 } from './forms';
 import { useCreateEvent, useUpdateEvent } from './hooks';
+import { FindTimePanel } from './FindTimePanel';
+import { GuestPicker } from './GuestPicker';
+import { RepeatFields } from './RepeatFields';
+import { SeriesScope } from './SeriesScope';
 import { useCalendarErrors } from './use-calendar-errors';
 
 interface EventFormProps {
@@ -46,7 +51,11 @@ export function EventForm({ event, defaultDate, onDone }: EventFormProps) {
     resolver: zodResolver(eventFormSchema),
     defaultValues: event ? valuesOf(event) : emptyEvent(defaultDate),
   });
+  const [mode, setMode] = useState<SeriesMode>('all');
+  const [finding, setFinding] = useState(false);
   const scope = useWatch({ control: form.control, name: 'scope' });
+  const guestIds = useWatch({ control: form.control, name: 'attendeeIds' });
+  const startDate = useWatch({ control: form.control, name: 'startDate' });
   const allDay = useWatch({ control: form.control, name: 'allDay' });
   const fieldErrors = form.formState.errors;
 
@@ -64,9 +73,13 @@ export function EventForm({ event, defaultDate, onDone }: EventFormProps) {
 
   const submit = (v: EventFormValues) => {
     const done = { onSuccess: onDone };
-    if (event) update.mutate(toUpdateRequest(v), done);
-    else create.mutate(toCreateRequest(v), done);
+    if (event) {
+      const scoped = mode === 'all' ? undefined : { mode, occurrence: event.occurrenceDate };
+      update.mutate({ body: toUpdateRequest(v, event, mode), scope: scoped }, done);
+    } else create.mutate(toCreateRequest(v), done);
   };
+
+  const canInvite = scope === 'personal' && (!event || event.isOrganizer);
 
   return (
     <form
@@ -131,6 +144,43 @@ export function EventForm({ event, defaultDate, onDone }: EventFormProps) {
           </Field>
         </>
       )}
+      {canInvite && (
+        <>
+          <GuestPicker
+            value={guestIds}
+            onChange={(ids) => form.setValue('attendeeIds', ids, { shouldDirty: true })}
+          />
+          <div className="sm:col-span-2">
+            <Button
+              type="button"
+              variant="secondary"
+              aria-expanded={finding}
+              onClick={() => setFinding((open) => !open)}
+            >
+              {t('findTime.open')}
+            </Button>
+          </div>
+          {finding && (
+            <FindTimePanel
+              from={startDate}
+              guestIds={guestIds}
+              onPick={(slot) => {
+                form.setValue('allDay', false, { shouldDirty: true });
+                form.setValue('startDate', slot.date, { shouldDirty: true });
+                form.setValue('endDate', slot.date, { shouldDirty: true });
+                form.setValue('startTime', slot.startTime, { shouldDirty: true });
+                form.setValue('endTime', slot.endTime, { shouldDirty: true });
+              }}
+            />
+          )}
+        </>
+      )}
+      {event?.recurrence && (
+        <div className="sm:col-span-2">
+          <SeriesScope value={mode} onChange={setMode} />
+        </div>
+      )}
+      {mode !== 'this' && <RepeatFields form={form} />}
       <div className="sm:col-span-2">
         <Field label={t('form.location')} error={messages.validation(fieldErrors.location)}>
           {(field) => (

@@ -90,6 +90,8 @@ export class ErasureService {
       await tx.oneOnOne.deleteMany({
         where: { tenantId, OR: [{ managerEmployeeId: employeeId }, { employeeId }] },
       });
+      // Invitations they received; the guests of their own personal events go with those events (ADR 0028).
+      await tx.calendarAttendee.deleteMany({ where: { tenantId, employeeId } });
       await tx.calendarEvent.deleteMany({
         where: { tenantId, ownerEmployeeId: employeeId, scope: 'personal' },
       });
