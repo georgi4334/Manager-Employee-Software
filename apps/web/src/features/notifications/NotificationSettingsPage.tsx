@@ -5,12 +5,12 @@ import {
   type NotificationPreference,
 } from '@intime/contracts';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
 import { useMessages } from '@/features/auth/messages';
 import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
 import { Card, CardTitle } from '@/shared/ui/card';
 import { usePreferences, useUpdatePreference } from './hooks';
+import { BackLink } from '@/shared/ui/back-link';
 
 /** Name of a notification type for the settings page; unknown (newer) types get a generic name. */
 function useTypeTitle() {
@@ -76,12 +76,8 @@ export function NotificationSettingsPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-2xl font-semibold">{t('settingsTitle')}</h1>
-        <Button asChild variant="secondary">
-          <Link to="/notifications">{t('backToInbox')}</Link>
-        </Button>
-      </div>
+      <BackLink to="/notifications">{t('backToInbox')}</BackLink>
+      <h1 className="text-2xl font-semibold">{t('settingsTitle')}</h1>
       <p className="text-sm text-muted-foreground">{t('settingsIntro')}</p>
 
       {update.isError && <Alert tone="danger">{messages.apiError(update.error)}</Alert>}

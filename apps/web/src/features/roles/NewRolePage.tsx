@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useCurrentUser } from '@/features/auth/use-auth';
 import { toRequest } from './forms';
 import { useCreateRole } from './hooks';
 import { RoleEditor } from './RoleEditor';
+import { BackLink } from '@/shared/ui/back-link';
 
 export function NewRolePage() {
   const { t } = useTranslation('roles');
@@ -13,9 +14,7 @@ export function NewRolePage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-4">
-      <Link to="/roles" className="text-sm text-primary underline">
-        {t('back')}
-      </Link>
+      <BackLink to="/roles">{t('back')}</BackLink>
       <h1 className="text-2xl font-semibold">{t('form.newTitle')}</h1>
       <RoleEditor
         mine={user?.permissions}

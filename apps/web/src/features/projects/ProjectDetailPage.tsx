@@ -1,7 +1,7 @@
 import { todayIn, type ProjectDetail } from '@intime/contracts';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { useCurrentUser } from '@/features/auth/use-auth';
 import { isApiError } from '@/shared/api/api-error';
 import { Alert } from '@/shared/ui/alert';
@@ -16,6 +16,7 @@ import { TeamSection } from './TeamSection';
 import { Timeline } from './Timeline';
 import { ProjectTasksLink } from '@/features/tasks/ProjectTasksLink';
 import { useProjectErrors } from './use-project-errors';
+import { BackLink } from '@/shared/ui/back-link';
 
 export function ProjectDetailPage() {
   const { t } = useTranslation('projects');
@@ -27,12 +28,7 @@ export function ProjectDetailPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-4">
-      <Link
-        to="/projects"
-        className="inline-flex min-h-11 items-center text-sm text-primary underline"
-      >
-        {t('back')}
-      </Link>
+      <BackLink to="/projects">{t('back')}</BackLink>
       {query.isPending && (
         <p role="status" className="text-sm text-muted-foreground">
           {t('loading')}

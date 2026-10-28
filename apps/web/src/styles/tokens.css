@@ -60,6 +60,18 @@
 
   --radius: 0.875rem;
   --shadow-card: 0 1px 2px rgb(28 25 23 / 0.04);
+
+  /* Buttons: a thin light line just inside the edge of filled buttons. */
+  --button-ring: rgb(255 255 255 / 0.9);
+  --button-shadow: 0 1px 2px rgb(28 25 23 / 0.12), 0 4px 12px -6px rgb(196 60 26 / 0.45);
+
+  /* Drop-downs: mostly white with a warm orange wash; the active item is a raised white pill. */
+  --menu-from: #ffffff;
+  --menu-to: #ffeee6;
+  --menu-border: #ece3df;
+  --menu-shadow: 0 20px 44px -14px rgb(28 25 23 / 0.28), 0 2px 6px rgb(28 25 23 / 0.06);
+  --menu-item-active: #ffffff;
+  --menu-item-glow: 0 0 0 1px #f2d5ca, 0 6px 18px -6px rgb(242 106 75 / 0.4);
 }
 
 [data-theme='dark'] {
@@ -107,6 +119,16 @@
   --chart-8: #a8a29e;
 
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.35);
+
+  --button-ring: rgb(255 255 255 / 0.55);
+  --button-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px -6px rgb(255 122 89 / 0.35);
+
+  --menu-from: #2a201e;
+  --menu-to: #36231d;
+  --menu-border: #3f302b;
+  --menu-shadow: 0 20px 44px -14px rgb(0 0 0 / 0.7), 0 2px 6px rgb(0 0 0 / 0.4);
+  --menu-item-active: #3b2c28;
+  --menu-item-glow: 0 0 0 1px #5c3d33, 0 6px 18px -6px rgb(255 122 89 / 0.3);
 }
 
 @theme inline {

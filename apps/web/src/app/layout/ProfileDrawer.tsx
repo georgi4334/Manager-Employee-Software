@@ -109,7 +109,7 @@ export function ProfileDrawer() {
               aria-labelledby={titleId}
               data-state={presence.state}
               onKeyDown={trapTab}
-              className="motion-sheet-right fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col rounded-l-3xl bg-surface shadow-card"
+              className="motion-sheet-right menu-panel fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col rounded-none rounded-l-3xl border-y-0 border-r-0 p-0"
             >
               <div className="flex items-start justify-between gap-3 border-b border-border p-4">
                 <div className="min-w-0">
@@ -133,7 +133,7 @@ export function ProfileDrawer() {
                 <Link
                   to="/profile"
                   onClick={() => setOpen(false)}
-                  className="flex min-h-11 items-center gap-3 rounded-md border border-border px-3 text-sm font-medium hover:bg-surface-muted"
+                  className="menu-item font-medium"
                 >
                   <UserRound className="size-5" aria-hidden="true" />
                   {t('profile')}

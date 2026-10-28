@@ -203,7 +203,7 @@ export function PickerInput({
           data-state={presence.state}
           style={{ '--pop-origin': alignRight ? 'top right' : 'top left' } as CSSProperties}
           className={cn(
-            'motion-pop absolute top-full z-40 mt-1 w-[19.5rem] max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-surface p-3 shadow-lg',
+            'motion-pop menu-panel absolute top-full z-40 mt-1 w-[19.5rem] max-w-[calc(100vw-2rem)] p-3',
             alignRight ? 'right-0' : 'left-0',
           )}
         >

@@ -30,6 +30,7 @@ import {
   useReactivateEmployee,
 } from './hooks';
 import { useEmployeeErrors } from './use-employee-messages';
+import { BackLink } from '@/shared/ui/back-link';
 
 export function EmployeeDetailPage() {
   const { id = '' } = useParams();
@@ -39,12 +40,7 @@ export function EmployeeDetailPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-4">
-      <Link
-        to="/employees"
-        className="inline-flex min-h-11 items-center text-sm text-primary underline"
-      >
-        {t('back')}
-      </Link>
+      <BackLink to="/employees">{t('back')}</BackLink>
 
       {query.isPending && (
         <p role="status" className="text-sm text-muted-foreground">

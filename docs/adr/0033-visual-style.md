@@ -35,3 +35,23 @@ Status: accepted
   `SkeletonLines`) inside one `SkeletonGroup` (`role="status"`, sr-only "Loading…"); the shapes
   are `aria-hidden`. Dashboard widgets loading on their own show `SkeletonLines`. The `.skeleton`
   pulse is opacity only.
+
+## Update: back navigation
+
+- Every sub-page (employee, project, goal, review, 1:1 and role details, new role, the employee form,
+  notification settings) starts with `BackLink` (`shared/ui/back-link.tsx`): an outlined pill with an
+  arrow in an `--accent` circle, 44px high, above the heading. The arrow is decoration; the link's name
+  is the text ("Back to projects"), so the texts carry no arrow characters.
+
+## Update: buttons and drop-downs
+
+- **Buttons:** `Button` is the only button. Filled variants (primary, danger) have a thin light line
+  just inside the edge (`.btn-ring`: two inset shadows, the outer one in the fill colour `--btn-bg`, the
+  inner one `--button-ring`), a soft shadow and semi-bold text; secondary is outlined with a faint
+  `--accent` inner line. Hover brightens instead of changing the fill, so the ring stays aligned.
+- **Drop-downs:** menus, the date/time picker, the theme menu and the profile drawer use `.menu-panel`
+  (mostly white, fading into a light orange `--menu-to`, large soft shadow) and `.menu-item` (hover,
+  focus and the current choice become a raised white pill with an orange glow, `--menu-item-glow`).
+  Dark mode uses warm dark equivalents. Native `<select>`s stay native (phones keep their own picker);
+  where the browser supports `appearance: base-select` (Chromium 135+), their open list gets the same
+  panel, items, check mark and a chevron. Other browsers show their native list unchanged.

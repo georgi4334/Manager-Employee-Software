@@ -17,6 +17,7 @@ import { useCheckIn, useDeleteGoal, useGoal } from './hooks';
 import { KeyResults } from './KeyResults';
 import { ProgressBar } from './ProgressBar';
 import { useGoalErrors } from './use-goal-errors';
+import { BackLink } from '@/shared/ui/back-link';
 
 function CheckIn({ goalId }: { goalId: string }) {
   const { t } = useTranslation('goals');
@@ -77,9 +78,9 @@ export function GoalDetailPage() {
         <Alert tone="danger">
           {isApiError(query.error, 'NOT_FOUND') ? t('notFound') : errors.apiError(query.error)}
         </Alert>
-        <Link to="/goals" className="text-primary underline">
+        <BackLink to="/goals" className="self-center">
           {t('back')}
-        </Link>
+        </BackLink>
       </Card>
     );
   }
@@ -93,9 +94,7 @@ export function GoalDetailPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-4">
-      <Link to="/goals" className="text-sm text-primary underline">
-        {t('back')}
-      </Link>
+      <BackLink to="/goals">{t('back')}</BackLink>
       <Card className="space-y-3">
         {editing ? (
           <GoalForm goal={goal} onDone={() => setEditing(false)} />

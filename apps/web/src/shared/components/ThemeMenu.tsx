@@ -79,7 +79,7 @@ export function ThemeMenu() {
             setOpen(true);
           }
         }}
-        className="flex min-h-11 w-full items-center gap-3 rounded-md border border-border bg-surface px-3 text-sm text-foreground hover:bg-surface-muted"
+        className="flex min-h-11 w-full items-center gap-3 rounded-md border border-border bg-surface px-3 text-sm text-foreground hover:bg-surface-muted aria-expanded:border-primary/40"
       >
         <Current className="size-5 shrink-0" aria-hidden="true" />
         <span id={valueId} className="flex-1 text-left">
@@ -97,7 +97,7 @@ export function ThemeMenu() {
           aria-label={t('themeTitle')}
           data-state={presence.state}
           onKeyDown={onMenuKeyDown}
-          className="motion-pop absolute inset-x-0 top-full z-10 mt-1 rounded-xl border border-border bg-surface p-1 shadow-card"
+          className="motion-pop menu-panel absolute inset-x-0 top-full z-10 mt-1 space-y-0.5"
         >
           {OPTIONS.map((option, index) => {
             const Icon = ICONS[option];
@@ -116,10 +116,8 @@ export function ThemeMenu() {
                   setPreference(option);
                   close();
                 }}
-                className={cn(
-                  'flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-sm hover:bg-surface-muted',
-                  selected && 'font-medium text-primary',
-                )}
+                data-active={selected}
+                className={cn('menu-item', selected && 'font-semibold text-primary')}
               >
                 <Icon className="size-5 shrink-0" aria-hidden="true" />
                 <span className="flex-1 text-left">{t(`theme.${option}`)}</span>
