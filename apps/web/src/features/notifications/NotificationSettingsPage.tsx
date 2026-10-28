@@ -126,7 +126,7 @@ export function NotificationSettingsPage() {
                   >
                     <span
                       aria-hidden="true"
-                      className={`absolute top-0.5 size-5 rounded-full bg-surface shadow-card transition-all ${state.enabled ? 'left-6' : 'left-0.5'}`}
+                      className={`absolute left-0.5 top-0.5 size-5 rounded-full bg-surface shadow-card transition-transform ${state.enabled ? 'translate-x-5' : ''}`}
                     />
                   </button>
                 </li>

@@ -1,6 +1,6 @@
 {
   "title": "Übersicht",
-  "intro": "Deine Arbeit auf einen Blick.",
+  "intro": "Ihre Arbeit auf einen Blick.",
   "customize": "Anpassen",
   "editing": "Übersicht anordnen",
   "editHint": "Widgets verschieben, entfernen oder hinzufügen. Alle im Arbeitsbereich sehen diese Anordnung; jede Person sieht nur die Widgets, auf die sie Zugriff hat.",
@@ -14,7 +14,7 @@
   "moveDown": "{{name}} nach unten",
   "remove": "{{name}} entfernen",
   "empty": "Hier gibt es noch nichts zu sehen.",
-  "hiddenForYou": "Du hast keinen Zugriff auf dieses Widget; Personen mit Zugriff sehen es.",
+  "hiddenForYou": "Sie haben keinen Zugriff auf dieses Widget; Personen mit Zugriff sehen es.",
   "viewAll": "Alle anzeigen",
   "loading": "Wird geladen …",
   "failed": "Konnte nicht geladen werden.",
@@ -41,7 +41,7 @@
     },
     "stat_approvals": {
       "title": "Offene Genehmigungen",
-      "note": "Abwesenheitsanträge warten auf dich"
+      "note": "Abwesenheitsanträge warten auf Sie"
     },
     "stat_hours": {
       "title": "Meine Stunden diese Woche",
@@ -75,7 +75,7 @@
     },
     "approvals": {
       "title": "Zu genehmigen",
-      "empty": "Nichts wartet auf dich.",
+      "empty": "Nichts wartet auf Sie.",
       "days_one": "{{days}} Tag",
       "days_other": "{{days}} Tage"
     },
@@ -117,7 +117,7 @@
     },
     "skills": {
       "title": "Meine Fähigkeiten",
-      "empty": "Du hast noch keine Fähigkeiten bewertet.",
+      "empty": "Sie haben noch keine Fähigkeiten bewertet.",
       "summary_one": "{{count}} Fähigkeit bewertet, Durchschnitt Stufe {{level}}",
       "summary_other": "{{count}} Fähigkeiten bewertet, Durchschnitt Stufe {{level}}"
     },
@@ -135,7 +135,7 @@
     "assistant": {
       "title": "Assistent",
       "open": "Assistent öffnen",
-      "on": "Frag nach deinem Urlaub, deinen Aufgaben und Zielen.",
+      "on": "Fragen Sie nach Ihrem Urlaub, Ihren Aufgaben und Zielen.",
       "off": "Der Assistent ist in diesem Arbeitsbereich ausgeschaltet."
     },
     "retention": {

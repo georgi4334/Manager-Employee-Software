@@ -1,9 +1,9 @@
 {
   "title": "Leistungsbeurteilungen",
-  "intro": "Blicke auf einen Zeitraum zurück, schreibe deine Selbstbeurteilung und lies dein Ergebnis, sobald es freigegeben ist. Führungskräfte beurteilen ihre Leute; HR betreut die Runden.",
+  "intro": "Blicken Sie auf einen Zeitraum zurück, schreiben Sie Ihre Selbstbeurteilung und lesen Sie Ihr Ergebnis, sobald es freigegeben ist. Führungskräfte beurteilen ihre Leute; HR betreut die Runden.",
   "loading": "Lädt…",
   "retry": "Erneut versuchen",
-  "notFound": "Diese Beurteilung existiert nicht oder du darfst sie nicht sehen.",
+  "notFound": "Diese Beurteilung existiert nicht oder Sie dürfen sie nicht sehen.",
   "back": "Zurück zu den Beurteilungen",
   "pagination": "Seiten",
   "previous": "Zurück",
@@ -23,8 +23,8 @@
     "cycles": "Runden"
   },
   "empty": {
-    "mine": "Du hast noch keine Beurteilungen.",
-    "team": "Für deine Leute gibt es noch keine Beurteilung.",
+    "mine": "Sie haben noch keine Beurteilungen.",
+    "team": "Für Ihre Leute gibt es noch keine Beurteilung.",
     "all": "Es gibt noch keine Beurteilungen."
   },
   "filters": {
@@ -72,7 +72,7 @@
   },
   "self": {
     "heading": "Selbstbeurteilung",
-    "editTitle": "Deine Selbstbeurteilung schreiben",
+    "editTitle": "Ihre Selbstbeurteilung schreiben",
     "notSubmitted": "Die Selbstbeurteilung wurde noch nicht abgegeben."
   },
   "manager": {
@@ -100,10 +100,10 @@
     "manager": "Beurteilung der Führungskraft wieder öffnen"
   },
   "rule": {
-    "incomplete": "Bewerte jede Kompetenz, bevor du abgibst.",
+    "incomplete": "Bewerten Sie jede Kompetenz, bevor Sie abgeben.",
     "required": "Zum Abgeben ist eine Gesamtbewertung erforderlich.",
     "unknown_competency": "Eine Bewertung nennt eine Kompetenz, die nicht zu dieser Runde gehört.",
-    "no_competencies": "Füge mindestens eine Kompetenz hinzu, bevor du die Runde öffnest.",
+    "no_competencies": "Fügen Sie mindestens eine Kompetenz hinzu, bevor Sie die Runde öffnen.",
     "too_many": "Eine Runde hat höchstens 12 Kompetenzen.",
     "end_before_start": "Ein Enddatum darf nicht vor dem Startdatum liegen.",
     "unknown_cycle": "Die Runde, aus der kopiert werden soll, existiert nicht.",

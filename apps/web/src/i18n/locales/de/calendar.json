@@ -125,8 +125,8 @@
     }
   },
   "rsvp": {
-    "label": "Deine Antwort",
-    "current": "Deine Antwort: {{answer}}",
+    "label": "Ihre Antwort",
+    "current": "Ihre Antwort: {{answer}}",
     "accepted": "Zusagen",
     "tentative": "Vielleicht",
     "declined": "Absagen"
@@ -140,12 +140,12 @@
   "findTime": {
     "open": "Zeit finden",
     "title": "Zeit finden",
-    "hint": "Sucht in den nächsten {{count}} Tagen zwischen 09:00 und 18:00 Uhr nach Zeiten, zu denen du und deine Gäste frei seid.",
+    "hint": "Sucht in den nächsten {{count}} Tagen zwischen 09:00 und 18:00 Uhr nach Zeiten, zu denen Sie und Ihre Gäste frei sind.",
     "duration": "Dauer",
     "minutes": "{{count}} Min.",
     "search": "Suchen",
     "searching": "Suche läuft…",
-    "none": "In diesem Zeitraum sind nicht alle frei. Versuche ein anderes Startdatum.",
+    "none": "In diesem Zeitraum sind nicht alle frei. Versuchen Sie ein anderes Startdatum.",
     "results": "Vorgeschlagene Zeiten",
     "slot": "{{date}}, {{start}}–{{end}}"
   },

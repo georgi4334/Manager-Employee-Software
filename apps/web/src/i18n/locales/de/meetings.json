@@ -1,8 +1,8 @@
 {
   "title": "1:1-Gespräche",
-  "intro": "Einzelgespräche mit deiner Führungskraft oder deinen Mitarbeitenden: Agenda, gemeinsame Notizen, private Notizen und Aufgaben.",
+  "intro": "Einzelgespräche mit Ihrer Führungskraft oder Ihren Mitarbeitenden: Agenda, gemeinsame Notizen, private Notizen und Aufgaben.",
   "new": "1:1 ansetzen",
-  "nobody": "Du hast keine Führungskraft und keine direkten Mitarbeitenden, daher gibt es noch niemanden für ein 1:1.",
+  "nobody": "Sie haben keine Führungskraft und keine direkten Mitarbeitenden, daher gibt es noch niemanden für ein 1:1.",
   "loading": "Lädt…",
   "retry": "Erneut versuchen",
   "empty": "Keine Gespräche vorhanden.",
@@ -11,7 +11,7 @@
   "next": "Weiter",
   "page": "Seite {{page}} von {{pages}}",
   "back": "Zurück zu den 1:1-Gesprächen",
-  "notFound": "Dieses Gespräch existiert nicht oder du nimmst nicht daran teil.",
+  "notFound": "Dieses Gespräch existiert nicht oder Sie nehmen nicht daran teil.",
   "markDone": "Als geführt markieren",
   "cancelMeeting": "Gespräch absagen",
   "confirmCancel": "Ja, absagen",
@@ -27,8 +27,8 @@
     "cancelled": "Abgesagt"
   },
   "role": {
-    "manager": "Du bist die Führungskraft",
-    "employee": "Du bist der Mitarbeitende"
+    "manager": "Sie sind die Führungskraft",
+    "employee": "Sie sind die mitarbeitende Person"
   },
   "card": {
     "with": "1:1 mit {{name}}",
@@ -58,8 +58,8 @@
     "agenda": "Agenda",
     "shared": "Gemeinsame Notizen",
     "sharedHint": "Ihr beide könnt sie lesen und schreiben.",
-    "private": "Deine privaten Notizen",
-    "privateHint": "Nur du siehst sie. Nicht die andere Person, nicht HR, nicht ein Administrator.",
+    "private": "Ihre privaten Notizen",
+    "privateHint": "Nur Sie sehen sie. Nicht die andere Person, nicht HR, nicht ein Administrator.",
     "save": "Notizen speichern",
     "saved": "Gespeichert."
   },
@@ -79,7 +79,7 @@
     "removeShort": "Entfernen"
   },
   "rule": {
-    "no_manager": "Du hast keine Führungskraft für ein Gespräch. Bitte HR, sie einzutragen.",
+    "no_manager": "Sie haben keine Führungskraft für ein Gespräch. Bitten Sie HR, sie einzutragen.",
     "unknown_employee": "Mit dieser Person ist kein 1:1 möglich.",
     "nonexistent_time": "Diese Uhrzeit gibt es an diesem Tag nicht (Zeitumstellung).",
     "not_participant": "Eine Aufgabe gehört einer der beiden Personen im Gespräch.",
