@@ -35,7 +35,7 @@
     "submitting": "Wird eingereicht…",
     "lockedSubmitted": "Diese Woche ist eingereicht. Sie kann bis zur Entscheidung nicht geändert werden.",
     "lockedApproved": "Diese Woche ist genehmigt und gesperrt.",
-    "sentBack": "Diese Woche wurde zurückgegeben. Ändere sie und reiche sie erneut ein."
+    "sentBack": "Diese Woche wurde zurückgegeben. Ändern Sie sie und reichen Sie sie erneut ein."
   },
   "entry": {
     "add": "Zeit erfassen",
@@ -81,13 +81,13 @@
     "reopenFor": "Woche von {{name}} wieder öffnen"
   },
   "conflict": {
-    "running": "Es läuft bereits ein Timer. Stoppe ihn zuerst.",
+    "running": "Es läuft bereits ein Timer. Stoppen Sie ihn zuerst.",
     "locked": "Diese Woche ist eingereicht oder genehmigt und kann nicht geändert werden.",
     "status": "Über diesen Zeitnachweis wurde bereits entschieden."
   },
   "rule": {
     "unknown_project": "Dieses Projekt existiert nicht.",
-    "not_on_project": "Du bist nicht in diesem Projekt.",
+    "not_on_project": "Sie sind nicht in diesem Projekt.",
     "task_not_in_project": "Diese Aufgabe gehört nicht zum Projekt.",
     "project_closed": "Dieses Projekt ist abgeschlossen.",
     "future_date": "Für einen Tag in der Zukunft kann keine Zeit erfasst werden.",
@@ -95,7 +95,7 @@
     "not_a_monday": "Eine Woche beginnt an einem Montag.",
     "future_week": "Eine Woche, die noch nicht begonnen hat, kann nicht eingereicht werden.",
     "no_entries": "In dieser Woche ist keine Zeit erfasst.",
-    "timer_running": "Stoppe den laufenden Timer, bevor du diese Woche einreichst."
+    "timer_running": "Stoppen Sie den laufenden Timer, bevor Sie diese Woche einreichen."
   },
   "reports": {
     "from": "Von",
@@ -109,7 +109,7 @@
     "project": "Projekt",
     "allProjects": "Alle Projekte",
     "problem": {
-      "invalidDate": "Gib ein gültiges Datum als Jahr-Monat-Tag ein.",
+      "invalidDate": "Geben Sie ein gültiges Datum als Jahr-Monat-Tag ein.",
       "end_before_start": "Das Ende darf nicht vor dem Beginn liegen.",
       "too_long": "Ein Bericht umfasst höchstens ein Jahr."
     },

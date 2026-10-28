@@ -1,6 +1,6 @@
 {
   "title": "Skills",
-  "intro": "Was du kannst und wie gut. Alle bewerten sich selbst; Führungskräfte können ihr Team bewerten, und HR pflegt die Liste der Skills.",
+  "intro": "Was Sie können und wie gut. Alle bewerten sich selbst; Führungskräfte können ihr Team bewerten, und HR pflegt die Liste der Skills.",
   "loading": "Lädt…",
   "retry": "Erneut versuchen",
   "search": "Nach Namen suchen",
@@ -30,11 +30,11 @@
   "editSkills": "Skills von {{name}} bearbeiten",
   "noRatings": "Noch keine Skills bewertet.",
   "skillsOf": "Skills von {{name}}",
-  "noEmployee": "Du hast keinen Mitarbeitendeneintrag, daher gibt es nichts zu bewerten.",
+  "noEmployee": "Sie haben keinen Mitarbeitendeneintrag, daher gibt es nichts zu bewerten.",
   "emptyCatalog": "Es gibt noch keine Skills. HR kann sie im Katalog anlegen.",
   "archived": "archiviert",
   "assessed": {
-    "self": "Von dir bewertet am {{date}}",
+    "self": "Von Ihnen bewertet am {{date}}",
     "by": "Bewertet von {{name}} am {{date}}"
   },
   "levelOf": "Stufe von {{skill}}",

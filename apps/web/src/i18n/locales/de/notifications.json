@@ -60,7 +60,7 @@
       },
       "reminder": {
         "title": "Anmeldung noch offen",
-        "text": "Deine Anmeldung vom {{date}} wurde nie beendet. Melde dich ab oder korrigiere sie.",
+        "text": "Ihre Anmeldung vom {{date}} wurde nie beendet. Melden Sie sich ab oder korrigieren Sie sie.",
         "settingsTitle": "Vergessene Abmeldungen",
         "settingsHelp": "Wenn eine Anmeldung 12 Stunden offen bleibt."
       }
@@ -76,24 +76,24 @@
     "task": {
       "assigned": {
         "title": "Aufgabe zugewiesen",
-        "text": "Dir wurde die Aufgabe {{taskKey}} zugewiesen.",
-        "settingsTitle": "Dir zugewiesene Aufgaben",
-        "settingsHelp": "Wenn dir jemand eine Aufgabe zuweist."
+        "text": "Ihnen wurde die Aufgabe {{taskKey}} zugewiesen.",
+        "settingsTitle": "Ihnen zugewiesene Aufgaben",
+        "settingsHelp": "Wenn Ihnen jemand eine Aufgabe zuweist."
       }
     },
     "timesheet": {
       "decided": {
         "title": "Zeitnachweis entschieden",
-        "textApproved": "Dein Zeitnachweis für die Woche ab {{week}} wurde genehmigt.",
-        "textRejected": "Dein Zeitnachweis für die Woche ab {{week}} wurde zurückgegeben. Du kannst ihn ändern und erneut einreichen.",
-        "settingsTitle": "Entscheidungen zu deinen Zeitnachweisen",
-        "settingsHelp": "Wenn jemand eine deiner Wochen genehmigt oder zurückgibt."
+        "textApproved": "Ihr Zeitnachweis für die Woche ab {{week}} wurde genehmigt.",
+        "textRejected": "Ihr Zeitnachweis für die Woche ab {{week}} wurde zurückgegeben. Sie können ihn ändern und erneut einreichen.",
+        "settingsTitle": "Entscheidungen zu Ihren Zeitnachweisen",
+        "settingsHelp": "Wenn jemand eine Ihrer Wochen genehmigt oder zurückgibt."
       }
     },
     "time": {
       "timer_reminder": {
         "title": "Timer läuft noch",
-        "text": "Ein Timer, den du am {{date}} gestartet hast, läuft noch. Stoppe ihn oder korrigiere den Eintrag.",
+        "text": "Ein Timer, den Sie am {{date}} gestartet haben, läuft noch. Stoppen Sie ihn oder korrigieren Sie den Eintrag.",
         "settingsTitle": "Weiterlaufende Timer",
         "settingsHelp": "Wenn ein Timer 10 Stunden lang läuft."
       }
@@ -101,9 +101,9 @@
     "goal": {
       "assigned": {
         "title": "Ziel gesetzt",
-        "text": "Dir wurde ein Ziel gesetzt.",
-        "settingsTitle": "Dir gesetzte Ziele",
-        "settingsHelp": "Wenn dir jemand ein Ziel setzt."
+        "text": "Ihnen wurde ein Ziel gesetzt.",
+        "settingsTitle": "Ihnen gesetzte Ziele",
+        "settingsHelp": "Wenn Ihnen jemand ein Ziel setzt."
       }
     },
     "one_on_one": {
@@ -112,30 +112,30 @@
         "textScheduled": "Ein 1:1-Gespräch wurde für den {{date}} angesetzt.",
         "textRescheduled": "Ein 1:1-Gespräch wurde auf den {{date}} verschoben.",
         "textCancelled": "Das 1:1-Gespräch vom {{date}} wurde abgesagt.",
-        "settingsTitle": "Änderungen an deinen 1:1-Gesprächen",
+        "settingsTitle": "Änderungen an Ihren 1:1-Gesprächen",
         "settingsHelp": "Wenn die andere Person ein 1:1 ansetzt, verschiebt oder absagt."
       }
     },
     "feedback": {
       "received": {
         "title": "Neues Feedback",
-        "text": "Du hast Feedback erhalten. Öffne es, um es zu lesen.",
-        "settingsTitle": "Feedback, das du erhältst",
-        "settingsHelp": "Wenn dir ein Kollege Feedback gibt."
+        "text": "Sie haben Feedback erhalten. Öffnen Sie es, um es zu lesen.",
+        "settingsTitle": "Feedback, das Sie erhalten",
+        "settingsHelp": "Wenn Ihnen jemand Feedback gibt."
       }
     },
     "review": {
       "cycle_opened": {
         "title": "Beurteilungsrunde eröffnet",
-        "text": "Eine Beurteilungsrunde hat begonnen. Deine Beurteilung wartet.",
+        "text": "Eine Beurteilungsrunde hat begonnen. Ihre Beurteilung wartet.",
         "settingsTitle": "Beurteilungsrunden",
-        "settingsHelp": "Wenn eine Beurteilungsrunde für dich beginnt."
+        "settingsHelp": "Wenn eine Beurteilungsrunde für Sie beginnt."
       },
       "released": {
         "title": "Beurteilung freigegeben",
-        "text": "Deine Beurteilung wurde freigegeben. Du kannst sie jetzt lesen.",
+        "text": "Ihre Beurteilung wurde freigegeben. Sie können sie jetzt lesen.",
         "settingsTitle": "Freigegebene Beurteilungen",
-        "settingsHelp": "Wenn das Ergebnis deiner Beurteilung freigegeben wird."
+        "settingsHelp": "Wenn das Ergebnis Ihrer Beurteilung freigegeben wird."
       }
     },
     "calendar": {
@@ -172,8 +172,8 @@
     "title": "Neue Benachrichtigung",
     "text": "Öffnen Sie die App, um die Details zu sehen."
   },
-  "toast_one": "Du hast eine neue Benachrichtigung",
-  "toast_other": "Du hast {{count}} neue Benachrichtigungen",
+  "toast_one": "Sie haben eine neue Benachrichtigung",
+  "toast_other": "Sie haben {{count}} neue Benachrichtigungen",
   "toastView": "Ansehen",
   "toastDismiss": "Schließen"
 }

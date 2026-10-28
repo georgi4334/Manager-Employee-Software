@@ -1,6 +1,6 @@
 {
   "title": "Feedback",
-  "intro": "Sag Kolleginnen und Kollegen, was gut lief und was besser sein könnte. Du entscheidest, wer es lesen darf: nur die Person oder auch ihre Führungskraft und HR.",
+  "intro": "Sagen Sie Kolleginnen und Kollegen, was gut lief und was besser sein könnte. Sie entscheiden, wer es lesen darf: nur die Person oder auch ihre Führungskraft und HR.",
   "new": "Feedback geben",
   "sent": "Feedback gesendet.",
   "loading": "Lädt…",
@@ -19,8 +19,8 @@
     "reported": "Gemeldet"
   },
   "empty": {
-    "received": "Du hast noch kein Feedback erhalten.",
-    "given": "Du hast noch kein Feedback gegeben.",
+    "received": "Sie haben noch kein Feedback erhalten.",
+    "given": "Sie haben noch kein Feedback gegeben.",
     "reported": "Kein Feedback wartet auf eine Entscheidung."
   },
   "kind": {
@@ -46,13 +46,13 @@
     "to": "An",
     "kind": "Art",
     "visibility": "Wer es lesen darf",
-    "visibilityHint": "Das kannst du später nicht ändern.",
-    "body": "Dein Feedback",
+    "visibilityHint": "Das können Sie später nicht ändern.",
+    "body": "Ihr Feedback",
     "send": "Senden",
     "cancel": "Abbrechen"
   },
   "rule": {
-    "self": "Du kannst dir selbst kein Feedback geben.",
+    "self": "Sie können sich selbst kein Feedback geben.",
     "unknown_employee": "Diese Person existiert nicht oder ist nicht mehr aktiv.",
     "reported": "Dieses Feedback wurde bereits gemeldet."
   }

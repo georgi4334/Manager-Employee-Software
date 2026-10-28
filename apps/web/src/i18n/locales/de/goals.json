@@ -14,7 +14,7 @@
   "percent": "{{pct}} %",
   "progressOf": "Fortschritt von {{title}}",
   "back": "Zurück zu den Zielen",
-  "notFound": "Dieses Ziel existiert nicht oder du darfst es nicht sehen.",
+  "notFound": "Dieses Ziel existiert nicht oder Sie dürfen es nicht sehen.",
   "edit": "Bearbeiten",
   "delete": "Löschen",
   "confirmDelete": "Ja, dieses Ziel löschen",
@@ -66,11 +66,11 @@
   "rule": {
     "unknown_employee": "Dieser Person können keine Ziele gesetzt werden.",
     "unknown_team": "Dieses Team existiert nicht.",
-    "parent_not_found": "Das übergeordnete Ziel existiert nicht oder du darfst es nicht sehen.",
+    "parent_not_found": "Das übergeordnete Ziel existiert nicht oder Sie dürfen es nicht sehen.",
     "parent_not_wider": "Ein Ziel kann nur zu einem übergeordneten Ziel beitragen.",
     "too_many": "Ein Ziel kann höchstens 10 Key Results haben.",
     "same_as_start": "Das Ziel muss sich vom Startwert unterscheiden.",
-    "children": "Andere Ziele tragen zu diesem bei. Entferne zuerst diese Verknüpfung."
+    "children": "Andere Ziele tragen zu diesem bei. Entfernen Sie zuerst diese Verknüpfung."
   },
   "kr": {
     "heading": "Key Results",
