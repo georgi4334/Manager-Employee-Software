@@ -1,14 +1,13 @@
 import { Outlet } from 'react-router';
-import { useTranslation } from 'react-i18next';
+import { Logo } from '@/shared/ui/logo';
 import { LanguageSwitcher } from '@/shared/components/LanguageSwitcher';
 import { ThemeToggle } from '@/shared/components/ThemeToggle';
 
 export function AuthLayout() {
-  const { t } = useTranslation('common');
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
       <header className="flex items-center justify-between p-4">
-        <span className="text-xl font-bold text-primary">{t('appName')}</span>
+        <Logo className="text-xl" />
         <div className="flex items-center gap-1">
           <LanguageSwitcher />
           <ThemeToggle />

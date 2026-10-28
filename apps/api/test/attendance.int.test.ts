@@ -350,7 +350,16 @@ describe.skipIf(!urls)('attendance over HTTP (real database)', () => {
 
     it('allows exactly 16 hours', async () => {
       const person = await onboard(acme, 'entry16');
-      const res = await entry(person, day(ago(3), '00:00', '16:00'));
+      // a recent day of exactly 24 hours: on a clock-change day 00:00-16:00 is 15 or 17 real hours
+      const plain = [3, 4, 5]
+        .map(ago)
+        .find(
+          (d) =>
+            (zonedToUtc(addDays(d, 1), '00:00', ZONE)?.getTime() ?? 0) -
+              (zonedToUtc(d, '00:00', ZONE)?.getTime() ?? 0) ===
+            24 * 3600_000,
+        )!;
+      const res = await entry(person, day(plain, '00:00', '16:00'));
       expect(attendanceRecordSchema.parse(res.body).minutes).toBe(960);
     });
 

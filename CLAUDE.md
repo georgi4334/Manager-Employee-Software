@@ -278,6 +278,13 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 
 - Colours and radii live only in `tokens.css`. Dark side panel (`bg-sidebar`, `text-sidebar-*`) with a curved content panel; cards outlined (`rounded-xl border`), secondary buttons outlined, tabs an orange pill. `--primary` carries text (AA); `--brand` is for fills without text.
 - A new colour pair must be checked for 4.5:1 in light and dark before it is used for text.
+- The logo is `LogoMark`/`Logo` (`shared/ui/logo.tsx`); `public/favicon.svg` and the splash copy in `index.html` repeat the drawing, so change all three together. Boot shows `Splash`; card pages show skeletons (`shared/ui/skeleton.tsx`) inside one `SkeletonGroup` (`role="status"`), never a bare "Loading…" line.
+
+## Dashboard (docs/adr/0034-dashboard.md)
+
+- One layout per workspace: `dashboard_layout` (RLS, `widgets text[]`, ≤ 50; no row = `DEFAULT_DASHBOARD`). `GET /dashboard/layout` is `@Authenticated()` (answers `canEdit`); `PUT`/`DELETE` need `admin.tenant.settings` and are audited (`dashboard.updated` with ids, `dashboard.reset`). No personal data: not exported or erased.
+- The catalog is `DASHBOARD_WIDGETS` in contracts; unknown or repeated ids are refused, stored ids that left the catalog are dropped on read (`normalizeLayout`). A new widget = id in contracts + component and permission in `features/dashboard/widgets.tsx` + en/de/bg texts in `dashboard.json`.
+- Widgets read through the existing endpoints with the viewer's rights and are hidden without their permission (cosmetic). Charts are hand-made SVG/CSS, `aria-hidden`, with the values in text. Editing uses buttons (move up/down, remove, add), not drag and drop. The test server answers an empty layout by default.
 
 ## Deployment (docs/adr/0005-deployment.md, docs/deployment.md)
 

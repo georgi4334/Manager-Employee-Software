@@ -92,5 +92,17 @@
     "active": "Aktiv",
     "done": "Erledigt",
     "cancelled": "Abgebrochen"
+  },
+  "summary": {
+    "people": "Teamgröße",
+    "peopleNote": "{{hires}} neu · {{leavers}} gegangen",
+    "absence": "Urlaubstage",
+    "absenceNote_one": "{{count}} Antrag wartet",
+    "absenceNote_other": "{{count}} Anträge warten",
+    "hours": "Erfasste Zeit",
+    "hoursNote": "{{percent}} abrechenbar",
+    "tasks": "Offene Arbeit",
+    "tasksNote_one": "{{count}} Aufgabe überfällig",
+    "tasksNote_other": "{{count}} Aufgaben überfällig"
   }
 }

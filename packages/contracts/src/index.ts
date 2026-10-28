@@ -3,6 +3,7 @@ export * from './analytics.js';
 export * from './attendance.js';
 export * from './calendar.js';
 export * from './capacity.js';
+export * from './dashboard.js';
 export * from './compensation.js';
 export * from './find-time.js';
 export * from './recurrence.js';

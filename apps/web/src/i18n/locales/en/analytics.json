@@ -92,5 +92,17 @@
     "active": "Active",
     "done": "Done",
     "cancelled": "Cancelled"
+  },
+  "summary": {
+    "people": "Team size",
+    "peopleNote": "{{hires}} joined · {{leavers}} left",
+    "absence": "Days on leave",
+    "absenceNote_one": "{{count}} request waiting",
+    "absenceNote_other": "{{count}} requests waiting",
+    "hours": "Logged time",
+    "hoursNote": "{{percent}} billable",
+    "tasks": "Open work",
+    "tasksNote_one": "{{count}} task overdue",
+    "tasksNote_other": "{{count}} tasks overdue"
   }
 }

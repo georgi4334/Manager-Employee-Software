@@ -145,6 +145,28 @@ describe('the dashboard', () => {
     expect(days).toBe(29);
   });
 
+  it('shows placeholder cards while the figures load, announced as loading', async () => {
+    let release = () => {};
+    server.use(
+      http.get(
+        `${API}/analytics`,
+        () =>
+          new Promise<Response>(
+            (resolve) => (release = () => resolve(HttpResponse.json(analytics()))),
+          ),
+      ),
+    );
+    const pending = renderApp('/analytics');
+    const status = await within(await screen.findByRole('main')).findByRole('status');
+    expect(status).toHaveTextContent('Loading…');
+    expect(status.querySelectorAll('.skeleton').length).toBeGreaterThan(8);
+    expect(screen.queryByText('Active people')).not.toBeInTheDocument();
+    release();
+    await pending;
+    expect(await screen.findByText('Active people')).toBeInTheDocument();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
   it('shows the numbers in words and with the value next to every bar', async () => {
     serve();
     await renderApp('/analytics');
@@ -234,14 +256,24 @@ describe('the dashboard', () => {
     );
     await renderApp('/analytics');
     await screen.findByText('Active people');
-    expect(screen.getAllByText('Nothing in this period.').length).toBe(3);
+    // breakdown by leave type, by place of work, hours per week and top projects
+    expect(screen.getAllByText('Nothing in this period.').length).toBe(4);
   });
 
   it('asks again with another period', async () => {
     const calls = serve();
     await renderApp('/analytics');
     await screen.findByText('Active people');
-    await userEvent.selectOptions(screen.getByLabelText('Period'), '90');
+    const period = screen.getByRole('group', { name: 'Period' });
+    expect(within(period).getByRole('button', { name: 'Last 30 days' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await userEvent.click(within(period).getByRole('button', { name: 'Last 90 days' }));
+    expect(within(period).getByRole('button', { name: 'Last 90 days' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     await screen.findByText('Active people');
     await waitFor(() => {
       const q = calls.at(-1)!.searchParams;

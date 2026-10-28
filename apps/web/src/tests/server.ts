@@ -51,6 +51,10 @@ export function signedInHandlers(user: CurrentUser = testUser) {
     http.get(`${API}/auth/me`, () => HttpResponse.json(user)),
     http.get(`${API}/auth/providers`, () => HttpResponse.json({ google: false })),
     http.get(`${API}/notifications/unread-count`, () => HttpResponse.json({ unreadCount: 0 })),
+    // An empty dashboard, so pages rendered at "/" make no widget requests (dashboard tests set their own).
+    http.get(`${API}/dashboard/layout`, () =>
+      HttpResponse.json({ widgets: [], isDefault: false, canEdit: false }),
+    ),
   ];
 }
 

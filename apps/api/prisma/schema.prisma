@@ -65,6 +65,7 @@ model Tenant {
   calendarReminders       CalendarReminder[]
   calendarAttendees       CalendarAttendee[]
   retentionPolicy         RetentionPolicy?
+  dashboardLayout         DashboardLayout?
   reviewCompetencies      ReviewCompetency[]
   reviewsAll              Review[]
   reviewRatings           ReviewRating[]
@@ -1426,4 +1427,20 @@ model CalendarAttendee {
   @@unique([tenantId, eventId, employeeId])
   @@index([tenantId, employeeId])
   @@map("calendar_attendee")
+}
+
+// ----- Dashboard (docs/adr/0034-dashboard.md) -------------------------------------------------------------
+
+/// The workspace dashboard: an ordered list of widget ids chosen by an administrator. No row = default.
+model DashboardLayout {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  tenantId  String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  widgets   String[]
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId])
+  @@unique([tenantId, id])
+  @@map("dashboard_layout")
 }

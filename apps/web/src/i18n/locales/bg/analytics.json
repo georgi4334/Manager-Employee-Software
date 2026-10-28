@@ -92,5 +92,17 @@
     "active": "Активна",
     "done": "Изпълнена",
     "cancelled": "Отказана"
+  },
+  "summary": {
+    "people": "Размер на екипа",
+    "peopleNote": "{{hires}} нови · {{leavers}} напуснали",
+    "absence": "Дни в отпуск",
+    "absenceNote_one": "{{count}} заявка чака",
+    "absenceNote_other": "{{count}} заявки чакат",
+    "hours": "Отчетено време",
+    "hoursNote": "{{percent}} за фактуриране",
+    "tasks": "Отворена работа",
+    "tasksNote_one": "{{count}} просрочена задача",
+    "tasksNote_other": "{{count}} просрочени задачи"
   }
 }

@@ -152,6 +152,11 @@ for (const variant of variants) {
       found.push(...(await scan(page, '/ (profile drawer, theme menu open)')));
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
+      // the dashboard while it is being arranged
+      await settle(page, '/');
+      await page.getByRole('button', { name: 'Customize' }).click();
+      found.push(...(await scan(page, '/ (dashboard edit mode)')));
+      await page.getByRole('button', { name: 'Cancel' }).click();
       // forms and panels that only exist after an action
       await settle(page, '/calendar?view=agenda');
       await page.getByRole('button', { name: 'New event' }).click();
