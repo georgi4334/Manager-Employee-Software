@@ -37,7 +37,8 @@
     "from": "From {{start}}",
     "until": "Until {{end}}",
     "span": "{{from}} – {{to}}",
-    "pending": "pending"
+    "pending": "pending",
+    "details": "Details"
   },
   "event": {
     "new": "New event",

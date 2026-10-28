@@ -13,7 +13,8 @@ test('an employee adds a personal event that nobody else sees', async ({ browser
   await form.getByLabel('End time').fill('10:30');
   await form.getByRole('button', { name: 'Save' }).click();
   await expect(eva.getByText('Dentist')).toBeVisible();
-  await expect(eva.getByText('My events · 09:00 – 10:30')).toBeVisible();
+  await expect(eva.getByText('09:00 – 10:30')).toBeVisible();
+  await expect(eva.getByText('My events', { exact: true }).first()).toBeVisible();
 
   const ada = await (await browser.newContext()).newPage();
   await signIn(ada, ADMIN_EMAIL);

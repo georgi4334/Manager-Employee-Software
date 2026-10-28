@@ -177,7 +177,12 @@ describe('month view', () => {
     expect([q.get('from'), q.get('to')]).toEqual(['2030-02-25', '2030-04-07']);
     // 10 March is selected: its event is listed below the grid
     expect(await screen.findByText('Dentist')).toBeInTheDocument();
-    expect(screen.getByText('My events · 09:00 – 10:00')).toBeInTheDocument();
+    const card = screen.getByText('Dentist').closest('li')!;
+    expect(within(card).getByText('My events')).toBeInTheDocument();
+    expect(within(card).getByText('09:00 – 10:00')).toBeInTheDocument();
+    // the date block on the right: day number and month
+    expect(within(card).getByText('10')).toBeInTheDocument();
+    expect(within(card).getByText('March')).toBeInTheDocument();
     // a multi-day event marks every day it covers
     const day = (label: RegExp) => within(grid).getByRole('gridcell', { name: label });
     expect(day(/12 March 2030/)).toHaveAccessibleName(/1 entry/);
