@@ -233,6 +233,41 @@ export class LeaveRequestsService {
     });
   }
 
+  /**
+   * Offboarding hook (ADR 0008): the leaver's reports have a new manager, so their pending requests are now
+   * decided by someone who was never told. Queues one `leave.requested` per request for the current approvers.
+   * Nothing is withdrawn or reassigned; approvers are always computed from the reporting line.
+   */
+  async notifyInheritedApprovals(tx: TenantTx, reportIds: readonly string[]): Promise<void> {
+    if (reportIds.length === 0) return;
+    const rows = await tx.leaveRequest.findMany({
+      where: { status: 'pending', employeeId: { in: [...reportIds] } },
+      select: {
+        id: true,
+        startDate: true,
+        endDate: true,
+        days: true,
+        employee: {
+          select: { id: true, userId: true, managerId: true, firstName: true, lastName: true },
+        },
+      },
+      orderBy: [{ startDate: 'asc' }, { id: 'asc' }],
+    });
+    for (const row of rows) {
+      const approvers = await this.approverUserIds(tx, row.employee);
+      if (approvers.length === 0) continue;
+      await this.outbox.publish(tx, 'leave.requested', {
+        recipientUserIds: approvers,
+        requestId: row.id,
+        employeeName: fullName(row.employee),
+        startDate: dateOut(row.startDate),
+        endDate: dateOut(row.endDate),
+        days: Number(row.days),
+        autoApproved: false,
+      });
+    }
+  }
+
   // ----- decisions -----------------------------------------------------------------------------
 
   approve(actor: RequestAuth, id: string, body: DecisionRequest): Promise<LeaveRequest> {

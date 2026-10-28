@@ -23,19 +23,26 @@ test('a repeating event with a guest: the guest answers, the organizer sees it',
   const mine = ada.getByText('Weekly sync').first().locator('xpath=ancestor::li');
   await expect(mine).toContainText('Repeats weekly');
   await expect(mine).toContainText('Reminder: 1 hour before');
-  await expect(mine).toContainText('Eva Employee · No answer yet');
+  // the guests and their answers are in the details
+  await mine.getByRole('button', { name: 'Weekly sync' }).click();
+  await expect(ada.getByRole('dialog', { name: 'Weekly sync' })).toContainText(
+    'Eva Employee · No answer yet',
+  );
+  await ada.keyboard.press('Escape');
 
   const eva = await (await browser.newContext({ viewport: { width: 375, height: 800 } })).newPage();
   await signIn(eva, EMPLOYEE_EMAIL);
   await eva.goto('/calendar?view=agenda');
-  const theirs = eva.getByText('Weekly sync').first().locator('xpath=ancestor::li');
+  await eva.getByRole('button', { name: 'Weekly sync' }).first().click();
+  const theirs = eva.getByRole('dialog', { name: 'Weekly sync' });
   await expect(theirs).toContainText('Organizer: Ada Admin');
   await expect(theirs.getByRole('button', { name: 'Edit' })).toHaveCount(0);
   await theirs.getByRole('button', { name: 'Accept' }).click();
   await expect(theirs.getByText('Your answer: Accepted')).toBeVisible();
 
   await ada.reload();
-  await expect(ada.getByText('Weekly sync').first().locator('xpath=ancestor::li')).toContainText(
+  await ada.getByRole('button', { name: 'Weekly sync' }).first().click();
+  await expect(ada.getByRole('dialog', { name: 'Weekly sync' })).toContainText(
     'Eva Employee · Accepted',
   );
 });
@@ -47,10 +54,12 @@ test('one occurrence can be deleted without ending the series', async ({ page })
   await expect(rows.first()).toBeVisible();
   const before = await rows.count();
   expect(before).toBeGreaterThan(1);
-  const first = rows.first().locator('xpath=ancestor::li');
-  await first.getByRole('button', { name: 'Delete' }).click();
-  await first.getByRole('radio', { name: 'This event only' }).check();
-  await first.getByRole('button', { name: 'Yes, delete' }).click();
+  await page.getByRole('button', { name: 'Weekly sync' }).first().click();
+  const dialog = page.getByRole('dialog', { name: 'Weekly sync' });
+  await dialog.getByRole('button', { name: 'Delete' }).click();
+  await dialog.getByRole('radio', { name: 'This event only' }).check();
+  await dialog.getByRole('button', { name: 'Yes, delete' }).click();
+  await expect(dialog).toHaveCount(0);
   await expect(rows).toHaveCount(before - 1);
 });
 

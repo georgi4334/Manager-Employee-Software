@@ -1,58 +1,23 @@
-import type { AttendeeResponse, SeriesMode } from '@intime/contracts';
 import { Bell, Clock, MapPin, Repeat } from 'lucide-react';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert } from '@/shared/ui/alert';
-import { Button } from '@/shared/ui/button';
 import { cn } from '@/shared/lib/cn';
 import { formatDay } from '@/shared/lib/format';
-import { EventForm } from './EventForm';
-import { useDeleteEvent, useRespond } from './hooks';
-import type { CalendarItem, ItemKind } from './items';
-import { SeriesScope } from './SeriesScope';
-import { useCalendarErrors } from './use-calendar-errors';
+import type { CalendarItem } from './items';
+import { KIND_ACCENT, KIND_DOT } from './kinds';
 
-export const KIND_DOT: Record<ItemKind, string> = {
-  personal: 'bg-primary',
-  team: 'bg-info',
-  company: 'bg-success',
-  leave: 'bg-warning',
-  holiday: 'bg-accent-foreground',
-};
+interface ItemRowProps {
+  item: CalendarItem;
+  date: string;
+  /** Opens the details (and, where allowed, edit and delete) of the item. */
+  onOpen: (item: CalendarItem, date: string) => void;
+}
 
-/** Edge and date colour per kind (text colours are the AA-checked tokens). */
-const KIND_ACCENT: Record<ItemKind, { edge: string; text: string }> = {
-  personal: { edge: 'border-l-primary', text: 'text-primary' },
-  team: { edge: 'border-l-info', text: 'text-info' },
-  company: { edge: 'border-l-success', text: 'text-success' },
-  leave: { edge: 'border-l-warning', text: 'text-warning' },
-  holiday: { edge: 'border-l-accent-foreground', text: 'text-accent-foreground' },
-};
-
-/** One item on one day. Events the server says may be changed offer edit and delete. */
-export function ItemRow({ item, date }: { item: CalendarItem; date: string }) {
+/** One item on one day, as a card. The whole card opens the item's dialog. */
+export function ItemRow({ item, date, onOpen }: ItemRowProps) {
   const { t, i18n } = useTranslation('calendar');
   const language = i18n.resolvedLanguage ?? 'en';
-  const errors = useCalendarErrors();
-  const remove = useDeleteEvent();
-  const [editing, setEditing] = useState(false);
-  const [confirming, setConfirming] = useState(false);
-  const [mode, setMode] = useState<SeriesMode>('all');
   const event = item.event;
-  const respond = useRespond(event?.id ?? '');
-  const answers: Exclude<AttendeeResponse, 'needs_action'>[] = [
-    'accepted',
-    'tentative',
-    'declined',
-  ];
-
-  if (editing && event) {
-    return (
-      <li className="rounded-xl border border-border bg-surface p-4 shadow-card">
-        <EventForm event={event} defaultDate={date} onDone={() => setEditing(false)} />
-      </li>
-    );
-  }
+  const accent = KIND_ACCENT[item.kind];
 
   const first = item.startDate === date;
   const last = item.endDate === date;
@@ -73,24 +38,31 @@ export function ItemRow({ item, date }: { item: CalendarItem; date: string }) {
         })
       : null;
 
-  const accent = KIND_ACCENT[item.kind];
   return (
     <li
       className={cn(
-        'space-y-3 rounded-xl border border-l-4 border-border bg-surface p-4 shadow-card',
+        'group relative rounded-xl border border-l-4 border-border bg-surface p-4 shadow-card transition-[background-color,box-shadow] duration-200 hover:bg-surface-muted',
         accent.edge,
       )}
     >
       <div className="flex items-start gap-4">
         <div className="min-w-0 flex-1 space-y-2">
-          <p className="break-words text-lg font-semibold leading-snug">
-            {item.who ? `${item.who} · ` : ''}
-            {item.title}
-            {item.pending && (
-              <span className="ml-2 text-sm font-normal text-muted-foreground">
-                ({t('day.pending')})
-              </span>
-            )}
+          <p className="text-lg font-semibold leading-snug">
+            <button
+              type="button"
+              aria-haspopup="dialog"
+              onClick={() => onOpen(item, date)}
+              // The button covers the whole card, so a click anywhere opens it.
+              className="break-words text-left after:absolute after:inset-0 after:rounded-xl focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-ring"
+            >
+              {item.who ? `${item.who} · ` : ''}
+              {item.title}
+              {item.pending && (
+                <span className="ml-2 text-sm font-normal text-muted-foreground">
+                  ({t('day.pending')})
+                </span>
+              )}
+            </button>
           </p>
           <ul
             aria-label={t('day.details')}
@@ -125,7 +97,7 @@ export function ItemRow({ item, date }: { item: CalendarItem; date: string }) {
           </ul>
           {span && <p className="text-sm text-muted-foreground">{span}</p>}
           {event?.description && (
-            <p className="whitespace-pre-line break-words text-sm text-foreground/80">
+            <p className="line-clamp-2 whitespace-pre-line break-words text-sm text-foreground/80">
               {event.description}
             </p>
           )}
@@ -143,81 +115,6 @@ export function ItemRow({ item, date }: { item: CalendarItem; date: string }) {
           </p>
         </div>
       </div>
-      {event && !event.isOrganizer && event.scope === 'personal' && (
-        <p className="text-sm text-muted-foreground">
-          {t('guests.organizer', { name: `${event.owner.firstName} ${event.owner.lastName}` })}
-        </p>
-      )}
-      {event && event.attendees.length > 0 && (
-        <div className="space-y-1">
-          <p className="text-sm font-medium">{t('guests.label')}</p>
-          <ul className="space-y-0.5 text-sm text-muted-foreground">
-            {event.attendees.map((a) => (
-              <li key={a.employee.id}>
-                {a.employee.firstName} {a.employee.lastName} · {t(`guests.response.${a.response}`)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      {event?.myResponse && (
-        <div className="space-y-1" role="group" aria-label={t('rsvp.label')}>
-          <p className="text-sm">
-            {t('rsvp.current', { answer: t(`guests.response.${event.myResponse}`) })}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {answers.map((answer) => (
-              <Button
-                key={answer}
-                variant={event.myResponse === answer ? 'primary' : 'secondary'}
-                aria-pressed={event.myResponse === answer}
-                disabled={respond.isPending}
-                onClick={() => respond.mutate(answer)}
-              >
-                {t(`rsvp.${answer}`)}
-              </Button>
-            ))}
-          </div>
-          {respond.isError && <Alert tone="danger">{errors.apiError(respond.error)}</Alert>}
-        </div>
-      )}
-      {remove.isError && <Alert tone="danger">{errors.apiError(remove.error)}</Alert>}
-      {event?.canEdit && !confirming && (
-        <div className="flex flex-wrap gap-2">
-          <Button variant="secondary" onClick={() => setEditing(true)}>
-            {t('event.edit')}
-          </Button>
-          <Button variant="ghost" onClick={() => setConfirming(true)}>
-            {t('event.delete')}
-          </Button>
-        </div>
-      )}
-      {event && confirming && (
-        <div className="space-y-2" role="group" aria-label={t('event.confirmDelete')}>
-          <p className="text-sm">{t('event.confirmDelete')}</p>
-          {event.recurrence && <SeriesScope value={mode} onChange={setMode} />}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant="danger"
-              disabled={remove.isPending}
-              onClick={() =>
-                remove.mutate(
-                  {
-                    id: event.id,
-                    scope: mode === 'all' ? undefined : { mode, occurrence: event.occurrenceDate },
-                  },
-                  { onSuccess: () => setConfirming(false) },
-                )
-              }
-            >
-              {t('event.deleteConfirm')}
-            </Button>
-            <Button variant="ghost" onClick={() => setConfirming(false)}>
-              {t('event.keep')}
-            </Button>
-          </div>
-        </div>
-      )}
     </li>
   );
 }

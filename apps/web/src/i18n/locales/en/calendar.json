@@ -46,7 +46,10 @@
     "delete": "Delete",
     "confirmDelete": "Delete this event?",
     "deleteConfirm": "Yes, delete",
-    "keep": "Keep it"
+    "keep": "Keep it",
+    "viewOnly": "You can see this event but not change it.",
+    "leaveInfo": "Approved or pending leave of a colleague. Details stay with the person.",
+    "holidayInfo": "A public holiday."
   },
   "form": {
     "newTitle": "New event",

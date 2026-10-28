@@ -91,6 +91,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Rules live in `@intime/contracts` as pure functions (`countLeaveDays`, `builtInHolidays`, `proratedAllowance`, `carryOver`) with unit tests; the API only supplies holidays and balances to them. Dates are `YYYY-MM-DD` strings, "today" is the workspace time zone (`todayIn`).
 - Counted days are stored per request (`leave_request_day`); balances freeze `entitled`/`carried_over` when first created, used/pending are always sums over request days. Creating a request takes the per-employee advisory lock; overlaps are also enforced by an exclusion constraint.
 - Nobody decides their own request (even Admin); approval scope comes from `leave.approve` through `authz` (`ownerEmployeeId`). Sick types never store a reason; masking of the type for colleagues is decided server-side (`hideSickTypeFromTeam`). Notifications and audit never contain reasons, comments or the sick type.
+- Deactivating an employee **never withdraws pending requests**: they stay visible and are decided by whoever the reporting line says (the leaver's manager, else HR/Admin). Reports of a leaving manager move up (ADR 0007) and their pending requests are announced once to the new approvers (`LeaveRequestsService.notifyInheritedApprovals`, called from `EmployeesService.deactivate`).
 - New built-in holiday keys must be added to `BUILT_IN_HOLIDAY_KEYS` and translated in en/de/bg (a test fails otherwise).
 
 ## Attendance (docs/adr/0009-attendance.md)
@@ -107,6 +108,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Visibility is decided in `CalendarService.visibleTo`: personal = owner only, team = members and lead (or `calendar.manage_team_calendars` at scope `all`), company = everybody. An event the caller cannot see is `404`, never `403`. Changes follow `mayManage`: owner (personal), team lead/member or scope `all` (team), `calendar.manage_company_calendar` (company). `canEdit` is computed per caller.
 - Every event has local `start_date`/`end_date` (range queries are plain date comparisons); timed events also store instants. Times are typed as `HH:MM` in the workspace time zone like attendance. The database re-checks shapes (all-day vs timed, team iff team scope, 31 days max).
 - Team and company changes are audited with ids only (never titles); personal events are not audited.
+- Every item opens in `EventDialog` (shared `Modal`) from every view: details for anyone who can see it, Edit/Delete/RSVP inside it only as the server's `canEdit`/`myResponse` allow. Cards carry no inline actions.
 
 ## Calendar, advanced (docs/adr/0028-calendar-advanced.md)
 

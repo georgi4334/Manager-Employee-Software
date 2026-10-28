@@ -113,6 +113,13 @@ for (const variant of variants) {
       await page.getByRole('button', { name: 'Cancel' }).click();
       // forms and panels that only exist after an action
       await settle(page, '/calendar?view=agenda');
+      // an event's dialog: details, then the form inside it
+      await page.getByRole('button', { name: 'Company picnic' }).first().click();
+      await page.getByRole('dialog', { name: 'Company picnic' }).waitFor();
+      found.push(...(await scan(page, '/calendar (event dialog)')));
+      await page.getByRole('dialog').getByRole('button', { name: 'Edit' }).click();
+      found.push(...(await scan(page, '/calendar (event dialog, edit form)')));
+      await page.keyboard.press('Escape');
       await page.getByRole('button', { name: 'New event' }).click();
       found.push(...(await scan(page, '/calendar (new event form)')));
       // the repeat and find-a-time parts of the same form

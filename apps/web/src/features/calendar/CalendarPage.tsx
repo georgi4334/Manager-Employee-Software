@@ -14,7 +14,8 @@ import { CALENDAR_VIEWS, eachDay, rangeFor, shift, yearsIn, type CalendarView } 
 import { DayList } from './DayList';
 import { EventForm } from './EventForm';
 import { useEvents, useLeaveLayer } from './hooks';
-import { KIND_DOT } from './ItemRow';
+import { EventDialog } from './EventDialog';
+import { KIND_DOT } from './kinds';
 import { ITEM_KINDS, itemFromEvent, type CalendarItem, type ItemKind } from './items';
 import { MonthGrid } from './MonthGrid';
 import { useCalendarErrors } from './use-calendar-errors';
@@ -45,6 +46,7 @@ export function CalendarPage() {
   const [params, setParams] = useSearchParams();
   const [layers, setLayers] = useState<ReadonlySet<ItemKind>>(new Set(ITEM_KINDS));
   const [creating, setCreating] = useState(false);
+  const [opened, setOpened] = useState<{ key: string; date: string } | null>(null);
 
   // Dates follow the user's own time zone setting when there is one, else the browser's.
   const zone = user?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -132,6 +134,8 @@ export function CalendarPage() {
     });
   const failed = events.error ?? leave.error;
   const selected = anchor;
+  const openItem = opened ? (items.find((i) => i.key === opened.key) ?? null) : null;
+  const open = (item: CalendarItem, date: string) => setOpened({ key: item.key, date });
 
   return (
     <div className="mx-auto max-w-6xl space-y-4">
@@ -217,9 +221,10 @@ export function CalendarPage() {
             today={today}
             items={items}
             onSelect={(date) => go({ date })}
+            onOpen={open}
             wide={wide}
           />
-          <DayList days={[selected]} items={items} today={today} />
+          <DayList days={[selected]} items={items} today={today} onOpen={open} />
         </div>
       ) : wide && (view === 'week' || view === 'day') ? (
         <div className="space-y-4">
@@ -230,12 +235,25 @@ export function CalendarPage() {
             now={now}
             selected={selected}
             onSelect={(date) => go({ date })}
+            onOpen={open}
           />
-          <DayList days={[selected]} items={items} today={today} />
+          <DayList days={[selected]} items={items} today={today} onOpen={open} />
         </div>
       ) : (
-        <DayList days={days} items={items} today={today} skipEmpty={view === 'agenda'} />
+        <DayList
+          days={days}
+          items={items}
+          today={today}
+          skipEmpty={view === 'agenda'}
+          onOpen={open}
+        />
       )}
+
+      <EventDialog
+        item={openItem}
+        date={opened?.date ?? selected}
+        onClose={() => setOpened(null)}
+      />
     </div>
   );
 }

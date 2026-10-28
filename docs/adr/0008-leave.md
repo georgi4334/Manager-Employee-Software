@@ -68,6 +68,14 @@ All transitions are single conditional updates (a request decided twice by two p
 enforces it (`CONFLICT`, `params.field = "dates"`). Types that do not require approval are approved immediately.
 Every change is audited (ids, dates, status; never reasons or comments).
 
+**Deactivation (decision):** pending requests are **never withdrawn** when an employee is deactivated; they stay
+pending and visible so the next approver can inherit them. Nothing is copied or reassigned: the approver is always
+computed from the reporting line at the time. A leaver's own request stays with the manager they had (HR/Admin
+with scope `all` otherwise). When a manager leaves, their reports move up (ADR 0007), so those reports' pending
+requests belong to the new manager, who is notified with the existing `leave.requested` notification (request id,
+dates, days only) once per request, in the same transaction as the deactivation. Pending days keep counting in the
+balance until someone decides (or the requester's request is cancelled by an approver).
+
 ### 5. Who sees what (endpoints under `/api/v1/leave`)
 
 | Endpoint                                     | Permission                    | Rules                                                                                           |

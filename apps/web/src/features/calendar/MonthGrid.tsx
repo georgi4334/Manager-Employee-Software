@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/shared/lib/cn';
 import { formatDay } from '@/shared/lib/format';
 import { eachDay, monthOf, rangeFor } from './dates';
-import { KIND_DOT } from './ItemRow';
+import { KIND_DOT } from './kinds';
 import { isWeekend } from './time-grid';
 import { KIND_BLOCK } from './TimeGrid';
 import { itemsOnDay, type CalendarItem } from './items';
@@ -13,6 +13,8 @@ interface MonthGridProps {
   today: string;
   items: readonly CalendarItem[];
   onSelect: (date: string) => void;
+  /** Opens an item's dialog (the chips in the days on wide screens). */
+  onOpen: (item: CalendarItem, date: string) => void;
   /** Wider screens show event titles in the days, phones only colored dots. */
   wide?: boolean;
 }
@@ -24,6 +26,7 @@ export function MonthGrid({
   today,
   items,
   onSelect,
+  onOpen,
   wide = false,
 }: MonthGridProps) {
   const { t, i18n } = useTranslation('calendar');
@@ -48,15 +51,22 @@ export function MonthGrid({
               const list = itemsOnDay(items, date);
               const kinds = [...new Set(list.map((i) => i.kind))].slice(0, 3);
               return (
-                <button
+                <div
                   key={date}
-                  type="button"
                   role="gridcell"
+                  tabIndex={0}
                   aria-selected={date === selected}
                   aria-label={`${formatDay(date, language, { dateStyle: 'full' })}${list.length ? `, ${t('month.count', { count: list.length })}` : ''}`}
                   onClick={() => onSelect(date)}
+                  onKeyDown={(event) => {
+                    if (event.target !== event.currentTarget) return;
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      onSelect(date);
+                    }
+                  }}
                   className={cn(
-                    'flex min-h-14 flex-col gap-1 bg-surface p-1 text-sm transition-colors hover:bg-secondary',
+                    'flex min-h-14 cursor-pointer flex-col gap-1 bg-surface p-1 text-sm transition-colors hover:bg-secondary',
                     wide ? 'min-h-24 items-stretch' : 'items-center',
                     isWeekend(date) && 'bg-surface-muted',
                     monthOf(date) !== monthOf(anchor) && 'text-muted-foreground',
@@ -73,23 +83,33 @@ export function MonthGrid({
                     {Number(date.slice(8))}
                   </span>
                   {wide ? (
-                    <span className="space-y-0.5 text-left" aria-hidden="true">
+                    <span className="space-y-0.5 text-left">
                       {list.slice(0, 2).map((item) => (
-                        <span
+                        <button
                           key={item.key}
+                          type="button"
+                          aria-haspopup="dialog"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            onOpen(item, date);
+                          }}
                           className={cn(
-                            'block truncate rounded border-l-2 px-1 text-[0.6875rem] font-normal text-foreground',
+                            'block w-full truncate rounded border-l-2 px-1 text-left text-[0.6875rem] font-normal text-foreground hover:brightness-95',
                             KIND_BLOCK[item.kind],
                           )}
                         >
                           {item.startTime && !item.allDay && item.startDate === date
                             ? `${item.startTime} `
                             : ''}
+                          {item.who ? `${item.who} · ` : ''}
                           {item.title}
-                        </span>
+                        </button>
                       ))}
                       {list.length > 2 && (
-                        <span className="block px-1 text-[0.6875rem] font-normal text-muted-foreground">
+                        <span
+                          aria-hidden="true"
+                          className="block px-1 text-[0.6875rem] font-normal text-muted-foreground"
+                        >
                           {t('month.more', { count: list.length - 2 })}
                         </span>
                       )}
@@ -101,7 +121,7 @@ export function MonthGrid({
                       ))}
                     </span>
                   )}
-                </button>
+                </div>
               );
             })}
           </div>

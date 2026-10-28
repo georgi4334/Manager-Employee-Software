@@ -116,6 +116,19 @@ const as = (role: 'employee' | 'manager' | 'hr') =>
   server.use(...signedInHandlers(userWithRole(role)));
 
 // ---------------------------------------------------------------------------------------------------
+/** Opens the dialog of a card in the list (the first one, or the one with that title). */
+async function openCard(
+  user: ReturnType<typeof userEvent.setup>,
+  title?: string | RegExp,
+  index = 0,
+) {
+  const main = within(await screen.findByRole('main'));
+  const all = await main.findAllByRole('button', title ? { name: title } : {});
+  const cards = all.filter((b) => b.getAttribute('aria-haspopup') === 'dialog');
+  await user.click(cards[index]!);
+  return within(await screen.findByRole('dialog'));
+}
+
 describe('access and structure', () => {
   it('is not for people without a calendar permission', async () => {
     server.use(
@@ -319,7 +332,17 @@ describe('layers', () => {
     expect(screen.getByText('(pending)')).toBeInTheDocument();
     expect(screen.getByText(/Dan Dimitrov · Absent/)).toBeInTheDocument(); // a masked sick leave: only "absent"
     expect(screen.queryByText('Out of range')).not.toBeInTheDocument();
-    expect(screen.getAllByRole('button', { name: 'Edit' })).toHaveLength(1); // only the event
+    // opening an item: the event can be changed, a colleague's leave and a holiday only read
+    const user = userEvent.setup();
+    expect((await openCard(user, 'Dentist')).getByRole('button', { name: 'Edit' })).toBeVisible();
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    const leave = await openCard(user, 'Dan Dimitrov · Annual leave');
+    expect(leave.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
+    expect(leave.getByText(/Details stay with the person/)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Close' }));
+    const holidayDialog = await openCard(user, 'Liberation Day');
+    expect(holidayDialog.getByText('A public holiday.')).toBeInTheDocument();
   });
 
   it('hides a layer when its box is cleared', async () => {
@@ -545,6 +568,136 @@ describe('creating events', () => {
 });
 
 // ---------------------------------------------------------------------------------------------------
+/** Pretends the screen is wide (the month shows titles, the week a time grid). */
+function wideScreen() {
+  const previous = window.matchMedia;
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    configurable: true,
+    value: (query: string) => ({
+      matches: query.includes('min-width'),
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }),
+  });
+  return () => {
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      configurable: true,
+      value: previous,
+    });
+  };
+}
+
+describe('opening an item from the views', () => {
+  const day = { startDate: '2030-03-04', endDate: '2030-03-04' };
+
+  it('opens from a title in the month grid without changing the selected day', async () => {
+    const restore = wideScreen();
+    try {
+      serve({
+        events: [
+          event(1, { title: 'Dentist', ...day }),
+          event(3, { title: 'Review', startDate: '2030-03-20', endDate: '2030-03-20' }),
+        ],
+      });
+      const { router } = await renderApp(MARCH);
+      const grid = await screen.findByRole('grid');
+      const user = userEvent.setup();
+      await user.click(await within(grid).findByRole('button', { name: /Review/ }));
+      const dialog = await screen.findByRole('dialog', { name: 'Review' });
+      expect(dialog).toBeInTheDocument();
+      // the day stays as it was (10 March, the default), and the dialog shows the item's own day
+      expect(router.state.location.search).not.toContain('2030-03-20');
+      expect(within(dialog).getByText(/20 March 2030/)).toBeInTheDocument();
+      await user.keyboard('{Escape}');
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    } finally {
+      restore();
+    }
+  });
+
+  it('selects a day from the keyboard on its cell', async () => {
+    const restore = wideScreen();
+    try {
+      serve({ events: [event(1, { title: 'Dentist', ...day })] });
+      const { router } = await renderApp(MARCH);
+      const cell = await screen.findByRole('gridcell', { name: /20 March 2030/ });
+      cell.focus();
+      await userEvent.setup().keyboard('{Enter}');
+      expect(router.state.location.search).toContain('date=2030-03-20');
+    } finally {
+      restore();
+    }
+  });
+
+  it('opens from a block in the week grid', async () => {
+    const restore = wideScreen();
+    try {
+      serve({ events: [event(1, { title: 'Dentist', ...day })] });
+      await renderApp('/calendar?view=week&date=2030-03-04');
+      const blocks = await screen.findAllByText('Dentist');
+      // the grid block is the one that is not a button (the list below has the accessible card)
+      const block = blocks.find((el) => !el.closest('button'))!;
+      await userEvent.setup().click(block);
+      expect(await screen.findByRole('dialog', { name: 'Dentist' })).toBeInTheDocument();
+    } finally {
+      restore();
+    }
+  });
+
+  it('lets an event of someone else be read, with their name and the answers, but not changed', async () => {
+    serve({
+      events: [
+        event(1, {
+          title: 'Their lunch',
+          ...day,
+          scope: 'personal',
+          canEdit: false,
+          isOrganizer: false,
+          owner: { id: uuid(61), firstName: 'Dan', lastName: 'Dimitrov' },
+          location: 'Canteen',
+          description: 'Bring your own cup.',
+        }),
+      ],
+    });
+    await renderApp(AGENDA);
+    const dialog = await openCard(userEvent.setup());
+    expect(dialog.getByText('Canteen')).toBeInTheDocument();
+    expect(dialog.getByText('Bring your own cup.')).toBeInTheDocument();
+    expect(dialog.getByText('Organizer: Dan Dimitrov')).toBeInTheDocument();
+    expect(dialog.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
+    expect(dialog.queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
+  });
+
+  it('shows a changed event in the reading view after saving, and closes after deleting', async () => {
+    serve({ events: [event(1, { title: 'Dentist', ...day })] });
+    server.use(
+      http.patch(`${API}/calendar/events/${uuid(101)}`, () => HttpResponse.json(event(1))),
+      http.delete(
+        `${API}/calendar/events/${uuid(101)}`,
+        () => new HttpResponse(null, { status: 204 }),
+      ),
+    );
+    await renderApp(AGENDA);
+    const user = userEvent.setup();
+    const dialog = await openCard(user);
+    await user.click(dialog.getByRole('button', { name: 'Edit' }));
+    await user.click(
+      within(screen.getByRole('form', { name: 'Change event' })).getByRole('button', {
+        name: 'Save',
+      }),
+    );
+    // back to the details, the dialog is still open
+    expect(await screen.findByRole('button', { name: 'Delete' })).toBeInTheDocument();
+    expect(screen.queryByRole('form', { name: 'Change event' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+  });
+});
+
 describe('changing and deleting events', () => {
   const day = { startDate: '2030-03-04', endDate: '2030-03-04' };
 
@@ -559,7 +712,8 @@ describe('changing and deleting events', () => {
     );
     await renderApp(AGENDA);
     const user = userEvent.setup();
-    await user.click(await screen.findByRole('button', { name: 'Edit' }));
+    await openCard(user);
+    await user.click(screen.getByRole('button', { name: 'Edit' }));
     const form = within(screen.getByRole('form', { name: 'Change event' }));
     expect(form.queryByLabelText('Calendar')).not.toBeInTheDocument();
     const title = form.getByLabelText('Title');
@@ -586,8 +740,11 @@ describe('changing and deleting events', () => {
     serve({ events: [event(1, { title: 'Party', scope: 'company', canEdit: false, ...day })] });
     await renderApp(AGENDA);
     expect(await screen.findByText('Party')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
+    const dialog = await openCard(userEvent.setup());
+    expect(dialog.getByRole('heading', { name: 'Party' })).toBeInTheDocument();
+    expect(dialog.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
+    expect(dialog.queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
+    expect(dialog.getByText('You can see this event but not change it.')).toBeInTheDocument();
   });
 
   it('asks before deleting, and does nothing when kept', async () => {
@@ -601,7 +758,8 @@ describe('changing and deleting events', () => {
     );
     await renderApp(AGENDA);
     const user = userEvent.setup();
-    await user.click(await screen.findByRole('button', { name: 'Delete' }));
+    await openCard(user);
+    await user.click(screen.getByRole('button', { name: 'Delete' }));
     expect(screen.getByText('Delete this event?')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Keep it' }));
     expect(deleted).toEqual([]);
@@ -617,7 +775,8 @@ describe('changing and deleting events', () => {
     );
     await renderApp(AGENDA);
     const user = userEvent.setup();
-    await user.click(await screen.findByRole('button', { name: 'Delete' }));
+    await openCard(user);
+    await user.click(screen.getByRole('button', { name: 'Delete' }));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
     expect(await screen.findByText('You are not allowed to do this.')).toBeInTheDocument();
   });
@@ -781,8 +940,10 @@ describe('repeating events, guests and answers', () => {
     await renderApp('/calendar?view=agenda&date=2030-03-04');
     expect(await screen.findAllByText('Sync')).toHaveLength(2);
     expect(screen.getAllByText('Repeats every 2 weeks')).toHaveLength(2);
-    expect(screen.getAllByText('Dan Dimitrov · Accepted')).toHaveLength(2);
-    expect(screen.getAllByText('Eve Evans · No answer yet')).toHaveLength(2);
+    const dialog = await openCard(userEvent.setup());
+    expect(dialog.getByText('Repeats every 2 weeks')).toBeInTheDocument();
+    expect(dialog.getByText('Dan Dimitrov · Accepted')).toBeInTheDocument();
+    expect(dialog.getByText('Eve Evans · No answer yet')).toBeInTheDocument();
   });
 
   it('lets a guest answer, and offers no editing', async () => {
@@ -813,11 +974,12 @@ describe('repeating events, guests and answers', () => {
       }),
     );
     await renderApp(AGENDA);
-    expect(await screen.findByText('Organizer: Dan Dimitrov')).toBeInTheDocument();
-    expect(screen.getByText('Your answer: No answer yet')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
     const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: 'Decline' }));
+    const dialog = await openCard(user);
+    expect(dialog.getByText('Organizer: Dan Dimitrov')).toBeInTheDocument();
+    expect(dialog.getByText('Your answer: No answer yet')).toBeInTheDocument();
+    expect(dialog.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
+    await user.click(dialog.getByRole('button', { name: 'Decline' }));
     await waitFor(() => expect(answers).toEqual([{ response: 'declined' }]));
   });
 
@@ -840,10 +1002,12 @@ describe('repeating events, guests and answers', () => {
       ),
     );
     await renderApp(AGENDA);
+    const user = userEvent.setup();
+    await openCard(user);
     const accept = await screen.findByRole('button', { name: 'Accept' });
     expect(accept).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByRole('button', { name: 'Maybe' })).toHaveAttribute('aria-pressed', 'false');
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Maybe' }));
+    await user.click(screen.getByRole('button', { name: 'Maybe' }));
     expect(await screen.findByRole('alert')).toBeInTheDocument();
   });
 
@@ -851,7 +1015,9 @@ describe('repeating events, guests and answers', () => {
     serveWithPeople({ events: [event(1, { title: 'Mine', ...day })] });
     await renderApp(AGENDA);
     await screen.findByText('Mine');
-    expect(screen.queryByRole('button', { name: 'Accept' })).not.toBeInTheDocument();
+    const dialog = await openCard(userEvent.setup());
+    expect(dialog.queryByRole('button', { name: 'Accept' })).not.toBeInTheDocument();
+    expect(dialog.getByRole('button', { name: 'Edit' })).toBeInTheDocument();
   });
 
   describe('reminders', () => {
@@ -912,6 +1078,7 @@ describe('repeating events, guests and answers', () => {
       await renderApp(AGENDA);
       expect(await screen.findByText('Reminder: 1 hour before')).toBeInTheDocument();
       const user = userEvent.setup();
+      await openCard(user);
       await user.click(screen.getByRole('button', { name: 'Edit' }));
       const form = within(screen.getByRole('form', { name: 'Change event' }));
       expect(form.getByLabelText('Reminder')).toHaveValue('60');
@@ -965,7 +1132,8 @@ describe('repeating events, guests and answers', () => {
       const calls = capture();
       await renderApp(AGENDA);
       const user = userEvent.setup();
-      await user.click(await screen.findByRole('button', { name: 'Edit' }));
+      await openCard(user);
+      await user.click(screen.getByRole('button', { name: 'Edit' }));
       const form = within(screen.getByRole('form', { name: 'Change event' }));
       expect(form.getByRole('radio', { name: 'All events' })).toBeChecked();
       await user.click(form.getByRole('radio', { name: 'This event only' }));
@@ -984,7 +1152,8 @@ describe('repeating events, guests and answers', () => {
       const calls = capture();
       await renderApp(AGENDA);
       const user = userEvent.setup();
-      await user.click(await screen.findByRole('button', { name: 'Edit' }));
+      await openCard(user);
+      await user.click(screen.getByRole('button', { name: 'Edit' }));
       const form = within(screen.getByRole('form', { name: 'Change event' }));
       expect(form.getByLabelText('Repeats')).toHaveValue('weekly');
       await user.click(form.getByRole('button', { name: 'Save' }));
@@ -999,7 +1168,8 @@ describe('repeating events, guests and answers', () => {
       const calls = capture();
       await renderApp(AGENDA);
       const user = userEvent.setup();
-      await user.click(await screen.findByRole('button', { name: 'Edit' }));
+      await openCard(user);
+      await user.click(screen.getByRole('button', { name: 'Edit' }));
       const form = within(screen.getByRole('form', { name: 'Change event' }));
       await user.selectOptions(form.getByLabelText('Repeats'), 'none');
       await user.click(form.getByRole('button', { name: 'Save' }));
@@ -1012,7 +1182,8 @@ describe('repeating events, guests and answers', () => {
       const calls = capture();
       await renderApp(AGENDA);
       const user = userEvent.setup();
-      await user.click(await screen.findByRole('button', { name: 'Delete' }));
+      await openCard(user);
+      await user.click(screen.getByRole('button', { name: 'Delete' }));
       await user.click(screen.getByRole('radio', { name: 'This and the following events' }));
       await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
       await waitFor(() => expect(calls).toHaveLength(1));
@@ -1024,7 +1195,8 @@ describe('repeating events, guests and answers', () => {
       const calls = capture();
       await renderApp(AGENDA);
       const user = userEvent.setup();
-      await user.click(await screen.findByRole('button', { name: 'Delete' }));
+      await openCard(user);
+      await user.click(screen.getByRole('button', { name: 'Delete' }));
       expect(screen.queryByRole('radio')).not.toBeInTheDocument();
       await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
       await waitFor(() => expect(calls).toHaveLength(1));
@@ -1038,7 +1210,9 @@ describe('repeating events, guests and answers', () => {
         ],
       });
       await renderApp(AGENDA);
-      await userEvent.setup().click(await screen.findByRole('button', { name: 'Edit' }));
+      const user = userEvent.setup();
+      await openCard(user);
+      await user.click(screen.getByRole('button', { name: 'Edit' }));
       const form = within(screen.getByRole('form', { name: 'Change event' }));
       expect(form.queryByLabelText('Invite colleagues (type a name)')).not.toBeInTheDocument();
     });
@@ -1111,12 +1285,15 @@ describe('repeating events, guests and answers', () => {
     await initTestI18n('de');
     const { unmount } = await renderApp(AGENDA);
     expect(await screen.findByText('Wiederholt sich alle 2 Wochen')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Zusagen' })).toBeInTheDocument();
+    const de = await openCard(userEvent.setup());
+    expect(de.getByRole('button', { name: 'Zusagen' })).toBeInTheDocument();
+    expect(de.getByText('Sie können diesen Termin sehen, aber nicht ändern.')).toBeInTheDocument();
     unmount();
     await initTestI18n('bg');
     await renderApp(AGENDA);
     expect(await screen.findByText('Повтаря се на всеки 2 седмици')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Приемам' })).toBeInTheDocument();
+    const bg = await openCard(userEvent.setup());
+    expect(bg.getByRole('button', { name: 'Приемам' })).toBeInTheDocument();
   });
 });
 
