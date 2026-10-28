@@ -70,3 +70,11 @@ Mine, Team, Company, Leave, Holidays (the last two follow the viewer's permissio
 - No calendar/share/attendee tables yet: Phase 4 adds them and migrates `calendar_event` (expand, then contract).
 - Personal data: events can contain whatever people type; titles stay out of audit logs and notifications.
   Erasure of an employee includes their personal events (Phase 1 hardening).
+
+## Update: event cards
+
+- Items in the day, week and agenda lists are cards: a left edge and the date block in the colour of
+  the kind (personal `--primary`, team `--info`, company `--success`, leave `--warning`, holiday
+  `--accent-foreground`), the title large, a meta line (kind, team, repeat, reminder, place) with small
+  icons, the description, and on the right the day number, the month in capitals and the time with a
+  clock. Colour is never the only signal: the kind is also written out.

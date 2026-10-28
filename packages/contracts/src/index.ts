@@ -1,6 +1,7 @@
 export * from './ai.js';
 export * from './analytics.js';
 export * from './attendance.js';
+export * from './attendance-days.js';
 export * from './calendar.js';
 export * from './capacity.js';
 export * from './dashboard.js';

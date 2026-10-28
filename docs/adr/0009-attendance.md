@@ -67,3 +67,20 @@ All strings en/de/bg, 375 px first.
 
 Shift schedules and overtime rules, geofencing or any automatic check-in, break tracking (use several records),
 night-shift records across midnight in one entry, attendance export, retention job.
+
+## Update: day view, progress and sorting
+
+- The Today, History and Team lists show **days**, not loose records: records are grouped per person
+  and date (`groupAttendanceDays` in contracts), each day with its total, an 8-hour progress line and
+  its records inside. Who-is-in-today cards show the same line.
+- The day's level is the pure `attendanceDayLevel` (contracts, unit-tested), measured against
+  `attendanceTarget(date)`: 8 h Monday to Friday (`WORKDAY_MINUTES`), **0 on a weekend**.
+  `short` below target − 1 h (under 7 h, red), `almost` up to the target (amber), `complete` up to
+  15 minutes over (green), `over` beyond that (red, "Overtime"), and `in_progress` (orange) while a
+  record is open, so a running day is never called short. On a weekend any recorded time beyond
+  15 minutes is overtime and the line says "Day off". Purely informational, like ADR 0017/0026:
+  nothing is blocked, stored or reported; the level is always written in words with an icon.
+- Per-person working hours (ADR 0026) and holidays are not applied here yet (the attendance responses
+  do not carry them); the line uses the standard day.
+- Sorting is client-side over the loaded period (`sortAttendanceDays`: newest, oldest, most, fewest
+  hours, needs attention first, name; `sortPresence`: working first, name, most, fewest).

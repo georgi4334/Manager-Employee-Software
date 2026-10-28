@@ -1,4 +1,9 @@
-import { ATTENDANCE_MODES, type AttendanceMode } from '@intime/contracts';
+import {
+  ATTENDANCE_MODES,
+  attendanceDayLevel,
+  attendanceTarget,
+  type AttendanceMode,
+} from '@intime/contracts';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isApiError } from '@/shared/api/api-error';
@@ -10,6 +15,7 @@ import { Input } from '@/shared/ui/input';
 import { Select } from '@/shared/ui/select';
 import { formatDay } from '@/shared/lib/format';
 import { useAttendanceStatus, useCheckIn, useCheckOut } from './hooks';
+import { LevelPill, ProgressLine } from './DayProgress';
 import { RecordForm } from './RecordForm';
 import { RecordRow, useDuration } from './RecordRow';
 import { useAttendanceErrors } from './use-attendance-errors';
@@ -39,30 +45,40 @@ export function TodayTab() {
   }
 
   const { today, open, records, minutes } = status.data;
+  const target = attendanceTarget(today);
+  const level = attendanceDayLevel(minutes, { open: Boolean(open), target });
   return (
     <div className="space-y-4">
-      <Card className="space-y-3">
-        <CardTitle>{formatDay(today, language, { dateStyle: 'full' })}</CardTitle>
-        {open ? <ClockOut since={open.startTime} mode={open.mode} /> : <ClockIn />}
-        <p className="text-sm text-muted-foreground">
+      <Card className="space-y-4">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <CardTitle>{formatDay(today, language, { dateStyle: 'full' })}</CardTitle>
+          {(records.length > 0 || open) && <LevelPill level={level} />}
+        </div>
+        <p className="text-xl font-semibold tabular-nums">
           {t('today.total', { duration: duration(minutes) })}
         </p>
+        <ProgressLine minutes={minutes} level={level} target={target} />
+        {open ? <ClockOut since={open.startTime} mode={open.mode} /> : <ClockIn />}
       </Card>
 
-      <div className="space-y-2">
-        <h2 className="text-base font-semibold">{t('today.records')}</h2>
+      <section className="space-y-2" aria-labelledby="today-records">
+        <h2 id="today-records" className="text-base font-semibold">
+          {t('today.records')}
+        </h2>
         {records.length === 0 ? (
           <Card>
             <p className="text-center text-sm text-muted-foreground">{t('today.empty')}</p>
           </Card>
         ) : (
-          <ul className="space-y-2" aria-label={t('today.records')}>
-            {records.map((record) => (
-              <RecordRow key={record.id} record={record} />
-            ))}
-          </ul>
+          <Card className="py-1">
+            <ul className="divide-y divide-border" aria-label={t('today.records')}>
+              {records.map((record) => (
+                <RecordRow key={record.id} record={record} />
+              ))}
+            </ul>
+          </Card>
         )}
-      </div>
+      </section>
 
       {adding ? (
         <Card className="space-y-3">
