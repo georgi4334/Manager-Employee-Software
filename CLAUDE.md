@@ -12,7 +12,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 ## Commands
 
 - Local DB: `docker compose up -d`; copy `apps/api/.env.example` to `apps/api/.env`; `pnpm --filter @intime/api db:deploy` applies migrations.
-- `pnpm dev` runs from each app (`apps/web` Vite on :5173, `apps/api` Nest watch on :3000, docs at `/api/docs`).
+- `pnpm dev` at the root builds `@intime/contracts`, keeps it rebuilding (`tsc --watch`) and runs both apps (`apps/web` Vite on :5173, `apps/api` Nest watch on :3000, docs at `/api/docs`); a stale contracts `dist` otherwise shows up as a missing export in the browser.
 - Checks: `pnpm lint && pnpm typecheck && pnpm test` (API database tests `test/*.int.test.ts` run one file at a time when `TEST_DATABASE_URL` is set; CI always sets it).
 - Schema change: edit `apps/api/prisma/schema.prisma`, then `pnpm --filter @intime/api db:migrate -- --name <what>`; commit the migration.
 
@@ -128,7 +128,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 ## End-to-end and accessibility (docs/adr/0012-e2e-and-accessibility.md)
 
 - `e2e/` (Playwright, Chromium) is a separate package, not part of `pnpm test`: `pnpm --filter @intime/e2e e2e` (needs `E2E_DATABASE_URL`, a Postgres owner URL, and a built API; locally `PW_CHROMIUM` can point at an installed Chromium). It starts its own API (fresh database, real `tenant:create`, log mail transport) and the Vite dev server; specs run in order. Use roles and visible labels as selectors.
-- `06-accessibility.spec.ts` scans every page with axe (WCAG 2.1 A/AA, phone and desktop, light and dark). A new page must be added to its list; fix violations in the components or the design tokens, never by excluding rules.
+- `06-accessibility.spec.ts` scans every page with axe (WCAG 2.1 A/AA, phone and desktop, light and dark). A new page must be added to its list (`e2e/support/pages.ts`); fix violations in the components or the design tokens, never by excluding rules. `08-layout.spec.ts` opens the same pages in German on a 375px phone and fails on horizontal scrolling (headings wrap long words via `globals.css`).
 
 ## Projects (docs/adr/0013-clients-and-projects.md)
 

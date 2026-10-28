@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { signIn } from '../support/auth';
 import { ADMIN_EMAIL } from '../support/constants';
+import { SIGNED_IN } from '../support/pages';
 
 // WCAG 2.1 A and AA, as far as an automated scan can judge (contrast, names, roles, landmarks, labels).
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
@@ -11,53 +12,6 @@ const SIGNED_OUT = [
   '/forgot-password',
   '/reset-password',
   '/accept-invitation?token=invalid',
-];
-const SIGNED_IN = [
-  '/',
-  '/employees',
-  '/employees/new',
-  '/organization',
-  '/leave',
-  '/leave?tab=approvals',
-  '/leave?tab=team',
-  '/leave?tab=settings',
-  '/attendance',
-  '/attendance?tab=history',
-  '/attendance?tab=team',
-  '/calendar?view=month',
-  '/calendar?view=week',
-  '/calendar?view=day',
-  '/calendar?view=agenda',
-  '/notifications',
-  '/notifications/settings',
-  '/projects',
-  '/projects?tab=clients',
-  '/tasks',
-  '/tasks?view=board',
-  '/time',
-  '/time?tab=approvals',
-  '/time?tab=reports',
-  '/capacity',
-  '/analytics',
-  '/assistant',
-  '/assistant?tab=settings',
-  '/retention',
-  '/roles',
-  '/roles/new',
-  '/goals',
-  '/goals?scope=personal',
-  '/one-on-ones',
-  '/one-on-ones?status=all',
-  '/feedback',
-  '/feedback?box=given',
-  '/skills',
-  '/skills?tab=people',
-  '/skills?tab=catalog',
-  '/reviews',
-  '/reviews?tab=team',
-  '/reviews?tab=cycles',
-  '/profile',
-  '/does-not-exist',
 ];
 
 /** Earlier specs erase the employee of the 1:1 spec, so the scan makes sure there is one meeting to open. */
