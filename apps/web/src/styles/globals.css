@@ -156,6 +156,55 @@
     animation: motion-enter var(--dur-base) var(--ease-ios) both;
   }
 
+  /* Filled buttons: a thin light line just inside the edge (set --btn-bg to the fill). */
+  .btn-ring {
+    box-shadow:
+      inset 0 0 0 2px var(--btn-bg),
+      inset 0 0 0 3.5px var(--button-ring),
+      var(--button-shadow);
+  }
+
+  /* Drop-downs (menus, popovers, the open list of a select): one look everywhere. */
+  .menu-panel {
+    border: 1px solid var(--menu-border);
+    border-radius: var(--radius-xl);
+    background-color: var(--menu-from);
+    background-image: linear-gradient(
+      165deg,
+      var(--menu-from) 0%,
+      var(--menu-from) 45%,
+      var(--menu-to) 100%
+    );
+    box-shadow: var(--menu-shadow);
+    padding: 0.375rem;
+    color: var(--foreground);
+  }
+  .menu-item {
+    display: flex;
+    min-height: 2.75rem;
+    width: 100%;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: var(--radius-lg);
+    padding-inline: 0.75rem;
+    font-size: 0.875rem;
+    text-align: left;
+    transition:
+      background-color var(--dur-fast) var(--ease-standard),
+      box-shadow var(--dur-fast) var(--ease-standard);
+  }
+  .menu-item:hover,
+  .menu-item:focus-visible,
+  .menu-item[data-active='true'] {
+    background-color: var(--menu-item-active);
+    box-shadow: var(--menu-item-glow);
+  }
+  .menu-separator {
+    height: 1px;
+    margin: 0.25rem 0.5rem;
+    background-color: var(--menu-border);
+  }
+
   /* Placeholder blocks shaped like the content that is loading. */
   .skeleton {
     border-radius: var(--radius-md);
@@ -299,5 +348,78 @@
     animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Native selects keep working everywhere (phones get their own picker); where the browser supports
+ * customizable selects, the open list gets the same drop-down look as our menus.
+ */
+@supports (appearance: base-select) {
+  select,
+  ::picker(select) {
+    appearance: base-select;
+  }
+  select {
+    align-items: center;
+    gap: 0.5rem;
+  }
+  select::picker-icon {
+    /* A chevron like the rest of the app instead of the default filled triangle (the mask is shape only). */
+    content: '';
+    width: 1rem;
+    height: 1rem;
+    background-color: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+    margin-inline-start: auto;
+    color: var(--muted-foreground);
+    transition: rotate var(--dur-fast) var(--ease-standard);
+  }
+  select:open::picker-icon {
+    rotate: 180deg;
+  }
+  ::picker(select) {
+    margin-block: 0.25rem;
+    max-height: min(20rem, 60dvh);
+    overflow-y: auto;
+    border: 1px solid var(--menu-border);
+    border-radius: var(--radius-xl);
+    background-color: var(--menu-from);
+    background-image: linear-gradient(
+      165deg,
+      var(--menu-from) 0%,
+      var(--menu-from) 45%,
+      var(--menu-to) 100%
+    );
+    box-shadow: var(--menu-shadow);
+    padding: 0.375rem;
+    color: var(--foreground);
+  }
+  select option {
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-lg);
+    padding-inline: 0.75rem;
+    font-size: 0.875rem;
+    transition:
+      background-color var(--dur-fast) var(--ease-standard),
+      box-shadow var(--dur-fast) var(--ease-standard);
+  }
+  select option:hover,
+  select option:focus-visible {
+    background-color: var(--menu-item-active);
+    box-shadow: var(--menu-item-glow);
+    outline: none;
+  }
+  select option:checked {
+    font-weight: 600;
+    color: var(--primary);
+  }
+  select option::checkmark {
+    order: 1;
+    margin-inline-start: auto;
+    color: var(--primary);
   }
 }
