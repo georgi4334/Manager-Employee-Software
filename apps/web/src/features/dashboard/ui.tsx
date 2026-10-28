@@ -46,7 +46,7 @@ export function StatCard({ title, icon: Icon, tone, value, note, trend, to }: St
     <Link
       to={to}
       className={cn(
-        'flex h-full flex-col gap-3 rounded-xl border bg-gradient-to-br to-surface p-4 transition-[transform,box-shadow] hover:shadow-card active:scale-[0.99]',
+        'flex min-h-40 flex-col gap-3 rounded-xl border bg-gradient-to-br to-surface p-4 transition-[transform,box-shadow] hover:shadow-card active:scale-[0.99]',
         style.card,
       )}
     >
@@ -107,7 +107,7 @@ interface WidgetCardProps {
 export function WidgetCard({ title, icon: Icon, to, linkText, children }: WidgetCardProps) {
   const { t } = useTranslation('dashboard');
   return (
-    <section className="flex h-full flex-col rounded-xl border border-border bg-surface p-4 shadow-card md:p-5">
+    <section className="flex min-h-60 flex-col rounded-xl border border-border bg-surface p-4 shadow-card md:p-5">
       <div className="mb-3 flex items-center gap-2">
         <span className="grid size-8 place-items-center rounded-lg bg-accent text-accent-foreground">
           <Icon className="size-4" aria-hidden="true" />

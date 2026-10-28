@@ -107,7 +107,8 @@ export function DashboardPage() {
             <li
               key={id}
               className={cn(
-                'relative min-w-0',
+                'grid min-w-0 gap-1',
+                editing ? 'grid-rows-[auto_1fr]' : 'grid-rows-1',
                 SPAN[widget.size],
                 editing &&
                   'rounded-xl outline-2 outline-offset-2 outline-dashed outline-primary/40',
@@ -144,11 +145,11 @@ export function DashboardPage() {
                 </div>
               )}
               {/* While arranging, the widgets are a preview: their links must not navigate away. */}
-              <div className="flex-1" inert={editing}>
+              <div className="grid grid-rows-1" inert={editing}>
                 {usable ? (
                   <Component />
                 ) : (
-                  <section className="flex h-full flex-col gap-1 rounded-xl border border-dashed border-border bg-surface p-4">
+                  <section className="flex min-h-36 flex-col gap-1 rounded-xl border border-dashed border-border bg-surface p-4">
                     <h2 className="text-base font-semibold">{title(id)}</h2>
                     <p className="text-sm text-muted-foreground">{t('hiddenForYou')}</p>
                   </section>
