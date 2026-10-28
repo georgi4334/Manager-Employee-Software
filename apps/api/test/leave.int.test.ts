@@ -1226,6 +1226,88 @@ describe.skipIf(!urls)('leave over HTTP (real database)', () => {
   });
 
   // ---------------------------------------------------------------------------------------------
+  describe('when an employee leaves', () => {
+    const mkPerson = async (name: string, role: SystemRole, managerId: string) => {
+      const who = await onboard(acme, name, role);
+      expect((await manage(acme, who.employeeId, managerId)).status).toBe(204);
+      const adjust = await hr.agent.post('/api/v1/leave/balances/adjustments').send({
+        employeeId: who.employeeId,
+        leaveTypeId: annual,
+        year: testYear,
+        delta: 60,
+      });
+      expect(adjust.status).toBe(201);
+      return who;
+    };
+    const deactivate = (employeeId: string) =>
+      hr.agent.post(`/api/v1/employees/${employeeId}/deactivate`).send({});
+    const statusOf = async (who: Member, id: string) =>
+      (await who.agent.get('/api/v1/leave/requests').query({ pageSize: 100 })).body.items.find(
+        (r: { id: string }) => r.id === id,
+      )?.status as string | undefined;
+
+    it('keeps pending requests of the leaver, still decided by their manager', async () => {
+      const boss = await mkPerson('lvboss', 'manager', adminEmployeeId);
+      const leaver = await mkPerson('lvleaver', 'employee', boss.employeeId);
+      const id = (await request(leaver, annual, freshWeek(leaver))).body.id as string;
+
+      expect((await deactivate(leaver.employeeId)).status).toBe(200);
+
+      expect(await statusOf(boss, id)).toBe('pending');
+      const pending = await boss.agent.get('/api/v1/leave/requests').query({ approvable: true });
+      expect(pending.body.items.map((r: { id: string }) => r.id)).toContain(id);
+      // an unrelated manager still has no say
+      expect((await decide(mia, id, 'approve')).status).toBe(403);
+      expect((await decide(boss, id, 'approve')).status).toBe(200);
+    });
+
+    it('hands the pending requests of a leaving manager’s reports to the next manager', async () => {
+      const boss = await mkPerson('inhboss', 'manager', adminEmployeeId);
+      const sub = await mkPerson('inhsub', 'employee', boss.employeeId);
+      const pending = (await request(sub, annual, freshWeek(sub))).body.id as string;
+      const decided = (await request(sub, annual, freshWeek(sub))).body.id as string;
+      expect((await decide(boss, decided, 'approve')).status).toBe(200);
+      const rejected = (await request(sub, annual, freshWeek(sub))).body.id as string;
+      expect((await decide(boss, rejected, 'reject')).status).toBe(200);
+      // the new approver has not been told yet, and is not the boss's own request notified to anyone else
+      expect((await notificationsOf(acme.admin)).some((n) => n.params.requestId === pending)).toBe(
+        false,
+      );
+
+      expect((await deactivate(boss.employeeId)).status).toBe(200);
+
+      expect(await statusOf(sub, pending)).toBe('pending');
+      const told = (await notificationsOf(acme.admin)).filter((n) => n.type === 'leave.requested');
+      expect(told.filter((n) => n.params.requestId === pending)).toHaveLength(1);
+      expect(told[0]?.params).toMatchObject({ employeeName: 'inhsub Test', autoApproved: false });
+      // decided requests are not announced again
+      for (const done of [decided, rejected]) {
+        expect(told.some((n) => n.params.requestId === done)).toBe(false);
+      }
+      // the new manager can decide; the leaver and a stranger cannot
+      expect((await decide(mia, pending, 'approve')).status).toBe(403);
+      expect((await decide(boss, pending, 'approve')).status).toBe(401);
+      expect((await decide(acme.admin, pending, 'approve')).status).toBe(200);
+    });
+
+    it('tells HR and Admin when the new manager is nobody', async () => {
+      const top = await mkPerson('inhtop', 'manager', adminEmployeeId);
+      const low = await mkPerson('inhlow', 'employee', top.employeeId);
+      expect((await manage(acme, top.employeeId, null)).status).toBe(204);
+      const id = (await request(low, annual, freshWeek(low))).body.id as string;
+      expect((await deactivate(top.employeeId)).status).toBe(200);
+      for (const who of [hr, acme.admin]) {
+        expect(
+          (await notificationsOf(who)).some(
+            (n) => n.type === 'leave.requested' && n.params.requestId === id,
+          ),
+        ).toBe(true);
+      }
+      expect((await notificationsOf(low)).some((n) => n.params.requestId === id)).toBe(false);
+    });
+  });
+
+  // ---------------------------------------------------------------------------------------------
   describe('tenant isolation', () => {
     it('keeps requests, balances and types of one workspace away from another', async () => {
       const id = (await request(dan, annual, freshWeek(dan))).body.id as string;

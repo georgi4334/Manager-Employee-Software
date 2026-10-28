@@ -18,6 +18,7 @@ import type { TenantTx } from '../../infrastructure/tenancy/tenant-context.js';
 import { TenantDb } from '../../infrastructure/tenancy/tenant-db.service.js';
 import { AuditService } from '../audit/audit.service.js';
 import { GoalsService } from '../goals/goals.service.js';
+import { LeaveRequestsService } from '../leave/leave-requests.service.js';
 import { OneOnOnesService } from '../one-on-ones/one-on-ones.service.js';
 import { TimeService } from '../time/time.service.js';
 import { AssignmentsService } from '../projects/assignments.service.js';
@@ -81,6 +82,7 @@ export class EmployeesService {
     private readonly time: TimeService,
     private readonly goals: GoalsService,
     private readonly oneOnOnes: OneOnOnesService,
+    private readonly leave: LeaveRequestsService,
     private readonly audit: AuditService,
   ) {}
 
@@ -266,7 +268,16 @@ export class EmployeesService {
       }
       // Ends the account and its sessions; refuses yourself and the last administrator.
       if (row.userId) await this.users.disableInTx(tx, actor, row.userId);
+      const reports = await tx.employee.findMany({
+        where: { managerId: id },
+        select: { id: true },
+      });
       await this.org.onEmployeeDeactivated(tx, actor.userId, id);
+      // Pending leave of the reports now belongs to their new manager (ADR 0008): tell them.
+      await this.leave.notifyInheritedApprovals(
+        tx,
+        reports.map((r) => r.id),
+      );
       await this.projects.onEmployeeDeactivated(tx, id, terminationDate);
       await this.time.onEmployeeDeactivated(tx, id);
       await this.goals.onEmployeeDeactivated(tx, id);
