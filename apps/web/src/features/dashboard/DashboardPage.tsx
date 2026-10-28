@@ -114,7 +114,7 @@ export function DashboardPage() {
               )}
             >
               {editing && (
-                <div className="absolute right-2 top-2 z-[1] flex gap-1 rounded-lg border border-border bg-surface p-0.5 shadow-card">
+                <div className="flex justify-end gap-1">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -144,7 +144,7 @@ export function DashboardPage() {
                 </div>
               )}
               {/* While arranging, the widgets are a preview: their links must not navigate away. */}
-              <div className="h-full" inert={editing}>
+              <div className="flex-1" inert={editing}>
                 {usable ? (
                   <Component />
                 ) : (
