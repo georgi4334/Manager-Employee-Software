@@ -7,7 +7,7 @@
   "list": "Rollen",
   "system": "System",
   "custom": "Eigene",
-  "back": "← Alle Rollen",
+  "back": "Alle Rollen",
   "notFoundTitle": "Rolle nicht gefunden",
   "notFoundText": "Diese Rolle gibt es in Ihrem Arbeitsbereich nicht.",
   "systemNote": "Systemrolle (fest)",

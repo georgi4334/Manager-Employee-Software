@@ -1,7 +1,7 @@
 import type { Competency, ReviewDetail } from '@intime/contracts';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { isApiError } from '@/shared/api/api-error';
 import { formatDay } from '@/shared/lib/format';
 import { Alert } from '@/shared/ui/alert';
@@ -13,6 +13,7 @@ import { useCalibrate, useReopen, useReview } from './hooks';
 import { PartEditor } from './PartEditor';
 import { ScoreSelect } from './ScoreSelect';
 import { useReviewErrors } from './use-review-errors';
+import { BackLink } from '@/shared/ui/back-link';
 
 type Part = NonNullable<ReviewDetail['self']>;
 
@@ -122,9 +123,9 @@ export function ReviewDetailPage() {
         <Alert tone="danger">
           {isApiError(query.error, 'NOT_FOUND') ? t('notFound') : errors.apiError(query.error)}
         </Alert>
-        <Link to="/reviews" className="text-primary underline">
+        <BackLink to="/reviews" className="self-center">
           {t('back')}
-        </Link>
+        </BackLink>
       </Card>
     );
   }
@@ -135,9 +136,7 @@ export function ReviewDetailPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-4">
-      <Link to="/reviews" className="text-sm text-primary underline">
-        {t('back')}
-      </Link>
+      <BackLink to="/reviews">{t('back')}</BackLink>
       <Card className="space-y-2">
         <h1 className="break-words text-2xl font-semibold">
           {t('detail.title', { name, cycle: review.cycle.name })}

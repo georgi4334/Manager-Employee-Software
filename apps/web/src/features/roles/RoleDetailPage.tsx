@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useCurrentUser } from '@/features/auth/use-auth';
 import { usePermission } from '@/features/auth/permissions';
 import { isApiError } from '@/shared/api/api-error';
@@ -12,6 +12,7 @@ import { useDeleteRole, useRole, useUpdateRole } from './hooks';
 import { PermissionGrid } from './PermissionGrid';
 import { RoleEditor } from './RoleEditor';
 import { useRoleErrors } from './use-role-errors';
+import { BackLink } from '@/shared/ui/back-link';
 
 /** One role. System roles (and viewers without `admin.role.manage`) get a read-only list; custom roles an editor. */
 export function RoleDetailPage() {
@@ -30,9 +31,7 @@ export function RoleDetailPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-4">
-      <Link to="/roles" className="text-sm text-primary underline">
-        {t('back')}
-      </Link>
+      <BackLink to="/roles">{t('back')}</BackLink>
       {query.isPending && (
         <p role="status" className="text-sm text-muted-foreground">
           {t('loading')}

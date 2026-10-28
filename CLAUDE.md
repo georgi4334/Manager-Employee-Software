@@ -278,7 +278,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 
 - Colours and radii live only in `tokens.css`. Dark side panel (`bg-sidebar`, `text-sidebar-*`) with a curved content panel; cards outlined (`rounded-xl border`), secondary buttons outlined, tabs an orange pill. `--primary` carries text (AA); `--brand` is for fills without text.
 - A new colour pair must be checked for 4.5:1 in light and dark before it is used for text.
-- The logo is `LogoMark`/`Logo` (`shared/ui/logo.tsx`); `public/favicon.svg` and the splash copy in `index.html` repeat the drawing, so change all three together. Boot shows `Splash`; card pages show skeletons (`shared/ui/skeleton.tsx`) inside one `SkeletonGroup` (`role="status"`), never a bare "Loading…" line.
+- The logo is `LogoMark`/`Logo` (`shared/ui/logo.tsx`); `public/favicon.svg` and the splash copy in `index.html` repeat the drawing, so change all three together. Sub-pages (details, forms, settings) start with `BackLink` (`shared/ui/back-link.tsx`, outlined pill with an arrow) to their list, never a bare text link. Boot shows `Splash`; card pages show skeletons (`shared/ui/skeleton.tsx`) inside one `SkeletonGroup` (`role="status"`), never a bare "Loading…" line.
 
 ## Dashboard (docs/adr/0034-dashboard.md)
 

@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { useMessages } from '@/features/auth/messages';
 import { isApiError } from '@/shared/api/api-error';
 import { formatDay } from '@/shared/lib/format';
@@ -26,6 +26,7 @@ import {
 } from './forms';
 import { useMeeting, useUpdateMeeting } from './hooks';
 import { useMeetingErrors } from './use-meeting-errors';
+import { BackLink } from '@/shared/ui/back-link';
 
 function NotesForm({
   meeting,
@@ -162,9 +163,9 @@ export function MeetingDetailPage() {
         <Alert tone="danger">
           {isApiError(query.error, 'NOT_FOUND') ? t('notFound') : errors.apiError(query.error)}
         </Alert>
-        <Link to="/one-on-ones" className="text-primary underline">
+        <BackLink to="/one-on-ones" className="self-center">
           {t('back')}
-        </Link>
+        </BackLink>
       </Card>
     );
   }
@@ -172,9 +173,7 @@ export function MeetingDetailPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-4">
-      <Link to="/one-on-ones" className="text-sm text-primary underline">
-        {t('back')}
-      </Link>
+      <BackLink to="/one-on-ones">{t('back')}</BackLink>
       <Card className="space-y-3">
         <h1 className="break-words text-2xl font-semibold">{t('card.with', { name: person })}</h1>
         <p className="text-sm text-muted-foreground">

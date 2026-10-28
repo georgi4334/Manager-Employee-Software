@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { EMPLOYMENT_TYPES, SENIORITIES, type Employee } from '@intime/contracts';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useMessages } from '@/features/auth/messages';
 import { isApiError } from '@/shared/api/api-error';
 import { Alert } from '@/shared/ui/alert';
@@ -21,6 +21,7 @@ import {
 } from './forms';
 import { useCreateEmployee, useEmployee, useUpdateEmployee } from './hooks';
 import { useEmployeeErrors } from './use-employee-messages';
+import { BackLink } from '@/shared/ui/back-link';
 
 /** Create (/employees/new) and edit (/employees/:id/edit) share one form. */
 export function EmployeeFormPage() {
@@ -96,12 +97,9 @@ function EmployeeForm({ employee }: { employee?: Employee }) {
 
   return (
     <div className="mx-auto max-w-2xl space-y-4">
-      <Link
-        to={employee ? `/employees/${employee.id}` : '/employees'}
-        className="inline-flex min-h-11 items-center text-sm text-primary underline"
-      >
+      <BackLink to={employee ? `/employees/${employee.id}` : '/employees'}>
         {t('form.cancel')}
-      </Link>
+      </BackLink>
       <h1 className="text-2xl font-semibold">
         {employee ? t('form.editTitle', { name }) : t('form.createTitle')}
       </h1>

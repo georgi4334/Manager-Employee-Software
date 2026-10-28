@@ -7,7 +7,7 @@
   "list": "Roles",
   "system": "System",
   "custom": "Custom",
-  "back": "← All roles",
+  "back": "All roles",
   "notFoundTitle": "Role not found",
   "notFoundText": "This role does not exist in your workspace.",
   "systemNote": "System role (fixed)",

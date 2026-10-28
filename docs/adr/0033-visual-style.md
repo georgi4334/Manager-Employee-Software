@@ -35,3 +35,10 @@ Status: accepted
   `SkeletonLines`) inside one `SkeletonGroup` (`role="status"`, sr-only "Loading…"); the shapes
   are `aria-hidden`. Dashboard widgets loading on their own show `SkeletonLines`. The `.skeleton`
   pulse is opacity only.
+
+## Update: back navigation
+
+- Every sub-page (employee, project, goal, review, 1:1 and role details, new role, the employee form,
+  notification settings) starts with `BackLink` (`shared/ui/back-link.tsx`): an outlined pill with an
+  arrow in an `--accent` circle, 44px high, above the heading. The arrow is decoration; the link's name
+  is the text ("Back to projects"), so the texts carry no arrow characters.
