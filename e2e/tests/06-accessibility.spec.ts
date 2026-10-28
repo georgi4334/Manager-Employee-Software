@@ -144,12 +144,27 @@ for (const variant of variants) {
         await settle(page, path);
         found.push(...(await scan(page, path)));
       }
+      // the profile drawer and its theme menu
+      await settle(page, '/');
+      await page.getByRole('button', { name: 'Profile and settings' }).click();
+      found.push(...(await scan(page, '/ (profile drawer)')));
+      await page.getByRole('button', { name: /^Theme / }).click();
+      found.push(...(await scan(page, '/ (profile drawer, theme menu open)')));
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('Escape');
       // forms and panels that only exist after an action
       await settle(page, '/calendar?view=agenda');
       await page.getByRole('button', { name: 'New event' }).click();
       found.push(...(await scan(page, '/calendar (new event form)')));
       // the repeat and find-a-time parts of the same form
       const eventForm = page.getByRole('form', { name: 'New event' });
+      // the calendar and the clock of the date and time fields
+      await eventForm.getByRole('button', { name: 'Open calendar' }).first().click();
+      found.push(...(await scan(page, '/calendar (date picker open)')));
+      await page.keyboard.press('Escape');
+      await eventForm.getByRole('button', { name: 'Open clock' }).first().click();
+      found.push(...(await scan(page, '/calendar (time picker open)')));
+      await page.keyboard.press('Escape');
       await eventForm.getByLabel('Repeats').selectOption('weekly');
       await eventForm.getByLabel('Ends').selectOption('count');
       await eventForm.getByRole('button', { name: 'Find a time' }).click();

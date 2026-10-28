@@ -23,6 +23,7 @@ test.describe('first administrator', () => {
     await expect(page).toHaveURL(/\/login/);
 
     await signIn(page, ADMIN_EMAIL);
+    await page.getByRole('button', { name: 'Profile and settings' }).click();
     await page.getByRole('button', { name: 'Sign out' }).click();
     await expect(page).toHaveURL(/\/login/);
     await page.goto('/leave');
@@ -31,11 +32,16 @@ test.describe('first administrator', () => {
 
   test('keeps the chosen language after a reload', async ({ page }) => {
     await signIn(page, ADMIN_EMAIL);
+    await page.getByRole('button', { name: 'Profile and settings' }).click();
     await page.getByLabel('Language').selectOption({ label: 'Deutsch' });
+    await expect(page.getByRole('button', { name: 'Profil und Einstellungen' })).toBeVisible();
+    await page.keyboard.press('Escape');
     await expect(page.getByRole('heading', { name: 'Übersicht' })).toBeVisible();
     await page.reload();
     await expect(page.getByRole('heading', { name: 'Übersicht' })).toBeVisible();
+    await page.getByRole('button', { name: 'Profil und Einstellungen' }).click();
     await page.getByLabel('Sprache').selectOption({ label: 'English' });
+    await page.keyboard.press('Escape');
     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
   });
 });

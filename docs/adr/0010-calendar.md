@@ -51,6 +51,20 @@ no notifications in this step (invitations arrive with Phase 4).
 Mine, Team, Company, Leave, Holidays (the last two follow the viewer's permissions). Create/edit form in the page
 (no modal), delete with confirmation. All strings en/de/bg.
 
+## Update: time grid and weekends (2026-10)
+
+- Weeks start on Monday everywhere. Saturday and Sunday are tinted (`bg-surface-muted`) in the
+  month grid and the time grid, so the weekend stands out; the tint is decoration only.
+- On wider screens (`md` and up) the week and day views are a time grid (hour rows, an all-day
+  row, events placed by their local start and end, overlapping events side by side). Timed events
+  that span midnight are cut per day. Below the grid the list of the selected day keeps the full
+  details and actions (edit, delete, answer), which are also the accessible representation; the
+  blocks in the grid are visual only (`aria-hidden`). Phones keep the day list.
+- Today is a filled orange pill in the headers; a red line (`--danger`) marks the current time in
+  today's column, with the time in the gutter, in the workspace time zone, updated every 30 s.
+- The month grid shows up to two event titles per day on wider screens (+N for more); phones keep
+  the dots. Layout of overlapping blocks is the pure `layoutDay` (`features/calendar/time-grid.ts`).
+
 ## Consequences
 
 - No calendar/share/attendee tables yet: Phase 4 adds them and migrates `calendar_event` (expand, then contract).

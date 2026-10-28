@@ -23,7 +23,9 @@
   },
   "month": {
     "count_one": "{{count}} запис",
-    "count_other": "{{count}} записа"
+    "count_other": "{{count}} записа",
+    "more_one": "+{{count}} още",
+    "more_other": "+{{count}} още"
   },
   "agenda": {
     "empty": "Няма нищо в този период."

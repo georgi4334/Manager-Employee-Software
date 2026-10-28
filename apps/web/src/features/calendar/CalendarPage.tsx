@@ -18,6 +18,10 @@ import { KIND_DOT } from './ItemRow';
 import { ITEM_KINDS, itemFromEvent, type CalendarItem, type ItemKind } from './items';
 import { MonthGrid } from './MonthGrid';
 import { useCalendarErrors } from './use-calendar-errors';
+import { TabList } from '@/shared/ui/tabs';
+import { useMediaQuery } from '@/shared/lib/use-media-query';
+import { TimeGrid } from './TimeGrid';
+import { useNowMinutes } from './use-now';
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const isView = (value: string | null): value is CalendarView =>
@@ -45,6 +49,8 @@ export function CalendarPage() {
   // Dates follow the user's own time zone setting when there is one, else the browser's.
   const zone = user?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
   const today = todayIn(zone);
+  const now = useNowMinutes(zone);
+  const wide = useMediaQuery('(min-width: 768px)');
   const requestedView = params.get('view');
   const view: CalendarView = isView(requestedView) ? requestedView : defaultView();
   const requestedDate = params.get('date');
@@ -128,7 +134,7 @@ export function CalendarPage() {
   const selected = anchor;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-4">
+    <div className="mx-auto max-w-6xl space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-semibold">{t('title')}</h1>
         <Button onClick={() => setCreating(true)} disabled={creating}>
@@ -143,27 +149,12 @@ export function CalendarPage() {
         </section>
       )}
 
-      <div
-        role="tablist"
-        aria-label={t('views.label')}
-        className="flex gap-1 overflow-x-auto rounded-lg bg-secondary p-1"
-      >
-        {CALENDAR_VIEWS.map((name) => (
-          <button
-            key={name}
-            type="button"
-            role="tab"
-            aria-selected={view === name}
-            onClick={() => go({ view: name })}
-            className={cn(
-              'min-h-11 flex-1 whitespace-nowrap rounded-md px-3 text-sm font-medium',
-              view === name ? 'bg-surface text-foreground shadow-card' : 'text-muted-foreground',
-            )}
-          >
-            {t(`views.${name}`)}
-          </button>
-        ))}
-      </div>
+      <TabList
+        label={t('views.label')}
+        tabs={CALENDAR_VIEWS.map((name) => ({ name, label: t(`views.${name}`) }))}
+        value={view}
+        onChange={(name) => go({ view: name as (typeof CALENDAR_VIEWS)[number] })}
+      />
 
       <div className="flex items-center justify-between gap-2">
         <Button
@@ -225,6 +216,19 @@ export function CalendarPage() {
             selected={selected}
             today={today}
             items={items}
+            onSelect={(date) => go({ date })}
+            wide={wide}
+          />
+          <DayList days={[selected]} items={items} today={today} />
+        </div>
+      ) : wide && (view === 'week' || view === 'day') ? (
+        <div className="space-y-4">
+          <TimeGrid
+            days={days}
+            items={items}
+            today={today}
+            now={now}
+            selected={selected}
             onSelect={(date) => go({ date })}
           />
           <DayList days={[selected]} items={items} today={today} />

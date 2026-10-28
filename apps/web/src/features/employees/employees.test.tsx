@@ -12,7 +12,7 @@ import {
   userWithPermissions,
   userWithRole,
 } from '@/tests/server';
-import { renderApp } from '@/tests/utils';
+import { openAccountMenu, renderApp } from '@/tests/utils';
 
 const uuid = (n: number) => `0192f5a0-0000-7000-8000-${String(n).padStart(12, '0')}`;
 
@@ -472,7 +472,7 @@ describe('my profile', () => {
     expect(await screen.findByText(/no employee record for your account/)).toBeInTheDocument();
   });
 
-  it('hides the phone form without the permission and is reachable from the top bar', async () => {
+  it('hides the phone form without the permission and is reachable from the profile drawer', async () => {
     server.use(
       ...signedInHandlers(userWithPermissions({ 'employee.view_directory': 'all' })),
       http.get(`${API}/employees/me`, () =>
@@ -482,7 +482,10 @@ describe('my profile', () => {
     await renderApp('/profile');
     await screen.findByRole('heading', { name: 'Ada Lovelace' });
     expect(screen.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'My profile' })).toHaveAttribute('href', '/profile');
+    expect((await openAccountMenu()).getByRole('link', { name: 'Profile' })).toHaveAttribute(
+      'href',
+      '/profile',
+    );
   });
 
   it('forgets employee data when signing out', async () => {
@@ -494,7 +497,9 @@ describe('my profile', () => {
     const { client, router } = await renderApp('/profile');
     await screen.findByRole('heading', { name: 'Ada Lovelace' });
     server.use(http.post(`${API}/auth/logout`, () => new HttpResponse(null, { status: 204 })));
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Sign out' }));
+    await userEvent
+      .setup()
+      .click((await openAccountMenu()).getByRole('button', { name: 'Sign out' }));
     await waitFor(() => expect(router.state.location.pathname).toBe('/login'));
     expect(client.getQueryCache().findAll({ queryKey: ['employees'] })).toHaveLength(0);
   });

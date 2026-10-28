@@ -10,12 +10,12 @@ import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 import { Select } from '@/shared/ui/select';
-import { cn } from '@/shared/lib/cn';
 import { PAGE_SIZE, type ListParams } from './api';
 import { useTasks } from './hooks';
 import { TaskCard } from './TaskCard';
 import { TaskForm } from './TaskForm';
 import { useTaskErrors } from './use-task-errors';
+import { TabList, TabContent } from '@/shared/ui/tabs';
 
 type View = 'list' | 'board';
 
@@ -144,89 +144,78 @@ export function TasksPage() {
         </label>
       </div>
 
-      <div
-        role="group"
-        aria-label={t('views.label')}
-        className="flex gap-1 rounded-lg bg-secondary p-1"
-      >
-        {(['list', 'board'] as const).map((v) => (
-          <button
-            key={v}
-            type="button"
-            aria-pressed={view === v}
-            onClick={() => setParam('view', v === 'list' ? '' : v)}
-            className={cn(
-              'min-h-11 flex-1 rounded-md px-3 text-sm font-medium',
-              view === v ? 'bg-surface text-foreground shadow-card' : 'text-muted-foreground',
-            )}
-          >
-            {t(`views.${v}`)}
-          </button>
-        ))}
-      </div>
+      <TabList
+        mode="toggle"
+        label={t('views.label')}
+        tabs={(['list', 'board'] as const).map((name) => ({ name, label: t(`views.${name}`) }))}
+        value={view}
+        onChange={(name) => setParam('view', name === 'list' ? '' : name)}
+      />
 
-      {query.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('loading')}
-        </p>
-      )}
-      {query.isError && (
-        <Card className="space-y-3 text-center">
-          <Alert tone="danger">{errors.apiError(query.error)}</Alert>
-          <Button onClick={() => void query.refetch()}>{t('retry')}</Button>
-        </Card>
-      )}
-      {data && (
-        <>
-          <p className="text-sm text-muted-foreground" aria-live="polite">
-            {t('total', { count: data.total })}
+      <TabContent value={view}>
+        {query.isPending && (
+          <p role="status" className="text-sm text-muted-foreground">
+            {t('loading')}
           </p>
-          {data.items.length === 0 ? (
-            <Card>
-              <p className="text-center text-sm text-muted-foreground">{t('empty')}</p>
-            </Card>
-          ) : view === 'list' ? (
-            <ul className="space-y-2" aria-label={t('title')}>
-              {data.items.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
-            </ul>
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {TASK_STATUSES.map((s) => {
-                const column = data.items.filter((task) => task.status === s);
-                return (
-                  <section key={s} aria-labelledby={`board-${s}`} className="space-y-2">
-                    <h2 id={`board-${s}`} className="text-sm font-semibold">
-                      {t(`status.${s}`)} ({column.length})
-                    </h2>
-                    <ul className="space-y-2" aria-labelledby={`board-${s}`}>
-                      {column.map((task) => (
-                        <TaskCard key={task.id} task={task} />
-                      ))}
-                    </ul>
-                  </section>
-                );
-              })}
-            </div>
-          )}
-          {pages > 1 && (
-            <nav className="flex items-center justify-between gap-2" aria-label={t('pagination')}>
-              <Button variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>
-                {t('previous')}
-              </Button>
-              <span className="text-sm text-muted-foreground">{t('page', { page, pages })}</span>
-              <Button
-                variant="secondary"
-                disabled={page >= pages}
-                onClick={() => setPage(page + 1)}
-              >
-                {t('next')}
-              </Button>
-            </nav>
-          )}
-        </>
-      )}
+        )}
+        {query.isError && (
+          <Card className="space-y-3 text-center">
+            <Alert tone="danger">{errors.apiError(query.error)}</Alert>
+            <Button onClick={() => void query.refetch()}>{t('retry')}</Button>
+          </Card>
+        )}
+        {data && (
+          <>
+            <p className="text-sm text-muted-foreground" aria-live="polite">
+              {t('total', { count: data.total })}
+            </p>
+            {data.items.length === 0 ? (
+              <Card>
+                <p className="text-center text-sm text-muted-foreground">{t('empty')}</p>
+              </Card>
+            ) : view === 'list' ? (
+              <ul className="space-y-2" aria-label={t('title')}>
+                {data.items.map((task) => (
+                  <TaskCard key={task.id} task={task} />
+                ))}
+              </ul>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                {TASK_STATUSES.map((s) => {
+                  const column = data.items.filter((task) => task.status === s);
+                  return (
+                    <section key={s} aria-labelledby={`board-${s}`} className="space-y-2">
+                      <h2 id={`board-${s}`} className="text-sm font-semibold">
+                        {t(`status.${s}`)} ({column.length})
+                      </h2>
+                      <ul className="space-y-2" aria-labelledby={`board-${s}`}>
+                        {column.map((task) => (
+                          <TaskCard key={task.id} task={task} />
+                        ))}
+                      </ul>
+                    </section>
+                  );
+                })}
+              </div>
+            )}
+            {pages > 1 && (
+              <nav className="flex items-center justify-between gap-2" aria-label={t('pagination')}>
+                <Button variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+                  {t('previous')}
+                </Button>
+                <span className="text-sm text-muted-foreground">{t('page', { page, pages })}</span>
+                <Button
+                  variant="secondary"
+                  disabled={page >= pages}
+                  onClick={() => setPage(page + 1)}
+                >
+                  {t('next')}
+                </Button>
+              </nav>
+            )}
+          </>
+        )}
+      </TabContent>
     </div>
   );
 }

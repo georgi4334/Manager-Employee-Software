@@ -1,5 +1,6 @@
 import type { InputHTMLAttributes, Ref } from 'react';
 import { cn } from '@/shared/lib/cn';
+import { PickerInput } from './date-time-picker';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   invalid?: boolean;
@@ -7,6 +8,19 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export function Input({ className, invalid, ref, ...props }: InputProps) {
+  // Dates and times use the calendar/clock picker; the value stays YYYY-MM-DD / HH:MM.
+  if (props.type === 'date' || props.type === 'time') {
+    const { type, ...rest } = props;
+    return (
+      <PickerInput
+        kind={type === 'date' ? 'date' : 'time'}
+        invalid={invalid}
+        className={className}
+        ref={ref}
+        {...rest}
+      />
+    );
+  }
   return (
     <input
       ref={ref}

@@ -9,12 +9,12 @@ import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Select } from '@/shared/ui/select';
-import { cn } from '@/shared/lib/cn';
 import { PAGE_SIZE } from './api';
 import { FeedbackCard } from './FeedbackCard';
 import { GiveForm } from './GiveForm';
 import { useFeedback } from './hooks';
 import { useFeedbackErrors } from './use-feedback-errors';
+import { TabList } from '@/shared/ui/tabs';
 
 export function FeedbackPage() {
   const { t } = useTranslation('feedback');
@@ -76,31 +76,18 @@ export function FeedbackPage() {
       )}
 
       {boxes.length > 1 && (
-        <div
-          role="group"
-          aria-label={t('tabs.label')}
-          className="flex gap-1 rounded-lg bg-secondary p-1"
-        >
-          {boxes.map((b) => (
-            <button
-              key={b}
-              type="button"
-              aria-pressed={box === b}
-              onClick={() => {
-                const next = new URLSearchParams(params);
-                next.set('box', b);
-                setParams(next, { replace: true });
-                setPage(1);
-              }}
-              className={cn(
-                'min-h-11 flex-1 rounded-md px-2 text-sm font-medium',
-                box === b ? 'bg-surface text-foreground shadow-card' : 'text-muted-foreground',
-              )}
-            >
-              {t(`tabs.${b}`)}
-            </button>
-          ))}
-        </div>
+        <TabList
+          mode="toggle"
+          label={t('tabs.label')}
+          tabs={boxes.map((name) => ({ name, label: t(`tabs.${name}`) }))}
+          value={box}
+          onChange={(name) => {
+            const next = new URLSearchParams(params);
+            next.set('box', name);
+            setParams(next, { replace: true });
+            setPage(1);
+          }}
+        />
       )}
 
       {box === 'received' && canReadOthers && (

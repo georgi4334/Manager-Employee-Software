@@ -4,19 +4,22 @@
  * and never raw hex values. To rebrand, edit only this file.
  */
 :root {
-  --background: #f8fafc;
+  /* Warm neutrals with an orange accent. The page is white, cards are outlined, not shadowed. */
+  --background: #ffffff;
   --surface: #ffffff;
-  --surface-muted: #f1f5f9;
-  --border: #e2e8f0;
-  --foreground: #0f172a;
-  --muted-foreground: #475569;
+  --surface-muted: #f6f4f3;
+  --border: #e8e4e2;
+  --foreground: #1c1917;
+  --muted-foreground: #6b625e;
 
-  --primary: #4f46e5;
+  /* Deep enough that white text on it passes AA; --brand is the brighter orange for fills without text. */
+  --primary: #c43c1a;
   --primary-foreground: #ffffff;
-  --secondary: #e2e8f0;
-  --secondary-foreground: #0f172a;
-  --accent: #e0e7ff;
-  --accent-foreground: #3730a3;
+  --brand: #f26a4b;
+  --secondary: #f1eeec;
+  --secondary-foreground: #1c1917;
+  --accent: #fdece6;
+  --accent-foreground: #8f2e12;
 
   --success: #15803d;
   --success-foreground: #ffffff;
@@ -27,35 +30,54 @@
   --info: #0369a1;
   --info-foreground: #ffffff;
 
-  --ring: #6366f1;
+  --ring: #e0502d;
 
-  --chart-1: #4f46e5;
+  /* The dark side panel and what sits on it. */
+  --sidebar: #170f0e;
+  --sidebar-foreground: #ece5e2;
+  --sidebar-muted: #a89f9b;
+  --sidebar-border: #2e2421;
+  --sidebar-active-from: #2f2623;
+  --sidebar-active-to: #231a18;
+
+  --chart-1: #c43c1a;
   --chart-2: #0891b2;
   --chart-3: #16a34a;
   --chart-4: #d97706;
   --chart-5: #dc2626;
   --chart-6: #9333ea;
   --chart-7: #db2777;
-  --chart-8: #64748b;
+  --chart-8: #78716c;
 
-  --radius: 0.625rem;
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.1);
+  /* Motion: iOS-style sheet curve, a soft spring for pops, and the One UI ease-out. */
+  --ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-standard: cubic-bezier(0.22, 0.25, 0, 1);
+  --dur-fast: 180ms;
+  --dur-base: 300ms;
+  --dur-sheet: 460ms;
+  --dur-exit: 280ms;
+
+  --radius: 0.875rem;
+  --shadow-card: 0 1px 2px rgb(28 25 23 / 0.04);
 }
 
 [data-theme='dark'] {
-  --background: #0b1120;
-  --surface: #111827;
-  --surface-muted: #1e293b;
-  --border: #334155;
-  --foreground: #f1f5f9;
-  --muted-foreground: #94a3b8;
+  /* Warm near-black: the content panel is a step lighter than the side panel so the curve stays visible. */
+  --background: #171110;
+  --surface: #211918;
+  --surface-muted: #2b211f;
+  --border: #3c2f2c;
+  --foreground: #f6eeeb;
+  --muted-foreground: #b9aca7;
 
-  --primary: #818cf8;
-  --primary-foreground: #0b1120;
-  --secondary: #1e293b;
-  --secondary-foreground: #f1f5f9;
-  --accent: #312e81;
-  --accent-foreground: #c7d2fe;
+  --primary: #ff7a59;
+  --primary-foreground: #1a0b07;
+  --brand: #ff7a59;
+  --secondary: #2b211f;
+  --secondary-foreground: #f6eeeb;
+  --accent: #3b2018;
+  --accent-foreground: #ffb9a3;
 
   --success: #4ade80;
   --success-foreground: #052e16;
@@ -66,18 +88,25 @@
   --info: #38bdf8;
   --info-foreground: #031c2c;
 
-  --ring: #818cf8;
+  --ring: #ff7a59;
 
-  --chart-1: #818cf8;
+  --sidebar: #0d0807;
+  --sidebar-foreground: #ece5e2;
+  --sidebar-muted: #a89f9b;
+  --sidebar-border: #2a1f1c;
+  --sidebar-active-from: #2a201d;
+  --sidebar-active-to: #1c1412;
+
+  --chart-1: #ff7a59;
   --chart-2: #22d3ee;
   --chart-3: #4ade80;
   --chart-4: #fbbf24;
   --chart-5: #f87171;
   --chart-6: #c084fc;
   --chart-7: #f472b6;
-  --chart-8: #94a3b8;
+  --chart-8: #a8a29e;
 
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.35);
 }
 
 @theme inline {
@@ -102,6 +131,11 @@
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
   --color-ring: var(--ring);
+  --color-brand: var(--brand);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-border: var(--sidebar-border);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -113,6 +147,8 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+  --radius-3xl: calc(var(--radius) + 18px);
   --shadow-card: var(--shadow-card);
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,

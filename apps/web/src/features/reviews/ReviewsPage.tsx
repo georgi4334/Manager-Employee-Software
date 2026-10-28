@@ -8,12 +8,12 @@ import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Select } from '@/shared/ui/select';
-import { cn } from '@/shared/lib/cn';
 import { PAGE_SIZE } from './api';
 import { CyclesTab } from './CyclesTab';
 import { useCycles, useReviews } from './hooks';
 import { ReviewCard } from './ReviewCard';
 import { useReviewErrors } from './use-review-errors';
+import { TabList, TabContent } from '@/shared/ui/tabs';
 
 type Tab = ReviewBox | 'cycles';
 
@@ -53,102 +53,91 @@ export function ReviewsPage() {
       <h1 className="text-2xl font-semibold">{t('title')}</h1>
       <p className="text-sm text-muted-foreground">{t('intro')}</p>
       {tabs.length > 1 && (
-        <div
-          role="group"
-          aria-label={t('tabs.label')}
-          className="flex gap-1 rounded-lg bg-secondary p-1"
-        >
-          {tabs.map((x) => (
-            <button
-              key={x}
-              type="button"
-              aria-pressed={tab === x}
-              onClick={() => go(x)}
-              className={cn(
-                'min-h-11 flex-1 rounded-md px-2 text-sm font-medium',
-                tab === x ? 'bg-surface text-foreground shadow-card' : 'text-muted-foreground',
-              )}
-            >
-              {t(`tabs.${x}`)}
-            </button>
-          ))}
-        </div>
+        <TabList
+          mode="toggle"
+          label={t('tabs.label')}
+          tabs={tabs.map((name) => ({ name, label: t(`tabs.${name}`) }))}
+          value={tab}
+          onChange={(name) => go(name as Tab)}
+        />
       )}
 
-      {tab === 'cycles' ? (
-        <CyclesTab onShowReviews={(id) => go('all', id)} />
-      ) : (
-        <>
-          {tab !== 'mine' && (
-            <Select
-              aria-label={t('filters.cycle')}
-              value={cycleId}
-              onChange={(e) => {
-                go(tab, e.target.value);
-              }}
-            >
-              <option value="">{t('filters.allCycles')}</option>
-              {(cycles.data?.items ?? []).map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </Select>
-          )}
-          {query.isPending && (
-            <p role="status" className="text-sm text-muted-foreground">
-              {t('loading')}
-            </p>
-          )}
-          {query.isError && (
-            <Card className="space-y-3 text-center">
-              <Alert tone="danger">{errors.apiError(query.error)}</Alert>
-              <Button onClick={() => void query.refetch()}>{t('retry')}</Button>
-            </Card>
-          )}
-          {data &&
-            (data.items.length === 0 ? (
-              <Card>
-                <p className="text-center text-sm text-muted-foreground">{t(`empty.${box}`)}</p>
+      <TabContent value={tab}>
+        {tab === 'cycles' ? (
+          <CyclesTab onShowReviews={(id) => go('all', id)} />
+        ) : (
+          <>
+            {tab !== 'mine' && (
+              <Select
+                aria-label={t('filters.cycle')}
+                value={cycleId}
+                onChange={(e) => {
+                  go(tab, e.target.value);
+                }}
+              >
+                <option value="">{t('filters.allCycles')}</option>
+                {(cycles.data?.items ?? []).map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </Select>
+            )}
+            {query.isPending && (
+              <p role="status" className="text-sm text-muted-foreground">
+                {t('loading')}
+              </p>
+            )}
+            {query.isError && (
+              <Card className="space-y-3 text-center">
+                <Alert tone="danger">{errors.apiError(query.error)}</Alert>
+                <Button onClick={() => void query.refetch()}>{t('retry')}</Button>
               </Card>
-            ) : (
-              <>
-                <p className="text-sm text-muted-foreground" aria-live="polite">
-                  {t('total', { count: data.total })}
-                </p>
-                <ul className="space-y-2" aria-label={t(`tabs.${box}`)}>
-                  {data.items.map((r) => (
-                    <ReviewCard key={r.id} review={r} showEmployee={box !== 'mine'} />
-                  ))}
-                </ul>
-                {pages > 1 && (
-                  <nav
-                    className="flex items-center justify-between gap-2"
-                    aria-label={t('pagination')}
-                  >
-                    <Button
-                      variant="secondary"
-                      disabled={page <= 1}
-                      onClick={() => setPage(page - 1)}
+            )}
+            {data &&
+              (data.items.length === 0 ? (
+                <Card>
+                  <p className="text-center text-sm text-muted-foreground">{t(`empty.${box}`)}</p>
+                </Card>
+              ) : (
+                <>
+                  <p className="text-sm text-muted-foreground" aria-live="polite">
+                    {t('total', { count: data.total })}
+                  </p>
+                  <ul className="space-y-2" aria-label={t(`tabs.${box}`)}>
+                    {data.items.map((r) => (
+                      <ReviewCard key={r.id} review={r} showEmployee={box !== 'mine'} />
+                    ))}
+                  </ul>
+                  {pages > 1 && (
+                    <nav
+                      className="flex items-center justify-between gap-2"
+                      aria-label={t('pagination')}
                     >
-                      {t('previous')}
-                    </Button>
-                    <span className="text-sm text-muted-foreground">
-                      {t('page', { page, pages })}
-                    </span>
-                    <Button
-                      variant="secondary"
-                      disabled={page >= pages}
-                      onClick={() => setPage(page + 1)}
-                    >
-                      {t('next')}
-                    </Button>
-                  </nav>
-                )}
-              </>
-            ))}
-        </>
-      )}
+                      <Button
+                        variant="secondary"
+                        disabled={page <= 1}
+                        onClick={() => setPage(page - 1)}
+                      >
+                        {t('previous')}
+                      </Button>
+                      <span className="text-sm text-muted-foreground">
+                        {t('page', { page, pages })}
+                      </span>
+                      <Button
+                        variant="secondary"
+                        disabled={page >= pages}
+                        onClick={() => setPage(page + 1)}
+                      >
+                        {t('next')}
+                      </Button>
+                    </nav>
+                  )}
+                </>
+              ))}
+          </>
+        )}
+      </TabContent>
     </div>
   );
 }

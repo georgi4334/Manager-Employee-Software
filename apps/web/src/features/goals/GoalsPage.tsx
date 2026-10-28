@@ -9,12 +9,12 @@ import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 import { Select } from '@/shared/ui/select';
-import { cn } from '@/shared/lib/cn';
 import { PAGE_SIZE, type ListParams } from './api';
 import { GoalCard } from './GoalCard';
 import { GoalForm } from './GoalForm';
 import { useGoals, useGoalTeams } from './hooks';
 import { useGoalErrors } from './use-goal-errors';
+import { TabList } from '@/shared/ui/tabs';
 
 const SCOPE_FILTERS = ['all', ...GOAL_SCOPES] as const;
 
@@ -74,32 +74,22 @@ export function GoalsPage() {
         </Card>
       )}
 
-      <div
-        role="group"
-        aria-label={t('filters.scope')}
-        className="flex gap-1 rounded-lg bg-secondary p-1"
-      >
-        {SCOPE_FILTERS.map((s) => (
-          <button
-            key={s}
-            type="button"
-            aria-pressed={scope === s}
-            onClick={() => {
-              const next = new URLSearchParams(params);
-              if (s === 'all') next.delete('scope');
-              else next.set('scope', s);
-              setParams(next, { replace: true });
-              setPage(1);
-            }}
-            className={cn(
-              'min-h-11 flex-1 rounded-md px-2 text-sm font-medium',
-              scope === s ? 'bg-surface text-foreground shadow-card' : 'text-muted-foreground',
-            )}
-          >
-            {s === 'all' ? t('filters.allScopes') : t(`scope.${s}`)}
-          </button>
-        ))}
-      </div>
+      <TabList
+        mode="toggle"
+        label={t('filters.scope')}
+        tabs={SCOPE_FILTERS.map((name) => ({
+          name,
+          label: name === 'all' ? t('filters.allScopes') : t(`scope.${name}`),
+        }))}
+        value={scope}
+        onChange={(name) => {
+          const next = new URLSearchParams(params);
+          if (name === 'all') next.delete('scope');
+          else next.set('scope', name);
+          setParams(next, { replace: true });
+          setPage(1);
+        }}
+      />
 
       <div className="grid gap-2 sm:grid-cols-2">
         <div className="relative">

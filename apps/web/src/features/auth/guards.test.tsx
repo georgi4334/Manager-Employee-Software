@@ -4,7 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 import { useApiStatusStore } from '@/shared/api/api-status.store';
 import { API, errorResponse, server, signedOutHandlers, testUser } from '@/tests/server';
-import { renderApp } from '@/tests/utils';
+import { openAccountMenu, renderApp } from '@/tests/utils';
 import { authKeys } from './api';
 
 describe('RequireAuth', () => {
@@ -105,7 +105,9 @@ describe('signing out', () => {
     const { client, router } = await renderApp('/');
     client.setQueryData(['employees', 'list'], ['secret']);
 
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Sign out' }));
+    await userEvent
+      .setup()
+      .click((await openAccountMenu()).getByRole('button', { name: 'Sign out' }));
 
     await waitFor(() => expect(router.state.location.pathname).toBe('/login'));
     expect(loggedOut).toBe(true);
@@ -116,15 +118,18 @@ describe('signing out', () => {
   it('signs out locally even when the server cannot be reached', async () => {
     server.use(http.post(`${API}/auth/logout`, () => HttpResponse.error()));
     const { router } = await renderApp('/');
-    await userEvent.setup().click(screen.getByRole('button', { name: 'Sign out' }));
+    await userEvent
+      .setup()
+      .click((await openAccountMenu()).getByRole('button', { name: 'Sign out' }));
     await waitFor(() => expect(router.state.location.pathname).toBe('/login'));
   });
 
-  it('shows who is signed in on larger screens', async () => {
+  it('shows who is signed in in the profile drawer, not in the header', async () => {
     await renderApp('/');
-    const header = screen.getByRole('banner');
-    expect(within(header).getByText('maria@acme.eu')).toBeInTheDocument();
-    expect(within(header).getByText('Acme GmbH · Employee')).toBeInTheDocument();
+    expect(within(screen.getByRole('banner')).queryByText('maria@acme.eu')).not.toBeInTheDocument();
+    const drawer = await openAccountMenu();
+    expect(drawer.getByText('maria@acme.eu')).toBeInTheDocument();
+    expect(drawer.getByText('Acme GmbH · Employee')).toBeInTheDocument();
   });
 });
 

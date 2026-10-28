@@ -24,5 +24,22 @@
   "serverWaking": "Сървърът се стартира. След период на неактивност това може да отнеме до минута.",
   "connectionProblemTitle": "Няма връзка със сървъра",
   "connectionProblemText": "Проверете интернет връзката си и опитайте отново.",
-  "myProfile": "Моят профил"
+  "myProfile": "Моят профил",
+  "accountMenu": "Профил и настройки",
+  "close": "Затвори",
+  "profile": "Профил",
+  "themeTitle": "Тема",
+  "chooseDate": "Отваряне на календар",
+  "chooseTime": "Отваряне на часовник",
+  "today": "Днес",
+  "clear": "Изчисти",
+  "done": "Готово",
+  "previousMonth": "Предишен месец",
+  "nextMonth": "Следващ месец",
+  "previousYear": "Предишна година",
+  "nextYear": "Следваща година",
+  "hour": "Час",
+  "minute": "Минута",
+  "datePlaceholder": "ГГГГ-ММ-ДД",
+  "timePlaceholder": "ЧЧ:ММ"
 }

@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 import { API, errorResponse, server, signedOutHandlers, testUser } from '@/tests/server';
-import { renderApp } from '@/tests/utils';
+import { openAccountMenu, renderApp } from '@/tests/utils';
 
 const TOKEN = 'a'.repeat(43);
 const GOOD = 'correct horse battery staple';
@@ -76,7 +76,7 @@ describe('AcceptInvitationPage', () => {
     await activate(await fillPasswords(GOOD));
     expect(await screen.findByRole('heading', { level: 1, name: 'Dashboard' })).toBeInTheDocument();
     expect(calls.accept).toEqual([{ token: TOKEN, password: GOOD }]);
-    expect(screen.getByRole('banner')).toHaveTextContent('maria@acme.eu');
+    expect((await openAccountMenu()).getByText('maria@acme.eu')).toBeInTheDocument();
   });
 
   it.each([

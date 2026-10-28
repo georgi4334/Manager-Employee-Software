@@ -7,9 +7,20 @@ export function Sidebar() {
   const { t } = useTranslation(['common', 'nav']);
   const items = useNavItems();
   return (
-    <aside className="hidden border-r border-border bg-surface md:flex md:flex-col">
-      <div className="px-6 py-5 text-xl font-bold text-primary">{t('common:appName')}</div>
-      <nav aria-label={t('common:mainNavigation')} className="flex flex-col gap-1 px-3">
+    <aside className="hidden bg-sidebar text-sidebar-foreground scrollbar-subtle md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:overflow-y-auto">
+      <div className="flex items-center gap-3 px-6 pb-9 pt-10">
+        <span
+          aria-hidden="true"
+          className="grid size-9 place-items-center rounded-xl bg-brand text-lg font-bold text-sidebar"
+        >
+          {t('common:appName').charAt(0)}
+        </span>
+        <span className="text-xl font-bold tracking-tight">{t('common:appName')}</span>
+      </div>
+      <p className="px-6 pb-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">
+        {t('nav:menu')}
+      </p>
+      <nav aria-label={t('common:mainNavigation')} className="flex flex-col gap-1 px-3 pb-12">
         {items.map(({ path, labelKey, icon: Icon }) => (
           <NavLink
             key={path}
@@ -17,10 +28,10 @@ export function Sidebar() {
             end={path === '/'}
             className={({ isActive }) =>
               cn(
-                'flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium',
+                'flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-[background-color,color,transform] duration-300 ease-[var(--ease-standard)] active:scale-[0.98]',
                 isActive
-                  ? 'bg-accent text-accent-foreground'
-                  : 'text-muted-foreground hover:bg-surface-muted hover:text-foreground',
+                  ? 'nav-active text-sidebar-foreground'
+                  : 'text-sidebar-muted hover:bg-sidebar-border/60 hover:text-sidebar-foreground',
               )
             }
           >
