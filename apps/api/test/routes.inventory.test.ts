@@ -101,4 +101,13 @@ describe('route inventory', () => {
     for (const route of [...users, ...roles])
       expect(route.declaration, route.route).toMatch(/^permission:admin\./);
   });
+
+  it('the dashboard layout is readable by everybody signed in and changed only with workspace settings', () => {
+    const dashboard = routes.filter((r) => r.route.startsWith('DashboardController'));
+    expect(dashboard.map((r) => [r.route.split(' ')[0], r.declaration])).toEqual([
+      ['DashboardController.layout', 'authenticated'],
+      ['DashboardController.update', 'permission:admin.tenant.settings'],
+      ['DashboardController.reset', 'permission:admin.tenant.settings'],
+    ]);
+  });
 });

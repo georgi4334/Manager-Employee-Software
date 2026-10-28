@@ -1,5 +1,168 @@
 {
   "title": "Übersicht",
-  "welcomeTitle": "Willkommen bei InTime",
-  "welcomeText": "Ihr Arbeitsbereich für das Mitarbeitermanagement wird eingerichtet."
+  "intro": "Deine Arbeit auf einen Blick.",
+  "customize": "Anpassen",
+  "editing": "Übersicht anordnen",
+  "editHint": "Widgets verschieben, entfernen oder hinzufügen. Alle im Arbeitsbereich sehen diese Anordnung; jede Person sieht nur die Widgets, auf die sie Zugriff hat.",
+  "save": "Anordnung speichern",
+  "cancel": "Abbrechen",
+  "reset": "Auf Standard zurücksetzen",
+  "addTitle": "Widgets hinzufügen",
+  "add": "{{name}} hinzufügen",
+  "allAdded": "Alle Widgets sind bereits auf der Übersicht.",
+  "moveUp": "{{name}} nach oben",
+  "moveDown": "{{name}} nach unten",
+  "remove": "{{name}} entfernen",
+  "empty": "Hier gibt es noch nichts zu sehen.",
+  "hiddenForYou": "Du hast keinen Zugriff auf dieses Widget; Personen mit Zugriff sehen es.",
+  "viewAll": "Alle anzeigen",
+  "loading": "Wird geladen …",
+  "failed": "Konnte nicht geladen werden.",
+  "health": {
+    "on_track": "Im Plan",
+    "at_risk": "Gefährdet",
+    "off_track": "Nicht im Plan"
+  },
+  "taskStatus": {
+    "todo": "Offen",
+    "in_progress": "In Arbeit",
+    "review": "In Prüfung",
+    "done": "Erledigt"
+  },
+  "feedbackKind": {
+    "praise": "Lob",
+    "constructive": "Konstruktiv"
+  },
+  "widgets": {
+    "stat_presence": {
+      "title": "Heute anwesend",
+      "note_one": "{{count}} im Urlaub",
+      "note_other": "{{count}} im Urlaub"
+    },
+    "stat_approvals": {
+      "title": "Offene Genehmigungen",
+      "note": "Abwesenheitsanträge warten auf dich"
+    },
+    "stat_hours": {
+      "title": "Meine Stunden diese Woche",
+      "note": "{{billable}} abrechenbar"
+    },
+    "stat_workload": {
+      "title": "Team-Auslastung",
+      "level": {
+        "none": "Keine Arbeitszeit diese Woche",
+        "balanced": "Gut verteilt",
+        "busy": "Ausgelastet",
+        "over": "Überlastet"
+      }
+    },
+    "stat_tasks": {
+      "title": "Meine offenen Aufgaben",
+      "note_one": "{{count}} überfällig",
+      "note_other": "{{count}} überfällig"
+    },
+    "attendance": {
+      "title": "Anwesenheit",
+      "in": "Eingecheckt seit {{time}}",
+      "out": "Nicht eingecheckt",
+      "today": "Heute erfasst: {{duration}}"
+    },
+    "leave": {
+      "title": "Mein Urlaub",
+      "empty": "Kein Urlaubskonto in diesem Jahr.",
+      "left_one": "{{days}} Tag übrig",
+      "left_other": "{{days}} Tage übrig"
+    },
+    "approvals": {
+      "title": "Zu genehmigen",
+      "empty": "Nichts wartet auf dich.",
+      "days_one": "{{days}} Tag",
+      "days_other": "{{days}} Tage"
+    },
+    "calendar": {
+      "title": "Nächste Termine",
+      "empty": "Nichts in den nächsten zwei Wochen.",
+      "allDay": "Ganztägig"
+    },
+    "projects": {
+      "title": "Aktive Projekte",
+      "empty": "Keine aktiven Projekte."
+    },
+    "tasks": {
+      "title": "Meine Aufgaben",
+      "empty": "Keine offenen Aufgaben.",
+      "due": "fällig {{date}}"
+    },
+    "time": {
+      "title": "Stunden diese Woche",
+      "total": "Gesamt: {{duration}}"
+    },
+    "capacity": {
+      "title": "Auslastung pro Person",
+      "empty": "Niemand anzuzeigen.",
+      "planned": "{{percent}} % geplant"
+    },
+    "goals": {
+      "title": "Ziele",
+      "empty": "Keine offenen Ziele.",
+      "progress": "{{percent}} %"
+    },
+    "one_on_ones": {
+      "title": "Nächste 1:1-Gespräche",
+      "empty": "Keine Gespräche geplant."
+    },
+    "feedback": {
+      "title": "Erhaltenes Feedback",
+      "empty": "Noch kein Feedback."
+    },
+    "skills": {
+      "title": "Meine Fähigkeiten",
+      "empty": "Du hast noch keine Fähigkeiten bewertet.",
+      "summary_one": "{{count}} Fähigkeit bewertet, Durchschnitt Stufe {{level}}",
+      "summary_other": "{{count}} Fähigkeiten bewertet, Durchschnitt Stufe {{level}}"
+    },
+    "reviews": {
+      "title": "Meine Beurteilungen",
+      "empty": "Noch keine Beurteilungen.",
+      "released": "Freigegeben",
+      "submitted": "Eingereicht",
+      "todo": "Zu erledigen"
+    },
+    "analytics": {
+      "title": "Erfasste Stunden pro Woche",
+      "summary": "{{people}} Personen · {{days}} Urlaubstage in den letzten 8 Wochen"
+    },
+    "assistant": {
+      "title": "Assistent",
+      "open": "Assistent öffnen",
+      "on": "Frag nach deinem Urlaub, deinen Aufgaben und Zielen.",
+      "off": "Der Assistent ist in diesem Arbeitsbereich ausgeschaltet."
+    },
+    "retention": {
+      "title": "Aufbewahrung",
+      "on": "An",
+      "off": "Aus",
+      "due_one": "{{count}} Person zur Anonymisierung fällig",
+      "due_other": "{{count}} Personen zur Anonymisierung fällig"
+    },
+    "roles": {
+      "title": "Rollen",
+      "people_one": "{{count}} Person",
+      "people_other": "{{count}} Personen"
+    },
+    "employees": {
+      "title": "Personen",
+      "active_one": "{{total}} aktive Person",
+      "active_other": "{{total}} aktive Personen"
+    },
+    "organization": {
+      "title": "Organisation",
+      "departments": "Abteilungen",
+      "teams": "Teams"
+    },
+    "notifications": {
+      "title": "Neueste Benachrichtigungen",
+      "empty": "Keine Benachrichtigungen."
+    }
+  }
 }

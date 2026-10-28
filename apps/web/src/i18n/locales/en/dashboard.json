@@ -1,5 +1,168 @@
 {
   "title": "Dashboard",
-  "welcomeTitle": "Welcome to InTime",
-  "welcomeText": "Your employee management workspace is being set up."
+  "intro": "Your work at a glance.",
+  "customize": "Customize",
+  "editing": "Arrange the dashboard",
+  "editHint": "Move, remove or add widgets. Everybody in the workspace sees this layout; each person only sees the widgets they have access to.",
+  "save": "Save layout",
+  "cancel": "Cancel",
+  "reset": "Reset to default",
+  "addTitle": "Add widgets",
+  "add": "Add {{name}}",
+  "allAdded": "Every widget is already on the dashboard.",
+  "moveUp": "Move {{name}} up",
+  "moveDown": "Move {{name}} down",
+  "remove": "Remove {{name}}",
+  "empty": "Nothing to show here yet.",
+  "hiddenForYou": "You do not have access to this widget; people who do will see it.",
+  "viewAll": "View all",
+  "loading": "Loading…",
+  "failed": "This could not be loaded.",
+  "health": {
+    "on_track": "On track",
+    "at_risk": "At risk",
+    "off_track": "Off track"
+  },
+  "taskStatus": {
+    "todo": "To do",
+    "in_progress": "In progress",
+    "review": "In review",
+    "done": "Done"
+  },
+  "feedbackKind": {
+    "praise": "Praise",
+    "constructive": "Constructive"
+  },
+  "widgets": {
+    "stat_presence": {
+      "title": "In today",
+      "note_one": "{{count}} on leave",
+      "note_other": "{{count}} on leave"
+    },
+    "stat_approvals": {
+      "title": "Pending approvals",
+      "note": "Leave requests waiting for you"
+    },
+    "stat_hours": {
+      "title": "My hours this week",
+      "note": "{{billable}} billable"
+    },
+    "stat_workload": {
+      "title": "Team workload",
+      "level": {
+        "none": "No working time this week",
+        "balanced": "Well balanced",
+        "busy": "Busy",
+        "over": "Over capacity"
+      }
+    },
+    "stat_tasks": {
+      "title": "My open tasks",
+      "note_one": "{{count}} overdue",
+      "note_other": "{{count}} overdue"
+    },
+    "attendance": {
+      "title": "Attendance",
+      "in": "Checked in since {{time}}",
+      "out": "Not checked in",
+      "today": "Recorded today: {{duration}}"
+    },
+    "leave": {
+      "title": "My leave",
+      "empty": "No leave balance this year.",
+      "left_one": "{{days}} day left",
+      "left_other": "{{days}} days left"
+    },
+    "approvals": {
+      "title": "Leave to approve",
+      "empty": "Nothing is waiting for you.",
+      "days_one": "{{days}} day",
+      "days_other": "{{days}} days"
+    },
+    "calendar": {
+      "title": "Upcoming events",
+      "empty": "Nothing in the next two weeks.",
+      "allDay": "All day"
+    },
+    "projects": {
+      "title": "Active projects",
+      "empty": "No active projects."
+    },
+    "tasks": {
+      "title": "My tasks",
+      "empty": "No open tasks.",
+      "due": "due {{date}}"
+    },
+    "time": {
+      "title": "Hours this week",
+      "total": "Total: {{duration}}"
+    },
+    "capacity": {
+      "title": "Workload per person",
+      "empty": "Nobody to show.",
+      "planned": "{{percent}} % planned"
+    },
+    "goals": {
+      "title": "Goals",
+      "empty": "No open goals.",
+      "progress": "{{percent}} %"
+    },
+    "one_on_ones": {
+      "title": "Upcoming 1:1 meetings",
+      "empty": "No meetings scheduled."
+    },
+    "feedback": {
+      "title": "Feedback received",
+      "empty": "No feedback yet."
+    },
+    "skills": {
+      "title": "My skills",
+      "empty": "You have not rated any skills yet.",
+      "summary_one": "{{count}} skill rated, average level {{level}}",
+      "summary_other": "{{count}} skills rated, average level {{level}}"
+    },
+    "reviews": {
+      "title": "My reviews",
+      "empty": "No reviews yet.",
+      "released": "Released",
+      "submitted": "Submitted",
+      "todo": "To do"
+    },
+    "analytics": {
+      "title": "Logged hours per week",
+      "summary": "{{people}} people · {{days}} leave days in the last 8 weeks"
+    },
+    "assistant": {
+      "title": "Assistant",
+      "open": "Open the assistant",
+      "on": "Ask about your leave, tasks and goals.",
+      "off": "The assistant is off in this workspace."
+    },
+    "retention": {
+      "title": "Data retention",
+      "on": "On",
+      "off": "Off",
+      "due_one": "{{count}} person due for anonymisation",
+      "due_other": "{{count}} people due for anonymisation"
+    },
+    "roles": {
+      "title": "Roles",
+      "people_one": "{{count}} person",
+      "people_other": "{{count}} people"
+    },
+    "employees": {
+      "title": "People",
+      "active_one": "{{total}} active person",
+      "active_other": "{{total}} active people"
+    },
+    "organization": {
+      "title": "Organization",
+      "departments": "Departments",
+      "teams": "Teams"
+    },
+    "notifications": {
+      "title": "Latest notifications",
+      "empty": "No notifications."
+    }
+  }
 }

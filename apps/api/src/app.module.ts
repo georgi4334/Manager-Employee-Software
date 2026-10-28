@@ -32,6 +32,7 @@ import { CapacityModule } from './modules/capacity/capacity.module.js';
 import { ProjectsModule } from './modules/projects/projects.module.js';
 import { TimeModule } from './modules/time/time.module.js';
 import { PrivacyModule } from './modules/privacy/privacy.module.js';
+import { DashboardModule } from './modules/dashboard/dashboard.module.js';
 import { LeaveModule } from './modules/leave/leave.module.js';
 import { OrganizationModule } from './modules/organization/organization.module.js';
 import { EmployeesModule } from './modules/employees/employees.module.js';
@@ -105,6 +106,7 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     AttendanceModule,
     CalendarModule,
     PrivacyModule,
+    DashboardModule,
     ProjectsModule,
     TimeModule,
     AiModule,
