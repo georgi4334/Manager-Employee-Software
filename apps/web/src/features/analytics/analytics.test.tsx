@@ -234,14 +234,24 @@ describe('the dashboard', () => {
     );
     await renderApp('/analytics');
     await screen.findByText('Active people');
-    expect(screen.getAllByText('Nothing in this period.').length).toBe(3);
+    // breakdown by leave type, by place of work, hours per week and top projects
+    expect(screen.getAllByText('Nothing in this period.').length).toBe(4);
   });
 
   it('asks again with another period', async () => {
     const calls = serve();
     await renderApp('/analytics');
     await screen.findByText('Active people');
-    await userEvent.selectOptions(screen.getByLabelText('Period'), '90');
+    const period = screen.getByRole('group', { name: 'Period' });
+    expect(within(period).getByRole('button', { name: 'Last 30 days' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await userEvent.click(within(period).getByRole('button', { name: 'Last 90 days' }));
+    expect(within(period).getByRole('button', { name: 'Last 90 days' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     await screen.findByText('Active people');
     await waitFor(() => {
       const q = calls.at(-1)!.searchParams;

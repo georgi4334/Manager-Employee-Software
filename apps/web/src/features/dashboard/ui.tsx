@@ -36,20 +36,20 @@ interface StatCardProps {
   value: ReactNode;
   note?: ReactNode;
   trend?: number[];
-  to: string;
+  /** Without a link the card is a plain figure. */
+  to?: string;
 }
 
 /** A coloured figure card: icon tile, value, a short note and an optional trend line. */
 export function StatCard({ title, icon: Icon, tone, value, note, trend, to }: StatCardProps) {
   const style = TONES[tone];
-  return (
-    <Link
-      to={to}
-      className={cn(
-        'flex min-h-40 flex-col gap-3 rounded-xl border bg-gradient-to-br to-surface p-4 transition-[transform,box-shadow] hover:shadow-card active:scale-[0.99]',
-        style.card,
-      )}
-    >
+  const className = cn(
+    'flex min-h-40 flex-col gap-3 rounded-xl border bg-gradient-to-br to-surface p-4',
+    to && 'transition-[transform,box-shadow] hover:shadow-card active:scale-[0.99]',
+    style.card,
+  );
+  const content = (
+    <>
       <div className="flex items-start gap-3">
         <span className={cn('grid size-11 shrink-0 place-items-center rounded-xl', style.tile)}>
           <Icon className="size-5" aria-hidden="true" />
@@ -63,7 +63,14 @@ export function StatCard({ title, icon: Icon, tone, value, note, trend, to }: St
       {trend && trend.length > 1 && (
         <Sparkline values={trend} className={cn('mt-auto h-8', style.line)} />
       )}
+    </>
+  );
+  return to ? (
+    <Link to={to} className={className}>
+      {content}
     </Link>
+  ) : (
+    <div className={className}>{content}</div>
   );
 }
 

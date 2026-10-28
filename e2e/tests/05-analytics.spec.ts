@@ -26,8 +26,12 @@ test('an administrator sees the management view and can change the period', asyn
   const projects = page.getByRole('region', { name: 'Projects and tasks' });
   await expect(projects.getByText('Open tasks')).toBeVisible();
 
-  await page.getByLabel('Period').selectOption('90');
-  await expect(page.getByLabel('Period')).toHaveValue('90');
+  const period = page.getByRole('group', { name: 'Period' });
+  await period.getByRole('button', { name: 'Last 90 days' }).click();
+  await expect(period.getByRole('button', { name: 'Last 90 days' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   await expect(people.getByText('Active people')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Analytics', level: 1 })).toBeVisible();
 });
