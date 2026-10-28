@@ -55,6 +55,7 @@ import { usePerson } from '@/features/skills/hooks';
 import { useTasks } from '@/features/tasks/hooks';
 import { useWeek } from '@/features/time/hooks';
 import { useAnalytics } from '@/features/analytics/hooks';
+import { SkeletonLines } from '@/shared/ui/skeleton';
 import { formatDay, formatNumber } from '@/shared/lib/format';
 import { Bars, Meter, Muted, Pill, Row, Rows, StatCard, WidgetCard, type Tone } from './ui';
 
@@ -88,7 +89,13 @@ function State({
   children: ReactNode;
 }) {
   const { t } = useTranslation('dashboard');
-  if (query.isPending) return <Muted>{t('loading')}</Muted>;
+  if (query.isPending)
+    return (
+      <>
+        <SkeletonLines />
+        <span className="sr-only">{t('loading')}</span>
+      </>
+    );
   if (query.isError) return <Muted>{t('failed')}</Muted>;
   return <>{children}</>;
 }

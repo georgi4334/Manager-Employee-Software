@@ -15,6 +15,7 @@ import { formatDay, formatNumber } from '@/shared/lib/format';
 import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
+import { Skeleton, SkeletonCard, SkeletonGroup, SkeletonStatCard } from '@/shared/ui/skeleton';
 import { TabList } from '@/shared/ui/tabs';
 import { Bars as Columns, StatCard } from '@/features/dashboard/ui';
 import { useAnalytics } from './hooks';
@@ -59,9 +60,19 @@ export function AnalyticsPage() {
       </div>
 
       {query.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('loading')}
-        </p>
+        <SkeletonGroup label={t('loading')} className="space-y-4">
+          <Skeleton className="h-4 w-56 max-w-full" />
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 4 }, (_, i) => (
+              <SkeletonStatCard key={i} />
+            ))}
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard className="lg:col-span-2" rows={5} />
+          </div>
+        </SkeletonGroup>
       )}
       {query.isError && (
         <Card className="space-y-3 text-center">

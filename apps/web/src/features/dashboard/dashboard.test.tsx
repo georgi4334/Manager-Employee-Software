@@ -111,6 +111,38 @@ describe('dashboard', () => {
     expect(container.querySelector('svg polyline')).not.toBeNull();
   });
 
+  it('shows placeholder cards while the layout loads, then the widgets', async () => {
+    dashboard({ widgets: ['notifications'] });
+    let release = () => {};
+    server.use(
+      http.get(
+        `${API}/dashboard/layout`,
+        () =>
+          new Promise<Response>(
+            (resolve) =>
+              (release = () =>
+                resolve(
+                  HttpResponse.json({
+                    widgets: ['notifications'],
+                    isDefault: false,
+                    canEdit: false,
+                  }),
+                )),
+          ),
+      ),
+    );
+    const pending = renderApp('/');
+    const status = await within(await screen.findByRole('main')).findByRole('status');
+    expect(status).toHaveTextContent('Loading…');
+    expect(status.querySelectorAll('.skeleton').length).toBeGreaterThan(8);
+    release();
+    await pending;
+    expect(
+      await within(widgetList()).findByRole('heading', { name: 'Latest notifications' }),
+    ).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
+  });
+
   it('says so when nothing is on the dashboard', async () => {
     dashboard({ widgets: [] }, {});
     await renderApp('/');

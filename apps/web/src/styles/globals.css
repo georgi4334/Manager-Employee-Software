@@ -147,6 +147,89 @@
   details[open] > :not(summary) {
     animation: motion-enter var(--dur-base) var(--ease-ios) both;
   }
+
+  /* Placeholder blocks shaped like the content that is loading. */
+  .skeleton {
+    border-radius: var(--radius-md);
+    background-color: var(--border);
+    animation: skeleton-pulse 1.4s var(--ease-standard) infinite alternate;
+  }
+
+  /* Boot screen: also written into index.html so it shows before the script has loaded. */
+  .splash {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    background-color: var(--sidebar);
+    color: var(--sidebar-foreground);
+  }
+  .splash-mark {
+    animation: splash-breathe 1.6s var(--ease-standard) infinite alternate;
+  }
+  .splash-mark .splash-tile {
+    fill: var(--brand);
+  }
+  .splash-mark .splash-ink {
+    fill: var(--sidebar);
+  }
+  .splash-mark .splash-line {
+    fill: none;
+    stroke: var(--sidebar);
+  }
+  .splash-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+  .splash-bar {
+    position: relative;
+    width: 7rem;
+    height: 3px;
+    overflow: hidden;
+    border-radius: 9999px;
+    background-color: var(--sidebar-border);
+  }
+  .splash-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: 40%;
+    border-radius: inherit;
+    background-color: var(--brand);
+    animation: splash-bar 1.2s var(--ease-ios) infinite;
+  }
+}
+
+@keyframes skeleton-pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.45;
+  }
+}
+@keyframes splash-breathe {
+  from {
+    opacity: 0.8;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes splash-bar {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
 }
 
 @keyframes motion-enter {

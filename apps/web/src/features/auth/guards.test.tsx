@@ -40,7 +40,9 @@ describe('RequireAuth', () => {
       ),
     );
     const pending = renderApp('/');
-    expect(await screen.findByRole('status')).toHaveTextContent('Loading…');
+    const splash = await screen.findByRole('status');
+    expect(splash).toHaveTextContent('Loading…');
+    expect(splash).toHaveTextContent('InTime');
     expect(screen.queryByRole('navigation', { name: 'Main navigation' })).not.toBeInTheDocument();
     release();
     await pending;

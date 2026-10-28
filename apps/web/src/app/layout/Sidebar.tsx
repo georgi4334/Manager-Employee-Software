@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 import { cn } from '@/shared/lib/cn';
+import { Logo } from '@/shared/ui/logo';
 import { useNavItems } from '../useNavItems';
 
 export function Sidebar() {
@@ -8,15 +9,7 @@ export function Sidebar() {
   const items = useNavItems();
   return (
     <aside className="hidden bg-sidebar text-sidebar-foreground scrollbar-subtle md:sticky md:top-0 md:flex md:h-dvh md:flex-col md:overflow-y-auto">
-      <div className="flex items-center gap-3 px-6 pb-9 pt-10">
-        <span
-          aria-hidden="true"
-          className="grid size-9 place-items-center rounded-xl bg-brand text-lg font-bold text-sidebar"
-        >
-          {t('common:appName').charAt(0)}
-        </span>
-        <span className="text-xl font-bold tracking-tight">{t('common:appName')}</span>
-      </div>
+      <Logo className="gap-3 px-6 pb-9 pt-10 text-xl" />
       <p className="px-6 pb-2 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">
         {t('nav:menu')}
       </p>

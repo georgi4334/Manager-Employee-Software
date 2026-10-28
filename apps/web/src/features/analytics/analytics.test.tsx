@@ -145,6 +145,28 @@ describe('the dashboard', () => {
     expect(days).toBe(29);
   });
 
+  it('shows placeholder cards while the figures load, announced as loading', async () => {
+    let release = () => {};
+    server.use(
+      http.get(
+        `${API}/analytics`,
+        () =>
+          new Promise<Response>(
+            (resolve) => (release = () => resolve(HttpResponse.json(analytics()))),
+          ),
+      ),
+    );
+    const pending = renderApp('/analytics');
+    const status = await within(await screen.findByRole('main')).findByRole('status');
+    expect(status).toHaveTextContent('Loading…');
+    expect(status.querySelectorAll('.skeleton').length).toBeGreaterThan(8);
+    expect(screen.queryByText('Active people')).not.toBeInTheDocument();
+    release();
+    await pending;
+    expect(await screen.findByText('Active people')).toBeInTheDocument();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
   it('shows the numbers in words and with the value next to every bar', async () => {
     serve();
     await renderApp('/analytics');

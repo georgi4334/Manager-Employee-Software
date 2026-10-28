@@ -12,6 +12,7 @@ import { useCurrentUser } from '@/features/auth/use-auth';
 import { cn } from '@/shared/lib/cn';
 import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
+import { SkeletonCard, SkeletonGroup, SkeletonStatCard } from '@/shared/ui/skeleton';
 import { useDashboardLayout, useResetLayout, useSaveLayout } from './hooks';
 import { canUse, WIDGETS, type WidgetSize } from './widgets';
 
@@ -86,9 +87,14 @@ export function DashboardPage() {
       {failed && <Alert tone="danger">{messages.apiError(failed)}</Alert>}
 
       {layout.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('loading')}
-        </p>
+        <SkeletonGroup label={t('loading')} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }, (_, i) => (
+            <SkeletonStatCard key={i} />
+          ))}
+          <SkeletonCard className="sm:col-span-2" />
+          <SkeletonCard />
+          <SkeletonCard />
+        </SkeletonGroup>
       )}
       {layout.isError && <Alert tone="danger">{messages.apiError(layout.error)}</Alert>}
 

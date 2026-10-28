@@ -18,3 +18,20 @@ Status: accepted
   lighter `#ff7a59` with dark text on it (7.5:1). Text is warm off-white, muted text `#b9aca7`.
 - All pairs used for text were checked for AA contrast in both themes; the axe scans in
   `06-accessibility.spec.ts` stay the gate. Change colours only in `tokens.css`.
+
+## Update: logo, splash and skeletons
+
+- **Logo:** a `--brand` tile with a clock face open at the top; its dot doubles as the dot of the
+  "i". `LogoMark` / `Logo` (`shared/ui/logo.tsx`) use tokens and are the only logo in the app
+  (side panel, phone header, sign-in pages). `public/favicon.svg` is the same drawing with raw
+  colours (a static file cannot read tokens); change both together.
+- **Splash:** while the app asks who is signed in, `Splash` (`shared/components/Splash.tsx`) fills
+  the screen with the dark panel, the mark, the name and a thin indeterminate bar (`role="status"`
+  with a translated "Loading…"). A copy of the same markup sits inside `#root` in `index.html`
+  (classes `splash-*` in `globals.css`), so the brand shows before the script has loaded and React
+  replaces it without a jump. Reduced motion stops the animation.
+- **Skeletons:** pages that load several cards at once (dashboard, analytics) show placeholder
+  cards shaped like the real ones (`shared/ui/skeleton.tsx`: `SkeletonStatCard`, `SkeletonCard`,
+  `SkeletonLines`) inside one `SkeletonGroup` (`role="status"`, sr-only "Loading…"); the shapes
+  are `aria-hidden`. Dashboard widgets loading on their own show `SkeletonLines`. The `.skeleton`
+  pulse is opacity only.

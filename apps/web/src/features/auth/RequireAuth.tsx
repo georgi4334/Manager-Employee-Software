@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Navigate, Outlet, useLocation } from 'react-router';
+import { Splash } from '@/shared/components/Splash';
 import { Button } from '@/shared/ui/button';
 import { Card, CardTitle } from '@/shared/ui/card';
 import { useCurrentUser } from './use-auth';
@@ -17,13 +18,7 @@ export function RequireAuth() {
   const { data: user, isPending, isError, refetch } = useCurrentUser();
 
   if (isPending) {
-    return (
-      <FullPageMessage>
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('loading')}
-        </p>
-      </FullPageMessage>
-    );
+    return <Splash />;
   }
 
   if (isError) {
