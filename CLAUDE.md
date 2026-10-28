@@ -99,6 +99,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - The database enforces the rules too: one open record per employee (partial unique index), no overlaps (exclusion constraint, open = infinity), at most 16 h, end after start. The service maps them to `CONFLICT` with `field` `open`/`overlap`.
 - Owners type or change their own records only for the last 7 days (`ATTENDANCE_SELF_EDIT_DAYS`); older days and other people's records need `attendance.correct` through `authz`, and nobody corrects their own old records. Corrections are audited (ids only) and notify the owner (`attendance.corrected`: date and action only). `canEdit` in responses is computed for the caller; the UI never decides.
 - Lists and presence are scoped with `allowedEmployees`; presence combines today's records with approved leave (`leave_request_day`). Break/overtime rules and exports are out of scope for now.
+- Web lists show days, not loose records: `groupAttendanceDays` / `attendanceDayLevel` / `attendanceTarget` / `sortAttendanceDays` / `sortPresence` (contracts, pure) give each person-day a total, an 8-hour line (`DayProgress`) and a level in words (short < 7 h, almost, complete up to 8:15, over; in progress while open; weekends are days off). Informational only.
 
 ## Calendar (docs/adr/0010-calendar.md)
 

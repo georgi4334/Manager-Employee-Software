@@ -103,7 +103,7 @@ function serve(o: Served = {}) {
     http.get(`${API}/attendance/status`, () => HttpResponse.json(o.status ?? status())),
     http.get(`${API}/attendance/today`, () =>
       HttpResponse.json({
-        date: '2026-10-24',
+        date: '2026-10-23',
         items: o.presence ?? [],
       } satisfies Presence),
     ),
@@ -458,6 +458,73 @@ describe('history', () => {
     expect(query.get('from')! < query.get('to')!).toBe(true);
   });
 
+  it('groups a split day into one card with its total, an 8-hour line and the status in words', async () => {
+    serve({
+      records: [
+        record(1, { date: '2026-10-21', minutes: 300, startTime: '09:00', endTime: '14:00' }),
+        record(2, {
+          date: '2026-10-21',
+          minutes: 180,
+          startTime: '15:00',
+          endTime: '18:00',
+          checkInAt: '2026-10-21T13:00:00.000Z',
+        }),
+        record(3, { date: '2026-10-20', minutes: 360, endTime: '15:00' }),
+        record(4, { date: '2026-10-19', minutes: 600, endTime: '19:00' }),
+      ],
+    });
+    await renderApp('/attendance?tab=history');
+    const list = await screen.findByRole('list', { name: 'Your records' });
+    const days = within(list).getAllByRole('article');
+    expect(days).toHaveLength(3);
+    // newest first; the split day adds up to 8 h and is complete
+    expect(days[0]).toHaveTextContent('8 h 0 min');
+    expect(days[0]).toHaveTextContent('Complete');
+    expect(within(days[0]!).getAllByRole('button', { name: 'Edit' })).toHaveLength(2);
+    expect(days[1]).toHaveTextContent('Short');
+    expect(days[1]).toHaveTextContent('2 h 0 min to go');
+    expect(days[2]).toHaveTextContent('Overtime');
+    expect(days[2]).toHaveTextContent('2 h 0 min over');
+    const summary = screen.getByRole('list', { name: 'Days by status' });
+    expect(summary).toHaveTextContent('Complete1');
+    expect(summary).toHaveTextContent('Short1');
+    expect(summary).toHaveTextContent('Overtime1');
+    expect(summary).not.toHaveTextContent('Almost there');
+  });
+
+  it('treats a weekend as a day off: recorded time there is extra, never short', async () => {
+    serve({ records: [record(1, { date: '2026-10-24', minutes: 180, endTime: '12:00' })] });
+    await renderApp('/attendance?tab=history');
+    const list = await screen.findByRole('list', { name: 'Your records' });
+    const [day] = within(list).getAllByRole('article');
+    expect(day).toHaveTextContent('Day off · 3 h 0 min recorded');
+    expect(day).toHaveTextContent('Overtime');
+    expect(day).not.toHaveTextContent('Short');
+  });
+
+  it('sorts the days by hours, date or what needs attention', async () => {
+    serve({
+      records: [
+        record(1, { date: '2026-10-21', minutes: 480 }),
+        record(2, { date: '2026-10-20', minutes: 200 }),
+        record(3, { date: '2026-10-19', minutes: 600 }),
+      ],
+    });
+    await renderApp('/attendance?tab=history');
+    const user = userEvent.setup();
+    const list = await screen.findByRole('list', { name: 'Your records' });
+    const firstDay = () => within(list).getAllByRole('article')[0]!;
+    expect(firstDay()).toHaveTextContent('8 h 0 min');
+    await user.selectOptions(screen.getByLabelText('Sort by'), 'Fewest hours');
+    expect(firstDay()).toHaveTextContent('3 h 20 min');
+    await user.selectOptions(screen.getByLabelText('Sort by'), 'Most hours');
+    expect(firstDay()).toHaveTextContent('10 h 0 min');
+    await user.selectOptions(screen.getByLabelText('Sort by'), 'Oldest first');
+    expect(firstDay()).toHaveTextContent('10 h 0 min');
+    await user.selectOptions(screen.getByLabelText('Sort by'), 'Needs attention first');
+    expect(firstDay()).toHaveTextContent('Short');
+  });
+
   it('refuses an invalid period without asking the server', async () => {
     const calls = serve();
     await renderApp('/attendance?tab=history');
@@ -500,6 +567,52 @@ describe('team', () => {
     expect(rows[1]).toHaveTextContent('8 h 0 min');
     expect(rows[2]).toHaveTextContent('On leave');
     expect(rows[3]).toHaveTextContent('Not recorded');
+  });
+
+  it('sorts who is in today by name or hours, and shows the 8-hour line for recorded days', async () => {
+    as('manager');
+    serve({
+      presence: [
+        presenceItem(1, { state: 'done', minutes: 300 }),
+        presenceItem(2, { state: 'done', minutes: 480 }),
+        presenceItem(3, { state: 'working', since: '08:00', mode: 'office', minutes: 60 }),
+      ],
+    });
+    await renderApp('/attendance?tab=team');
+    const user = userEvent.setup();
+    const list = await screen.findByRole('list', { name: 'Today' });
+    const names = () =>
+      within(list)
+        .getAllByRole('listitem')
+        .map((li) => li.textContent?.match(/Person\d/)?.[0]);
+    expect(names()).toEqual(['Person3', 'Person1', 'Person2']);
+    const rows = within(list).getAllByRole('listitem');
+    expect(rows[0]).toHaveTextContent('1 h 0 min of 8 h 0 min');
+    expect(rows[1]).toHaveTextContent('Short');
+    expect(rows[2]).toHaveTextContent('Complete');
+    const sortToday = screen.getAllByLabelText('Sort by')[0]!;
+    await user.selectOptions(sortToday, 'Most hours');
+    expect(names()).toEqual(['Person2', 'Person1', 'Person3']);
+    await user.selectOptions(sortToday, 'Name (A–Z)');
+    expect(names()).toEqual(['Person1', 'Person2', 'Person3']);
+  });
+
+  it('groups team records per person and day and sorts them by name', async () => {
+    as('manager');
+    serve({
+      records: [
+        record(1, { employee: { id: OTHER, firstName: 'Dan', lastName: 'Zlatev' } }),
+        record(2, { date: '2026-10-19' }),
+      ],
+    });
+    await renderApp('/attendance?tab=team');
+    const user = userEvent.setup();
+    const list = await screen.findByRole('list', { name: 'Records' });
+    const first = () => within(list).getAllByRole('article')[0]!;
+    expect(first()).toHaveAccessibleName(/^Dan Zlatev/);
+    const sorts = screen.getAllByLabelText('Sort by');
+    await user.selectOptions(sorts.at(-1)!, 'Name (A–Z)');
+    expect(first()).toHaveAccessibleName(/^Maria Ivanova/);
   });
 
   it('lists the records of the people the server returns, with names', async () => {

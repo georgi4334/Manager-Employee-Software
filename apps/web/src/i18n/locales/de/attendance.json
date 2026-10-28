@@ -85,5 +85,32 @@
     "nonexistent_time": "Diese Uhrzeit gibt es an dem Tag nicht (Zeitumstellung).",
     "open_record": "Ein offener Eintrag wird durch Ausstempeln beendet.",
     "too_far_in_past": "Sie können nur die letzten 7 Tage selbst eintragen. Ältere Tage trägt Ihre Führungskraft oder HR nach."
-  }
+  },
+  "level": {
+    "in_progress": "Läuft",
+    "short": "Zu kurz",
+    "almost": "Fast geschafft",
+    "complete": "Erfüllt",
+    "over": "Überstunden"
+  },
+  "progress": "{{done}} von {{target}}",
+  "overBy": "{{duration}} darüber",
+  "missing": "Noch {{duration}}",
+  "sort": {
+    "label": "Sortieren nach",
+    "newest": "Neueste zuerst",
+    "oldest": "Älteste zuerst",
+    "most": "Meiste Stunden",
+    "fewest": "Wenigste Stunden",
+    "attention": "Auffällige zuerst",
+    "name": "Name (A–Z)",
+    "status": "Anwesende zuerst"
+  },
+  "summary": {
+    "label": "Tage nach Status"
+  },
+  "day": {
+    "records": "Einträge des Tages"
+  },
+  "dayOff": "Freier Tag · {{duration}} erfasst"
 }

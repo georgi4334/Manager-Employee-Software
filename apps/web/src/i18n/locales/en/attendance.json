@@ -85,5 +85,32 @@
     "nonexistent_time": "That time does not exist on that day (clocks change).",
     "open_record": "An open record is closed by checking out.",
     "too_far_in_past": "You can only enter the last 7 days yourself. Ask your manager or HR for older days."
-  }
+  },
+  "level": {
+    "in_progress": "In progress",
+    "short": "Short",
+    "almost": "Almost there",
+    "complete": "Complete",
+    "over": "Overtime"
+  },
+  "progress": "{{done}} of {{target}}",
+  "overBy": "{{duration}} over",
+  "missing": "{{duration}} to go",
+  "sort": {
+    "label": "Sort by",
+    "newest": "Newest first",
+    "oldest": "Oldest first",
+    "most": "Most hours",
+    "fewest": "Fewest hours",
+    "attention": "Needs attention first",
+    "name": "Name (A–Z)",
+    "status": "Working first"
+  },
+  "summary": {
+    "label": "Days by status"
+  },
+  "day": {
+    "records": "Records of the day"
+  },
+  "dayOff": "Day off · {{duration}} recorded"
 }
