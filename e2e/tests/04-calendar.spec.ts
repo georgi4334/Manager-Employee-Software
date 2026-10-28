@@ -42,8 +42,20 @@ test('a company event reaches everybody, and only administrators can change it',
   await eva.goto('/calendar?view=agenda');
   const row = eva.getByText('Company picnic').locator('xpath=ancestor::li');
   await expect(row).toBeVisible();
-  await expect(row.getByRole('button', { name: 'Edit' })).toHaveCount(0);
-  await expect(ada.getByRole('button', { name: 'Edit' }).first()).toBeVisible();
+  // an employee can open and read it, but not change it
+  await row.getByRole('button', { name: 'Company picnic' }).click();
+  const theirs = eva.getByRole('dialog', { name: 'Company picnic' });
+  await expect(theirs.getByText('You can see this event but not change it.')).toBeVisible();
+  await expect(theirs.getByRole('button', { name: 'Edit' })).toHaveCount(0);
+  await expect(theirs.getByRole('button', { name: 'Delete' })).toHaveCount(0);
+  await eva.keyboard.press('Escape');
+  await expect(theirs).toHaveCount(0);
+
+  // the administrator who made it can change it
+  await ada.getByRole('button', { name: 'Company picnic' }).first().click();
+  const mine = ada.getByRole('dialog', { name: 'Company picnic' });
+  await expect(mine.getByRole('button', { name: 'Edit' })).toBeVisible();
+  await expect(mine.getByRole('button', { name: 'Delete' })).toBeVisible();
 });
 
 test('views switch and the month shows the event day', async ({ page }) => {

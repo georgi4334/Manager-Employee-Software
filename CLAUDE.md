@@ -107,6 +107,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Visibility is decided in `CalendarService.visibleTo`: personal = owner only, team = members and lead (or `calendar.manage_team_calendars` at scope `all`), company = everybody. An event the caller cannot see is `404`, never `403`. Changes follow `mayManage`: owner (personal), team lead/member or scope `all` (team), `calendar.manage_company_calendar` (company). `canEdit` is computed per caller.
 - Every event has local `start_date`/`end_date` (range queries are plain date comparisons); timed events also store instants. Times are typed as `HH:MM` in the workspace time zone like attendance. The database re-checks shapes (all-day vs timed, team iff team scope, 31 days max).
 - Team and company changes are audited with ids only (never titles); personal events are not audited.
+- Every item opens in `EventDialog` (shared `Modal`) from every view: details for anyone who can see it, Edit/Delete/RSVP inside it only as the server's `canEdit`/`myResponse` allow. Cards carry no inline actions.
 
 ## Calendar, advanced (docs/adr/0028-calendar-advanced.md)
 

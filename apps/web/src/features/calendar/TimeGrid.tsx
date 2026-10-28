@@ -24,13 +24,15 @@ interface TimeGridProps {
   now: number;
   selected: string;
   onSelect: (date: string) => void;
+  /** Opens an item's dialog. The grid is a picture; keyboard users open items from the list below. */
+  onOpen: (item: CalendarItem, date: string) => void;
 }
 
 /**
  * Hours down, days across. The header buttons choose the day whose details show below; the
  * grid itself is a picture of the same items (aria-hidden), the list below is the accessible one.
  */
-export function TimeGrid({ days, items, today, now, selected, onSelect }: TimeGridProps) {
+export function TimeGrid({ days, items, today, now, selected, onSelect, onOpen }: TimeGridProps) {
   const { t, i18n } = useTranslation('calendar');
   const language = i18n.resolvedLanguage ?? 'en';
   const body = useRef<HTMLDivElement>(null);
@@ -106,8 +108,12 @@ export function TimeGrid({ days, items, today, now, selected, onSelect }: TimeGr
                 {list.slice(0, 2).map((item) => (
                   <p
                     key={item.key}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onOpen(item, date);
+                    }}
                     className={cn(
-                      'truncate rounded border-l-2 px-1 text-[0.6875rem] text-foreground',
+                      'cursor-pointer truncate rounded border-l-2 px-1 text-[0.6875rem] text-foreground hover:brightness-95',
                       KIND_BLOCK[item.kind],
                     )}
                   >
@@ -165,8 +171,12 @@ export function TimeGrid({ days, items, today, now, selected, onSelect }: TimeGr
                 {layoutDay(items, date).map((segment) => (
                   <div
                     key={segment.item.key}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onOpen(segment.item, date);
+                    }}
                     className={cn(
-                      'absolute overflow-hidden rounded-md border-l-4 px-1.5 py-0.5 text-xs text-foreground shadow-card',
+                      'absolute cursor-pointer overflow-hidden rounded-md border-l-4 px-1.5 py-0.5 text-xs text-foreground shadow-card hover:brightness-95',
                       KIND_BLOCK[segment.item.kind],
                     )}
                     style={{

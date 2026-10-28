@@ -10,10 +10,11 @@ interface DayListProps {
   today: string;
   /** Leave out days without items (agenda). */
   skipEmpty?: boolean;
+  onOpen: (item: CalendarItem, date: string) => void;
 }
 
 /** Days stacked as sections, each with its items: week, day and agenda views. */
-export function DayList({ days, items, today, skipEmpty }: DayListProps) {
+export function DayList({ days, items, today, skipEmpty, onOpen }: DayListProps) {
   const { t, i18n } = useTranslation('calendar');
   const language = i18n.resolvedLanguage ?? 'en';
   const shown = days
@@ -44,7 +45,7 @@ export function DayList({ days, items, today, skipEmpty }: DayListProps) {
           ) : (
             <ul className="space-y-2">
               {list.map((item) => (
-                <ItemRow key={item.key} item={item} date={date} />
+                <ItemRow key={item.key} item={item} date={date} onOpen={onOpen} />
               ))}
             </ul>
           )}

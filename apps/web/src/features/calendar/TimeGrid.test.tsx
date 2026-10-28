@@ -39,6 +39,7 @@ const holiday: CalendarItem = {
 async function renderGrid(over: Partial<Parameters<typeof TimeGrid>[0]> = {}) {
   await initTestI18n('en');
   const onSelect = vi.fn();
+  const onOpen = vi.fn();
   const utils = render(
     <TimeGrid
       days={week}
@@ -47,10 +48,11 @@ async function renderGrid(over: Partial<Parameters<typeof TimeGrid>[0]> = {}) {
       now={8 * 60 + 24}
       selected="2026-10-27"
       onSelect={onSelect}
+      onOpen={onOpen}
       {...over}
     />,
   );
-  return { ...utils, onSelect };
+  return { ...utils, onSelect, onOpen };
 }
 
 describe('TimeGrid', () => {
@@ -96,5 +98,13 @@ describe('minutesIn', () => {
     const instant = new Date('2026-10-27T07:24:00Z');
     expect(minutesIn('UTC', instant)).toBe(7 * 60 + 24);
     expect(minutesIn('Europe/Sofia', instant)).toBe(9 * 60 + 24);
+  });
+
+  it('opens an item on click without selecting its day', async () => {
+    const { onSelect, onOpen } = await renderGrid();
+    const block = screen.getByText('Standup', { selector: 'p' });
+    block.click();
+    expect(onOpen).toHaveBeenCalledWith(meeting, '2026-10-27');
+    expect(onSelect).not.toHaveBeenCalled();
   });
 });

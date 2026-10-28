@@ -78,3 +78,19 @@ Mine, Team, Company, Leave, Holidays (the last two follow the viewer's permissio
   `--accent-foreground`), the title large, a meta line (kind, team, repeat, reminder, place) with small
   icons, the description, and on the right the day number, the month in capitals and the time with a
   clock. Colour is never the only signal: the kind is also written out.
+
+## Update: opening an item
+
+- Clicking an item opens it in a dialog (`EventDialog`, built on the shared `Modal`) in **every**
+  view: the cards of the day/week/agenda lists (the whole card is the button), the titles inside the
+  month days on wide screens (the day cell is a focusable grid cell with real buttons inside; Enter
+  selects the day), and the blocks of the week/day time grid. The time grid is a picture
+  (`aria-hidden`): keyboard and screen-reader users open items from the list below it.
+- Everybody who can see an item can read its details there: day and time, team, repeat, reminder,
+  place, description, the organizer and the guests with their answers. A guest answers (RSVP) in the
+  dialog. Edit and Delete appear only when the server says `canEdit` (owner, team rights, company
+  rights, administrators as in this ADR); otherwise the dialog says the event can be seen but not
+  changed. A colleague's leave and a holiday open read-only with a short note (the leave type and
+  reason masking is unchanged: the dialog uses the same item the list shows).
+- Editing happens inside the dialog (the form replaces the details and returns to them after saving);
+  deleting asks for confirmation and, for a series, which events, then closes the dialog.

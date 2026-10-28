@@ -46,7 +46,10 @@
     "delete": "Löschen",
     "confirmDelete": "Diesen Termin löschen?",
     "deleteConfirm": "Ja, löschen",
-    "keep": "Behalten"
+    "keep": "Behalten",
+    "viewOnly": "Sie können diesen Termin sehen, aber nicht ändern.",
+    "leaveInfo": "Genehmigter oder offener Urlaub einer Kollegin oder eines Kollegen. Details bleiben bei der Person.",
+    "holidayInfo": "Ein gesetzlicher Feiertag."
   },
   "form": {
     "newTitle": "Neuer Termin",
