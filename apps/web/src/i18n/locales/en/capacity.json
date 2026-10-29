@@ -37,7 +37,6 @@
     "full": "Almost full",
     "over": "Over-booked"
   },
-  "numbers": "Available {{available}} · planned {{planned}} · logged {{logged}} · free {{free}}",
   "dayNumbers": "planned {{planned}} of {{available}} h",
   "dayLogged": "logged {{logged}} h",
   "projectNumbers": "planned {{planned}} h · logged {{logged}} h",
@@ -46,7 +45,21 @@
     "show": "Days and projects of {{name}}",
     "days": "Days of {{name}}",
     "projects": "Projects of {{name}}",
-    "otherProjects": "Other projects"
+    "otherProjects": "Other projects",
+    "daysHeading": "Day by day",
+    "projectsHeading": "By project"
   },
-  "overtime": "Overtime {{overtime}}: logged beyond the available time"
+  "overtime": "Overtime {{overtime}}: logged beyond the available time",
+  "percentPlanned": "{{percent}} % planned",
+  "projectShare": "{{percent}} % of the planned time",
+  "stats": {
+    "available": "Available",
+    "planned": "Planned",
+    "logged": "Logged",
+    "free": "Free"
+  },
+  "legend": {
+    "planned": "Planned",
+    "logged": "Logged"
+  }
 }

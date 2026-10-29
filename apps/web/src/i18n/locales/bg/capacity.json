@@ -37,7 +37,6 @@
     "full": "Почти зает",
     "over": "Свръхангажиран"
   },
-  "numbers": "Налично {{available}} · планирано {{planned}} · отчетено {{logged}} · свободно {{free}}",
   "dayNumbers": "планирано {{planned}} от {{available}} ч",
   "dayLogged": "отчетено {{logged}} ч",
   "projectNumbers": "планирано {{planned}} ч · отчетено {{logged}} ч",
@@ -46,7 +45,21 @@
     "show": "Дни и проекти на {{name}}",
     "days": "Дни на {{name}}",
     "projects": "Проекти на {{name}}",
-    "otherProjects": "Други проекти"
+    "otherProjects": "Други проекти",
+    "daysHeading": "Ден по ден",
+    "projectsHeading": "По проект"
   },
-  "overtime": "Извънреден труд {{overtime}}: отчетено над наличното време"
+  "overtime": "Извънреден труд {{overtime}}: отчетено над наличното време",
+  "percentPlanned": "{{percent}} % планирано",
+  "projectShare": "{{percent}} % от планираното време",
+  "stats": {
+    "available": "Налично",
+    "planned": "Планирано",
+    "logged": "Отчетено",
+    "free": "Свободно"
+  },
+  "legend": {
+    "planned": "Планирано",
+    "logged": "Отчетено"
+  }
 }

@@ -10,6 +10,7 @@ import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 import { Select } from '@/shared/ui/select';
+import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
 import { formatDay } from '@/shared/lib/format';
 import { PAGE_SIZE } from './api';
 import { useCapacity } from './hooks';
@@ -114,9 +115,26 @@ export function CapacityPage() {
       </label>
 
       {query.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('loading')}
-        </p>
+        <SkeletonGroup label={t('loading')} className="space-y-3">
+          {[0, 1, 2].map((n) => (
+            <div key={n} className="space-y-4 rounded-xl border border-border bg-surface p-4">
+              <div className="flex items-center gap-3">
+                <Skeleton className="size-11 shrink-0 rounded-xl" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-2/5" />
+                  <Skeleton className="h-3 w-1/4" />
+                </div>
+                <Skeleton className="h-5 w-16 rounded-full" />
+              </div>
+              <Skeleton className="h-2.5 w-full rounded-full" />
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {[0, 1, 2, 3].map((m) => (
+                  <Skeleton key={m} className="h-12 rounded-lg" />
+                ))}
+              </div>
+            </div>
+          ))}
+        </SkeletonGroup>
       )}
       {query.isError && (
         <Card className="space-y-3 text-center">
