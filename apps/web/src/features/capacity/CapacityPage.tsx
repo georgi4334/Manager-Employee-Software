@@ -11,6 +11,7 @@ import { Card } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 import { Select } from '@/shared/ui/select';
 import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
+import { WeekNav } from '@/shared/ui/week-nav';
 import { formatDay } from '@/shared/lib/format';
 import { PAGE_SIZE } from './api';
 import { useCapacity } from './hooks';
@@ -55,22 +56,16 @@ export function CapacityPage() {
       <h1 className="text-2xl font-semibold">{t('title')}</h1>
       <p className="text-sm text-muted-foreground">{t('standardDay')}</p>
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Button variant="secondary" onClick={() => moveWeek(-7)}>
-          {t('week.previous')}
-        </Button>
-        <h2 className="text-base font-semibold" aria-live="polite">
-          {t('week.of', { date: formatDay(weekStart, language) })}
-        </h2>
-        <Button variant="secondary" onClick={() => moveWeek(7)}>
-          {t('week.next')}
-        </Button>
-        {weekStart !== weekStartOf(today) && (
-          <Button variant="ghost" onClick={() => setWeekStart(weekStartOf(today))}>
-            {t('week.thisWeek')}
-          </Button>
-        )}
-      </div>
+      <WeekNav
+        title={t('week.of', { date: formatDay(weekStart, language) })}
+        previousLabel={t('week.previous')}
+        nextLabel={t('week.next')}
+        currentLabel={t('week.thisWeek')}
+        isCurrent={weekStart === weekStartOf(today)}
+        onPrevious={() => moveWeek(-7)}
+        onNext={() => moveWeek(7)}
+        onCurrent={() => setWeekStart(weekStartOf(today))}
+      />
 
       <div className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">

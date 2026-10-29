@@ -5,6 +5,7 @@ import { usePermission } from '@/features/auth/permissions';
 import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
+import { WeekNav } from '@/shared/ui/week-nav';
 import { formatDay } from '@/shared/lib/format';
 import { ComparePanel } from './ComparePanel';
 import { useSubmitWeek, useWeek } from './hooks';
@@ -43,22 +44,16 @@ export function WeekTab({ today }: { today: string }) {
     <div className="space-y-4">
       {canLog && <TimerCard />}
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Button variant="secondary" onClick={() => move(addDays(weekStart, -7))}>
-          {t('week.previous')}
-        </Button>
-        <h2 className="text-base font-semibold" aria-live="polite">
-          {t('week.of', { date: formatDay(weekStart, language) })}
-        </h2>
-        <Button variant="secondary" onClick={() => move(addDays(weekStart, 7))}>
-          {t('week.next')}
-        </Button>
-        {!isCurrent && (
-          <Button variant="ghost" onClick={() => move(weekStartOf(today))}>
-            {t('week.thisWeek')}
-          </Button>
-        )}
-      </div>
+      <WeekNav
+        title={t('week.of', { date: formatDay(weekStart, language) })}
+        previousLabel={t('week.previous')}
+        nextLabel={t('week.next')}
+        currentLabel={t('week.thisWeek')}
+        isCurrent={isCurrent}
+        onPrevious={() => move(addDays(weekStart, -7))}
+        onNext={() => move(addDays(weekStart, 7))}
+        onCurrent={() => move(weekStartOf(today))}
+      />
 
       {week.isPending && (
         <p role="status" className="text-sm text-muted-foreground">
