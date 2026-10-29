@@ -1,5 +1,5 @@
 import { PROJECT_STATUSES, todayIn, type ProjectSummary } from '@intime/contracts';
-import { Search } from 'lucide-react';
+import { CalendarDays, Building2, FolderKanban, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useSearchParams } from 'react-router';
@@ -17,7 +17,9 @@ import { HealthBadge } from './HealthBadge';
 import { useClients, useProjects } from './hooks';
 import { ProjectForm } from './ProjectForm';
 import { useProjectErrors } from './use-project-errors';
+import { SkeletonGroup, Skeleton } from '@/shared/ui/skeleton';
 import { TabList, TabPanel } from '@/shared/ui/tabs';
+import { Chip, Tile, initials } from './tiles';
 
 type Tab = 'projects' | 'clients';
 
@@ -150,9 +152,21 @@ function ProjectsList({ today }: { today: string }) {
       </div>
 
       {query.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('loading')}
-        </p>
+        <SkeletonGroup label={t('loading')} className="grid gap-3 sm:grid-cols-2">
+          {[0, 1, 2, 3].map((n) => (
+            <div key={n} className="space-y-4 rounded-xl border border-border bg-surface p-4">
+              <div className="flex items-start justify-between">
+                <Skeleton className="size-11 rounded-xl" />
+                <Skeleton className="h-5 w-20 rounded-full" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-3/5" />
+                <Skeleton className="h-3.5 w-2/5" />
+              </div>
+              <Skeleton className="h-8 w-full" />
+            </div>
+          ))}
+        </SkeletonGroup>
       )}
       {query.isError && (
         <Card className="space-y-3 text-center">
@@ -170,7 +184,7 @@ function ProjectsList({ today }: { today: string }) {
               <p className="text-center text-sm text-muted-foreground">{t('empty')}</p>
             </Card>
           ) : (
-            <ul className="space-y-2" aria-label={t('title')}>
+            <ul className="grid gap-3 sm:grid-cols-2" aria-label={t('title')}>
               {data.items.map((project) => (
                 <ProjectRow key={project.id} project={project} />
               ))}
@@ -200,33 +214,59 @@ function ProjectsList({ today }: { today: string }) {
 function ProjectRow({ project }: { project: ProjectSummary }) {
   const { t, i18n } = useTranslation('projects');
   const language = i18n.resolvedLanguage ?? 'en';
+  const period = project.endDate
+    ? t('period', {
+        from: formatDay(project.startDate, language),
+        to: formatDay(project.endDate, language),
+      })
+    : t('since', { from: formatDay(project.startDate, language) });
   return (
     <li>
       <Link
         to={`/projects/${project.id}`}
-        className="block space-y-1 rounded-xl border border-border bg-surface p-4 shadow-card hover:bg-surface-muted"
+        className="flex h-full flex-col gap-4 rounded-xl border border-border bg-surface p-4 shadow-card transition-transform duration-[var(--dur-fast)] ease-[var(--ease-ios)] hover:bg-surface-muted motion-safe:hover:-translate-y-0.5"
       >
-        <span className="flex flex-wrap items-start justify-between gap-2">
-          <span className="min-w-0">
-            <span className="block font-medium">{project.name}</span>
-            <span className="block text-sm text-muted-foreground">
+        <span className="flex items-start justify-between gap-2">
+          <Tile>
+            <FolderKanban className="size-5" />
+          </Tile>
+          <HealthBadge project={project} />
+        </span>
+        <span className="block min-w-0 space-y-1">
+          <span className="block break-words text-base font-semibold leading-snug">
+            {project.name}
+          </span>
+          <span className="flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
+            {project.client && <Building2 className="size-3.5 shrink-0" aria-hidden="true" />}
+            <span>
               {project.code}
               {project.client && ` · ${project.client.name}`}
             </span>
           </span>
-          <HealthBadge project={project} />
         </span>
-        <span className="block text-sm text-muted-foreground">
-          {project.lead
-            ? t('lead', { name: `${project.lead.firstName} ${project.lead.lastName}` })
-            : t('noLead')}
-          {' · '}
-          {project.endDate
-            ? t('period', {
-                from: formatDay(project.startDate, language),
-                to: formatDay(project.endDate, language),
-              })
-            : t('since', { from: formatDay(project.startDate, language) })}
+        <span className="flex flex-wrap gap-1.5">
+          <Chip>{t(`priority.${project.priority}`)}</Chip>
+        </span>
+        <span className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-border pt-3 text-sm text-muted-foreground">
+          <span className="flex min-w-0 items-center gap-2">
+            {project.lead && (
+              <span
+                aria-hidden="true"
+                className="grid size-7 shrink-0 place-items-center rounded-full bg-accent text-xs font-semibold text-accent-foreground"
+              >
+                {initials(project.lead.firstName, project.lead.lastName)}
+              </span>
+            )}
+            <span className="truncate">
+              {project.lead
+                ? t('lead', { name: `${project.lead.firstName} ${project.lead.lastName}` })
+                : t('noLead')}
+            </span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <CalendarDays className="size-4 shrink-0" aria-hidden="true" />
+            {period}
+          </span>
         </span>
       </Link>
     </li>
