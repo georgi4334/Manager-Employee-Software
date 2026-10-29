@@ -78,5 +78,8 @@
     "open_one": "{{count}} offene Aufgabe",
     "open_other": "{{count}} offene Aufgaben",
     "go": "Aufgaben öffnen"
+  },
+  "board": {
+    "empty": "Hier ist nichts"
   }
 }

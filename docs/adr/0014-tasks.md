@@ -55,3 +55,12 @@ the open count. All strings en/de/bg, 375 px first.
 - One new table and one new column on `project` (expand-only).
 - Time tracking (next step) references `task.id`; leave-conflict warnings will also read `task.due_date`.
 - Sub-tasks, comments, attachments, labels and drag and drop are out of scope.
+
+## Update: board and list design
+
+The board is four soft columns (colour dot, status and count in the heading) holding cards: key tag and edit/delete icons on top,
+the title, type/priority/overdue tags, a four-step stage bar (decoration, the column and select say the stage in words), then
+assignee avatar, due/done date and hours, and the status select for people who may move the task. The list is one row per task:
+a stage icon tile, title with tags and milestone, assignee and dates, the status select and icon actions; rows stack on phones.
+Both use the same `TaskCard` (`variant`), the shared `Chip`/initials in `shared/ui/tiles.tsx` and only design tokens. Behaviour,
+permissions and API are unchanged.
