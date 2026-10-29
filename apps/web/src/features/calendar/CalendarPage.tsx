@@ -64,8 +64,17 @@ export function CalendarPage() {
   const view: CalendarView = isView(requestedView) ? requestedView : defaultView();
   const requestedDate = params.get('date');
   const anchor = requestedDate && DATE.test(requestedDate) ? requestedDate : today;
-  const go = (next: { view?: CalendarView; date?: string }) =>
-    setParams({ view: next.view ?? view, date: next.date ?? anchor }, { replace: true });
+  const requestedDay = params.get('day');
+  /** `date` decides what is shown (month, week, …); `day` is only the day picked inside the month. */
+  const go = (next: { view?: CalendarView; date?: string; day?: string }) =>
+    setParams(
+      {
+        view: next.view ?? view,
+        date: next.date ?? anchor,
+        ...(next.day ? { day: next.day } : {}),
+      },
+      { replace: true },
+    );
 
   const { from, to } = rangeFor(view, anchor);
   const events = useEvents(from, to);
@@ -167,7 +176,15 @@ export function CalendarPage() {
       return next;
     });
   const failed = events.error ?? leave.error;
-  const selected = anchor;
+  // A day of the weeks before or after the month (the grey ones) is picked without turning the page.
+  const selected =
+    view === 'month' &&
+    requestedDay &&
+    DATE.test(requestedDay) &&
+    requestedDay >= from &&
+    requestedDay <= to
+      ? requestedDay
+      : anchor;
   const openItem = opened ? (items.find((i) => i.key === opened.key) ?? null) : null;
   const open = (item: CalendarItem, date: string) => setOpened({ key: item.key, date });
 
@@ -181,7 +198,7 @@ export function CalendarPage() {
       </div>
 
       {creating && (
-        <section className="space-y-3 rounded-xl border border-border bg-surface p-4 shadow-card">
+        <section className="space-y-3 rounded-xl glass p-4">
           <h2 className="text-base font-semibold">{t('form.newTitle')}</h2>
           <EventForm defaultDate={selected} onDone={() => setCreating(false)} />
         </section>
@@ -191,10 +208,10 @@ export function CalendarPage() {
         label={t('views.label')}
         tabs={CALENDAR_VIEWS.map((name) => ({ name, label: t(`views.${name}`) }))}
         value={view}
-        onChange={(name) => go({ view: name as (typeof CALENDAR_VIEWS)[number] })}
+        onChange={(name) => go({ view: name as (typeof CALENDAR_VIEWS)[number], date: selected })}
       />
 
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface p-2 shadow-card">
+      <div className="flex items-center justify-between gap-3 rounded-xl glass p-2">
         <Button
           variant="secondary"
           size="icon"
@@ -267,7 +284,7 @@ export function CalendarPage() {
             selected={selected}
             today={today}
             items={items}
-            onSelect={(date) => go({ date })}
+            onSelect={(date) => go({ day: date })}
             onOpen={open}
             wide={wide}
           />

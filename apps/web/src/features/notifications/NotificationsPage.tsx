@@ -83,8 +83,8 @@ export function NotificationsPage() {
                   type="button"
                   onClick={() => open(item)}
                   className={cn(
-                    'flex min-h-14 w-full items-start gap-3 rounded-xl border border-border p-4 text-left shadow-card hover:bg-surface-muted',
-                    isUnread ? 'bg-accent text-accent-foreground' : 'bg-surface',
+                    'flex min-h-14 w-full items-start gap-3 rounded-xl glass p-4 text-left',
+                    isUnread ? 'bg-accent text-accent-foreground' : 'glass-hover',
                   )}
                 >
                   <span

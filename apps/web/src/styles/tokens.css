@@ -72,6 +72,17 @@
   --menu-shadow: 0 20px 44px -14px rgb(28 25 23 / 0.28), 0 2px 6px rgb(28 25 23 / 0.06);
   --menu-item-active: #ffffff;
   --menu-item-glow: 0 0 0 1px #f2d5ca, 0 6px 18px -6px rgb(242 106 75 / 0.4);
+  /* Liquid glass (ADR 0033): containers are frosted panes over a softly tinted canvas. */
+  --canvas-1: rgb(242 106 75 / 0.16);
+  --canvas-2: rgb(8 145 178 / 0.11);
+  --canvas-3: rgb(22 163 74 / 0.09);
+  --glass-bg: rgb(255 255 255 / 0.64);
+  --glass-bg-hover: rgb(255 255 255 / 0.8);
+  --glass-border: rgb(255 255 255 / 0.8);
+  --glass-edge: rgb(28 25 23 / 0.08);
+  --glass-highlight: rgb(255 255 255 / 0.95);
+  --glass-shadow: 0 10px 30px -14px rgb(28 25 23 / 0.2), 0 1px 2px rgb(28 25 23 / 0.05);
+  --glass-solid: #fbf8f7;
 }
 
 [data-theme='dark'] {
@@ -129,6 +140,16 @@
   --menu-shadow: 0 20px 44px -14px rgb(0 0 0 / 0.7), 0 2px 6px rgb(0 0 0 / 0.4);
   --menu-item-active: #3b2c28;
   --menu-item-glow: 0 0 0 1px #5c3d33, 0 6px 18px -6px rgb(255 122 89 / 0.3);
+  --canvas-1: rgb(255 122 89 / 0.14);
+  --canvas-2: rgb(34 211 238 / 0.08);
+  --canvas-3: rgb(74 222 128 / 0.06);
+  --glass-bg: rgb(43 33 31 / 0.58);
+  --glass-bg-hover: rgb(54 42 39 / 0.72);
+  --glass-border: rgb(255 255 255 / 0.1);
+  --glass-edge: rgb(0 0 0 / 0.35);
+  --glass-highlight: rgb(255 255 255 / 0.09);
+  --glass-shadow: 0 12px 32px -14px rgb(0 0 0 / 0.65), 0 1px 2px rgb(0 0 0 / 0.35);
+  --glass-solid: #2b211f;
 }
 
 @theme inline {

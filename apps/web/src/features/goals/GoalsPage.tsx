@@ -1,5 +1,5 @@
 import { GOAL_SCOPES, GOAL_STATUSES, type GoalScope } from '@intime/contracts';
-import { Search } from 'lucide-react';
+import { Search, Target } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router';
@@ -9,14 +9,17 @@ import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 import { Select } from '@/shared/ui/select';
+import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
 import { PAGE_SIZE, type ListParams } from './api';
-import { GoalCard } from './GoalCard';
+import { GoalCard, SCOPE_STYLE } from './GoalCard';
 import { GoalForm } from './GoalForm';
 import { useGoals, useGoalTeams } from './hooks';
 import { useGoalErrors } from './use-goal-errors';
 import { TabList } from '@/shared/ui/tabs';
 
 const SCOPE_FILTERS = ['all', ...GOAL_SCOPES] as const;
+/** The widest goals first: what the company wants, then the teams, then each person. */
+const GROUP_ORDER: GoalScope[] = ['company', 'team', 'personal'];
 
 export function GoalsPage() {
   const { t } = useTranslation('goals');
@@ -125,9 +128,22 @@ export function GoalsPage() {
       </div>
 
       {query.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('loading')}
-        </p>
+        <SkeletonGroup label={t('loading')} className="space-y-3">
+          {[0, 1, 2].map((n) => (
+            <div key={n} className="space-y-3 rounded-xl glass border-l-4 p-4">
+              <div className="flex items-start gap-3">
+                <Skeleton className="size-11 shrink-0 rounded-xl" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-3/5" />
+                  <Skeleton className="h-3 w-1/4" />
+                </div>
+                <Skeleton className="h-5 w-16 rounded-full" />
+              </div>
+              <Skeleton className="h-3 w-full rounded-full" />
+              <Skeleton className="h-3.5 w-2/5" />
+            </div>
+          ))}
+        </SkeletonGroup>
       )}
       {query.isError && (
         <Card className="space-y-3 text-center">
@@ -141,11 +157,43 @@ export function GoalsPage() {
             {t('total', { count: data.total })}
           </p>
           {data.items.length === 0 ? (
-            <Card>
-              <p className="text-center text-sm text-muted-foreground">{t('empty')}</p>
+            <Card className="flex flex-col items-center gap-2 py-8 text-center">
+              <Target className="size-8 text-muted-foreground" aria-hidden="true" />
+              <p className="text-sm text-muted-foreground">{t('empty')}</p>
             </Card>
+          ) : scope === 'all' ? (
+            // Everything at once: grouped by scope so the company goals are not lost between personal ones.
+            <div className="space-y-6">
+              {GROUP_ORDER.map((group) => {
+                const items = data.items.filter((goal) => goal.scope === group);
+                if (items.length === 0) return null;
+                const GroupIcon = SCOPE_STYLE[group].icon;
+                return (
+                  <section key={group} aria-labelledby={`goals-${group}`} className="space-y-3">
+                    <h2
+                      id={`goals-${group}`}
+                      className="flex items-center gap-2 text-base font-semibold"
+                    >
+                      <GroupIcon
+                        className={`size-5 ${SCOPE_STYLE[group].text}`}
+                        aria-hidden="true"
+                      />
+                      {t(`groups.${group}`)}
+                      <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
+                        {items.length}
+                      </span>
+                    </h2>
+                    <ul className="space-y-3" aria-labelledby={`goals-${group}`}>
+                      {items.map((goal) => (
+                        <GoalCard key={goal.id} goal={goal} />
+                      ))}
+                    </ul>
+                  </section>
+                );
+              })}
+            </div>
           ) : (
-            <ul className="space-y-2" aria-label={t('title')}>
+            <ul className="space-y-3" aria-label={t('title')}>
               {data.items.map((goal) => (
                 <GoalCard key={goal.id} goal={goal} />
               ))}

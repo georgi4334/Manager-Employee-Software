@@ -23,7 +23,7 @@ export function DayList({ days, items, today, skipEmpty, onOpen }: DayListProps)
 
   if (shown.length === 0) {
     return (
-      <p className="rounded-xl border border-border bg-surface p-4 text-center text-sm text-muted-foreground">
+      <p className="rounded-xl glass p-4 text-center text-sm text-muted-foreground">
         {t('agenda.empty')}
       </p>
     );

@@ -6,13 +6,18 @@ import { initTheme } from './shared/stores/theme.store';
 import './styles/globals.css';
 
 initTheme();
-void initI18n();
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Root element #root not found');
 
-createRoot(root).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+// The static boot screen in index.html stays until the texts are there: rendering earlier would
+// replace it with an empty page while the first components wait for their translations.
+void initI18n()
+  .catch(() => undefined)
+  .finally(() => {
+    createRoot(root).render(
+      <StrictMode>
+        <App />
+      </StrictMode>,
+    );
+  });

@@ -232,6 +232,66 @@ describe('month view', () => {
     expect(screen.queryByText('Dentist')).not.toBeInTheDocument();
   });
 
+  it('picks a day of the month before or after without turning the page', async () => {
+    serve({
+      events: [
+        event(1, { title: 'Ski trip', startDate: '2030-02-25', endDate: '2030-02-25' }),
+        event(2, { title: 'Easter walk', startDate: '2030-04-07', endDate: '2030-04-07' }),
+      ],
+    });
+    await renderApp(MARCH); // March 2030 starts on a Friday: the grid runs 25 Feb – 7 Apr
+    const user = userEvent.setup();
+    await screen.findByText('March 2030');
+    const grid = () => screen.getByRole('grid');
+    // top left: the last Monday of February
+    await user.click(within(grid()).getByRole('gridcell', { name: /25 February 2030/ }));
+    expect(screen.getByText('March 2030')).toBeInTheDocument();
+    expect(grid()).toHaveAccessibleName('March 2030');
+    expect(within(grid()).getByRole('gridcell', { name: /25 February 2030/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(await screen.findByText('Ski trip')).toBeInTheDocument();
+    // bottom right: the first Sunday of April
+    await user.click(within(grid()).getByRole('gridcell', { name: /7 April 2030/ }));
+    expect(screen.getByText('March 2030')).toBeInTheDocument();
+    expect(await screen.findByText('Easter walk')).toBeInTheDocument();
+    expect(screen.queryByText('Ski trip')).not.toBeInTheDocument();
+    // the arrows still turn the page, and the week view opens on the picked day
+    await user.click(screen.getByRole('tab', { name: 'Week' }));
+    expect(await screen.findByText(/1 Apr 2030.*7 Apr 2030/)).toBeInTheDocument();
+  });
+
+  it('forgets a picked day when the month changes', async () => {
+    serve();
+    await renderApp('/calendar?view=month&date=2030-03-10&day=2030-02-25');
+    const user = userEvent.setup();
+    await screen.findByText('March 2030');
+    expect(screen.getByRole('gridcell', { name: /25 February 2030/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+    expect(await screen.findByText('April 2030')).toBeInTheDocument();
+    expect(screen.getByRole('gridcell', { name: /^Monday,? 1 April 2030/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+  });
+
+  it('ignores a picked day outside the shown weeks or that is not a date', async () => {
+    serve();
+    for (const day of ['2031-01-01', 'nonsense']) {
+      const { unmount } = await renderApp(`/calendar?view=month&date=2030-03-10&day=${day}`);
+      await screen.findByText('March 2030');
+      expect(screen.getByRole('gridcell', { name: /10 March 2030/ })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+      unmount();
+    }
+  });
+
   it('moves to the next and previous month and back to today', async () => {
     const calls = serve();
     await renderApp(MARCH);
@@ -744,7 +804,9 @@ describe('opening an item from the views', () => {
       const cell = await screen.findByRole('gridcell', { name: /20 March 2030/ });
       cell.focus();
       await userEvent.setup().keyboard('{Enter}');
-      expect(router.state.location.search).toContain('date=2030-03-20');
+      // the day is picked; the month stays where it was
+      expect(router.state.location.search).toContain('day=2030-03-20');
+      expect(router.state.location.search).toContain('date=2030-03-10');
     } finally {
       restore();
     }

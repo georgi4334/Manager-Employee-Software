@@ -164,6 +164,50 @@
       var(--button-shadow);
   }
 
+  /*
+   * Liquid glass (ADR 0033): every container that carries information is a frosted pane. The canvas behind
+   * them is softly tinted so the blur has something to show; text sits on a pane that stays mostly opaque.
+   */
+  .glass-canvas {
+    background-color: var(--background);
+    background-image:
+      radial-gradient(60rem 40rem at 8% -10%, var(--canvas-1), transparent 62%),
+      radial-gradient(52rem 36rem at 100% 18%, var(--canvas-2), transparent 60%),
+      radial-gradient(50rem 40rem at 45% 112%, var(--canvas-3), transparent 62%);
+    background-attachment: fixed;
+  }
+  .glass {
+    border: 1px solid var(--glass-border);
+    background-color: var(--glass-bg);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 0 1px var(--glass-edge),
+      var(--glass-shadow);
+    -webkit-backdrop-filter: blur(18px) saturate(1.6);
+    backdrop-filter: blur(18px) saturate(1.6);
+  }
+  .glass-hover {
+    transition: background-color var(--dur-fast) var(--ease-standard);
+  }
+  .glass-hover:hover {
+    background-color: var(--glass-bg-hover);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass {
+      background-color: var(--glass-solid);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .glass {
+      background-color: var(--glass-solid);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+    .glass-canvas {
+      background-image: none;
+    }
+  }
+
   /* Drop-downs (menus, popovers, the open list of a select): one look everywhere. */
   .menu-panel {
     border: 1px solid var(--menu-border);

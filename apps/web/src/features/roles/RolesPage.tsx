@@ -42,7 +42,7 @@ export function RolesPage() {
             <li key={role.id}>
               <Link
                 to={`/roles/${role.id}`}
-                className="block h-full rounded-xl border border-border bg-surface p-4 shadow-card hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
+                className="block h-full rounded-xl glass p-4 hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
               >
                 <span className="flex flex-wrap items-center gap-2">
                   <span className="font-medium">{role.name}</span>

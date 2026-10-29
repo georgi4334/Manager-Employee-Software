@@ -20,7 +20,7 @@ export function ReviewCard({
           ? t('state.overdue')
           : t('state.open');
   return (
-    <li className="space-y-1 rounded-xl border border-border bg-surface p-4 shadow-card">
+    <li className="space-y-1 rounded-xl glass p-4">
       <Link to={`/reviews/${review.id}`} className="font-medium text-primary underline">
         {showEmployee ? t('card.of', { name, cycle: review.cycle.name }) : review.cycle.name}
       </Link>

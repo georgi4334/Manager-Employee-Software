@@ -76,3 +76,13 @@ check-in form and history, parent and aligned goals. Create form with scope-depe
 - Reviews (Phase 4) can read goals without changing them.
 - Because progress is not stored for goals with key results, a corrected key result corrects everything above it at once.
 - Check-in snapshots keep history truthful even when key results are later edited.
+
+## Update: the goal list
+
+The list is grouped by scope when "All" is chosen (company goals first, then team, then personal, each under a heading with its
+count; empty groups are left out). A single scope tab shows one plain list. Every goal is a card with a coloured left edge and
+icon tile per scope (orange personal, blue team, green company, as in the calendar), the title as a link that covers the card,
+the owner (initials) or team, a status pill (draft, active, done, cancelled) and an overdue flag, a thick progress bar with the
+percentage in text, and a meta line: scope, due date, key result count and the goal it contributes to. The bar is green when done,
+red when overdue, grey when cancelled (the title is struck through) and orange otherwise. Loading shows card-shaped skeletons and
+an empty list says so with an icon. Only the web page changed: same endpoint, same permissions, nothing new stored.

@@ -94,5 +94,10 @@
     "comment": "Was hat sich geändert? (optional)",
     "save": "Check-in erfassen",
     "none": "Noch keine Check-ins."
+  },
+  "groups": {
+    "company": "Unternehmensziele",
+    "team": "Teamziele",
+    "personal": "Persönliche Ziele"
   }
 }

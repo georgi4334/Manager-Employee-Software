@@ -115,7 +115,7 @@ export function EmployeesPage() {
                 <li key={employee.id}>
                   <Link
                     to={`/employees/${employee.id}`}
-                    className="flex min-h-14 items-center gap-3 rounded-xl border border-border bg-surface p-3 shadow-card hover:bg-surface-muted"
+                    className="flex min-h-14 items-center gap-3 rounded-xl glass p-3 glass-hover"
                   >
                     <EmployeeAvatar firstName={employee.firstName} lastName={employee.lastName} />
                     <span className="min-w-0 flex-1">

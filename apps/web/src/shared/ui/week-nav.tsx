@@ -30,7 +30,7 @@ export function WeekNav({
   onCurrent,
 }: WeekNavProps) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface p-2 shadow-card">
+    <div className="flex items-center justify-between gap-3 rounded-xl glass p-2">
       <Button variant="secondary" size="icon" aria-label={previousLabel} onClick={onPrevious}>
         <ChevronLeft className="size-5" aria-hidden="true" />
       </Button>

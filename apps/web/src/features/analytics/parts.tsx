@@ -20,10 +20,7 @@ export function Section({
   return (
     <section
       aria-labelledby={id}
-      className={cn(
-        'space-y-4 rounded-xl border border-border bg-surface p-4 shadow-card md:p-5',
-        className,
-      )}
+      className={cn('space-y-4 rounded-xl glass p-4 md:p-5', className)}
     >
       <div className="flex items-center gap-2">
         <span className="grid size-8 place-items-center rounded-lg bg-accent text-accent-foreground">

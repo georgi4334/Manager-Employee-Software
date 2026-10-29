@@ -38,7 +38,7 @@ export function PermissionGrid({ value, mine, readOnly, onChange }: GridProps) {
           <details
             key={module}
             open={readOnly ? true : granted.length > 0}
-            className="rounded-xl border border-border bg-surface"
+            className="rounded-xl glass"
           >
             <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 px-4 py-2 text-sm font-semibold">
               <span>{t(`modules.${module}`)}</span>

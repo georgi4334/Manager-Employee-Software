@@ -21,7 +21,7 @@ export function DayCard({ day, showEmployee }: { day: AttendanceDay; showEmploye
   });
 
   return (
-    <li className="rounded-xl border border-border bg-surface p-4 shadow-card">
+    <li className="rounded-xl glass p-4">
       <article aria-label={showEmployee ? `${name}, ${date}` : date} className="space-y-3">
         <div className="flex flex-wrap items-center gap-3">
           {showEmployee && (

@@ -167,7 +167,7 @@ export function TasksPage() {
             className={view === 'board' ? 'grid gap-4 md:grid-cols-2 xl:grid-cols-4' : 'space-y-2'}
           >
             {Array.from({ length: view === 'board' ? 4 : 3 }, (_, n) => (
-              <div key={n} className="space-y-3 rounded-xl border border-border bg-surface p-4">
+              <div key={n} className="space-y-3 rounded-xl glass p-4">
                 <div className="flex items-center gap-3">
                   <Skeleton className="size-11 shrink-0 rounded-xl" />
                   <div className="flex-1 space-y-2">
@@ -209,7 +209,7 @@ export function TasksPage() {
                     <section
                       key={s}
                       aria-labelledby={`board-${s}`}
-                      className="space-y-3 rounded-2xl border border-border bg-surface-muted p-3"
+                      className="space-y-3 rounded-2xl glass p-3"
                     >
                       <h2
                         id={`board-${s}`}

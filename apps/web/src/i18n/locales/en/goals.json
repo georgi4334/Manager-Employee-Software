@@ -94,5 +94,10 @@
     "comment": "What changed? (optional)",
     "save": "Record check-in",
     "none": "No check-ins yet."
+  },
+  "groups": {
+    "company": "Company goals",
+    "team": "Team goals",
+    "personal": "Personal goals"
   }
 }

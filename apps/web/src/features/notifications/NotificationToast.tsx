@@ -39,7 +39,7 @@ export function NotificationToast() {
     <div
       role="status"
       data-state={presence.state}
-      className="motion-toast fixed inset-x-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-50 mx-auto flex max-w-sm items-center gap-3 rounded-xl border border-border bg-surface p-2 pl-4 shadow-card"
+      className="motion-toast fixed inset-x-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-50 mx-auto flex max-w-sm items-center gap-3 rounded-xl glass p-2 pl-4"
     >
       <Bell className="size-5 shrink-0 text-primary" aria-hidden="true" />
       <p className="flex-1 text-sm font-medium">{t('toast', { count: added })}</p>

@@ -56,7 +56,7 @@ export function TimeGrid({ days, items, today, now, selected, onSelect, onOpen }
   }, [days.join(), showsToday]);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-surface">
+    <div className="overflow-hidden rounded-xl glass">
       <div className="grid border-b border-border" style={columns}>
         <span />
         {days.map((date) => {
