@@ -160,22 +160,97 @@ describe('the list', () => {
       summary(3, { scope: 'company', progressPct: 0 }),
     ]);
     await renderApp('/goals');
-    const rows = within(await screen.findByRole('list', { name: 'Goals' })).getAllByRole(
-      'listitem',
-    );
+    await screen.findByText('Goal 1');
+    // grouped, widest first: company, team, personal
+    const rows = within(await screen.findByRole('main')).getAllByRole('listitem');
     expect(rows).toHaveLength(3);
-    expect(rows[0]).toHaveTextContent('Personal · Dan Dev');
-    expect(rows[0]).toHaveTextContent('2 key results');
-    expect(rows[0]).toHaveTextContent('40 %');
-    expect(rows[0]).toHaveTextContent('Overdue');
-    expect(within(rows[0]!).getByRole('progressbar')).toHaveAttribute('aria-valuenow', '40');
-    expect(rows[1]).toHaveTextContent('Team · Platform');
-    expect(rows[1]).not.toHaveTextContent('Overdue');
-    expect(rows[2]).toHaveTextContent('Company');
-    expect(within(rows[0]!).getByRole('link', { name: 'Goal 1' })).toHaveAttribute(
+    expect(rows.map((r) => r.querySelector('a')?.textContent)).toEqual([
+      'Goal 3',
+      'Goal 2',
+      'Goal 1',
+    ]);
+    const [company, team, personal] = rows;
+    expect(personal).toHaveTextContent('Personal');
+    expect(personal).toHaveTextContent('Dan Dev');
+    expect(personal).toHaveTextContent('2 key results');
+    expect(personal).toHaveTextContent('40 %');
+    expect(personal).toHaveTextContent('Overdue');
+    expect(personal).toHaveTextContent('Active');
+    expect(personal).toHaveTextContent('due 2 Jan 2026');
+    expect(within(personal!).getByRole('progressbar')).toHaveAttribute('aria-valuenow', '40');
+    expect(team).toHaveTextContent('Team');
+    expect(team).toHaveTextContent('Platform');
+    expect(team).not.toHaveTextContent('Overdue');
+    expect(company).toHaveTextContent('Company');
+    expect(within(personal!).getByRole('link', { name: 'Goal 1' })).toHaveAttribute(
       'href',
       `/goals/${uuid(501)}`,
     );
+  });
+
+  it('groups the goals by scope with a heading and a count, and leaves out empty groups', async () => {
+    as('manager');
+    serve([summary(1), summary(2), summary(3, { scope: 'company' })]);
+    await renderApp('/goals');
+    const company = await screen.findByRole('heading', { name: /Company goals/ });
+    expect(company).toHaveTextContent('1');
+    const personal = screen.getByRole('heading', { name: /Personal goals/ });
+    expect(personal).toHaveTextContent('2');
+    expect(screen.queryByRole('heading', { name: /Team goals/ })).not.toBeInTheDocument();
+    expect(
+      within(screen.getByRole('list', { name: /Personal goals/ })).getAllByRole('listitem'),
+    ).toHaveLength(2);
+    // the company group comes first
+    const order = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent);
+    expect(order[0]).toMatch(/Company goals/);
+    expect(order[1]).toMatch(/Personal goals/);
+  });
+
+  it('shows one plain list without group headings when a single scope is chosen', async () => {
+    as('manager');
+    serve([summary(1, { scope: 'team', team: TEAM }), summary(2, { scope: 'team', team: TEAM })]);
+    await renderApp('/goals?scope=team');
+    const list = await screen.findByRole('list', { name: 'Goals' });
+    expect(within(list).getAllByRole('listitem')).toHaveLength(2);
+    expect(screen.queryByRole('heading', { name: /Team goals/ })).not.toBeInTheDocument();
+  });
+
+  it('shows what a goal contributes to, and marks done, cancelled and overdue goals differently', async () => {
+    as('manager');
+    serve([
+      summary(1, {
+        parent: { id: uuid(777), title: 'Grow the company', scope: 'company' },
+        progressPct: 30,
+      }),
+      summary(2, { status: 'done', progressPct: 100 }),
+      summary(3, { status: 'cancelled' }),
+      summary(4, { overdue: true, dueDate: '2026-01-02', progressPct: 10 }),
+    ]);
+    await renderApp('/goals');
+    await screen.findByText('Goal 1');
+    const row = (title: string) => screen.getByRole('link', { name: title }).closest('li')!;
+    expect(row('Goal 1')).toHaveTextContent('Contributes to: Grow the company');
+    const fill = (title: string) =>
+      within(row(title)).getByRole('progressbar').firstElementChild as HTMLElement;
+    expect(fill('Goal 1').className).toContain('bg-primary');
+    expect(fill('Goal 2').className).toContain('bg-success');
+    expect(fill('Goal 3').className).toContain('bg-muted-foreground');
+    expect(fill('Goal 4').className).toContain('bg-danger');
+    expect(row('Goal 2')).toHaveTextContent('Done');
+    expect(row('Goal 3')).toHaveTextContent('Cancelled');
+    expect(screen.getByRole('link', { name: 'Goal 3' }).className).toContain('line-through');
+    expect(row('Goal 1')).not.toHaveTextContent('Overdue');
+  });
+
+  it('keeps the bar inside its track for odd percentages', async () => {
+    as('manager');
+    serve([summary(1, { progressPct: 130 }), summary(2, { progressPct: -5 })]);
+    await renderApp('/goals');
+    await screen.findByText('Goal 1');
+    const fills = screen
+      .getAllByRole('progressbar')
+      .map((bar) => (bar.firstElementChild as HTMLElement).style.width);
+    expect(fills).toEqual(['100%', '0%']);
   });
 
   it('asks for open goals first and passes the scope, status and search to the API', async () => {
