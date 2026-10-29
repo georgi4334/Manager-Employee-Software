@@ -98,5 +98,9 @@ stacked with billable at the bottom and not billable above it, grid lines every 
 words. It only reads `GET /time/week`: nothing new is stored or sent. The sums are the pure `timeWeekChart` in contracts
 (finished entries only, so a running timer adds nothing until it stops; the scale is at least 8 hours and grows to the next
 whole hour for a longer day). **Entries hold hours, not clock times**, so a column is the time spent that day, not when it
-happened; the card says so. The plot is `aria-hidden`: the totals, the per-day values, the project list and the day list below
-carry the same numbers in text. Approvals and Reports are unchanged.
+happened; the card says so. **Every day is a button** (`aria-pressed`, named with its date, hours and billable hours): choosing one lists that day's entries
+under the chart, with Edit and Delete for the entries the person may change and "Add an entry for this day" (the form opens for
+that date) unless the week is submitted or approved. The page opens on today when it is in the week, else on the first day with
+time. This replaces the separate list of seven days on My time (the Approvals tab still lists a sheet's days read only). The
+columns, labels and axis are decoration; the buttons, totals, per-project lines and the day's list carry the numbers in text.
+Approvals and Reports are unchanged.

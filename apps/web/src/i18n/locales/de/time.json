@@ -152,6 +152,12 @@
     "byProject": "Nach Projekt",
     "projectLine": "{{billable}} Std. abrechenbar · {{notBillable}} Std. nicht abrechenbar",
     "empty": "In dieser Woche ist noch nichts erfasst.",
-    "note": "Einträge enthalten Stunden, keine Uhrzeiten; jede Spalte zeigt die an diesem Tag verbrachte Zeit."
+    "note": "Einträge enthalten Stunden, keine Uhrzeiten; jede Spalte zeigt die an diesem Tag verbrachte Zeit.",
+    "pick": "Wählen Sie einen Tag, um seine Einträge zu sehen.",
+    "dayLabel": "{{date}}: {{total}} Std. erfasst, {{billable}} Std. abrechenbar",
+    "dayEntries": "Einträge vom {{date}}",
+    "dayEmpty": "An diesem Tag ist nichts erfasst.",
+    "addForDay": "Eintrag für diesen Tag hinzufügen",
+    "billableShort": "{{value}} Std. abrechenbar"
   }
 }

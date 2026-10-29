@@ -2,7 +2,7 @@ import type { ProjectSummary, TimeEntry, Timesheet, TimeWeek } from '@intime/con
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, onTestFinished, vi } from 'vitest';
 import { initTestI18n } from '@/tests/i18n';
 import {
   API,
@@ -204,6 +204,9 @@ describe('access and structure', () => {
 
 describe('my week', () => {
   it('shows days with entries, totals and the state in words', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-12-15T10:00:00Z'));
+    onTestFinished(() => void vi.useRealTimers());
     serve({
       week: week({
         status: 'rejected',
@@ -217,8 +220,8 @@ describe('my week', () => {
       }),
     });
     await open();
-    const rows = within(await screen.findByRole('list', { name: 'Days of the week' }));
-    expect(rows.getAllByRole('listitem')[0]).toHaveTextContent('Monday');
+    const rows = within(await screen.findByRole('list', { name: 'Entries of Monday 26 Oct' }));
+    expect(rows.getAllByRole('listitem')).toHaveLength(2);
     expect(await screen.findByText('2:00 h logged · 1:30 h billable')).toBeInTheDocument();
     expect(screen.getAllByText('Sent back').length).toBeGreaterThan(0);
     expect(screen.getByText(/WEB-3/)).toBeInTheDocument();
@@ -289,14 +292,128 @@ describe('my week', () => {
       expect(await screen.findByText('Nothing logged this week yet.')).toBeInTheDocument();
     });
 
-    it('is a picture: the plot is hidden from assistive technology', async () => {
-      serve({ week: chartWeek() });
-      await open();
-      const heading = await screen.findByRole('heading', { name: 'Billable time' });
-      const plot = heading
-        .closest('section, div')!
-        .parentElement!.querySelector('[aria-hidden="true"].flex');
-      expect(plot).not.toBeNull();
+    describe('clicking a day', () => {
+      const dayButton = async (name: RegExp) =>
+        within(await screen.findByRole('group', { name: 'Days of the week' })).getByRole('button', {
+          name,
+        });
+
+      afterEach(() => vi.useRealTimers());
+      const at = (iso: string) => {
+        vi.useFakeTimers({ toFake: ['Date'] });
+        vi.setSystemTime(new Date(iso));
+      };
+
+      it('gives every day a button that says its hours, and no separate day list', async () => {
+        at('2026-12-15T10:00:00Z');
+        serve({ week: chartWeek() });
+        await open();
+        const group = within(await screen.findByRole('group', { name: 'Days of the week' }));
+        expect(group.getAllByRole('button')).toHaveLength(7);
+        expect(
+          group.getByRole('button', { name: 'Monday 26 Oct: 6:00 h logged, 5:00 h billable' }),
+        ).toBeInTheDocument();
+        expect(
+          group.getByRole('button', { name: 'Friday 30 Oct: 0:00 h logged, 0:00 h billable' }),
+        ).toBeInTheDocument();
+        expect(screen.queryByRole('list', { name: 'Days of the week' })).not.toBeInTheDocument();
+      });
+
+      it('opens on the first day with time when today is not in the week', async () => {
+        at('2026-12-15T10:00:00Z');
+        serve({ week: chartWeek() });
+        await open();
+        const list = within(await screen.findByRole('list', { name: 'Entries of Monday 26 Oct' }));
+        expect(list.getAllByRole('listitem')).toHaveLength(2);
+        expect(list.getAllByText(/WEB · Website/)).toHaveLength(2);
+        expect(screen.getByRole('button', { name: /^Monday 26 Oct/ })).toHaveAttribute(
+          'aria-pressed',
+          'true',
+        );
+      });
+
+      it('lists the entries of the day that was clicked, and only those', async () => {
+        at('2026-12-15T10:00:00Z');
+        serve({ week: chartWeek() });
+        await open();
+        const user = userEvent.setup();
+        await user.click(await dayButton(/^Tuesday 27 Oct/));
+        const list = within(await screen.findByRole('list', { name: 'Entries of Tuesday 27 Oct' }));
+        expect(list.getAllByRole('listitem')).toHaveLength(1);
+        expect(list.getByText(/OPS · Operations/)).toBeInTheDocument();
+        expect(list.getByText('2:00 h')).toBeInTheDocument();
+        expect(screen.queryByRole('list', { name: 'Entries of Monday 26 Oct' })).toBeNull();
+        expect(screen.getByRole('button', { name: /^Tuesday 27 Oct/ })).toHaveAttribute(
+          'aria-pressed',
+          'true',
+        );
+        expect(screen.getByRole('button', { name: /^Monday 26 Oct/ })).toHaveAttribute(
+          'aria-pressed',
+          'false',
+        );
+      });
+
+      it('opens on today when it is in the week, and says when the day is empty', async () => {
+        at('2026-10-28T10:00:00Z');
+        serve({ week: chartWeek() });
+        await open();
+        expect(
+          await screen.findByRole('heading', { name: 'Wednesday 28 Oct' }),
+        ).toBeInTheDocument();
+        expect(screen.getByText('Nothing logged on this day.')).toBeInTheDocument();
+        expect(
+          screen.getByRole('button', { name: 'Add an entry for this day' }),
+        ).toBeInTheDocument();
+      });
+
+      it('adds time for the day that is selected', async () => {
+        at('2026-12-15T10:00:00Z');
+        serve({ week: chartWeek() });
+        await open();
+        const user = userEvent.setup();
+        await user.click(await dayButton(/^Thursday 29 Oct/));
+        await user.click(await screen.findByRole('button', { name: 'Add an entry for this day' }));
+        const form = within(await screen.findByRole('form', { name: 'Add time' }));
+        expect(form.getByLabelText('Date')).toHaveValue('2026-10-29');
+        // choosing another day closes the form
+        await user.click(await dayButton(/^Monday 26 Oct/));
+        expect(screen.queryByRole('form', { name: 'Add time' })).not.toBeInTheDocument();
+      });
+
+      it('can change and delete entries from the list of the day', async () => {
+        at('2026-12-15T10:00:00Z');
+        serve({ week: chartWeek() });
+        await open();
+        const list = within(await screen.findByRole('list', { name: 'Entries of Monday 26 Oct' }));
+        expect(list.getAllByRole('button', { name: 'Edit' })).toHaveLength(2);
+        expect(list.getAllByRole('button', { name: 'Delete' })).toHaveLength(2);
+      });
+
+      it('offers no way to add time to a locked week', async () => {
+        at('2026-12-15T10:00:00Z');
+        serve({
+          week: {
+            ...chartWeek(),
+            status: 'approved',
+            entries: chartWeek().entries.map((e) => ({ ...e, canEdit: false })),
+          },
+        });
+        await open();
+        await screen.findByRole('list', { name: 'Entries of Monday 26 Oct' });
+        expect(screen.queryByRole('button', { name: 'Add an entry for this day' })).toBeNull();
+        expect(screen.queryByRole('button', { name: 'Edit' })).toBeNull();
+      });
+
+      it('goes back to the first day when another week is shown', async () => {
+        at('2026-12-15T10:00:00Z');
+        serve({ week: chartWeek() });
+        await open();
+        const user = userEvent.setup();
+        await user.click(await dayButton(/^Tuesday 27 Oct/));
+        await screen.findByRole('list', { name: 'Entries of Tuesday 27 Oct' });
+        await user.click(screen.getByRole('button', { name: 'Next week' }));
+        await screen.findByRole('list', { name: 'Entries of Monday 26 Oct' });
+      });
     });
   });
 
