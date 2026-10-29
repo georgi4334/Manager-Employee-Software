@@ -142,5 +142,22 @@
     },
     "empty": "Nothing recorded on either side this week.",
     "hint": "Only a mirror: differences above 30 minutes are pointed out. Nothing is changed or reported."
+  },
+  "chart": {
+    "title": "Billable time",
+    "share": "{{percent}} % billable",
+    "billable": "Billable",
+    "notBillable": "Not billable",
+    "total": "Total",
+    "byProject": "By project",
+    "projectLine": "{{billable}} h billable · {{notBillable}} h not billable",
+    "empty": "Nothing logged this week yet.",
+    "note": "Entries hold hours, not clock times, so each column shows the time spent that day.",
+    "pick": "Select a day to see its entries.",
+    "dayLabel": "{{date}}: {{total}} h logged, {{billable}} h billable",
+    "dayEntries": "Entries of {{date}}",
+    "dayEmpty": "Nothing logged on this day.",
+    "addForDay": "Add an entry for this day",
+    "billableShort": "{{value}} h billable"
   }
 }

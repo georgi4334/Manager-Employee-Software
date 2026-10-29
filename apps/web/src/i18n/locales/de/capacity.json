@@ -37,7 +37,6 @@
     "full": "Fast voll",
     "over": "Überbucht"
   },
-  "numbers": "Verfügbar {{available}} · geplant {{planned}} · erfasst {{logged}} · frei {{free}}",
   "dayNumbers": "geplant {{planned}} von {{available}} Std.",
   "dayLogged": "erfasst {{logged}} Std.",
   "projectNumbers": "geplant {{planned}} Std. · erfasst {{logged}} Std.",
@@ -46,7 +45,21 @@
     "show": "Tage und Projekte von {{name}}",
     "days": "Tage von {{name}}",
     "projects": "Projekte von {{name}}",
-    "otherProjects": "Andere Projekte"
+    "otherProjects": "Andere Projekte",
+    "daysHeading": "Tag für Tag",
+    "projectsHeading": "Nach Projekt"
   },
-  "overtime": "Mehrarbeit {{overtime}}: über die verfügbare Zeit hinaus erfasst"
+  "overtime": "Mehrarbeit {{overtime}}: über die verfügbare Zeit hinaus erfasst",
+  "percentPlanned": "{{percent}} % verplant",
+  "projectShare": "{{percent}} % der geplanten Zeit",
+  "stats": {
+    "available": "Verfügbar",
+    "planned": "Geplant",
+    "logged": "Erfasst",
+    "free": "Frei"
+  },
+  "legend": {
+    "planned": "Geplant",
+    "logged": "Erfasst"
+  }
 }

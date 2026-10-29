@@ -158,7 +158,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Logging needs an active employee record, a project the person is staffed on or leads, not a finished project; the task must belong to the project (trigger plus `task_not_in_project`). A day holds at most 24 h (`day_too_long`, per-employee advisory lock `lockEmployee`). Own entries only: other people's are `404`, also for managers, HR and Admin.
 - Approval goes through `authz` on the owner with `timesheet.approve`; **nobody decides or reopens their own sheet**, whatever the role; out-of-scope sheets are `404`. `timesheet.decided` notifications carry the week and the decision only. Audit has ids and the week, never notes.
 - Deactivation stops a running timer (`TimeService.onEmployeeDeactivated`); the export lists entries and sheets; erasure clears notes and keeps hours detached from the person.
-- Web: `/time` (My time: timer, week navigator, entries, submit; Approvals tab). Durations are typed as `1:30` or `1.5` (`parseDuration`/`formatDuration`, pure and tested). Reports, CSV export and budgets are the next step (Time reports).
+- Web: `/time` (My time: timer, week navigator, entries, submit; Approvals tab). My time shows `WeekChart` instead of a day list: billable vs not billable hours per day, an 8-hour line, a per-project split (pure `timeWeekChart` in contracts, finished entries only, informational; entries hold hours not clock times). Each day is a button that lists that day's entries (edit/delete/add) under the chart; `openDay` picks the day to open on. Durations are typed as `1:30` or `1.5` (`parseDuration`/`formatDuration`, pure and tested). Reports, CSV export and budgets are the next step (Time reports).
 
 ## Time reports (docs/adr/0016-time-reports.md)
 
@@ -181,7 +181,8 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Computed, never stored (no table, nothing to export or erase). The model is pure functions in `@intime/contracts` (`capacity.ts`): `workingMinutes` (weekends, holidays of the person's country, hire and termination dates), `availableMinutes` (minus approved leave; pending leave changes nothing), `plannedMinutes` (each covering assignment claims its percentage of the available time, rounded **per assignment** so project parts add up to the whole), `loadLevel` / `dayStatus`.
 - Everybody without a schedule is measured against the standard **8-hour day** (`WORKDAY_MINUTES`); per-person hours override it (ADR 0026).
 - `GET /capacity` (`capacity.view`; people = active employees inside the scope via `allowedEmployees`; period at most 31 days). The per-project breakdown shows only projects the caller may see (`project.view`); the rest is one row without an id so totals still add up. A `projectId` the caller cannot see is `404`. Over-booking is information, never a block.
-- Web: `/capacity` has its own route guard (`capacity.view`); cards, a week at a time, no wide table.
+- Week navigation (Capacity and My time) is the shared `WeekNav` (`shared/ui/week-nav.tsx`): Previous/Next are icon buttons that never move; "This week" keeps its place and is only hidden (`invisible`, `aria-hidden`, disabled) in the current week.
+- Web: `/capacity` has its own route guard (`capacity.view`); cards, a week at a time, no wide table. A person card shows initials, level, a planned-versus-available bar and four figures; "Days and projects" is a collapsed `details` with day-by-day planned/logged bars and a per-project split (values always in text).
 
 ## Goals (docs/adr/0019-goals.md)
 

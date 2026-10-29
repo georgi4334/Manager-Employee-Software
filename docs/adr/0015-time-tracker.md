@@ -89,3 +89,18 @@ drag-and-drop calendar entry, mobile timer widget in the header.
 - A forgotten timer costs at most 16 h and is easy to correct while the week is open.
 - Because entries are not linked to sheets, moving an entry's date into a locked week is refused by the same rule as
   creating one.
+
+## Update: billable time chart on My time
+
+My time shows a week chart under the week summary, drawn like the calendar's week view: one column per day, the hours
+stacked with billable at the bottom and not billable above it, grid lines every four hours and a dashed line at the 8-hour day
+(weekends are shaded days off). Below it the same week per project, biggest first, with the billable and not billable hours in
+words. It only reads `GET /time/week`: nothing new is stored or sent. The sums are the pure `timeWeekChart` in contracts
+(finished entries only, so a running timer adds nothing until it stops; the scale is at least 8 hours and grows to the next
+whole hour for a longer day). **Entries hold hours, not clock times**, so a column is the time spent that day, not when it
+happened; the card says so. **Every day is a button** (`aria-pressed`, named with its date, hours and billable hours): choosing one lists that day's entries
+under the chart, with Edit and Delete for the entries the person may change and "Add an entry for this day" (the form opens for
+that date) unless the week is submitted or approved. The page opens on today when it is in the week, else on the first day with
+time. This replaces the separate list of seven days on My time (the Approvals tab still lists a sheet's days read only). The
+columns, labels and axis are decoration; the buttons, totals, per-project lines and the day's list carry the numbers in text.
+Approvals and Reports are unchanged.

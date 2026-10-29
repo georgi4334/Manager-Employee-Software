@@ -95,12 +95,12 @@ describe('access', () => {
     await initTestI18n('de');
     const { unmount } = await renderApp('/capacity');
     expect(await screen.findByRole('heading', { name: 'Kapazität' })).toBeInTheDocument();
-    expect(await screen.findByText('Ausgelastet')).toBeInTheDocument();
+    expect((await screen.findAllByText('Ausgelastet')).length).toBeGreaterThan(0);
     unmount();
     await initTestI18n('bg');
     await renderApp('/capacity');
     expect(await screen.findByRole('heading', { name: 'Капацитет' })).toBeInTheDocument();
-    expect(await screen.findByText('Зает')).toBeInTheDocument();
+    expect((await screen.findAllByText('Зает')).length).toBeGreaterThan(0);
   });
 });
 
@@ -121,9 +121,18 @@ describe('the list', () => {
     await renderApp('/capacity');
     const card = (await screen.findByText('Person1 Test')).closest('li')!;
     expect(card).toHaveTextContent('Busy');
-    expect(card).toHaveTextContent(
-      'Available 28:00 h · planned 10:00 h · logged 5:00 h · free 18:00 h',
-    );
+    const stats = within(card);
+    for (const [label, value] of [
+      ['Available', '28:00 h'],
+      ['Planned', '10:00 h'],
+      ['Logged', '5:00 h'],
+      ['Free', '18:00 h'],
+    ] as const) {
+      expect(stats.getByText(label, { selector: 'dt' }).nextElementSibling).toHaveTextContent(
+        value,
+      );
+    }
+    expect(card).toHaveTextContent('36 % planned');
     const q = calls.capacity.at(-1)!.searchParams;
     expect(new Date(`${q.get('from')}T00:00:00Z`).getUTCDay()).toBe(1); // a Monday
     expect(q.get('to')).toBe(
@@ -166,6 +175,70 @@ describe('the list', () => {
     const projects = within(card).getByRole('list', { name: 'Projects of Person1 Test' });
     expect(within(projects).getByText('WEB-1 · Website')).toBeInTheDocument();
     expect(within(projects).getByText('Other projects')).toBeInTheDocument();
+  });
+
+  it('starts collapsed, opens on a click and says how each project shares the planned time', async () => {
+    serve([
+      person(1, {
+        projects: [
+          { id: uuid(9), code: 'WEB-1', name: 'Website', plannedMinutes: 450, loggedMinutes: 300 },
+          {
+            id: uuid(10),
+            code: 'API-2',
+            name: 'Public API',
+            plannedMinutes: 150,
+            loggedMinutes: 0,
+          },
+        ],
+      }),
+    ]);
+    await renderApp('/capacity');
+    const card = (await screen.findByText('Person1 Test')).closest('li')!;
+    const details = card.querySelector('details')!;
+    expect(details.open).toBe(false);
+    await userEvent.setup().click(within(card).getByText('Days and projects'));
+    expect(details.open).toBe(true);
+    const projects = within(within(card).getByRole('list', { name: 'Projects of Person1 Test' }));
+    const rows = projects.getAllByRole('listitem');
+    expect(rows[0]).toHaveTextContent('WEB-1 · Website');
+    expect(rows[0]).toHaveTextContent('75 % of the planned time');
+    expect(rows[0]).toHaveTextContent('planned 7:30 h · logged 5:00 h');
+    expect(rows[1]).toHaveTextContent('25 % of the planned time');
+    expect(within(card).getByRole('heading', { name: 'Day by day' })).toBeInTheDocument();
+    expect(within(card).getByRole('heading', { name: 'By project' })).toBeInTheDocument();
+  });
+
+  it('has no percentage and no bar for someone who is not available', async () => {
+    serve([
+      person(1, {
+        level: 'none',
+        availableMinutes: 0,
+        plannedMinutes: 0,
+        loggedMinutes: 0,
+        freeMinutes: 0,
+        projects: [],
+        days: person(1).days.map((d) => ({
+          ...d,
+          availableMinutes: 0,
+          plannedMinutes: 0,
+          status: 'off' as const,
+        })),
+      }),
+    ]);
+    await renderApp('/capacity');
+    const card = (await screen.findByText('Person1 Test')).closest('li')!;
+    expect(card).toHaveTextContent('Not available');
+    expect(card).not.toHaveTextContent('% planned');
+    expect(within(card).queryByRole('heading', { name: 'By project' })).not.toBeInTheDocument();
+  });
+
+  it('shows initials, and over-booked time beyond a full bar without breaking', async () => {
+    serve([person(1, { level: 'over', plannedMinutes: 2000 })]);
+    await renderApp('/capacity');
+    const card = (await screen.findByText('Person1 Test')).closest('li')!;
+    expect(card).toHaveTextContent('Over-booked');
+    expect(card).toHaveTextContent('119 % planned');
+    expect(card.textContent).toContain('PT'); // the initials tile
   });
 
   it('shows an empty state, an error with a retry, and a count', async () => {

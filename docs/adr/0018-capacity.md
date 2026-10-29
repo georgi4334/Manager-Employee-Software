@@ -58,3 +58,13 @@ a unit, skills-based search ("who has React and time?", Phase 3 with the skills 
 - Without a schema change, capacity needs no migration, no erasure and no export entry: it reads data that is already
   exported or erased.
 - Numbers for part-time people are optimistic until the work schedule exists; the standard day is stated in the UI.
+
+## Update: the person card
+
+A person is a card: an initials tile, the name, "N % planned" and the level in words, a bar of planned time against the available
+time (full and red when over-booked), and four figures (available, planned, logged, free). "Days and projects" is a collapsed
+section (a native `details`, so it works with the keyboard and screen readers) with a chevron. Opened, it shows **day by day**:
+a row per day with a planned bar (coloured by the day's level) and a thinner logged bar against that day's available time, the
+level in words and the numbers; leave and days off carry an icon and no bar. Below it, **by project**: each project's planned and
+logged bars scaled to the person's largest project, with its share of the planned time. Bars are decoration; every value is
+written next to them. Nothing new is computed or stored: the same `GET /capacity` answer, and loading shows card-shaped skeletons.

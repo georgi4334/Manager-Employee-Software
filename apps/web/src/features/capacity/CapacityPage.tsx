@@ -10,6 +10,8 @@ import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 import { Select } from '@/shared/ui/select';
+import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
+import { WeekNav } from '@/shared/ui/week-nav';
 import { formatDay } from '@/shared/lib/format';
 import { PAGE_SIZE } from './api';
 import { useCapacity } from './hooks';
@@ -54,22 +56,16 @@ export function CapacityPage() {
       <h1 className="text-2xl font-semibold">{t('title')}</h1>
       <p className="text-sm text-muted-foreground">{t('standardDay')}</p>
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Button variant="secondary" onClick={() => moveWeek(-7)}>
-          {t('week.previous')}
-        </Button>
-        <h2 className="text-base font-semibold" aria-live="polite">
-          {t('week.of', { date: formatDay(weekStart, language) })}
-        </h2>
-        <Button variant="secondary" onClick={() => moveWeek(7)}>
-          {t('week.next')}
-        </Button>
-        {weekStart !== weekStartOf(today) && (
-          <Button variant="ghost" onClick={() => setWeekStart(weekStartOf(today))}>
-            {t('week.thisWeek')}
-          </Button>
-        )}
-      </div>
+      <WeekNav
+        title={t('week.of', { date: formatDay(weekStart, language) })}
+        previousLabel={t('week.previous')}
+        nextLabel={t('week.next')}
+        currentLabel={t('week.thisWeek')}
+        isCurrent={weekStart === weekStartOf(today)}
+        onPrevious={() => moveWeek(-7)}
+        onNext={() => moveWeek(7)}
+        onCurrent={() => setWeekStart(weekStartOf(today))}
+      />
 
       <div className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
@@ -114,9 +110,26 @@ export function CapacityPage() {
       </label>
 
       {query.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('loading')}
-        </p>
+        <SkeletonGroup label={t('loading')} className="space-y-3">
+          {[0, 1, 2].map((n) => (
+            <div key={n} className="space-y-4 rounded-xl border border-border bg-surface p-4">
+              <div className="flex items-center gap-3">
+                <Skeleton className="size-11 shrink-0 rounded-xl" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-2/5" />
+                  <Skeleton className="h-3 w-1/4" />
+                </div>
+                <Skeleton className="h-5 w-16 rounded-full" />
+              </div>
+              <Skeleton className="h-2.5 w-full rounded-full" />
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {[0, 1, 2, 3].map((m) => (
+                  <Skeleton key={m} className="h-12 rounded-lg" />
+                ))}
+              </div>
+            </div>
+          ))}
+        </SkeletonGroup>
       )}
       {query.isError && (
         <Card className="space-y-3 text-center">
