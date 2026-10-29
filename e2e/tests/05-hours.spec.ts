@@ -38,7 +38,9 @@ test('an administrator sets part-time working hours and capacity follows', async
     .getByRole('listitem')
     .filter({ hasText: 'Eva Employee' });
   const text = await eva.innerText();
-  const available = Number(/Available (\d+):\d\d h/.exec(text)?.[1]);
+  // the card shows each figure in its own tile: "Available" above "20:00 h"
+  const available = Number(/Available\s+(\d+):\d\d h/.exec(text)?.[1]);
+  expect(available).toBeGreaterThan(0);
   expect(available).toBeLessThanOrEqual(20);
 });
 
