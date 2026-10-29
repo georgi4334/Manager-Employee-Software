@@ -43,6 +43,8 @@ const envSchema = z
     TRUST_PROXY: booleanString.optional(),
     /** Proxy hops in front of the API whose X-Forwarded-For entries are trusted (see docs/adr/0005). */
     TRUST_PROXY_HOPS: z.coerce.number().int().min(1).max(5).default(1),
+    /** Read public holidays from openholidaysapi.org for the calendar (docs/adr/0035). Off = offline data only. */
+    PUBLIC_HOLIDAYS_FEED: booleanString.default(true),
     /** Background delivery of notifications and emails. Turn off for tests and one-off commands. */
     WORKER_ENABLED: booleanString.default(true),
     /**

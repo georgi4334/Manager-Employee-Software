@@ -19,7 +19,7 @@ import { ProjectForm } from './ProjectForm';
 import { useProjectErrors } from './use-project-errors';
 import { SkeletonGroup, Skeleton } from '@/shared/ui/skeleton';
 import { TabList, TabPanel } from '@/shared/ui/tabs';
-import { Chip, Tile, initials } from './tiles';
+import { Chip, Tile, initials } from '@/shared/ui/tiles';
 
 type Tab = 'projects' | 'clients';
 

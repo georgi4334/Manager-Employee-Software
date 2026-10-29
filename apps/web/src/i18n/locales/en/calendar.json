@@ -165,5 +165,15 @@
       "60": "Reminder: 1 hour before",
       "1440": "Reminder: 1 day before"
     }
+  },
+  "holidays": {
+    "label": "Countries",
+    "countries": {
+      "BG": "Bulgaria",
+      "DE": "Germany",
+      "GB": "England"
+    },
+    "offline": "The holiday feed could not be reached, so built-in days are shown for Bulgaria and Germany.",
+    "informational": "Shown for information; leave counting uses your own country’s days."
   }
 }

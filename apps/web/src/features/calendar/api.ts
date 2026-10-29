@@ -5,6 +5,8 @@ import type {
   CreateEventRequest,
   FindTimeRequest,
   FindTimeResponse,
+  PublicHolidayLanguage,
+  PublicHolidayList,
   SeriesScopeQuery,
   UpdateEventRequest,
 } from '@intime/contracts';
@@ -18,6 +20,10 @@ export const calendarKeys = {
 
 export const fetchEvents = (from: string, to: string) =>
   apiRequest<CalendarEventList>(`/calendar/events?${new URLSearchParams({ from, to })}`);
+export const fetchPublicHolidays = (from: string, to: string, language: PublicHolidayLanguage) =>
+  apiRequest<PublicHolidayList>(
+    `/calendar/public-holidays?${new URLSearchParams({ from, to, language })}`,
+  );
 export const createEvent = (body: CreateEventRequest) =>
   apiRequest<CalendarEvent>('/calendar/events', { method: 'POST', body });
 

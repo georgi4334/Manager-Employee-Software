@@ -15,6 +15,7 @@ import {
   createEventRequestSchema,
   eventQuerySchema,
   findTimeRequestSchema,
+  publicHolidayQuerySchema,
   respondRequestSchema,
   seriesScopeQuerySchema,
   updateEventRequestSchema,
@@ -24,6 +25,8 @@ import {
   type EventQuery,
   type FindTimeRequest,
   type FindTimeResponse,
+  type PublicHolidayList,
+  type PublicHolidayQuery,
   type RespondRequest,
   type SeriesScopeQuery,
   type UpdateEventRequest,
@@ -34,6 +37,7 @@ import { CurrentAuth, RequirePermission } from '../../common/auth/decorators.js'
 import { ZodValidationPipe } from '../../common/pipes/zod-validation.pipe.js';
 import { CalendarFindTimeService } from './calendar-find-time.service.js';
 import { CalendarService } from './calendar.service.js';
+import { PublicHolidaysService } from './public-holidays.service.js';
 
 const idParam = new ZodValidationPipe(z.uuid());
 
@@ -44,6 +48,7 @@ export class CalendarController {
   constructor(
     private readonly calendar: CalendarService,
     private readonly findTime: CalendarFindTimeService,
+    private readonly holidays: PublicHolidaysService,
   ) {}
 
   @Get('events')
@@ -54,6 +59,17 @@ export class CalendarController {
     @Query(new ZodValidationPipe(eventQuerySchema)) query: EventQuery,
   ): Promise<CalendarEventList> {
     return this.calendar.list(actor, query);
+  }
+
+  @Get('public-holidays')
+  @RequirePermission('calendar.manage_own')
+  @ApiOperation({
+    summary: 'Public holidays of Bulgaria, Germany and England for a period (at most 93 days)',
+  })
+  publicHolidays(
+    @Query(new ZodValidationPipe(publicHolidayQuerySchema)) query: PublicHolidayQuery,
+  ): Promise<PublicHolidayList> {
+    return this.holidays.list(query);
   }
 
   @Post('events')

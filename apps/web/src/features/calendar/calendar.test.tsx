@@ -1,4 +1,11 @@
-import type { CalendarEvent, Employee, Holiday, LeaveRequest, Team } from '@intime/contracts';
+import type {
+  CalendarEvent,
+  Employee,
+  Holiday,
+  LeaveRequest,
+  PublicHoliday,
+  Team,
+} from '@intime/contracts';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
@@ -91,11 +98,14 @@ interface Served {
   events?: CalendarEvent[];
   leave?: LeaveRequest[];
   holidays?: Holiday[];
+  publicHolidays?: PublicHoliday[];
+  /** Makes the holiday feed answer with a server error. */
+  feedDown?: boolean;
   teams?: Team[];
 }
 
 function serve(o: Served = {}) {
-  const calls = { events: [] as URL[], leave: [] as URL[] };
+  const calls = { events: [] as URL[], leave: [] as URL[], feed: [] as URL[] };
   server.use(
     http.get(`${API}/employees/me`, () => HttpResponse.json(own())),
     http.get(`${API}/org/teams`, () => HttpResponse.json(o.teams ?? [])),
@@ -109,6 +119,11 @@ function serve(o: Served = {}) {
       return HttpResponse.json({ items, total: items.length, page: 1, pageSize: 100 });
     }),
     http.get(`${API}/leave/holidays`, () => HttpResponse.json(o.holidays ?? [])),
+    http.get(`${API}/calendar/public-holidays`, ({ request: r }) => {
+      calls.feed.push(new URL(r.url));
+      if (o.feedDown) return errorResponse('INTERNAL', 500);
+      return HttpResponse.json({ items: o.publicHolidays ?? [] });
+    }),
   );
   return calls;
 }
@@ -296,6 +311,21 @@ describe('week, day and agenda', () => {
 });
 
 // ---------------------------------------------------------------------------------------------------
+const feedDay = (
+  date: string,
+  country: PublicHoliday['country'],
+  name: string,
+  over: Partial<PublicHoliday> = {},
+): PublicHoliday => ({
+  date,
+  endDate: date,
+  country,
+  name,
+  key: null,
+  source: 'openholidays',
+  ...over,
+});
+
 describe('layers', () => {
   const holiday: Holiday = {
     id: null,
@@ -321,13 +351,15 @@ describe('layers', () => {
         }),
       ],
       holidays: [
-        { ...holiday, date: '2030-03-04' },
+        { ...holiday, date: '2030-03-04', key: null, name: 'Founders Day' },
         { ...holiday, date: '2030-05-05', key: null, name: 'Out of range' },
       ],
+      publicHolidays: [feedDay('2030-03-04', 'BG', 'Liberation Day')],
     });
     await renderApp(AGENDA);
     expect(await screen.findByText('Dentist')).toBeInTheDocument();
-    expect(await screen.findByText('Liberation Day')).toBeInTheDocument();
+    expect(await screen.findByText('BG · Liberation Day')).toBeInTheDocument();
+    expect(screen.getByText('Founders Day')).toBeInTheDocument(); // the workspace's own day
     expect(screen.getAllByText(/Dan Dimitrov · Annual leave/)).toHaveLength(2);
     expect(screen.getByText('(pending)')).toBeInTheDocument();
     expect(screen.getByText(/Dan Dimitrov · Absent/)).toBeInTheDocument(); // a masked sick leave: only "absent"
@@ -341,20 +373,20 @@ describe('layers', () => {
     expect(leave.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
     expect(leave.getByText(/Details stay with the person/)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Close' }));
-    const holidayDialog = await openCard(user, 'Liberation Day');
+    const holidayDialog = await openCard(user, 'BG · Liberation Day');
     expect(holidayDialog.getByText('A public holiday.')).toBeInTheDocument();
   });
 
   it('hides a layer when its box is cleared', async () => {
     serve({
       events: [event(1, { title: 'Dentist', startDate: '2030-03-04', endDate: '2030-03-04' })],
-      holidays: [{ ...holiday, date: '2030-03-04' }],
+      publicHolidays: [feedDay('2030-03-04', 'BG', 'Liberation Day')],
     });
     await renderApp(AGENDA);
-    await screen.findByText('Liberation Day');
+    await screen.findByText('BG · Liberation Day');
     const user = userEvent.setup();
     await user.click(screen.getByRole('checkbox', { name: 'Public holidays' }));
-    expect(screen.queryByText('Liberation Day')).not.toBeInTheDocument();
+    expect(screen.queryByText('BG · Liberation Day')).not.toBeInTheDocument();
     expect(screen.getByText('Dentist')).toBeInTheDocument();
     await user.click(screen.getByRole('checkbox', { name: 'My events' }));
     expect(screen.queryByText('Dentist')).not.toBeInTheDocument();
@@ -383,6 +415,92 @@ describe('layers', () => {
 });
 
 // ---------------------------------------------------------------------------------------------------
+describe('public holidays from the feed', () => {
+  const days = [
+    feedDay('2030-03-04', 'BG', 'Liberation Day'),
+    feedDay('2030-03-04', 'DE', 'Tag der Einheit'),
+    feedDay('2030-03-04', 'GB', 'Easter Monday'),
+  ];
+
+  it('shows Bulgaria, Germany and England side by side, each marked with its country', async () => {
+    serve({ publicHolidays: days });
+    await renderApp(AGENDA);
+    expect(await screen.findByText('BG · Liberation Day')).toBeInTheDocument();
+    expect(screen.getByText('DE · Tag der Einheit')).toBeInTheDocument();
+    expect(screen.getByText('ENG · Easter Monday')).toBeInTheDocument();
+  });
+
+  it('asks for the period and the language of the page, and only when the layer is on', async () => {
+    const calls = serve({ publicHolidays: days });
+    await renderApp(AGENDA);
+    await screen.findByText('BG · Liberation Day');
+    const url = calls.feed.at(-1)!.searchParams;
+    expect(url.get('language')).toBe('en');
+    expect(url.get('from')).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(url.get('to')! >= url.get('from')!).toBe(true);
+
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('checkbox', { name: 'Public holidays' }));
+    expect(screen.queryByRole('group', { name: 'Countries' })).not.toBeInTheDocument();
+    const before = calls.feed.length;
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+    await waitFor(() => expect(calls.events.length).toBeGreaterThan(1));
+    expect(calls.feed).toHaveLength(before); // switched off: nothing is fetched
+  });
+
+  it('lets a person hide one country at a time', async () => {
+    serve({ publicHolidays: days });
+    await renderApp(AGENDA);
+    await screen.findByText('DE · Tag der Einheit');
+    const user = userEvent.setup();
+    const countries = within(screen.getByRole('group', { name: 'Countries' }));
+    expect(countries.getAllByRole('checkbox').map((c) => (c as HTMLInputElement).checked)).toEqual([
+      true,
+      true,
+      true,
+    ]);
+    await user.click(countries.getByRole('checkbox', { name: 'Germany' }));
+    expect(screen.queryByText('DE · Tag der Einheit')).not.toBeInTheDocument();
+    expect(screen.getByText('BG · Liberation Day')).toBeInTheDocument();
+    expect(screen.getByText('ENG · Easter Monday')).toBeInTheDocument();
+    await user.click(countries.getByRole('checkbox', { name: 'Germany' }));
+    expect(await screen.findByText('DE · Tag der Einheit')).toBeInTheDocument();
+  });
+
+  it('translates built-in days when the feed is down and says so', async () => {
+    serve({
+      publicHolidays: [
+        feedDay('2030-03-04', 'BG', '', {
+          name: null,
+          key: 'BG.liberation_day',
+          source: 'builtin',
+        }),
+      ],
+    });
+    await renderApp(AGENDA);
+    expect(await screen.findByText('BG · Liberation Day')).toBeInTheDocument();
+    expect(screen.getByText(/feed could not be reached/)).toBeInTheDocument();
+  });
+
+  it('keeps the page working when the holiday request fails', async () => {
+    serve({
+      feedDown: true,
+      events: [event(1, { title: 'Dentist', startDate: '2030-03-04', endDate: '2030-03-04' })],
+    });
+    await renderApp(AGENDA);
+    expect(await screen.findByText('Dentist')).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('shows a multi-day holiday on every day it covers', async () => {
+    serve({
+      publicHolidays: [feedDay('2030-03-03', 'DE', 'Long weekend', { endDate: '2030-03-05' })],
+    });
+    await renderApp(AGENDA);
+    expect(await screen.findAllByText('DE · Long weekend')).not.toHaveLength(0);
+  });
+});
+
 describe('creating events', () => {
   const open = async () => {
     const user = userEvent.setup();

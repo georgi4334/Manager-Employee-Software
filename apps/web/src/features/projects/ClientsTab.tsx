@@ -12,7 +12,7 @@ import { Card, CardTitle } from '@/shared/ui/card';
 import { Field } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
 import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
-import { Chip, Tile, initials } from './tiles';
+import { Chip, Tile, initials } from '@/shared/ui/tiles';
 import { clientFormSchema, toCreateClient, toUpdateClient, type ClientFormValues } from './forms';
 import { useClients, useCreateClient, useUpdateClient } from './hooks';
 import { useProjectErrors } from './use-project-errors';

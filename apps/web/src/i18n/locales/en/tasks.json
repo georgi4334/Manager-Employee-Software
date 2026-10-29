@@ -78,5 +78,8 @@
     "open_one": "{{count}} open task",
     "open_other": "{{count}} open tasks",
     "go": "Open the tasks"
+  },
+  "board": {
+    "empty": "Nothing here"
   }
 }

@@ -1,4 +1,4 @@
-import { TASK_STATUSES, TASK_TYPES } from '@intime/contracts';
+import { TASK_STATUSES, TASK_TYPES, type TaskStatus } from '@intime/contracts';
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,7 @@ import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 import { Select } from '@/shared/ui/select';
+import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
 import { PAGE_SIZE, type ListParams } from './api';
 import { useTasks } from './hooks';
 import { TaskCard } from './TaskCard';
@@ -18,6 +19,13 @@ import { useTaskErrors } from './use-task-errors';
 import { TabList, TabContent } from '@/shared/ui/tabs';
 
 type View = 'list' | 'board';
+
+const COLUMN_DOT: Record<TaskStatus, string> = {
+  todo: 'bg-muted-foreground',
+  in_progress: 'bg-info',
+  review: 'bg-warning',
+  done: 'bg-success',
+};
 
 export function TasksPage() {
   const { t } = useTranslation('tasks');
@@ -56,7 +64,7 @@ export function TasksPage() {
   const editable = (projects.data?.items ?? []).filter((p) => p.canEdit);
 
   return (
-    <div className="mx-auto max-w-5xl space-y-4">
+    <div className="mx-auto max-w-6xl space-y-4">
       <h1 className="text-2xl font-semibold">{t('title')}</h1>
       {canCreate && editable.length > 0 && !creating && (
         <Button onClick={() => setCreating(true)}>{t('new')}</Button>
@@ -154,9 +162,23 @@ export function TasksPage() {
 
       <TabContent value={view}>
         {query.isPending && (
-          <p role="status" className="text-sm text-muted-foreground">
-            {t('loading')}
-          </p>
+          <SkeletonGroup
+            label={t('loading')}
+            className={view === 'board' ? 'grid gap-4 md:grid-cols-2 xl:grid-cols-4' : 'space-y-2'}
+          >
+            {Array.from({ length: view === 'board' ? 4 : 3 }, (_, n) => (
+              <div key={n} className="space-y-3 rounded-xl border border-border bg-surface p-4">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="size-11 shrink-0 rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-3/5" />
+                    <Skeleton className="h-3 w-2/5" />
+                  </div>
+                </div>
+                <Skeleton className="h-6 w-full" />
+              </div>
+            ))}
+          </SkeletonGroup>
         )}
         {query.isError && (
           <Card className="space-y-3 text-center">
@@ -180,19 +202,35 @@ export function TasksPage() {
                 ))}
               </ul>
             ) : (
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
                 {TASK_STATUSES.map((s) => {
                   const column = data.items.filter((task) => task.status === s);
                   return (
-                    <section key={s} aria-labelledby={`board-${s}`} className="space-y-2">
-                      <h2 id={`board-${s}`} className="text-sm font-semibold">
+                    <section
+                      key={s}
+                      aria-labelledby={`board-${s}`}
+                      className="space-y-3 rounded-2xl border border-border bg-surface-muted p-3"
+                    >
+                      <h2
+                        id={`board-${s}`}
+                        className="flex items-center gap-2 px-1 text-sm font-semibold"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className={`size-2.5 rounded-full ${COLUMN_DOT[s]}`}
+                        />
                         {t(`status.${s}`)} ({column.length})
                       </h2>
-                      <ul className="space-y-2" aria-labelledby={`board-${s}`}>
+                      <ul className="space-y-3" aria-labelledby={`board-${s}`}>
                         {column.map((task) => (
-                          <TaskCard key={task.id} task={task} />
+                          <TaskCard key={task.id} task={task} variant="board" />
                         ))}
                       </ul>
+                      {column.length === 0 && (
+                        <p className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
+                          {t('board.empty')}
+                        </p>
+                      )}
                     </section>
                   );
                 })}

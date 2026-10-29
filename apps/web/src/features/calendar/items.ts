@@ -8,7 +8,7 @@ export interface CalendarItem {
   key: string;
   kind: ItemKind;
   title: string;
-  /** The person for leave items. */
+  /** The person for leave items, the country for public holidays. */
   who?: string;
   startDate: string;
   endDate: string;
