@@ -8,6 +8,95 @@
     <meta name="referrer" content="no-referrer" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>InTime</title>
+    <!--
+      The boot screen must look right before any script or stylesheet has loaded, so its few rules are
+      inline. The values mirror tokens.css (--sidebar, --sidebar-foreground, --sidebar-border, --brand);
+      change them together (ADR 0033). The same classes in globals.css take over once the app runs.
+    -->
+    <style>
+      .splash {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.25rem;
+        background: #170f0e;
+        color: #ece5e2;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          Arial,
+          sans-serif;
+      }
+      .splash-mark {
+        width: 4rem;
+        height: 4rem;
+        animation: splash-breathe 1.6s ease-in-out infinite alternate;
+      }
+      .splash-tile {
+        fill: #f26a4b;
+      }
+      .splash-ink {
+        fill: #170f0e;
+      }
+      .splash-line {
+        fill: none;
+        stroke: #170f0e;
+      }
+      .splash-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+      }
+      .splash-bar {
+        position: relative;
+        width: 7rem;
+        height: 3px;
+        overflow: hidden;
+        border-radius: 9999px;
+        background: #2e2421;
+      }
+      .splash-bar::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        width: 40%;
+        border-radius: inherit;
+        background: #f26a4b;
+        animation: splash-bar 1.2s cubic-bezier(0.32, 0.72, 0, 1) infinite;
+      }
+      @keyframes splash-breathe {
+        from {
+          opacity: 0.8;
+          transform: scale(0.94);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      @keyframes splash-bar {
+        from {
+          transform: translateX(-100%);
+        }
+        to {
+          transform: translateX(250%);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .splash-mark,
+        .splash-bar::after {
+          animation: none;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="root">

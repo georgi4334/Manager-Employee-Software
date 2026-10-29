@@ -1,4 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router';
+import { Splash } from '@/shared/components/Splash';
 import { safeRedirectPath } from './redirect';
 import { useCurrentUser } from './use-auth';
 
@@ -8,7 +9,13 @@ export function PublicOnly() {
   const { data: user } = useCurrentUser();
   if (user) {
     const from = (location.state as { from?: unknown } | null)?.from;
-    return <Navigate to={safeRedirectPath(from)} replace />;
+    // A redirect draws nothing for a frame; the boot screen covers it.
+    return (
+      <>
+        <Splash />
+        <Navigate to={safeRedirectPath(from)} replace />
+      </>
+    );
   }
   return <Outlet />;
 }

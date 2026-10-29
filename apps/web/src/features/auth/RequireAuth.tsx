@@ -34,8 +34,12 @@ export function RequireAuth() {
   }
 
   if (!user) {
+    // A redirect draws nothing for a frame; the boot screen stays until the login page is there.
     return (
-      <Navigate to="/login" replace state={{ from: `${location.pathname}${location.search}` }} />
+      <>
+        <Splash />
+        <Navigate to="/login" replace state={{ from: `${location.pathname}${location.search}` }} />
+      </>
     );
   }
   return <Outlet />;

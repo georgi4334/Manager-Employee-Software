@@ -80,3 +80,12 @@ has something to show. Coloured left edges and borders still work on top (utilit
   grids of the calendar (many small cells; blur would be costly) and the drawer controls.
 - Colours live only in `tokens.css`, as before. `Card` uses `.glass`; new containers use `glass` (and `glass-hover` when they react
   to the pointer) instead of `border border-border bg-surface shadow-card`.
+
+## Update: a boot screen without gaps
+
+The boot screen in `index.html` carries its own small inline `<style>` (the `.splash` rules), because it is shown before any
+stylesheet arrives; without it the first frames were an unstyled logo and text in the corner. Its colours repeat `--sidebar`,
+`--sidebar-foreground`, `--sidebar-border` and `--brand`, and `src/app/splash-markup.test.ts` fails when they drift from
+`tokens.css`. The app renders only once the translations are loaded (the static screen stays meanwhile), the `Suspense` fallback is
+`Splash`, and the route guards (`RequireAuth`, `PublicOnly`) keep `Splash` on screen while they redirect, so no empty frame appears
+between the boot screen and the first page.
