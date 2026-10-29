@@ -142,5 +142,16 @@
     },
     "empty": "In dieser Woche ist auf beiden Seiten nichts erfasst.",
     "hint": "Nur ein Spiegel: Unterschiede über 30 Minuten werden angezeigt. Nichts wird geändert oder gemeldet."
+  },
+  "chart": {
+    "title": "Abrechenbare Zeit",
+    "share": "{{percent}} % abrechenbar",
+    "billable": "Abrechenbar",
+    "notBillable": "Nicht abrechenbar",
+    "total": "Gesamt",
+    "byProject": "Nach Projekt",
+    "projectLine": "{{billable}} Std. abrechenbar · {{notBillable}} Std. nicht abrechenbar",
+    "empty": "In dieser Woche ist noch nichts erfasst.",
+    "note": "Einträge enthalten Stunden, keine Uhrzeiten; jede Spalte zeigt die an diesem Tag verbrachte Zeit."
   }
 }

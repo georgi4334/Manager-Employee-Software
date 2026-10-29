@@ -29,6 +29,7 @@ export * from './schedule.js';
 export * from './tasks.js';
 export * from './time.js';
 export * from './time-reports.js';
+export * from './time-week-chart.js';
 export * from './users.js';
 export * from './zoned-time.js';
 export * from './one-on-ones.js';

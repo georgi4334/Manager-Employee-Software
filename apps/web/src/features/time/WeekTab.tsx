@@ -12,6 +12,7 @@ import { useSubmitWeek, useWeek } from './hooks';
 import { StatusBadge } from './StatusBadge';
 import { TimerCard } from './TimerCard';
 import { useTimeErrors } from './use-time-errors';
+import { WeekChart } from './WeekChart';
 import { WeekDays } from './WeekDays';
 
 export function WeekTab({ today }: { today: string }) {
@@ -100,6 +101,7 @@ export function WeekTab({ today }: { today: string }) {
               />
             </Card>
           )}
+          <WeekChart week={data} today={today} />
           {seesAttendance && <ComparePanel key={weekStart} weekStart={weekStart} />}
           <WeekDays week={data} />
         </>

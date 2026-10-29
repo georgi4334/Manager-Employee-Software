@@ -223,8 +223,81 @@ describe('my week', () => {
     expect(screen.getAllByText('Sent back').length).toBeGreaterThan(0);
     expect(screen.getByText(/WEB-3/)).toBeInTheDocument();
     expect(screen.getByText('Reviewed')).toBeInTheDocument();
-    expect(screen.getByText('Not billable')).toBeInTheDocument();
+    expect(rows.getByText('Not billable')).toBeInTheDocument();
     expect(screen.getByText(/was sent back/)).toBeInTheDocument();
+  });
+
+  describe('the billable time chart', () => {
+    const OPS = uuid(61);
+    const chartWeek = () =>
+      week({
+        entries: [
+          entry(1, { minutes: 300, isBillable: true }),
+          entry(2, { minutes: 60, isBillable: false }),
+          entry(3, {
+            minutes: 120,
+            isBillable: true,
+            workDate: '2026-10-27',
+            project: { id: OPS, code: 'OPS', name: 'Operations' },
+          }),
+        ],
+        days: days([360, 120, 0, 0, 0, 0, 0]),
+        totalMinutes: 480,
+        billableMinutes: 420,
+      });
+
+    it('shows billable, not billable and total hours with the billable share', async () => {
+      serve({ week: chartWeek() });
+      await open();
+      const card = (await screen.findByRole('heading', { name: 'Billable time' })).closest(
+        'div',
+      )!.parentElement!;
+      const chart = within(card);
+      expect(chart.getByText('88 % billable')).toBeInTheDocument();
+      expect(chart.getByText('7:00 h')).toBeInTheDocument(); // billable
+      expect(chart.getByText('1:00 h')).toBeInTheDocument(); // not billable
+      expect(chart.getByText('8:00 h')).toBeInTheDocument(); // total
+    });
+
+    it('breaks the week down by project, biggest first', async () => {
+      serve({ week: chartWeek() });
+      await open();
+      const list = within(await screen.findByRole('list', { name: 'By project' }));
+      const rows = list.getAllByRole('listitem');
+      expect(rows).toHaveLength(2);
+      expect(rows[0]).toHaveTextContent('WEB · Website');
+      expect(rows[0]).toHaveTextContent('5:00 h billable · 1:00 h not billable');
+      expect(rows[1]).toHaveTextContent('OPS · Operations');
+      expect(rows[1]).toHaveTextContent('2:00 h billable · 0:00 h not billable');
+    });
+
+    it('says so, and shows no project list, when nothing is logged', async () => {
+      serve();
+      await open();
+      expect(await screen.findByText('Nothing logged this week yet.')).toBeInTheDocument();
+      expect(screen.getByText('0 % billable')).toBeInTheDocument();
+      expect(screen.queryByRole('list', { name: 'By project' })).not.toBeInTheDocument();
+    });
+
+    it('leaves a running timer out of the hours', async () => {
+      serve({
+        week: week({
+          entries: [entry(1, { minutes: null, running: true, startedAt: '2026-10-26T08:00:00Z' })],
+        }),
+      });
+      await open();
+      expect(await screen.findByText('Nothing logged this week yet.')).toBeInTheDocument();
+    });
+
+    it('is a picture: the plot is hidden from assistive technology', async () => {
+      serve({ week: chartWeek() });
+      await open();
+      const heading = await screen.findByRole('heading', { name: 'Billable time' });
+      const plot = heading
+        .closest('section, div')!
+        .parentElement!.querySelector('[aria-hidden="true"].flex');
+      expect(plot).not.toBeNull();
+    });
   });
 
   it('asks for the week that is shown and moves between weeks', async () => {
