@@ -55,3 +55,10 @@ Status: accepted
   Dark mode uses warm dark equivalents. Native `<select>`s stay native (phones keep their own picker);
   where the browser supports `appearance: base-select` (Chromium 135+), their open list gets the same
   panel, items, check mark and a chevron. Other browsers show their native list unchanged.
+
+## Update: project and client cards
+
+The Projects and Clients lists are card grids (one column on phones, two from `sm`), not stacked rows. A card has a soft
+icon or initials tile (`Tile`), a short tag (`Chip`), the title, and a footer line with a person avatar and meta icons,
+all from `features/projects/tiles.tsx` and the existing tokens. The whole project card is the link; the card lifts
+(`transform` only, `motion-safe`) on hover. Loading shows card-shaped skeletons. Health stays a word, never only a colour.

@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Client } from '@intime/contracts';
+import { Briefcase, Mail, User } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +11,8 @@ import { Button } from '@/shared/ui/button';
 import { Card, CardTitle } from '@/shared/ui/card';
 import { Field } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
+import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
+import { Chip, Tile, initials } from './tiles';
 import { clientFormSchema, toCreateClient, toUpdateClient, type ClientFormValues } from './forms';
 import { useClients, useCreateClient, useUpdateClient } from './hooks';
 import { useProjectErrors } from './use-project-errors';
@@ -39,9 +42,20 @@ export function ClientsTab() {
         </Card>
       )}
       {clients.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('loading')}
-        </p>
+        <SkeletonGroup label={t('loading')} className="grid gap-3 sm:grid-cols-2">
+          {[0, 1, 2, 3].map((n) => (
+            <div key={n} className="space-y-3 rounded-xl border border-border bg-surface p-4">
+              <div className="flex items-center gap-3">
+                <Skeleton className="size-11 rounded-xl" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-2/3" />
+                  <Skeleton className="h-3 w-1/3" />
+                </div>
+              </div>
+              <Skeleton className="h-8 w-full" />
+            </div>
+          ))}
+        </SkeletonGroup>
       )}
       {clients.isError && <Alert tone="danger">{errors.apiError(clients.error)}</Alert>}
       {clients.data && clients.data.items.length === 0 && (
@@ -50,7 +64,7 @@ export function ClientsTab() {
         </Card>
       )}
       {clients.data && clients.data.items.length > 0 && (
-        <ul className="space-y-2" aria-label={t('clients.title')}>
+        <ul className="grid gap-3 sm:grid-cols-2" aria-label={t('clients.title')}>
           {clients.data.items.map((client) => (
             <ClientRow key={client.id} client={client} canManage={canManage} />
           ))}
@@ -68,34 +82,52 @@ function ClientRow({ client, canManage }: { client: Client; canManage: boolean }
 
   if (editing) {
     return (
-      <li className="rounded-xl border border-border bg-surface p-4 shadow-card">
+      <li className="rounded-xl border border-border bg-surface p-4 shadow-card sm:col-span-2">
         <ClientForm client={client} onDone={() => setEditing(false)} />
       </li>
     );
   }
   return (
-    <li className="space-y-2 rounded-xl border border-border bg-surface p-4 shadow-card">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="font-medium">{client.name}</p>
-          <p className="text-sm text-muted-foreground">
-            {t('clients.projects', { count: client.projectCount })}
-          </p>
-          {client.contactName && <p className="text-sm">{client.contactName}</p>}
-          {client.contactEmail && (
-            <p className="text-sm text-muted-foreground">{client.contactEmail}</p>
-          )}
-          {client.notes && <p className="text-sm">{client.notes}</p>}
+    <li className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 shadow-card">
+      <div className="flex items-start gap-3">
+        <Tile>{initials(client.name)}</Tile>
+        <div className="min-w-0 flex-1">
+          <p className="break-words text-base font-semibold leading-snug">{client.name}</p>
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            <Chip>
+              <Briefcase className="size-3" aria-hidden="true" />
+              {t('clients.projects', { count: client.projectCount })}
+            </Chip>
+            {client.status === 'archived' && (
+              <Chip className="border border-warning bg-transparent text-warning">
+                {t('clients.archived')}
+              </Chip>
+            )}
+          </div>
         </div>
-        {client.status === 'archived' && (
-          <span className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">
-            {t('clients.archived')}
-          </span>
-        )}
       </div>
+      {(client.contactName || client.contactEmail) && (
+        <div className="space-y-1.5 text-sm">
+          {client.contactName && (
+            <p className="flex items-center gap-2">
+              <User className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <span className="min-w-0 break-words">{client.contactName}</span>
+            </p>
+          )}
+          {client.contactEmail && (
+            <p className="flex items-center gap-2 text-muted-foreground">
+              <Mail className="size-4 shrink-0" aria-hidden="true" />
+              <span className="min-w-0 break-all">{client.contactEmail}</span>
+            </p>
+          )}
+        </div>
+      )}
+      {client.notes && (
+        <p className="line-clamp-2 break-words text-sm text-muted-foreground">{client.notes}</p>
+      )}
       {update.isError && <Alert tone="danger">{errors.apiError(update.error)}</Alert>}
       {canManage && (
-        <div className="flex flex-wrap gap-2">
+        <div className="mt-auto flex flex-wrap gap-2 border-t border-border pt-3">
           <Button variant="secondary" onClick={() => setEditing(true)}>
             {t('clients.edit')}
           </Button>
