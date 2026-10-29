@@ -112,7 +112,7 @@ export function CapacityPage() {
       {query.isPending && (
         <SkeletonGroup label={t('loading')} className="space-y-3">
           {[0, 1, 2].map((n) => (
-            <div key={n} className="space-y-4 rounded-xl border border-border bg-surface p-4">
+            <div key={n} className="space-y-4 rounded-xl glass p-4">
               <div className="flex items-center gap-3">
                 <Skeleton className="size-11 shrink-0 rounded-xl" />
                 <div className="flex-1 space-y-2">

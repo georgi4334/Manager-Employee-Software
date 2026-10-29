@@ -62,3 +62,21 @@ The Projects and Clients lists are card grids (one column on phones, two from `s
 icon or initials tile (`Tile`), a short tag (`Chip`), the title, and a footer line with a person avatar and meta icons,
 all from `shared/ui/tiles.tsx` and the existing tokens. The whole project card is the link; the card lifts
 (`transform` only, `motion-safe`) on hover. Loading shows card-shaped skeletons. Health stays a word, never only a colour.
+
+## Update: liquid glass containers
+
+Every container that carries information (cards, list rows, stat tiles, the person and goal cards, board columns, the segmented
+control, the week navigator, the back link, the notification toast) is a **frosted glass pane**: the `.glass` class in
+`globals.css` (translucent `--glass-bg`, a light top highlight `--glass-highlight`, a hairline edge `--glass-edge`, a soft shadow
+and `backdrop-filter: blur(18px) saturate(1.6)`); interactive panes add `.glass-hover`. The content panel is the canvas
+(`.glass-canvas`): the page background with three very soft radial tints (`--canvas-1/2/3`: brand orange, cyan, green), so the blur
+has something to show. Coloured left edges and borders still work on top (utilities override the component class).
+
+- Readability first: the pane stays mostly opaque (64 % white in light, 58 % warm dark in dark), so the AA text pairs of the
+  tokens still hold; the tints are faint.
+- Without `backdrop-filter`, and for `prefers-reduced-transparency: reduce`, panes become solid (`--glass-solid`) and the canvas
+  plain.
+- Not glass: inputs, selects and alerts (they stay solid so typing is easy to read), drop-downs (`.menu-panel`), the month and time
+  grids of the calendar (many small cells; blur would be costly) and the drawer controls.
+- Colours live only in `tokens.css`, as before. `Card` uses `.glass`; new containers use `glass` (and `glass-hover` when they react
+  to the pointer) instead of `border border-border bg-surface shadow-card`.

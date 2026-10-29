@@ -150,7 +150,7 @@ function PresenceCard({ item, target }: { item: PresenceItem; target: number }) 
   const recorded = state === 'working' || state === 'done';
   const level = attendanceDayLevel(item.minutes, { open: state === 'working', target });
   return (
-    <li className="space-y-3 rounded-xl border border-border bg-surface p-4 shadow-card">
+    <li className="space-y-3 rounded-xl glass p-4">
       <div className="flex items-center gap-3">
         <span
           aria-hidden="true"

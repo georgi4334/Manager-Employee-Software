@@ -39,7 +39,7 @@ export function SkeletonLines({ lines = 3, className }: { lines?: number; classN
 /** Same outline as the dashboard and analytics stat cards. */
 export function SkeletonStatCard() {
   return (
-    <div className="flex min-h-40 flex-col gap-3 rounded-xl border border-border bg-surface p-4">
+    <div className="flex min-h-40 flex-col gap-3 rounded-xl glass p-4">
       <div className="flex items-start gap-3">
         <Skeleton className="size-11 shrink-0 rounded-xl" />
         <div className="flex-1 space-y-2 pt-0.5">
@@ -56,12 +56,7 @@ export function SkeletonStatCard() {
 /** Same outline as a widget or section card: icon, heading, a few rows. */
 export function SkeletonCard({ rows = 4, className }: { rows?: number; className?: string }) {
   return (
-    <div
-      className={cn(
-        'flex min-h-60 flex-col gap-4 rounded-xl border border-border bg-surface p-4 shadow-card md:p-5',
-        className,
-      )}
-    >
+    <div className={cn('flex min-h-60 flex-col gap-4 rounded-xl glass p-4 md:p-5', className)}>
       <div className="flex items-center gap-2">
         <Skeleton className="size-8 rounded-lg" />
         <Skeleton className="h-4 w-32" />

@@ -168,7 +168,7 @@ export function ChatTab({ status, onOpenSettings }: Props) {
                   type="button"
                   aria-current={c.id === conversationId ? 'true' : undefined}
                   onClick={() => setConversationId(c.id)}
-                  className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg border border-border bg-surface px-3 text-left text-sm"
+                  className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg glass px-3 text-left text-sm"
                 >
                   <span className="min-w-0 truncate">{c.title}</span>
                   <span className="shrink-0 text-xs text-muted-foreground">

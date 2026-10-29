@@ -64,7 +64,7 @@ export function DashboardPage() {
       {editing && (
         <section
           aria-label={t('editing')}
-          className="motion-enter sticky top-16 z-[5] flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/30 bg-surface p-3 shadow-card"
+          className="motion-enter sticky top-16 z-[5] flex flex-wrap items-center justify-between gap-3 rounded-xl glass border-primary/30 p-3"
         >
           <p className="max-w-prose text-sm text-muted-foreground">{t('editHint')}</p>
           <div className="flex flex-wrap gap-2">
@@ -155,7 +155,7 @@ export function DashboardPage() {
                 {usable ? (
                   <Component />
                 ) : (
-                  <section className="flex min-h-36 flex-col gap-1 rounded-xl border border-dashed border-border bg-surface p-4">
+                  <section className="flex min-h-36 flex-col gap-1 rounded-xl glass border-dashed p-4">
                     <h2 className="text-base font-semibold">{title(id)}</h2>
                     <p className="text-sm text-muted-foreground">{t('hiddenForYou')}</p>
                   </section>

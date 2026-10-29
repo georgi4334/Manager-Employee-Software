@@ -47,7 +47,7 @@ export function TabList({ label, tabs, value, onChange, idPrefix, mode = 'tabs' 
       ref={list}
       role={toggle ? 'group' : 'tablist'}
       aria-label={label}
-      className="relative flex gap-1 overflow-x-auto rounded-xl border border-border bg-surface p-1"
+      className="relative flex gap-1 overflow-x-auto rounded-xl glass p-1"
     >
       {thumb && (
         <span

@@ -44,7 +44,7 @@ export function GoalCard({ goal }: { goal: GoalSummary }) {
   return (
     <li
       className={cn(
-        'relative space-y-3 rounded-xl border border-l-4 border-border bg-surface p-4 shadow-card transition-transform duration-[var(--dur-fast)] ease-[var(--ease-ios)] hover:bg-surface-muted motion-safe:hover:-translate-y-0.5',
+        'relative space-y-3 rounded-xl glass border-l-4 p-4 transition-transform duration-[var(--dur-fast)] ease-[var(--ease-ios)] glass-hover motion-safe:hover:-translate-y-0.5',
         style.edge,
       )}
     >

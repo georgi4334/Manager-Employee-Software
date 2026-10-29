@@ -130,10 +130,7 @@ export function GoalsPage() {
       {query.isPending && (
         <SkeletonGroup label={t('loading')} className="space-y-3">
           {[0, 1, 2].map((n) => (
-            <div
-              key={n}
-              className="space-y-3 rounded-xl border border-l-4 border-border bg-surface p-4"
-            >
+            <div key={n} className="space-y-3 rounded-xl glass border-l-4 p-4">
               <div className="flex items-start gap-3">
                 <Skeleton className="size-11 shrink-0 rounded-xl" />
                 <div className="flex-1 space-y-2">

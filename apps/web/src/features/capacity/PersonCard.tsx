@@ -78,7 +78,7 @@ export function PersonCard({ person }: { person: CapacityPerson }) {
   ] as const;
 
   return (
-    <li className="space-y-4 rounded-xl border border-border bg-surface p-4 shadow-card">
+    <li className="space-y-4 rounded-xl glass p-4">
       <div className="flex items-center gap-3">
         <Tile>{initials(person.employee.firstName, person.employee.lastName)}</Tile>
         <div className="min-w-0 flex-1">

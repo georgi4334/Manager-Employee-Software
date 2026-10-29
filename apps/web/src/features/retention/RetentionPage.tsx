@@ -170,10 +170,7 @@ function Upcoming({ overview }: { overview: RetentionOverview }) {
       ) : (
         <ul className="space-y-2">
           {overview.candidates.map((c) => (
-            <li
-              key={c.employeeId}
-              className="space-y-2 rounded-xl border border-border bg-surface p-4 shadow-card"
-            >
+            <li key={c.employeeId} className="space-y-2 rounded-xl glass p-4">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <p className="min-w-0 break-words font-medium">{c.name}</p>
                 <span className="flex flex-wrap gap-1">

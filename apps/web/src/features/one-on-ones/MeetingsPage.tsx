@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
-import { cn } from '@/shared/lib/cn';
+import { TabList } from '@/shared/ui/tabs';
 import { PAGE_SIZE } from './api';
 import { useMeetingPeople, useMeetings } from './hooks';
 import { MeetingCard } from './MeetingCard';
@@ -50,32 +50,19 @@ export function MeetingsPage() {
         </Card>
       )}
 
-      <div
-        role="group"
-        aria-label={t('tabs.label')}
-        className="flex gap-1 rounded-lg bg-secondary p-1"
-      >
-        {TABS.map((s) => (
-          <button
-            key={s}
-            type="button"
-            aria-pressed={tab === s}
-            onClick={() => {
-              const next = new URLSearchParams(params);
-              if (s === 'upcoming') next.delete('status');
-              else next.set('status', s);
-              setParams(next, { replace: true });
-              setPage(1);
-            }}
-            className={cn(
-              'min-h-11 flex-1 rounded-md px-2 text-sm font-medium',
-              tab === s ? 'bg-surface text-foreground shadow-card' : 'text-muted-foreground',
-            )}
-          >
-            {t(`tabs.${s}`)}
-          </button>
-        ))}
-      </div>
+      <TabList
+        mode="toggle"
+        label={t('tabs.label')}
+        tabs={TABS.map((name) => ({ name, label: t(`tabs.${name}`) }))}
+        value={tab}
+        onChange={(name) => {
+          const next = new URLSearchParams(params);
+          if (name === 'upcoming') next.delete('status');
+          else next.set('status', name);
+          setParams(next, { replace: true });
+          setPage(1);
+        }}
+      />
 
       {query.isPending && (
         <p role="status" className="text-sm text-muted-foreground">

@@ -17,7 +17,7 @@ export function BackLink({
     <Link
       to={to}
       className={cn(
-        'group inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-surface py-1 pl-1 pr-4 text-sm font-medium text-foreground shadow-card transition-[background-color,border-color,transform] duration-200 ease-[var(--ease-standard)] hover:border-primary/40 hover:bg-accent active:scale-[0.97]',
+        'group inline-flex min-h-11 items-center gap-2 rounded-full glass py-1 pl-1 pr-4 text-sm font-medium text-foreground transition-[background-color,border-color,transform] duration-200 ease-[var(--ease-standard)] hover:border-primary/40 hover:bg-accent active:scale-[0.97]',
         className,
       )}
     >

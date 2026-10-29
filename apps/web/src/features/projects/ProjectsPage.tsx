@@ -154,7 +154,7 @@ function ProjectsList({ today }: { today: string }) {
       {query.isPending && (
         <SkeletonGroup label={t('loading')} className="grid gap-3 sm:grid-cols-2">
           {[0, 1, 2, 3].map((n) => (
-            <div key={n} className="space-y-4 rounded-xl border border-border bg-surface p-4">
+            <div key={n} className="space-y-4 rounded-xl glass p-4">
               <div className="flex items-start justify-between">
                 <Skeleton className="size-11 rounded-xl" />
                 <Skeleton className="h-5 w-20 rounded-full" />
@@ -224,7 +224,7 @@ function ProjectRow({ project }: { project: ProjectSummary }) {
     <li>
       <Link
         to={`/projects/${project.id}`}
-        className="flex h-full flex-col gap-4 rounded-xl border border-border bg-surface p-4 shadow-card transition-transform duration-[var(--dur-fast)] ease-[var(--ease-ios)] hover:bg-surface-muted motion-safe:hover:-translate-y-0.5"
+        className="flex h-full flex-col gap-4 rounded-xl glass p-4 transition-transform duration-[var(--dur-fast)] ease-[var(--ease-ios)] glass-hover motion-safe:hover:-translate-y-0.5"
       >
         <span className="flex items-start justify-between gap-2">
           <Tile>

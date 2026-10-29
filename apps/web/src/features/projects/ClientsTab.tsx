@@ -44,7 +44,7 @@ export function ClientsTab() {
       {clients.isPending && (
         <SkeletonGroup label={t('loading')} className="grid gap-3 sm:grid-cols-2">
           {[0, 1, 2, 3].map((n) => (
-            <div key={n} className="space-y-3 rounded-xl border border-border bg-surface p-4">
+            <div key={n} className="space-y-3 rounded-xl glass p-4">
               <div className="flex items-center gap-3">
                 <Skeleton className="size-11 rounded-xl" />
                 <div className="flex-1 space-y-2">
@@ -82,13 +82,13 @@ function ClientRow({ client, canManage }: { client: Client; canManage: boolean }
 
   if (editing) {
     return (
-      <li className="rounded-xl border border-border bg-surface p-4 shadow-card sm:col-span-2">
+      <li className="rounded-xl glass p-4 sm:col-span-2">
         <ClientForm client={client} onDone={() => setEditing(false)} />
       </li>
     );
   }
   return (
-    <li className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 shadow-card">
+    <li className="flex flex-col gap-4 rounded-xl glass p-4">
       <div className="flex items-start gap-3">
         <Tile>{initials(client.name)}</Tile>
         <div className="min-w-0 flex-1">

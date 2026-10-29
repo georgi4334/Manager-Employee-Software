@@ -41,7 +41,7 @@ export function ItemRow({ item, date, onOpen }: ItemRowProps) {
   return (
     <li
       className={cn(
-        'group relative rounded-xl border border-l-4 border-border bg-surface p-4 shadow-card transition-[background-color,box-shadow] duration-200 hover:bg-surface-muted',
+        'group relative rounded-xl glass border-l-4 p-4 transition-[background-color,box-shadow] duration-200 glass-hover',
         accent.edge,
       )}
     >

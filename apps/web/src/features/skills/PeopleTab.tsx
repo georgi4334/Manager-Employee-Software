@@ -133,10 +133,7 @@ export function PeopleTab() {
               {data.items.map((p) => {
                 const name = `${p.employee.firstName} ${p.employee.lastName}`;
                 return (
-                  <li
-                    key={p.employee.id}
-                    className="space-y-2 rounded-xl border border-border bg-surface p-4 shadow-card"
-                  >
+                  <li key={p.employee.id} className="space-y-2 rounded-xl glass p-4">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <p className="font-medium">{name}</p>
                       {p.canEdit && (

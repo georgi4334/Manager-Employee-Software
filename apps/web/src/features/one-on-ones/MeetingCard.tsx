@@ -8,7 +8,7 @@ export function MeetingCard({ meeting }: { meeting: OneOnOneSummary }) {
   const language = i18n.resolvedLanguage ?? 'en';
   const person = `${meeting.other.firstName} ${meeting.other.lastName}`;
   return (
-    <li className="space-y-1 rounded-xl border border-border bg-surface p-4 shadow-card">
+    <li className="space-y-1 rounded-xl glass p-4">
       <Link to={`/one-on-ones/${meeting.id}`} className="font-medium text-primary underline">
         {t('card.with', { name: person })}
       </Link>

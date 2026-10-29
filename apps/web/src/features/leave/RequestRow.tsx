@@ -55,7 +55,7 @@ export function RequestRow({ request, showEmployee, decide, cancel }: RequestRow
   const name = `${request.employee.firstName} ${request.employee.lastName}`;
 
   return (
-    <li className="space-y-2 rounded-xl border border-border bg-surface p-4 shadow-card">
+    <li className="space-y-2 rounded-xl glass p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           {showEmployee && <p className="font-medium">{name}</p>}
@@ -153,7 +153,7 @@ export function RequestRow({ request, showEmployee, decide, cancel }: RequestRow
                 maxLength={300}
                 value={comment}
                 onChange={(event) => setComment(event.target.value)}
-                className="min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-base text-foreground md:text-sm"
+                className="min-h-11 w-full rounded-md glass px-3 py-2 text-base text-foreground md:text-sm"
               />
               <div className="flex gap-2">
                 <Button

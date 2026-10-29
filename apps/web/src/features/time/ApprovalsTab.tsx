@@ -72,7 +72,7 @@ function SheetRow({ sheet }: { sheet: Timesheet }) {
   const name = `${sheet.employee.firstName} ${sheet.employee.lastName}`;
 
   return (
-    <li className="space-y-3 rounded-xl border border-border bg-surface p-4 shadow-card">
+    <li className="space-y-3 rounded-xl glass p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="font-medium">{name}</p>

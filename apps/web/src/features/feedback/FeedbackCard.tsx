@@ -20,7 +20,7 @@ export function FeedbackCard({ item }: { item: FeedbackItem }) {
   const to = `${item.to.firstName} ${item.to.lastName}`;
 
   return (
-    <li className="space-y-2 rounded-xl border border-border bg-surface p-4 shadow-card">
+    <li className="space-y-2 rounded-xl glass p-4">
       <p className="text-sm text-muted-foreground">
         {t('card.fromTo', { from, to })}
         {' · '}

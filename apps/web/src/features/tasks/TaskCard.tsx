@@ -112,7 +112,7 @@ export function TaskCard({ task, variant = 'list' }: { task: Task; variant?: 'li
 
   if (editing) {
     return (
-      <li className="rounded-xl border border-border bg-surface p-4 shadow-card">
+      <li className="rounded-xl glass p-4">
         <TaskForm task={task} onDone={() => setEditing(false)} />
       </li>
     );
@@ -197,7 +197,7 @@ export function TaskCard({ task, variant = 'list' }: { task: Task; variant?: 'li
 
   if (board) {
     return (
-      <li className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-3.5 shadow-card">
+      <li className="flex flex-col gap-3 rounded-xl glass p-3.5">
         <div className="flex items-center justify-between gap-2">
           {keyLink}
           {actions}
@@ -217,7 +217,7 @@ export function TaskCard({ task, variant = 'list' }: { task: Task; variant?: 'li
   }
 
   return (
-    <li className="space-y-3 rounded-xl border border-border bg-surface p-4 shadow-card">
+    <li className="space-y-3 rounded-xl glass p-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
         <span
           aria-hidden="true"
