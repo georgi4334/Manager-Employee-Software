@@ -1,4 +1,10 @@
-import type { AttendeeResponse, LeaveRequest, SeriesScopeQuery } from '@intime/contracts';
+import {
+  PUBLIC_HOLIDAY_LANGUAGES,
+  type AttendeeResponse,
+  type LeaveRequest,
+  type PublicHolidayLanguage,
+  type SeriesScopeQuery,
+} from '@intime/contracts';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchRequests } from '@/features/leave/api';
 import {
@@ -6,6 +12,7 @@ import {
   createEvent,
   deleteEvent,
   fetchEvents,
+  fetchPublicHolidays,
   findTime,
   respondToEvent,
   updateEvent,
@@ -20,6 +27,29 @@ export const useEvents = (from: string, to: string) =>
     queryFn: () => fetchEvents(from, to),
     placeholderData: keepPreviousData,
     retry: false,
+  });
+
+const HOLIDAY_STALE_MS = 60 * 60 * 1000;
+
+/** The feed has names in these languages; anything else asks for English. */
+export const holidayLanguage = (language: string): PublicHolidayLanguage =>
+  PUBLIC_HOLIDAY_LANGUAGES.find((l) => l === language.slice(0, 2)) ?? 'en';
+
+/** Public holidays of Bulgaria, Germany and England; a failure only hides the layer, never the page. */
+export const usePublicHolidays = (from: string, to: string, language: string, enabled: boolean) =>
+  useQuery({
+    queryKey: [
+      ...calendarKeys.all,
+      'public-holidays',
+      from,
+      to,
+      holidayLanguage(language),
+    ] as const,
+    queryFn: () => fetchPublicHolidays(from, to, holidayLanguage(language)),
+    placeholderData: keepPreviousData,
+    staleTime: HOLIDAY_STALE_MS,
+    retry: false,
+    enabled,
   });
 
 /** Approved and pending leave in the period for the people the caller may see (the server masks and scopes it). */

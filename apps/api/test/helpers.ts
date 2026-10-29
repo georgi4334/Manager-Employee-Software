@@ -18,6 +18,8 @@ export function testEnv(overrides: Record<string, string | undefined> = {}): Env
     JWT_ACCESS_SECRET: 'test-secret-that-is-at-least-32-characters-long',
     MAIL_TRANSPORT: 'memory',
     WORKER_ENABLED: 'false',
+    // Tests never reach the holiday feed; the ones that need it replace HolidayFeedClient.
+    PUBLIC_HOLIDAYS_FEED: 'false',
     // Undefined overrides keep the default (e.g. when TEST_DATABASE_URL is not set).
     ...Object.fromEntries(Object.entries(overrides).filter(([, value]) => value !== undefined)),
   });

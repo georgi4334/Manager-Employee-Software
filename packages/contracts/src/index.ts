@@ -14,6 +14,7 @@ export * from './employees.js';
 export * from './errors.js';
 export * from './goals.js';
 export * from './holidays.js';
+export * from './public-holidays.js';
 export * from './integrations.js';
 export * from './leave-days.js';
 export * from './leave.js';
