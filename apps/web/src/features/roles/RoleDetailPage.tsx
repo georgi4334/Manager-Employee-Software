@@ -61,7 +61,7 @@ export function RoleDetailPage() {
           {editable ? (
             <>
               <RoleEditor
-                key={`${role.id}-${role.grants.length}-${role.name}`}
+                key={`${role.id}-${role.grants.length}-${role.name}-${role.parentId ?? ''}`}
                 role={role}
                 mine={user?.permissions}
                 pending={update.isPending}

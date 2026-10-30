@@ -1,4 +1,4 @@
-import type { RoleDetail, RoleListItem, RoleRequest } from '@intime/contracts';
+import type { RoleDetail, RoleListItem, RoleParentRequest, RoleRequest } from '@intime/contracts';
 import { apiRequest } from '@/shared/api/client';
 
 /** Everything under "roles" is workspace data: signing out removes it (see clearSession). */
@@ -15,3 +15,5 @@ export const createRole = (body: RoleRequest) =>
 export const updateRole = (id: string, body: RoleRequest) =>
   apiRequest<RoleDetail>(`/roles/${id}`, { method: 'PUT', body });
 export const deleteRole = (id: string) => apiRequest(`/roles/${id}`, { method: 'DELETE' });
+export const moveRole = (id: string, body: RoleParentRequest) =>
+  apiRequest<RoleDetail>(`/roles/${id}/parent`, { method: 'PUT', body });

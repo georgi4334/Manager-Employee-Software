@@ -2,13 +2,15 @@ import { expect, test } from '@playwright/test';
 import { signIn } from '../support/auth';
 import { ADMIN_EMAIL } from '../support/constants';
 
-test('an administrator creates, changes and deletes a custom role', async ({ browser }) => {
+test('an administrator creates, changes, moves and deletes a custom role', async ({ browser }) => {
   const ada = await (await browser.newContext({ viewport: { width: 375, height: 800 } })).newPage();
   await signIn(ada, ADMIN_EMAIL);
   await ada.goto('/roles');
-  const list = ada.getByRole('list', { name: 'Roles' });
+  const list = ada.getByRole('list', { name: 'Role hierarchy' });
   await expect(list).toContainText('Admin');
   await expect(list).toContainText('System');
+  // the default tree: Admin > HR > Manager > Employee
+  await expect(ada.getByRole('list', { name: 'Roles under Manager' })).toContainText('Employee');
 
   await ada.getByRole('link', { name: 'New role' }).click();
   const form = ada.getByRole('form', { name: 'New role' });
@@ -37,6 +39,19 @@ test('an administrator creates, changes and deletes a custom role', async ({ bro
   await expect(ada.getByText(/The role was saved/)).toBeVisible();
   await expect(ada.getByRole('heading', { name: 'External contractor' })).toBeVisible();
 
+  // it moves in the tree without changing any permission
+  await ada.goto('/roles');
+  await ada.getByRole('button', { name: 'Move External contractor' }).click();
+  const dialog = ada.getByRole('dialog', { name: 'Move External contractor' });
+  // options are indented by depth, so pick Manager by its value
+  const manager = await dialog.locator('option', { hasText: 'Manager' }).getAttribute('value');
+  await dialog.getByLabel('Sits under').selectOption(manager!);
+  await dialog.getByRole('button', { name: 'Move' }).click();
+  await expect(dialog).toBeHidden();
+  await expect(ada.getByRole('list', { name: 'Roles under Manager' })).toContainText(
+    'External contractor',
+  );
+
   // system roles cannot be changed
   await ada.goto('/roles');
   await ada.getByRole('link', { name: /^Admin/ }).click();
@@ -48,5 +63,7 @@ test('an administrator creates, changes and deletes a custom role', async ({ bro
   await ada.getByRole('link', { name: /External contractor/ }).click();
   await ada.getByRole('button', { name: 'Delete this role' }).click();
   await ada.getByRole('button', { name: 'Yes, delete' }).click();
-  await expect(ada.getByRole('list', { name: 'Roles' })).not.toContainText('External contractor');
+  await expect(ada.getByRole('list', { name: 'Role hierarchy' })).not.toContainText(
+    'External contractor',
+  );
 });

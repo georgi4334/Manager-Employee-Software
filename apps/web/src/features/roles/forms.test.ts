@@ -27,6 +27,7 @@ const role: RoleDetail = {
     { code: 'leave.approve', scope: 'team' },
   ],
   userCount: 2,
+  parentId: null,
 };
 
 describe('role form', () => {
@@ -36,6 +37,7 @@ describe('role form', () => {
       name: 'Payroll clerk',
       description: 'Handles pay',
       grants: { 'compensation.view': 'all', 'leave.approve': 'team' },
+      parentId: '',
     });
     expect(roleFormSchema.safeParse(values).success).toBe(true);
     const body = toRequest(values);
@@ -51,6 +53,7 @@ describe('role form', () => {
       name: '  Clerk ',
       description: '  ',
       grants: { 'leave.approve': 'all', 'employee.create': 'all' },
+      parentId: '',
     });
     expect(body.name).toBe('Clerk');
     expect(body).not.toHaveProperty('description');
@@ -59,6 +62,16 @@ describe('role form', () => {
         (c) => c === 'employee.create' || c === 'leave.approve',
       ),
     );
+  });
+
+  it('sends the place in the tree: empty is the top level', () => {
+    const parent = '0192f5a0-0000-7000-8000-000000000009';
+    expect(toRequest({ ...valuesOf(role), parentId: '' }).parentId).toBeNull();
+    expect(toRequest({ ...valuesOf(role), parentId: parent }).parentId).toBe(parent);
+    expect(valuesOf({ ...role, parentId: parent }).parentId).toBe(parent);
+    expect(
+      roleRequestSchema.safeParse(toRequest({ ...valuesOf(role), parentId: parent })).success,
+    ).toBe(true);
   });
 
   it('leaves out "no access", unknown permissions and scopes the permission does not allow', () => {
@@ -71,6 +84,7 @@ describe('role form', () => {
         'admin.role.manage': 'own', // only "all" is allowed
         'employee.create': 'all',
       },
+      parentId: '',
     });
     expect(body.grants).toEqual([{ code: 'employee.create', scope: 'all' }]);
     expect(roleRequestSchema.safeParse(body).success).toBe(true);

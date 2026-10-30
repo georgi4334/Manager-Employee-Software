@@ -20,10 +20,17 @@ export const roleFormSchema = z.object({
   description: z.string().trim().max(MAX_ROLE_DESCRIPTION, { error: 'tooLong' }),
   /** Permission code to scope; '' (or missing) = no access. */
   grants: z.record(z.string(), z.string()),
+  /** The role it sits under in the tree (ADR 0036); '' = top level. */
+  parentId: z.string(),
 });
 export type RoleFormValues = z.input<typeof roleFormSchema>;
 
-export const emptyRole = (): RoleFormValues => ({ name: '', description: '', grants: {} });
+export const emptyRole = (): RoleFormValues => ({
+  name: '',
+  description: '',
+  grants: {},
+  parentId: '',
+});
 
 export const grantsToMap = (grants: readonly Grant[]): Record<string, string> =>
   Object.fromEntries(grants.map((g) => [g.code, g.scope]));
@@ -32,6 +39,7 @@ export const valuesOf = (role: RoleDetail): RoleFormValues => ({
   name: role.name,
   description: role.description ?? '',
   grants: grantsToMap(role.grants),
+  parentId: role.parentId ?? '',
 });
 
 export const toRequest = (v: RoleFormValues): RoleRequest => ({
@@ -43,6 +51,7 @@ export const toRequest = (v: RoleFormValues): RoleRequest => ({
       ? [{ code: p.code, scope: scope as PermissionScope }]
       : [];
   }),
+  parentId: v.parentId || null,
 });
 
 /** Can the signed-in user put this permission at this scope into a role? (The server decides; this is for the UI.) */

@@ -4,7 +4,6 @@
   "new": "New role",
   "loading": "Loading…",
   "retry": "Try again",
-  "list": "Roles",
   "system": "System",
   "custom": "Custom",
   "back": "All roles",
@@ -25,7 +24,9 @@
     "permissionsHint": "Choose, per permission, how far it reaches. You can only hand out what you hold yourself.",
     "save": "Save role",
     "saving": "Saving…",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "parent": "Sits under",
+    "parentHint": "For the overview only: permissions are never inherited."
   },
   "grid": {
     "noAccess": "No access",
@@ -44,7 +45,9 @@
     "nameTaken": "A role with this name already exists.",
     "inUse": "Somebody still holds this role. Take it away from them first.",
     "limit": "The workspace has reached the limit of custom roles.",
-    "cannotGrant": "You can only hand out permissions that you hold yourself, with at most your own reach."
+    "cannotGrant": "You can only hand out permissions that you hold yourself, with at most your own reach.",
+    "cycle": "A role cannot sit under itself or one of its own sub-roles.",
+    "unknownParent": "That role no longer exists. Reload the page and try again."
   },
   "counts": "Permissions: {{permissions}} · People: {{people}}",
   "modules": {
@@ -138,7 +141,7 @@
     "admin.user.disable": "Disable and re-enable accounts",
     "admin.role.view": "See roles",
     "admin.role.assign": "Assign roles to users",
-    "admin.role.manage": "Create, change and delete custom roles",
+    "admin.role.manage": "Create, change, move and delete custom roles",
     "admin.tenant.settings": "Change workspace settings",
     "admin.audit_log.view": "See the audit log",
     "gdpr.export_own": "Export the own data",
@@ -152,5 +155,32 @@
     "team": "Own and everyone below",
     "department": "Own department",
     "all": "Everyone"
+  },
+  "tree": {
+    "label": "Role hierarchy",
+    "hint": "The tree shows how roles relate. It is for overview only: every role keeps exactly its own permissions, nothing is passed down.",
+    "below": "Roles under {{name}}"
+  },
+  "card": {
+    "subRoles_one": "{{count}} sub-role",
+    "subRoles_other": "{{count}} sub-roles",
+    "collapse": "Hide the roles under {{name}}",
+    "expand": "Show the roles under {{name}}",
+    "noModules": "No permissions",
+    "moreModules": "+{{count}} more",
+    "move": "Move",
+    "people_one": "{{count}} person",
+    "people_other": "{{count}} people",
+    "permissions_one": "{{count}} permission",
+    "permissions_other": "{{count}} permissions",
+    "hide": "Hide sub-roles",
+    "show": "Show sub-roles"
+  },
+  "move": {
+    "title": "Move {{name}}",
+    "hint": "Only its place in the overview changes. Nobody gains or loses a permission.",
+    "top": "Top level",
+    "save": "Move",
+    "saving": "Moving…"
   }
 }

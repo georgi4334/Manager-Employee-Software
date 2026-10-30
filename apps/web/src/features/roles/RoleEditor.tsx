@@ -13,6 +13,7 @@ import { copyGrants, emptyRole, roleFormSchema, valuesOf, type RoleFormValues } 
 import { fetchRole } from './api';
 import { PermissionGrid } from './PermissionGrid';
 import { useRoles } from './hooks';
+import { indent, parentOptions } from './tree';
 import { useRoleErrors } from './use-role-errors';
 
 interface EditorProps {
@@ -66,6 +67,25 @@ export function RoleEditor({ role, mine, pending, error, onSubmit, onCancel }: E
           <Input {...field} maxLength={200} autoComplete="off" {...form.register('description')} />
         )}
       </Field>
+      <Controller
+        control={form.control}
+        name="parentId"
+        render={({ field: { ref, ...value } }) => (
+          <Field label={t('form.parent')} hint={t('form.parentHint')}>
+            {(field) => (
+              // Controlled: the options arrive with the role list, after the form has its values.
+              <Select {...field} {...value} ref={ref}>
+                <option value="">{t('move.top')}</option>
+                {parentOptions(roles.data ?? [], role?.id).map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {indent(o)}
+                  </option>
+                ))}
+              </Select>
+            )}
+          </Field>
+        )}
+      />
       {!role && (roles.data?.length ?? 0) > 0 && (
         <Field label={t('form.copyFrom')} hint={t('form.copyHint')}>
           {(field) => (
