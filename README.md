@@ -9,7 +9,7 @@
 **People, time and projects for small and mid-size teams, in one place.**
 
 [![CI](https://github.com/georgi4334/Manager-Employee-Software/actions/workflows/ci.yml/badge.svg)](https://github.com/georgi4334/Manager-Employee-Software/actions/workflows/ci.yml)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![NestJS](https://img.shields.io/badge/NestJS-12-E0234E?logo=nestjs&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Prisma%20%2B%20RLS-4169E1?logo=postgresql&logoColor=white)
@@ -54,7 +54,7 @@ InTime is a web app for running a team of up to a few hundred people: who works 
 
 ### Why these technologies
 
-- **React 19, Vite and Tailwind** with design tokens in one file, so the whole look (light and dark) changes in one place. **TanStack Query** for server data, **Zustand** for small UI state.
+- **React 19, Vite and Tailwind** with design tokens in one file, so the whole look (light and dark) changes in one place. **TanStack Query** for server data, **Zustand** for small UI state. Everything is **TypeScript 6** in strict mode.
 - **NestJS and PostgreSQL with Prisma** for a modular API where every feature is its own module. **Row Level Security** in the database keeps companies apart, even if application code has a bug.
 - **Zod schemas and pure rule functions in a shared package** (`@intime/contracts`), so the web app and the API agree on every request, permission and calculation (leave days, capacity, recurrence, money parsing).
 - **Free EU plans only** (Cloudflare Pages, Render, Neon, Resend), which shaped several choices below.
