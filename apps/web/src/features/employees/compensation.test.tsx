@@ -99,7 +99,7 @@ function serve(person: Employee, initial: Compensation): Backend {
 const as = (role: 'employee' | 'manager' | 'hr' | 'admin') =>
   server.use(...signedInHandlers(userWithRole(role)));
 const open = async (person: Employee) => {
-  await renderApp(`/employees/${person.id}`);
+  await renderApp(`/employees/${person.id}?tab=pay`);
   const heading = await screen.findByRole('heading', { name: 'Compensation' });
   return within(heading.closest('div')!);
 };
@@ -125,7 +125,7 @@ describe('compensation on the profile', () => {
     async (role) => {
       as(role);
       const backend = serve(employee(), state());
-      await renderApp(`/employees/${uuid(1)}`);
+      await renderApp(`/employees/${uuid(1)}?tab=pay`);
       await screen.findByRole('heading', { name: 'Working hours' }).catch(() => undefined);
       await screen.findByText('Dan Dimitrov');
       expect(screen.queryByRole('heading', { name: 'Compensation' })).not.toBeInTheDocument();
@@ -136,7 +136,7 @@ describe('compensation on the profile', () => {
   it('is not rendered for an erased person', async () => {
     as('hr');
     const backend = serve(employee({ erased: true }), state());
-    await renderApp(`/employees/${uuid(1)}`);
+    await renderApp(`/employees/${uuid(1)}?tab=pay`);
     await screen.findByRole('heading', { level: 1 });
     expect(screen.queryByRole('heading', { name: 'Compensation' })).not.toBeInTheDocument();
     expect(backend.reads).toBe(0);
@@ -251,12 +251,12 @@ describe('compensation on the profile', () => {
     as('hr');
     serve(employee(), state());
     await initTestI18n('de');
-    const { unmount } = await renderApp(`/employees/${uuid(1)}`);
+    const { unmount } = await renderApp(`/employees/${uuid(1)}?tab=pay`);
     expect(await screen.findByRole('heading', { name: 'Vergütung' })).toBeInTheDocument();
     expect(await screen.findByText(/3\.500,50\s€ pro Monat/)).toBeInTheDocument();
     unmount();
     await initTestI18n('bg');
-    await renderApp(`/employees/${uuid(1)}`);
+    await renderApp(`/employees/${uuid(1)}?tab=pay`);
     expect(await screen.findByRole('heading', { name: 'Възнаграждение' })).toBeInTheDocument();
     expect(await screen.findByText(/на месец/)).toBeInTheDocument();
   });

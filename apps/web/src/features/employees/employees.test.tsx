@@ -84,7 +84,8 @@ describe('employee directory', () => {
     await renderApp('/employees');
     const list = await screen.findByRole('list', { name: 'Employee list' });
     expect(within(list).getByText('Ada Lovelace')).toBeInTheDocument();
-    expect(within(list).getByText('Engineer · Sofia')).toBeInTheDocument();
+    expect(within(list).getByText('Engineer')).toBeInTheDocument();
+    expect(within(list).getAllByText('Sofia').length).toBeGreaterThan(0);
     expect(within(list).getByText('ada@acme.eu')).toBeInTheDocument();
     expect(within(list).getByText('You')).toBeInTheDocument();
     expect(screen.getByText('2 employees')).toBeInTheDocument();
@@ -199,11 +200,30 @@ describe('employee page', () => {
     as('hr');
     serveOne(person(1, { profile: profile() }));
     await renderApp(`/employees/${uuid(1)}`);
+    // the header: status, name, title and the key facts
+    const header = await screen.findByRole('region', { name: 'Ada Lovelace' });
+    expect(within(header).getByRole('heading', { name: 'Ada Lovelace' })).toBeInTheDocument();
+    expect(within(header).getByText('Active')).toBeInTheDocument();
+    const facts = within(header).getByRole('list', { name: 'Key facts' });
+    expect(facts).toHaveTextContent('Sofia');
+    expect(within(facts).getByRole('link', { name: 'ada@acme.eu' })).toHaveAttribute(
+      'href',
+      'mailto:ada@acme.eu',
+    );
+    // the record in tabs: Work first, then Personal
+    const tabs = screen.getByRole('tablist', { name: 'Employee record' });
+    expect(
+      within(tabs)
+        .getAllByRole('tab')
+        .map((tab) => tab.textContent),
+    ).toEqual(['Work', 'Personal', 'Pay', 'Data and privacy']);
+    expect(screen.getByText('Senior')).toBeInTheDocument();
+    expect(screen.getByText('Full-time')).toBeInTheDocument();
+    expect(screen.queryByText('Date of birth')).not.toBeInTheDocument();
+    await userEvent.setup().click(within(tabs).getByRole('tab', { name: 'Personal' }));
     expect(await screen.findByText('Date of birth')).toBeInTheDocument();
     expect(screen.getByText('10 December 1990')).toBeInTheDocument();
-    expect(screen.getByText('Senior')).toBeInTheDocument();
     expect(screen.getByText('+359 88 123 4567')).toBeInTheDocument();
-    expect(screen.getByText('Full-time')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Edit' })).toHaveAttribute(
       'href',
       `/employees/${uuid(1)}/edit`,

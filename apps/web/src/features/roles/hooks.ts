@@ -1,6 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { RoleRequest } from '@intime/contracts';
-import { createRole, deleteRole, fetchRole, fetchRoles, roleKeys, updateRole } from './api';
+import {
+  createRole,
+  deleteRole,
+  fetchRole,
+  fetchRoles,
+  moveRole,
+  roleKeys,
+  updateRole,
+} from './api';
 
 export const useRoles = () =>
   useQuery({ queryKey: roleKeys.list, queryFn: fetchRoles, retry: false });
@@ -36,4 +44,13 @@ export function useUpdateRole(id: string) {
 export function useDeleteRole(id: string) {
   const refresh = useRefresh();
   return useMutation({ mutationFn: () => deleteRole(id), onSuccess: refresh });
+}
+/** Display only (ADR 0036): moving a role changes no permission, so only the role screens refresh. */
+export function useMoveRole() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, parentId }: { id: string; parentId: string | null }) =>
+      moveRole(id, { parentId }),
+    onSuccess: () => client.invalidateQueries({ queryKey: roleKeys.all }),
+  });
 }

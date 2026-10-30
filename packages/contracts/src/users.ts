@@ -23,6 +23,10 @@ export const roleListItemSchema = z.object({
   description: z.string().nullable(),
   permissionCount: z.number().int(),
   userCount: z.number().int(),
+  /** The role it sits under in the tree (ADR 0036, display only); null = a root. */
+  parentId: z.uuid().nullable(),
+  /** Modules its grants cover, in catalog order. */
+  modules: z.array(z.string()),
 });
 export type RoleListItem = z.infer<typeof roleListItemSchema>;
 

@@ -88,7 +88,7 @@ This table is **generated** from the permission catalog in `packages/contracts/s
 |  | `admin.user.disable` | Disable and re-enable user accounts | — | — | all | all |
 |  | `admin.role.view` | List roles | — | — | all | all |
 |  | `admin.role.assign` | Assign roles to users | — | — | — | all |
-|  | `admin.role.manage` | Create, change and delete custom roles | — | — | — | all |
+|  | `admin.role.manage` | Create, change, move and delete custom roles | — | — | all | all |
 |  | `admin.tenant.settings` | Workspace settings | — | — | — | all |
 |  | `admin.audit_log.view` | View the audit log (HR sees HR-related events only) | — | — | all | all |
 | **GDPR** | `gdpr.export_own` | Export own data | own | own | own | own |
@@ -112,11 +112,12 @@ the owning module enforces the exact meaning and adds the restrictions written i
 6. **Sick leave**: reason is never stored/displayed; managers see "absent", not the type, if the tenant enables `hide_leave_type_from_team`.
 7. **No self-approval**: a user can never approve their own leave/review; approval escalates to the next manager/HR.
 8. **Last-admin protection**: the last active Admin cannot be demoted or disabled.
-9. **Every denied path has a test** (see test pattern below).
+9. **Nobody hands out more than they hold**: a custom role only gets grants its editor holds (ADR 0031), and a custom role is only assigned by someone who holds all of its grants (ADR 0036). The role tree is display only.
+10. **Every denied path has a test** (see test pattern below).
 
 ## How it is tested
 
-- **Catalog** (`packages/contracts/src/permissions.test.ts`): integrity (unique codes, allowed scopes only), the rules above as assertions (e.g. compensation is HR + Admin only, nobody gets a 1:1 override, assigning roles is Admin-only), and that this file is up to date.
+- **Catalog** (`packages/contracts/src/permissions.test.ts`): integrity (unique codes, allowed scopes only), the rules above as assertions (e.g. compensation is HR + Admin only, nobody gets a 1:1 override, assigning roles is Admin-only, building roles is HR and Admin), and that this file is up to date.
 - **Matrix** (`apps/api/src/modules/roles/permissions.matrix.test.ts`): generated from the catalog — every permission × every role × every kind of record owner (`self`, `direct_report`, `subordinate`, `same_department`, `other`), allowed and denied.
 - **Database** (`apps/api/test/roles.int.test.ts`): the seeded roles equal the catalog, drift is healed by `roles:sync`, corrupted rows grant nothing, other workspaces' roles are unreachable, the audit log is append-only.
 - **HTTP** (`apps/api/test/users.int.test.ts`): account administration per role (allowed and denied), immediate effect of role changes, last-administrator protection incl. concurrency, workspace isolation.

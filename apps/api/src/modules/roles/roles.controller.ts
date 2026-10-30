@@ -1,9 +1,11 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
+  roleParentRequestSchema,
   roleRequestSchema,
   type RoleDetail,
   type RoleListItem,
+  type RoleParentRequest,
   type RoleRequest,
 } from '@intime/contracts';
 import { z } from 'zod';
@@ -52,6 +54,17 @@ export class RolesController {
     @Body(new ZodValidationPipe(roleRequestSchema)) body: RoleRequest,
   ): Promise<RoleDetail> {
     return this.roles.update(actor, id, body);
+  }
+
+  @Put(':id/parent')
+  @RequirePermission('admin.role.manage')
+  @ApiOperation({ summary: 'Move a role in the tree (display only; grants never change)' })
+  move(
+    @CurrentAuth() actor: RequestAuth,
+    @Param('id', idParam) id: string,
+    @Body(new ZodValidationPipe(roleParentRequestSchema)) body: RoleParentRequest,
+  ): Promise<RoleDetail> {
+    return this.roles.move(actor, id, body.parentId);
   }
 
   @Delete(':id')

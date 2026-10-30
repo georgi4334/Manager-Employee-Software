@@ -104,8 +104,8 @@ describe('the rules written in docs/permission-matrix.md hold in the catalog', (
     ]);
   });
 
-  it('assigning roles is Admin-only; inviting and disabling users is HR and Admin', () => {
-    for (const code of ['admin.role.assign', 'admin.role.manage', 'admin.tenant.settings']) {
+  it('assigning roles is Admin-only; inviting and disabling users and building roles is HR and Admin', () => {
+    for (const code of ['admin.role.assign', 'admin.tenant.settings']) {
       expect(grantOf(code, 'admin')).toBe('all');
       expect(grantOf(code, 'hr')).toBeUndefined();
     }
@@ -114,6 +114,7 @@ describe('the rules written in docs/permission-matrix.md hold in the catalog', (
       'admin.user.disable',
       'admin.user.view',
       'admin.role.view',
+      'admin.role.manage', // ADR 0036
     ]) {
       expect(grantOf(code, 'hr')).toBe('all');
       expect(grantOf(code, 'admin')).toBe('all');

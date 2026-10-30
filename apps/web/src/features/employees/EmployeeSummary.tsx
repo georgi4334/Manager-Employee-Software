@@ -1,107 +1,88 @@
-import type { Employee } from '@intime/contracts';
+import type { Employee, EmployeeProfile } from '@intime/contracts';
 import { useTranslation } from 'react-i18next';
-import { formatDate, formatList } from '@/shared/lib/format';
+import { formatDate } from '@/shared/lib/format';
 import { Card, CardTitle } from '@/shared/ui/card';
-import { EmployeeAvatar } from './EmployeeAvatar';
+import { ProfileHeader } from './ProfileHeader';
 
-/** Name, directory data and (when the caller may see it) the full profile of one employee. */
-export function EmployeeSummary({ employee }: { employee: Employee }) {
+function useFormat() {
   const { t, i18n } = useTranslation('employees');
   const language = i18n.resolvedLanguage ?? 'en';
-  const profile = employee.profile;
   const none = t('notProvided');
   const date = (value: string | null | undefined) =>
     value
       ? formatDate(`${value}T00:00:00Z`, language, { dateStyle: 'long', timeZone: 'UTC' })
       : none;
+  return { t, none, date };
+}
 
+export function EmploymentSection({
+  employee,
+  profile,
+}: {
+  employee: Employee;
+  profile: EmployeeProfile;
+}) {
+  const { t, none, date } = useFormat();
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <EmployeeAvatar
-          firstName={employee.firstName}
-          lastName={employee.lastName}
-          className="size-14 text-lg"
-        />
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold">
-            {employee.firstName} {employee.lastName}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {[employee.jobTitle, employee.status === 'inactive' ? t('badge.inactive') : null]
-              .filter(Boolean)
-              .join(' · ') || none}
-          </p>
-        </div>
-      </div>
+    <Card className="space-y-3">
+      <CardTitle>{t('sections.employment')}</CardTitle>
+      <Details
+        rows={[
+          [t('fields.employeeNo'), profile.employeeNo ?? none],
+          [t('fields.employmentType'), t(`employmentType.${profile.employmentType}`)],
+          [t('fields.seniority'), profile.seniority ? t(`seniority.${profile.seniority}`) : none],
+          [t('fields.hireDate'), date(profile.hireDate)],
+          ...(employee.status === 'inactive'
+            ? ([[t('fields.terminationDate'), date(profile.terminationDate)]] as const)
+            : []),
+        ]}
+      />
+    </Card>
+  );
+}
 
+export function PersonalSection({ profile }: { profile: EmployeeProfile }) {
+  const { t, none, date } = useFormat();
+  return (
+    <>
       <Card className="space-y-3">
-        <CardTitle>{t('sections.directory')}</CardTitle>
+        <CardTitle>{t('sections.personal')}</CardTitle>
         <Details
           rows={[
-            [t('fields.email'), employee.email ?? none],
-            [t('fields.jobTitle'), employee.jobTitle ?? none],
-            [t('fields.location'), employee.location ?? none],
-            [t('fields.department'), employee.department?.name ?? none],
-            [
-              t('fields.manager'),
-              employee.manager
-                ? `${employee.manager.firstName} ${employee.manager.lastName}`
-                : none,
-            ],
-            [
-              t('fields.teams'),
-              employee.teams.length > 0
-                ? formatList(
-                    employee.teams.map((team) => team.name),
-                    language,
-                  )
-                : none,
-            ],
+            [t('fields.birthDate'), date(profile.birthDate)],
+            [t('fields.phone'), profile.phone ?? none],
+            [t('fields.country'), profile.country ?? none],
           ]}
         />
       </Card>
+      <Card className="space-y-3">
+        <CardTitle>{t('sections.account')}</CardTitle>
+        <Details
+          rows={[[t('sections.account'), t(`accountStatus.${profile.accountStatus ?? 'none'}`)]]}
+        />
+      </Card>
+    </>
+  );
+}
 
+export function LimitedViewNote() {
+  const { t } = useTranslation('employees');
+  return <p className="text-sm text-muted-foreground">{t('limitedView')}</p>;
+}
+
+/** The whole record on one page (My profile): header, then every section the caller may see. */
+export function EmployeeSummary({ employee }: { employee: Employee }) {
+  const profile = employee.profile;
+  return (
+    <div className="space-y-4">
+      <ProfileHeader employee={employee} />
       {profile ? (
         <>
-          <Card className="space-y-3">
-            <CardTitle>{t('sections.employment')}</CardTitle>
-            <Details
-              rows={[
-                [t('fields.employeeNo'), profile.employeeNo ?? none],
-                [t('fields.employmentType'), t(`employmentType.${profile.employmentType}`)],
-                [
-                  t('fields.seniority'),
-                  profile.seniority ? t(`seniority.${profile.seniority}`) : none,
-                ],
-                [t('fields.hireDate'), date(profile.hireDate)],
-                ...(employee.status === 'inactive'
-                  ? ([[t('fields.terminationDate'), date(profile.terminationDate)]] as const)
-                  : []),
-              ]}
-            />
-          </Card>
-          <Card className="space-y-3">
-            <CardTitle>{t('sections.personal')}</CardTitle>
-            <Details
-              rows={[
-                [t('fields.birthDate'), date(profile.birthDate)],
-                [t('fields.phone'), profile.phone ?? none],
-                [t('fields.country'), profile.country ?? none],
-              ]}
-            />
-          </Card>
-          <Card className="space-y-3">
-            <CardTitle>{t('sections.account')}</CardTitle>
-            <Details
-              rows={[
-                [t('sections.account'), t(`accountStatus.${profile.accountStatus ?? 'none'}`)],
-              ]}
-            />
-          </Card>
+          <EmploymentSection employee={employee} profile={profile} />
+          <PersonalSection profile={profile} />
         </>
       ) : (
-        <p className="text-sm text-muted-foreground">{t('limitedView')}</p>
+        <LimitedViewNote />
       )}
     </div>
   );

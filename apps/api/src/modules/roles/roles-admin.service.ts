@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import {
   MAX_CUSTOM_ROLES,
+  PERMISSIONS,
   diffGrants,
   escalations,
+  isPermissionCode,
   isValidGrant,
+  wouldCycle,
   type Grant,
   type PermissionScope,
   type RoleDetail,
@@ -22,6 +25,18 @@ import { ADMIN_POWER, UserRolesService } from './user-roles.service.js';
 const label = (g: Grant): string => `${g.code}:${g.scope}`;
 
 const notFound = () => new AppException('NOT_FOUND', { message: 'Role not found' });
+
+/** Modules in catalog order, so every list says them the same way. */
+const MODULE_ORDER = [...new Set(PERMISSIONS.map((p) => p.module))];
+const modulesOf = (codes: readonly string[]): string[] => {
+  const covered = new Set(
+    codes.filter(isPermissionCode).map((code) => PERMISSIONS.find((p) => p.code === code)!.module),
+  );
+  return MODULE_ORDER.filter((m) => covered.has(m));
+};
+
+const badParent = (code: 'role_cycle' | 'unknown_role', message: string) =>
+  new AppException('VALIDATION_FAILED', { details: [{ path: 'parentId', code, message }] });
 
 /**
  * Custom roles (docs/adr/0031-role-editor.md): create, change, delete. System roles are read-only; nobody grants
@@ -45,14 +60,17 @@ export class RolesAdminService {
           name: true,
           description: true,
           isSystem: true,
+          parentId: true,
+          permissions: { select: { permissionCode: true } },
           _count: { select: { permissions: true, users: true } },
         },
         orderBy: [{ isSystem: 'desc' }, { name: 'asc' }],
       });
-      return roles.map(({ _count, ...role }) => ({
+      return roles.map(({ _count, permissions, ...role }) => ({
         ...role,
         permissionCount: _count.permissions,
         userCount: _count.users,
+        modules: modulesOf(permissions.map((p) => p.permissionCode)),
       }));
     });
   }
@@ -73,8 +91,14 @@ export class RolesAdminService {
       }
       await this.assertNameFree(tx, body.name);
       this.assertNoEscalation(actor, [], body.grants);
+      const parentId = body.parentId ?? null;
+      if (parentId !== null) {
+        await this.lockTree(tx);
+        await this.assertParentExists(tx, parentId);
+      }
       const role = await tx.role.create({
         data: {
+          parentId,
           name: body.name,
           description: body.description ?? null,
           isSystem: false,
@@ -89,7 +113,7 @@ export class RolesAdminService {
         action: 'role.created',
         entity: 'role',
         entityId: role.id,
-        after: { grants: body.grants.map(label) },
+        after: { grants: body.grants.map(label), parentId },
       });
       return this.detail(tx, role.id);
     });
@@ -111,6 +135,9 @@ export class RolesAdminService {
         where: { id },
         data: { name: body.name, description: body.description ?? null },
       });
+      if (body.parentId !== undefined && body.parentId !== current.parentId) {
+        await this.placeInTree(tx, actor, id, current.parentId, body.parentId);
+      }
       await tx.rolePermission.deleteMany({ where: { roleId: id } });
       if (body.grants.length > 0) {
         await tx.rolePermission.createMany({
@@ -152,6 +179,9 @@ export class RolesAdminService {
           params: { field: 'in_use' },
         });
       }
+      // Sub-roles move up to the deleted role's own parent (docs/adr/0036-role-hierarchy.md).
+      await this.lockTree(tx);
+      await tx.role.updateMany({ where: { parentId: id }, data: { parentId: role.parentId } });
       await tx.role.delete({ where: { id } });
       await this.audit.record(tx, {
         actorUserId: actor.userId,
@@ -162,7 +192,55 @@ export class RolesAdminService {
     });
   }
 
+  /** Where a role sits in the tree. Display only: any role, system roles included; grants never change. */
+  move(actor: RequestAuth, id: string, parentId: string | null): Promise<RoleDetail> {
+    return this.db.tx(async (tx) => {
+      await this.authz.assert(actor, 'admin.role.manage');
+      const current = await this.detail(tx, id);
+      if (current.parentId !== parentId) {
+        await this.placeInTree(tx, actor, id, current.parentId, parentId);
+      }
+      return this.detail(tx, id);
+    });
+  }
+
   // ----- helpers ------------------------------------------------------------------------------
+
+  /** Serializes tree changes of one workspace, so two moves cannot build a cycle together. */
+  private async lockTree(tx: TenantTx): Promise<void> {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('role-tree:' || app_current_tenant()::text))`;
+  }
+
+  private async assertParentExists(tx: TenantTx, parentId: string): Promise<void> {
+    const found = await tx.role.count({ where: { id: parentId } });
+    if (found === 0) throw badParent('unknown_role', 'Unknown parent role');
+  }
+
+  private async placeInTree(
+    tx: TenantTx,
+    actor: RequestAuth,
+    id: string,
+    from: string | null,
+    to: string | null,
+  ): Promise<void> {
+    await this.lockTree(tx);
+    if (to !== null) {
+      await this.assertParentExists(tx, to);
+      const all = await tx.role.findMany({ select: { id: true, parentId: true } });
+      if (wouldCycle(all, id, to)) {
+        throw badParent('role_cycle', 'A role cannot sit under itself or one of its sub-roles');
+      }
+    }
+    await tx.role.update({ where: { id }, data: { parentId: to } });
+    await this.audit.record(tx, {
+      actorUserId: actor.userId,
+      action: 'role.moved',
+      entity: 'role',
+      entityId: id,
+      before: { parentId: from },
+      after: { parentId: to },
+    });
+  }
 
   /** Another workspace's role is simply not found (Row Level Security). Invalid stored grants are left out. */
   private async detail(tx: TenantTx, id: string): Promise<RoleDetail> {
@@ -174,6 +252,7 @@ export class RolesAdminService {
         name: true,
         description: true,
         isSystem: true,
+        parentId: true,
         permissions: { select: { permissionCode: true, scope: true } },
         _count: { select: { users: true } },
       },
@@ -191,6 +270,7 @@ export class RolesAdminService {
       isSystem: role.isSystem,
       grants,
       userCount: role._count.users,
+      parentId: role.parentId,
     };
   }
 

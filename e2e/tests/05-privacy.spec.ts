@@ -41,6 +41,7 @@ test('a former employee can be erased only after deactivation, and then stays a 
     .click();
   await expect(page.getByText('Inactive').first()).toBeVisible();
 
+  await page.getByRole('tab', { name: 'Data and privacy' }).click();
   await page.getByRole('button', { name: 'Erase personal data' }).click();
   const confirm = page.getByRole('button', { name: 'Erase permanently' });
   await expect(confirm).toBeDisabled();

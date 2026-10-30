@@ -395,11 +395,18 @@ describe('manager and department on the employee page', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('shows "not provided" for people without department, manager or teams', async () => {
+  it('leaves department, manager and teams out of the header when there are none', async () => {
     serve(employee({ department: null, manager: null, teams: [] }));
     await renderApp(`/employees/${uuid(3)}`);
     await screen.findByRole('heading', { name: 'Cy Dev' });
-    expect(screen.getAllByText('Not provided').length).toBeGreaterThanOrEqual(4);
+    const facts = screen.getByRole('list', { name: 'Key facts' });
+    expect(facts).not.toHaveTextContent('Manager');
+    // only the email links; there is no manager to link to
+    expect(
+      within(facts)
+        .getAllByRole('link')
+        .map((a) => a.getAttribute('href')),
+    ).toEqual(['mailto:cy@acme.eu']);
   });
 
   it('lets HR change both, never offering the person as their own manager', async () => {

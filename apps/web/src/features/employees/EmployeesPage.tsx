@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Plus, Search } from 'lucide-react';
+import { Building2, Mail, MapPin, Plus, Search } from 'lucide-react';
+import type { Employee } from '@intime/contracts';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { usePermission } from '@/features/auth/permissions';
@@ -8,6 +9,7 @@ import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 import { Select } from '@/shared/ui/select';
+import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
 import { PAGE_SIZE, type ListParams } from './api';
 import { EmployeeAvatar } from './EmployeeAvatar';
 import { useEmployees } from './hooks';
@@ -40,7 +42,7 @@ export function EmployeesPage() {
   const pages = data ? Math.max(1, Math.ceil(data.total / PAGE_SIZE)) : 1;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-4">
+    <div className="mx-auto max-w-6xl space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-semibold">{t('title')}</h1>
         {canCreate && (
@@ -88,9 +90,14 @@ export function EmployeesPage() {
       </div>
 
       {query.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('common:loading')}
-        </p>
+        <SkeletonGroup
+          label={t('common:loading')}
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {[0, 1, 2, 3, 4, 5].map((n) => (
+            <Skeleton key={n} className="h-48 rounded-xl" />
+          ))}
+        </SkeletonGroup>
       )}
 
       {query.isError && (
@@ -110,31 +117,9 @@ export function EmployeesPage() {
               <p className="text-center text-sm text-muted-foreground">{t('empty')}</p>
             </Card>
           ) : (
-            <ul className="space-y-2" aria-label={t('list')}>
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label={t('list')}>
               {data.items.map((employee) => (
-                <li key={employee.id}>
-                  <Link
-                    to={`/employees/${employee.id}`}
-                    className="flex min-h-14 items-center gap-3 rounded-xl glass p-3 glass-hover"
-                  >
-                    <EmployeeAvatar firstName={employee.firstName} lastName={employee.lastName} />
-                    <span className="min-w-0 flex-1">
-                      <span className="flex flex-wrap items-center gap-x-2">
-                        <span className="font-medium">
-                          {employee.firstName} {employee.lastName}
-                        </span>
-                        {employee.isSelf && <Badge>{t('badge.you')}</Badge>}
-                        {employee.status === 'inactive' && <Badge>{t('badge.inactive')}</Badge>}
-                      </span>
-                      <span className="block truncate text-sm text-muted-foreground">
-                        {[employee.jobTitle, employee.location].filter(Boolean).join(' · ')}
-                      </span>
-                    </span>
-                    <span className="hidden truncate text-sm text-muted-foreground md:block">
-                      {employee.email}
-                    </span>
-                  </Link>
-                </li>
+                <EmployeeCard key={employee.id} employee={employee} />
               ))}
             </ul>
           )}
@@ -161,6 +146,58 @@ export function EmployeesPage() {
         </>
       )}
     </div>
+  );
+}
+
+/** A person in the directory: a small banner like the profile page, the avatar across it and the key facts. */
+function EmployeeCard({ employee }: { employee: Employee }) {
+  const { t } = useTranslation('employees');
+  const name = `${employee.firstName} ${employee.lastName}`;
+  return (
+    <li>
+      <article className="relative h-full overflow-hidden rounded-xl glass glass-hover">
+        <div aria-hidden="true" className="h-14 border-b-2 border-brand bg-sidebar" />
+        <div className="px-4 pb-4">
+          <div className="-mt-8 flex items-end justify-between gap-2">
+            <EmployeeAvatar
+              firstName={employee.firstName}
+              lastName={employee.lastName}
+              className="size-16 text-lg ring-4 ring-surface"
+            />
+            <span className="flex flex-wrap justify-end gap-1.5">
+              {employee.isSelf && <Badge>{t('badge.you')}</Badge>}
+              {employee.status === 'inactive' && <Badge>{t('badge.inactive')}</Badge>}
+            </span>
+          </div>
+          <h2 className="mt-2 break-words text-base font-semibold leading-snug">
+            {/* The name links; the stretched link makes the whole card clickable. */}
+            <Link
+              to={`/employees/${employee.id}`}
+              className="after:absolute after:inset-0 after:rounded-xl focus-visible:outline-none focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-ring"
+            >
+              {name}
+            </Link>
+          </h2>
+          {employee.jobTitle && (
+            <p className="break-words text-sm text-muted-foreground">{employee.jobTitle}</p>
+          )}
+          <ul className="mt-3 space-y-1.5 text-sm">
+            {employee.location && <Fact icon={MapPin}>{employee.location}</Fact>}
+            {employee.department && <Fact icon={Building2}>{employee.department.name}</Fact>}
+            {employee.email && <Fact icon={Mail}>{employee.email}</Fact>}
+          </ul>
+        </div>
+      </article>
+    </li>
+  );
+}
+
+function Fact({ icon: Icon, children }: { icon: typeof Mail; children: string }) {
+  return (
+    <li className="flex min-w-0 items-center gap-2">
+      <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+      <span className="min-w-0 truncate">{children}</span>
+    </li>
   );
 }
 

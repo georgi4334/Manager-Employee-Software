@@ -28,7 +28,6 @@
   "limitedView": "Sie sehen die Verzeichnisangaben dieser Person.",
   "notProvided": "Nicht angegeben",
   "sections": {
-    "directory": "Verzeichnis",
     "employment": "Beschäftigung",
     "personal": "Persönliches",
     "account": "Konto"
@@ -174,5 +173,17 @@
     "currency": "Währung",
     "save": "Vergütung speichern",
     "cancel": "Abbrechen"
+  },
+  "tabs": {
+    "label": "Personalakte",
+    "personal": "Persönlich",
+    "work": "Arbeit",
+    "pay": "Vergütung",
+    "privacy": "Daten und Datenschutz"
+  },
+  "header": {
+    "number": "#{{number}}",
+    "facts": "Eckdaten",
+    "employed": "Beschäftigt seit {{date}}"
   }
 }

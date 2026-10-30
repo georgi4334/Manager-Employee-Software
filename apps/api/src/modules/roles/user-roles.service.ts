@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import type { SystemRole } from '@intime/contracts';
+import {
+  escalations,
+  isValidGrant,
+  type PermissionScope,
+  type SystemRole,
+} from '@intime/contracts';
+import type { RequestAuth } from '../../common/auth/auth.types.js';
 import { AppException } from '../../common/errors/app-exception.js';
 import { TenantContext, type TenantTx } from '../../infrastructure/tenancy/tenant-context.js';
 
@@ -45,6 +51,31 @@ export class UserRolesService {
     if (found !== unique.length) {
       throw new AppException('VALIDATION_FAILED', {
         details: [{ path: 'roleIds', code: 'unknown_role', message: 'Unknown role' }],
+      });
+    }
+  }
+
+  /**
+   * Nobody assigns a custom role they could not have built (docs/adr/0036-role-hierarchy.md): the actor must hold every grant
+   * of each newly assigned custom role at its scope or wider. System roles are exempt (their grants are a catalog decision).
+   */
+  async assertMayAssign(tx: TenantTx, actor: RequestAuth, newRoleIds: string[]): Promise<void> {
+    if (newRoleIds.length === 0) return;
+    const custom = await tx.role.findMany({
+      where: { id: { in: [...new Set(newRoleIds)] }, isSystem: false },
+      select: { permissions: { select: { permissionCode: true, scope: true } } },
+    });
+    const grants = custom.flatMap((role) =>
+      role.permissions
+        .filter((g) => isValidGrant(g.permissionCode, g.scope))
+        .map((g) => ({ code: g.permissionCode, scope: g.scope as PermissionScope })),
+    );
+    if (escalations(actor.permissions, [], grants).length > 0) {
+      throw new AppException('FORBIDDEN', {
+        message: 'You cannot assign a role with permissions you do not hold',
+        details: [
+          { path: 'roleIds', code: 'cannot_assign', message: 'The role grants more than you hold' },
+        ],
       });
     }
   }

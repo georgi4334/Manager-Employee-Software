@@ -4,7 +4,6 @@
   "new": "Neue Rolle",
   "loading": "Wird geladen…",
   "retry": "Erneut versuchen",
-  "list": "Rollen",
   "system": "System",
   "custom": "Eigene",
   "back": "Alle Rollen",
@@ -25,7 +24,9 @@
     "permissionsHint": "Legen Sie pro Berechtigung fest, wie weit sie reicht. Sie können nur weitergeben, was Sie selbst haben.",
     "save": "Rolle speichern",
     "saving": "Wird gespeichert…",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "parent": "Liegt unter",
+    "parentHint": "Nur für die Übersicht: Berechtigungen werden nie vererbt."
   },
   "grid": {
     "noAccess": "Kein Zugriff",
@@ -44,7 +45,9 @@
     "nameTaken": "Eine Rolle mit diesem Namen gibt es bereits.",
     "inUse": "Die Rolle wird noch verwendet. Entziehen Sie sie zuerst.",
     "limit": "Der Arbeitsbereich hat die Höchstzahl eigener Rollen erreicht.",
-    "cannotGrant": "Sie können nur Berechtigungen weitergeben, die Sie selbst haben, höchstens mit Ihrer eigenen Reichweite."
+    "cannotGrant": "Sie können nur Berechtigungen weitergeben, die Sie selbst haben, höchstens mit Ihrer eigenen Reichweite.",
+    "cycle": "Eine Rolle kann nicht unter sich selbst oder einer ihrer Unterrollen liegen.",
+    "unknownParent": "Diese Rolle gibt es nicht mehr. Laden Sie die Seite neu und versuchen Sie es erneut."
   },
   "counts": "Berechtigungen: {{permissions}} · Personen: {{people}}",
   "modules": {
@@ -138,7 +141,7 @@
     "admin.user.disable": "Konten deaktivieren und wieder aktivieren",
     "admin.role.view": "Rollen sehen",
     "admin.role.assign": "Benutzern Rollen zuweisen",
-    "admin.role.manage": "Eigene Rollen anlegen, ändern und löschen",
+    "admin.role.manage": "Eigene Rollen anlegen, ändern, verschieben und löschen",
     "admin.tenant.settings": "Einstellungen des Arbeitsbereichs ändern",
     "admin.audit_log.view": "Das Audit-Protokoll sehen",
     "gdpr.export_own": "Die eigenen Daten exportieren",
@@ -152,5 +155,32 @@
     "team": "Eigene und alle darunter",
     "department": "Eigene Abteilung",
     "all": "Alle"
+  },
+  "tree": {
+    "label": "Rollenhierarchie",
+    "hint": "Der Baum zeigt, wie Rollen zusammenhängen. Er dient nur der Übersicht: Jede Rolle behält genau ihre eigenen Berechtigungen, nichts wird vererbt.",
+    "below": "Rollen unter {{name}}"
+  },
+  "card": {
+    "subRoles_one": "{{count}} Unterrolle",
+    "subRoles_other": "{{count}} Unterrollen",
+    "collapse": "Rollen unter {{name}} ausblenden",
+    "expand": "Rollen unter {{name}} einblenden",
+    "noModules": "Keine Berechtigungen",
+    "moreModules": "+{{count}} weitere",
+    "move": "Verschieben",
+    "people_one": "{{count}} Person",
+    "people_other": "{{count}} Personen",
+    "permissions_one": "{{count}} Berechtigung",
+    "permissions_other": "{{count}} Berechtigungen",
+    "hide": "Unterrollen ausblenden",
+    "show": "Unterrollen einblenden"
+  },
+  "move": {
+    "title": "{{name}} verschieben",
+    "hint": "Nur der Platz in der Übersicht ändert sich. Niemand erhält oder verliert eine Berechtigung.",
+    "top": "Oberste Ebene",
+    "save": "Verschieben",
+    "saving": "Wird verschoben…"
   }
 }

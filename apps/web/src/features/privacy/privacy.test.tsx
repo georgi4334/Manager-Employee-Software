@@ -142,17 +142,17 @@ describe('HR: export and erase', () => {
   it('offers export to HR, and nothing to employees and managers', async () => {
     serve(employee());
     as('employee');
-    const first = await renderApp(`/employees/${ID}`);
+    const first = await renderApp(`/employees/${ID}?tab=privacy`);
     await screen.findByText('Dan Dimitrov');
     expect(screen.queryByText('Personal data')).not.toBeInTheDocument();
     first.unmount();
     as('manager');
-    const second = await renderApp(`/employees/${ID}`);
+    const second = await renderApp(`/employees/${ID}?tab=privacy`);
     await screen.findByText('Dan Dimitrov');
     expect(screen.queryByText('Personal data')).not.toBeInTheDocument();
     second.unmount();
     as('hr');
-    await renderApp(`/employees/${ID}`);
+    await renderApp(`/employees/${ID}?tab=privacy`);
     expect(await screen.findByRole('button', { name: 'Download data' })).toBeInTheDocument();
   });
 
@@ -160,7 +160,7 @@ describe('HR: export and erase', () => {
     as('hr');
     serve(employee());
     server.use(http.get(`${API}/privacy/export/${ID}`, () => HttpResponse.json(document)));
-    await renderApp(`/employees/${ID}`);
+    await renderApp(`/employees/${ID}?tab=privacy`);
     await userEvent.setup().click(await screen.findByRole('button', { name: 'Download data' }));
     expect(await screen.findByText(/The file was downloaded/)).toBeInTheDocument();
     expect(saved[0]!.name).toBe(`intime-data-export-${ID}.json`);
@@ -169,24 +169,24 @@ describe('HR: export and erase', () => {
   it('offers erasure only for former employees, and never for yourself', async () => {
     as('hr');
     serve(employee({ status: 'active' }));
-    const first = await renderApp(`/employees/${ID}`);
+    const first = await renderApp(`/employees/${ID}?tab=privacy`);
     await screen.findByRole('button', { name: 'Download data' });
     expect(screen.queryByRole('button', { name: 'Erase personal data' })).not.toBeInTheDocument();
     first.unmount();
     serve(employee({ status: 'inactive', isSelf: true }));
-    const second = await renderApp(`/employees/${ID}`);
+    const second = await renderApp(`/employees/${ID}?tab=privacy`);
     await screen.findByRole('button', { name: 'Download data' });
     expect(screen.queryByRole('button', { name: 'Erase personal data' })).not.toBeInTheDocument();
     second.unmount();
     serve(employee());
-    await renderApp(`/employees/${ID}`);
+    await renderApp(`/employees/${ID}?tab=privacy`);
     expect(await screen.findByRole('button', { name: 'Erase personal data' })).toBeInTheDocument();
   });
 
   it('shows no actions on an erased record, only the export', async () => {
     as('hr');
     serve(employee({ firstName: '—', lastName: '#6df443', erased: true }));
-    await renderApp(`/employees/${ID}`);
+    await renderApp(`/employees/${ID}?tab=privacy`);
     await screen.findByRole('button', { name: 'Download data' });
     expect(screen.queryByRole('button', { name: 'Erase personal data' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Reactivate' })).not.toBeInTheDocument();
@@ -203,7 +203,7 @@ describe('HR: export and erase', () => {
         return new HttpResponse(null, { status: 204 });
       }),
     );
-    await renderApp(`/employees/${ID}`);
+    await renderApp(`/employees/${ID}?tab=privacy`);
     const user = userEvent.setup();
     await user.click(await screen.findByRole('button', { name: 'Erase personal data' }));
     expect(screen.getByText('Erase the personal data of Dan Dimitrov?')).toBeInTheDocument();
@@ -226,7 +226,7 @@ describe('HR: export and erase', () => {
         return new HttpResponse(null, { status: 204 });
       }),
     );
-    await renderApp(`/employees/${ID}`);
+    await renderApp(`/employees/${ID}?tab=privacy`);
     const user = userEvent.setup();
     await user.click(await screen.findByRole('button', { name: 'Erase personal data' }));
     await user.click(
@@ -251,7 +251,7 @@ describe('HR: export and erase', () => {
         errorResponse('CONFLICT', 409, { params: { field } }),
       ),
     );
-    await renderApp(`/employees/${ID}`);
+    await renderApp(`/employees/${ID}?tab=privacy`);
     const user = userEvent.setup();
     await user.click(await screen.findByRole('button', { name: 'Erase personal data' }));
     await user.click(screen.getByRole('checkbox'));
@@ -263,7 +263,7 @@ describe('HR: export and erase', () => {
     as('admin');
     serve(employee());
     server.use(http.post(`${API}/privacy/erase/${ID}`, () => errorResponse('FORBIDDEN', 403)));
-    await renderApp(`/employees/${ID}`);
+    await renderApp(`/employees/${ID}?tab=privacy`);
     const user = userEvent.setup();
     await user.click(await screen.findByRole('button', { name: 'Erase personal data' }));
     await user.click(screen.getByRole('checkbox'));
