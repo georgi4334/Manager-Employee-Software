@@ -6,7 +6,7 @@ import {
   type GrantedPermissions,
   type PermissionCode,
 } from './permissions.js';
-import { PERMISSION_SCOPES, type PermissionScope } from './roles.js';
+import { PERMISSION_SCOPES, SYSTEM_ROLES, type PermissionScope, type SystemRole } from './roles.js';
 
 /** Custom roles (docs/adr/0031-role-editor.md). */
 export const MAX_CUSTOM_ROLES = 30;
@@ -49,6 +49,8 @@ export const roleRequestSchema = z
     name: z.string().trim().min(1, { error: 'required' }).max(MAX_ROLE_NAME, { error: 'tooLong' }),
     description: text(MAX_ROLE_DESCRIPTION).optional(),
     grants: grantsSchema,
+    /** Where the role sits in the tree (ADR 0036): null = a root; missing = root on create, unchanged on update. */
+    parentId: z.uuid().nullable().optional(),
   })
   .strict();
 export type RoleRequest = z.infer<typeof roleRequestSchema>;
@@ -61,6 +63,7 @@ export const roleDetailSchema = z.object({
   isSystem: z.boolean(),
   grants: z.array(grantSchema),
   userCount: z.number().int(),
+  parentId: z.uuid().nullable(),
 });
 export type RoleDetail = z.infer<typeof roleDetailSchema>;
 
@@ -97,4 +100,94 @@ export function diffGrants(before: readonly Grant[], after: readonly Grant[]): G
     changed: after.filter((g) => was.has(g.code) && was.get(g.code) !== g.scope),
     removed: before.filter((g) => !now.has(g.code)),
   };
+}
+
+/** Moving a role in the tree (ADR 0036). Display only: the tree never changes what anybody may do. */
+export const roleParentRequestSchema = z.object({ parentId: z.uuid().nullable() }).strict();
+export type RoleParentRequest = z.infer<typeof roleParentRequestSchema>;
+
+/** Where new workspaces put the system roles; `roles:sync` never moves an existing role. */
+export const SYSTEM_ROLE_PARENTS = {
+  admin: null,
+  hr: 'admin',
+  manager: 'hr',
+  employee: 'manager',
+} as const satisfies Record<SystemRole, SystemRole | null>;
+
+export interface RoleNodeInput {
+  id: string;
+  parentId: string | null;
+}
+
+/**
+ * Would putting `id` under `parentId` make a cycle? True when the new parent is the role itself or one of its descendants.
+ * A parent chain that is already broken (unknown id) simply ends.
+ */
+export function wouldCycle(
+  roles: readonly RoleNodeInput[],
+  id: string,
+  parentId: string | null,
+): boolean {
+  const parentOf = new Map(roles.map((r) => [r.id, r.parentId]));
+  const seen = new Set<string>();
+  for (let at = parentId; at !== null && at !== undefined; at = parentOf.get(at) ?? null) {
+    if (at === id) return true;
+    if (seen.has(at)) return true; // an existing loop; never extend it
+    seen.add(at);
+  }
+  return false;
+}
+
+/** The ids of every role below `id` (children, their children, ...). */
+export function descendantIds(roles: readonly RoleNodeInput[], id: string): Set<string> {
+  const children = new Map<string, string[]>();
+  for (const r of roles) {
+    if (r.parentId === null) continue;
+    children.set(r.parentId, [...(children.get(r.parentId) ?? []), r.id]);
+  }
+  const out = new Set<string>();
+  const stack = [...(children.get(id) ?? [])];
+  while (stack.length > 0) {
+    const next = stack.pop()!;
+    if (out.has(next) || next === id) continue;
+    out.add(next);
+    stack.push(...(children.get(next) ?? []));
+  }
+  return out;
+}
+
+export interface RoleTreeNode<T> {
+  role: T;
+  children: RoleTreeNode<T>[];
+}
+
+/**
+ * Builds the role tree for display. Roots are roles without a parent, or whose parent is unknown; anything caught in a loop is
+ * shown as a root too, so every role appears exactly once. Siblings: system roles first (in catalog order), then by name.
+ */
+export function buildRoleTree<
+  T extends RoleNodeInput & { key: string | null; name: string; isSystem: boolean },
+>(roles: readonly T[]): RoleTreeNode<T>[] {
+  const byId = new Map(roles.map((r) => [r.id, r]));
+  const rank = (r: T) =>
+    r.isSystem && r.key ? SYSTEM_ROLES.indexOf(r.key as SystemRole) : SYSTEM_ROLES.length;
+  const order = (a: RoleTreeNode<T>, b: RoleTreeNode<T>) =>
+    rank(a.role) - rank(b.role) || a.role.name.localeCompare(b.role.name);
+  const nodes = new Map(roles.map((r) => [r.id, { role: r, children: [] } as RoleTreeNode<T>]));
+  const roots: RoleTreeNode<T>[] = [];
+  for (const r of roles) {
+    const node = nodes.get(r.id)!;
+    const parent = r.parentId !== null ? nodes.get(r.parentId) : undefined;
+    if (parent && byId.has(r.parentId!) && !wouldCycle(roles, r.id, r.parentId)) {
+      parent.children.push(node);
+    } else {
+      roots.push(node);
+    }
+  }
+  const sort = (list: RoleTreeNode<T>[]) => {
+    list.sort(order);
+    list.forEach((n) => sort(n.children));
+  };
+  sort(roots);
+  return roots;
 }

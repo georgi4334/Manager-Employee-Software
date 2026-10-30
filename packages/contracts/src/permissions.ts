@@ -608,9 +608,9 @@ export const PERMISSIONS = [
   def({
     code: 'admin.role.manage',
     module: 'admin',
-    description: 'Create, change and delete custom roles',
+    description: 'Create, change, move and delete custom roles',
     scopes: ALL,
-    grants: g(null, null, null, 'all'),
+    grants: g(null, null, 'all', 'all'),
   }),
   def({
     code: 'admin.tenant.settings',

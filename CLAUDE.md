@@ -273,6 +273,12 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Audit `role.created|updated|deleted` has the role id and `code:scope` strings of what changed, **never the name or description**. Changes apply to the next request of everybody holding the role.
 - Web: `/roles` (list cards), `/roles/:id` (read-only grid for system roles and viewers; editor + delete for custom roles with `admin.role.manage`), `/roles/new` (can start from a copy: only what the user may hand out is copied). The permission grid disables scopes the user does not hold (cosmetic). **Every permission, module and scope needs a text in `roles.json` (en/de/bg)**: `labels.test.ts` walks the catalog and fails otherwise. Editing system roles, per-user overrides and role history are out of scope.
 
+## Role hierarchy (docs/adr/0036-role-hierarchy.md) — security critical
+
+- `role.parent_id` (composite foreign key, cycle trigger) places a role in a tree. **Display only: authorization never reads it**, nothing is inherited; moves are `PUT /roles/:id/parent` (`admin.role.manage`, any role incl. system roles), `parentId` on create/update, audited `role.moved` (ids only). Cycles are `VALIDATION_FAILED` `role_cycle` (checked under the `role-tree` advisory lock, `wouldCycle` in contracts); deleting a role moves its sub-roles up. New workspaces start with Admin > HR > Manager > Employee (`SYSTEM_ROLE_PARENTS`); `roles:sync` never moves a role.
+- `admin.role.manage` is HR and Admin. **Nobody assigns a custom role they could not have built**: invitations and `PUT /users/:id/roles` check newly assigned custom roles with `escalations` (`FORBIDDEN`, `cannot_assign`; `UserRolesService.assertMayAssign`); system roles are exempt. This keeps HR-only grants (`feedback.view_received`) away from Admin.
+- Web: `/roles` is an org chart (`RoleTree`: roots on top, direct sub-roles as columns, deeper levels stacked; cards with people, permissions, sub-roles and modules; Hide/Show per branch), `MoveRoleDialog` and a "Sits under" select in the editor (`parentOptions` never offers the role itself or its sub-roles).
+
 ## Motion (docs/adr/0032-motion.md)
 
 - CSS only (transform/opacity); curves and durations are tokens in `tokens.css` (`--ease-ios`, `--ease-spring`, `--dur-*`). Never animate width, height, top or left.

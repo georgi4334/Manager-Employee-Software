@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   SYSTEM_ROLES,
   SYSTEM_ROLE_LABELS,
+  SYSTEM_ROLE_PARENTS,
   systemRoleGrants,
   type PermissionScope,
   type SystemRole,
@@ -37,6 +38,7 @@ export class SystemRolesService {
       grantsRemoved: 0,
     };
 
+    const created: SystemRole[] = [];
     for (const key of SYSTEM_ROLES) {
       const existing = await tx.role.findUnique({ where: { tenantId_key: { tenantId, key } } });
       const role = existing
@@ -45,7 +47,10 @@ export class SystemRolesService {
             data: { name: SYSTEM_ROLE_LABELS[key], isSystem: true },
           })
         : await tx.role.create({ data: { key, name: SYSTEM_ROLE_LABELS[key], isSystem: true } });
-      if (!existing) result.rolesCreated += 1;
+      if (!existing) {
+        result.rolesCreated += 1;
+        created.push(key);
+      }
       result.roleIds[key] = role.id;
 
       const desired = new Map<string, PermissionScope>(
@@ -87,6 +92,15 @@ export class SystemRolesService {
         });
         result.grantsAdded += toAdd.length;
       }
+    }
+    // New roles start in the default tree (docs/adr/0036-role-hierarchy.md); an existing placement is never changed.
+    for (const key of created) {
+      const parent = SYSTEM_ROLE_PARENTS[key];
+      if (parent === null) continue;
+      await tx.role.update({
+        where: { id: result.roleIds[key] },
+        data: { parentId: result.roleIds[parent] },
+      });
     }
     return result;
   }

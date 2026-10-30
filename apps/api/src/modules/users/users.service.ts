@@ -77,6 +77,7 @@ export class UsersService {
       const employeeRoleId = await this.userRoles.roleIdByKey(tx, 'employee');
       const roleIds = [...new Set(requestedRoleIds ?? [employeeRoleId])];
       if (roleIds.some((id) => id !== employeeRoleId)) await this.authz.assert(actor, ADMIN_POWER);
+      await this.userRoles.assertMayAssign(tx, actor, roleIds);
 
       const { userId } = await this.invitations.invite(tx, email, roleIds);
       await this.audit.record(tx, {
@@ -97,6 +98,11 @@ export class UsersService {
       const before = user.roles.map((r) => r.role.id).sort();
       const after = [...new Set(roleIds)].sort();
       await this.userRoles.assertRolesExist(tx, after);
+      await this.userRoles.assertMayAssign(
+        tx,
+        actor,
+        after.filter((id) => !before.includes(id)),
+      );
 
       const wasAdministrator = user.status === 'active' && (await this.holdsAdminPower(tx, userId));
       await this.userRoles.setRoles(tx, userId, after);

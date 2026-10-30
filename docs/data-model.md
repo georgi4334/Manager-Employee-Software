@@ -32,7 +32,7 @@ erDiagram
 | `auth_identity`           | user_id, provider (`password/google`), provider_subject, password_hash (argon2id, only for `password`)                                                                                     |
 | `refresh_token`           | user_id, token_hash, family_id, expires_at, revoked_at, replaced_by (reuse detection)                                                                                                      |
 | `invitation`              | _(not a table: invitations are `auth_token` rows with purpose `invite`, see ADR 0002)_                                                                                                     |
-| `role`                    | key (admin/hr/manager/employee for system roles, null for custom), name, description, is_system — unique (tenant, name) and (tenant, key)                                                  |
+| `role`                    | key (admin/hr/manager/employee for system roles, null for custom), name, description, is_system, parent_id (tree, display only, ADR 0036) — unique (tenant, name) and (tenant, key)        |
 | _(no `permission` table)_ | The permission catalog lives in code (`@intime/contracts`); the database only stores grants. See [ADR 0003](adr/0003-roles-and-permissions.md)                                             |
 | `role_permission`         | role_id, permission_code (validated against the catalog), **scope** (`own/reports/team/department/all`) — primary key (role, code)                                                         |
 | `user_role`               | user_id, role_id (composite tenant-safe FKs; a role in use cannot be deleted)                                                                                                              |

@@ -192,16 +192,21 @@ model Role {
   name        String
   description String?
   isSystem    Boolean  @default(false) @map("is_system")
+  /// The role it sits under in the tree (docs/adr/0036-role-hierarchy.md). Display only: never read by authorization.
+  parentId    String?  @map("parent_id") @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   tenant      Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  parent      Role?            @relation("RoleTree", fields: [tenantId, parentId], references: [tenantId, id], onDelete: NoAction, onUpdate: NoAction)
+  children    Role[]           @relation("RoleTree")
   permissions RolePermission[]
   users       UserRole[]
 
   @@unique([tenantId, id])
   @@unique([tenantId, key])
   @@unique([tenantId, name])
+  @@index([tenantId, parentId])
   @@map("role")
 }
 
