@@ -151,11 +151,15 @@ for (const variant of variants) {
         .filter({ hasText: 'Ada Admin' })
         .first()
         .click();
+      for (const tab of ['Personal', 'Data and privacy', 'Work']) {
+        await page.getByRole('tab', { name: tab }).click();
+        found.push(...(await scan(page, `employee detail (${tab})`)));
+      }
       await page.getByRole('button', { name: 'Change working hours' }).click();
       found.push(...(await scan(page, 'employee detail (working hours form open)')));
       // somebody else's pay: the card with its editor (nobody edits their own)
       const pia = await ensureEmployee(page, 'Pia', 'Pay');
-      await settle(page, `/employees/${pia}`);
+      await settle(page, `/employees/${pia}?tab=pay`);
       await page.getByRole('button', { name: 'Add or change pay' }).click();
       found.push(...(await scan(page, 'employee detail (compensation form open)')));
       await settle(page, '/projects');

@@ -28,7 +28,6 @@
   "limitedView": "You can see the directory information of this person.",
   "notProvided": "Not provided",
   "sections": {
-    "directory": "Directory",
     "employment": "Employment",
     "personal": "Personal",
     "account": "Account"
@@ -174,5 +173,17 @@
     "currency": "Currency",
     "save": "Save pay",
     "cancel": "Cancel"
+  },
+  "tabs": {
+    "label": "Employee record",
+    "personal": "Personal",
+    "work": "Work",
+    "pay": "Pay",
+    "privacy": "Data and privacy"
+  },
+  "header": {
+    "number": "#{{number}}",
+    "facts": "Key facts",
+    "employed": "Employed since {{date}}"
   }
 }

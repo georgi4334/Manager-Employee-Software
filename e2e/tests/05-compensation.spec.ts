@@ -9,6 +9,7 @@ test('an administrator records pay that only HR and administrators can see', asy
   await signIn(ada, ADMIN_EMAIL);
   await ada.goto('/employees');
   await ada.getByRole('link', { name: /Eva Employee/ }).click();
+  await ada.getByRole('tab', { name: 'Pay' }).click();
   const card = ada.getByRole('heading', { name: 'Compensation' }).locator('xpath=ancestor::div[1]');
   await expect(card).toContainText('No pay has been recorded yet.');
   await card.getByRole('button', { name: 'Add or change pay' }).click();
@@ -25,6 +26,7 @@ test('an administrator records pay that only HR and administrators can see', asy
   await eva.goto(`/employees/${me.id}`);
   await expect(eva.getByRole('heading', { name: 'Working hours' })).toBeVisible();
   await expect(eva.getByRole('heading', { name: 'Compensation' })).toHaveCount(0);
+  await expect(eva.getByRole('tab', { name: 'Pay' })).toHaveCount(0);
   const refused = await eva.request.get(`/api/v1/employees/${me.id}/compensation`);
   expect(refused.status()).toBe(403);
   // …but her own data export contains her records
@@ -35,7 +37,7 @@ test('an administrator records pay that only HR and administrators can see', asy
 test('nobody changes their own pay', async ({ page }) => {
   await signIn(page, ADMIN_EMAIL);
   const me = (await (await page.request.get('/api/v1/employees/me')).json()) as { id: string };
-  await page.goto(`/employees/${me.id}`);
+  await page.goto(`/employees/${me.id}?tab=pay`);
   const card = page
     .getByRole('heading', { name: 'Compensation' })
     .locator('xpath=ancestor::div[1]');

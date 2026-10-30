@@ -3,7 +3,7 @@ import type { Employee } from '@intime/contracts';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router';
+import { Link, useParams, useSearchParams } from 'react-router';
 import { useMessages } from '@/features/auth/messages';
 import { EmployeeDataPanel } from '@/features/privacy/EmployeeDataPanel';
 import { usePermission } from '@/features/auth/permissions';
@@ -14,7 +14,10 @@ import { Card, CardTitle } from '@/shared/ui/card';
 import { Field } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
 import { AssignmentPanel } from '@/features/organization/AssignmentPanel';
-import { EmployeeSummary } from './EmployeeSummary';
+import { EmploymentSection, LimitedViewNote, PersonalSection } from './EmployeeSummary';
+import { ProfileHeader } from './ProfileHeader';
+import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
+import { TabList, TabPanel } from '@/shared/ui/tabs';
 import { CompensationCard } from './CompensationCard';
 import { WorkingHoursCard } from './WorkingHoursCard';
 import {
@@ -39,13 +42,15 @@ export function EmployeeDetailPage() {
   const query = useEmployee(id);
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
+    <div className="mx-auto max-w-5xl space-y-4">
       <BackLink to="/employees">{t('back')}</BackLink>
 
       {query.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('common:loading')}
-        </p>
+        <SkeletonGroup label={t('common:loading')} className="space-y-4">
+          <Skeleton className="h-56 rounded-xl" />
+          <Skeleton className="h-12 rounded-xl" />
+          <Skeleton className="h-40 rounded-xl" />
+        </SkeletonGroup>
       )}
       {query.isError &&
         (isApiError(query.error, 'NOT_FOUND') ? (
@@ -59,16 +64,79 @@ export function EmployeeDetailPage() {
             <Button onClick={() => void query.refetch()}>{t('common:retry')}</Button>
           </Card>
         ))}
-      {query.data && (
-        <>
-          <EmployeeActions employee={query.data} />
-          <EmployeeSummary employee={query.data} />
-          <WorkingHoursCard employee={query.data} />
-          <CompensationCard employee={query.data} />
-          <EmployeeDataPanel employee={query.data} />
-        </>
-      )}
+      {query.data && <EmployeeView employee={query.data} />}
     </div>
+  );
+}
+
+type Tab = 'work' | 'personal' | 'pay' | 'privacy';
+
+/** Header, actions and the record in tabs; a tab is offered only when it has something the caller may see. */
+function EmployeeView({ employee }: { employee: Employee }) {
+  const { t } = useTranslation('employees');
+  const [params, setParams] = useSearchParams();
+  const canSeePay = usePermission('compensation.view');
+  const canExport = usePermission('gdpr.export_employee');
+  const canErase = usePermission('gdpr.erase_employee');
+  const profile = employee.profile;
+
+  const tabs: { name: Tab; label: string }[] = [
+    ...(profile
+      ? ([
+          { name: 'work', label: t('tabs.work') },
+          { name: 'personal', label: t('tabs.personal') },
+        ] as const)
+      : []),
+    ...(canSeePay && !employee.erased ? ([{ name: 'pay', label: t('tabs.pay') }] as const) : []),
+    ...(canExport ||
+    (canErase && employee.status === 'inactive' && !employee.isSelf && !employee.erased)
+      ? ([{ name: 'privacy', label: t('tabs.privacy') }] as const)
+      : []),
+  ];
+  const requested = params.get('tab');
+  const tab: Tab | undefined = tabs.find((x) => x.name === requested)?.name ?? tabs[0]?.name;
+
+  return (
+    <>
+      <ProfileHeader employee={employee}>
+        <EmployeeActions employee={employee} />
+      </ProfileHeader>
+      {tabs.length > 1 && (
+        <TabList
+          label={t('tabs.label')}
+          tabs={tabs}
+          value={tab ?? ''}
+          idPrefix="employee"
+          onChange={(name) =>
+            setParams(
+              (current) => {
+                const next = new URLSearchParams(current);
+                if (name === tabs[0]?.name) next.delete('tab');
+                else next.set('tab', name);
+                return next;
+              },
+              { replace: true },
+            )
+          }
+        />
+      )}
+      {!profile && <LimitedViewNote />}
+      {tab && (
+        <TabPanel value={tabs.length > 1 ? tab : ''} idPrefix="employee">
+          <div className="space-y-4">
+            {tab === 'work' && profile && (
+              <>
+                <EmploymentSection employee={employee} profile={profile} />
+                <WorkingHoursCard employee={employee} />
+              </>
+            )}
+            {tab === 'personal' && profile && <PersonalSection profile={profile} />}
+            {tab === 'pay' && <CompensationCard employee={employee} />}
+            {tab === 'privacy' && <EmployeeDataPanel employee={employee} />}
+          </div>
+        </TabPanel>
+      )}
+    </>
   );
 }
 
