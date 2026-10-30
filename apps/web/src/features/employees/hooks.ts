@@ -22,8 +22,14 @@ export const useEmployees = (params: ListParams) =>
     retry: false,
   });
 
+/** No id (the create form) asks for nothing; an empty id would otherwise request `/employees/`. */
 export const useEmployee = (id: string) =>
-  useQuery({ queryKey: employeeKeys.detail(id), queryFn: () => fetchEmployee(id), retry: false });
+  useQuery({
+    queryKey: employeeKeys.detail(id),
+    queryFn: () => fetchEmployee(id),
+    enabled: id !== '',
+    retry: false,
+  });
 
 export const useOwnEmployee = () =>
   useQuery({ queryKey: employeeKeys.me, queryFn: fetchOwnEmployee, retry: false });
