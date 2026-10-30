@@ -6,7 +6,8 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 ## Stack
 
 - Monorepo: pnpm + Turborepo. Packages: `@intime/web` (apps/web), `@intime/api` (apps/api), `@intime/contracts` (packages/contracts: Zod schemas, permission codes, shared types).
-- Web: React 19, TypeScript, Vite, React Router (library mode), Zustand (UI state) + TanStack Query (server state), Tailwind with CSS-variable tokens, react-i18next (en, de, bg).
+- Web: React 19, TypeScript 6, Vite, React Router (library mode), Zustand (UI state) + TanStack Query (server state), Tailwind with CSS-variable tokens, react-i18next (en, de, bg).
+- TypeScript is `~6.0` everywhere (root and `apps/web`, kept aligned). `typescript-eslint` supports `<6.1`, so do not move to TypeScript 7 until it does. TS 6 deprecates `baseUrl`: path aliases use `paths` relative to the tsconfig (`"@/*": ["./src/*"]`).
 - API: NestJS 12 (ESM), PostgreSQL + Prisma 7 (pg driver adapter), Row Level Security per tenant, a transactional outbox for notifications (ADR 0004; no pg-boss), own auth module with `jose` (JWT, Google OIDC) and argon2id (`@node-rs/argon2`).
 
 ## Commands

@@ -23,7 +23,7 @@ Solo developer + Claude, ~3–4 focused hours/day. Estimates are in **working da
 ## Phase 0 — Foundation (~10–12 days)
 
 1. Monorepo (pnpm + Turborepo), TS config, ESLint/Prettier, Husky + commitlint, GitHub Actions — **done**. _(1–2 d)_
-2. `apps/web`: Vite + React 19 + React Router, Tailwind with `tokens.css` (neutral placeholder palette, light/dark), shadcn/ui base components, app shell (sidebar / mobile bottom nav), Vitest + RTL + MSW — **done**. _(2–3 d)_
+2. `apps/web`: Vite + React 19 + TypeScript 6 + React Router, Tailwind with `tokens.css` (neutral placeholder palette, light/dark), shadcn/ui base components, app shell (sidebar / mobile bottom nav), Vitest + RTL + MSW — **done**. _(2–3 d)_
 3. i18n: react-i18next, EN/DE/BG namespaces, language switcher, missing-key check in CI — **done**. _(1 d)_
 4. `apps/api`: NestJS, config validation, Prisma + Postgres (docker-compose locally), health check, error format with codes, OpenAPI — **done**. _(2 d)_
 5. Tenancy: tenant context + RLS migration + isolation tests — **done** (ADR 0001). _(1–2 d)_
