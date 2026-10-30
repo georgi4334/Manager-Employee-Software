@@ -1,8 +1,12 @@
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
+import { cleanup, configure } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 import { initTestI18n } from './i18n';
 import { server, signedInHandlers } from './server';
+
+// The default 1 s for findBy/waitFor is too short when the whole monorepo's tests share the CPU (CI, `pnpm test`);
+// paging tests timed out now and then. A longer wait only slows tests that would otherwise fail.
+configure({ asyncUtilTimeout: 3000 });
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
 afterAll(() => server.close());
