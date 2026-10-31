@@ -47,13 +47,21 @@
     "of": "{{name}} · {{cycle}}",
     "self": "Self-review {{state}}",
     "manager": "Manager review {{state}}",
-    "final": "Final rating: {{rating}} of 5"
+    "final": "Final rating: {{rating}} of 5",
+    "released": "Results released",
+    "notReleased": "Not released yet",
+    "progress": "Progress",
+    "mine": "Your review",
+    "noFinal": "No final rating yet"
   },
   "detail": {
     "title": "{{name}} · {{cycle}}",
     "period": "{{from}} to {{to}}",
     "dues": "Self-review due {{self}}, manager review due {{manager}}",
-    "final": "Final rating: {{rating}} of 5 ({{words}})"
+    "final": "Final rating: {{rating}} of 5 ({{words}})",
+    "selfDue": "Self-review due {{date}}",
+    "managerDue": "Manager review due {{date}}",
+    "finalLabel": "Final rating"
   },
   "score": {
     "1": "Needs improvement",
@@ -68,7 +76,8 @@
     "label": "Comment on {{name}} (optional)"
   },
   "summary": {
-    "label": "Summary (optional)"
+    "label": "Summary (optional)",
+    "heading": "Summary"
   },
   "self": {
     "heading": "Self-review",
@@ -146,6 +155,18 @@
       "close": "Yes, close it and release the results"
     },
     "delete": "Delete {{name}}",
-    "confirmDelete": "Yes, delete this draft"
+    "confirmDelete": "Yes, delete this draft",
+    "stages": "Stages",
+    "bar": {
+      "self": "Self-reviews",
+      "manager": "Manager reviews",
+      "released": "Released"
+    },
+    "competencyHeading": "Competencies"
+  },
+  "part": {
+    "submitted": "Submitted {{date}}",
+    "notSubmitted": "Not submitted yet",
+    "hidden": "Shown after release"
   }
 }
