@@ -133,8 +133,10 @@ export function Capsule({
             text,
           )}
         >
-          {!fits && inside}
-          {after}
+          {!fits && <span>{inside}</span>}
+          {after !== undefined && (
+            <span className="font-medium text-muted-foreground">{after}</span>
+          )}
         </span>
       )}
     </span>

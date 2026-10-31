@@ -89,13 +89,14 @@ export function MilestoneTrack({
             'sm:right-auto sm:top-0 sm:left-[var(--pos)] sm:-translate-x-1/2 sm:translate-y-0 sm:flex-col sm:gap-0',
         )}
       >
+        {/* a tick across the rail (vertical) or a stem down to it (across); the pill keeps to the edge */}
         <span
           className={cn(
-            'h-px flex-1 border-t border-dashed border-foreground/60',
-            across &&
-              'sm:order-2 sm:h-12 sm:flex-none sm:border-l-2 sm:border-t-0 sm:border-solid sm:border-foreground',
+            'h-0.5 w-7 shrink-0 rounded-full bg-foreground',
+            across && 'sm:order-2 sm:h-12 sm:w-0.5',
           )}
         />
+        <span className={cn('flex-1', across && 'sm:hidden')} />
         <span className="rounded-full bg-foreground px-2 py-0.5 text-xs font-semibold text-background">
           {t('today')}
         </span>

@@ -27,7 +27,9 @@ export function Timeline({ project, today }: { project: ProjectDetail; today: st
 
   return (
     <div className="space-y-3">
-      <MilestoneTrack points={points} today={today} label={t('timeline.title')} />
+      {points.length > 1 && (
+        <MilestoneTrack points={points} today={today} label={t('timeline.title')} />
+      )}
       <p className="flex flex-wrap justify-between gap-x-3 text-sm text-muted-foreground">
         <span>{summary}</span>
         <span>{t('timeline.milestoneCount', { count: project.milestones.length })}</span>
