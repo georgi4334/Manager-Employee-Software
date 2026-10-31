@@ -1,4 +1,5 @@
 import {
+  DEFAULT_WEEK,
   SYSTEM_ROLE_LABELS,
   mergeGrants,
   systemRoleGrants,
@@ -9,10 +10,57 @@ import {
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 
-/** One mock API for all component tests. Tests add or override handlers with server.use(...). */
-export const server = setupServer();
-
 export const API = 'http://localhost:3000/api/v1';
+
+const emptyPage = { items: [], total: 0, page: 1, pageSize: 25 };
+
+/**
+ * Neutral answers for reads that many pages make on the side (org chart, counts, cards). They stay after
+ * `resetHandlers()`; a test that cares about one of them overrides it with `server.use(...)`.
+ */
+const defaultHandlers = [
+  http.get(`${API}/org/chart`, () => HttpResponse.json({ nodes: [] })),
+  http.get(`${API}/org/departments`, () => HttpResponse.json([])),
+  http.get(`${API}/roles`, () => HttpResponse.json([])),
+  http.get(`${API}/tasks`, () => HttpResponse.json(emptyPage)),
+  http.get(`${API}/employees`, () => HttpResponse.json(emptyPage)),
+  http.get(`${API}/employees/me`, () =>
+    HttpResponse.json(errorBody('NOT_FOUND', 404), { status: 404 }),
+  ),
+  http.get(`${API}/employees/:id/schedule`, ({ params }) =>
+    HttpResponse.json({
+      employeeId: params.id,
+      effective: [...DEFAULT_WEEK],
+      isDefault: true,
+      items: [],
+      canManage: false,
+    }),
+  ),
+  http.get(`${API}/employees/:id/compensation`, ({ params }) =>
+    HttpResponse.json({ employeeId: params.id, items: [], canManage: false }),
+  ),
+  http.get(`${API}/notifications`, () =>
+    HttpResponse.json({ items: [], unreadCount: 0, nextCursor: null }),
+  ),
+  http.get(`${API}/notifications/preferences`, () => HttpResponse.json([])),
+  http.get(`${API}/attendance/status`, () =>
+    HttpResponse.json({
+      today: new Date().toISOString().slice(0, 10),
+      open: null,
+      records: [],
+      minutes: 0,
+    }),
+  ),
+  http.get(`${API}/time/compare`, () =>
+    HttpResponse.json(errorBody('NOT_FOUND', 404), { status: 404 }),
+  ),
+];
+
+/** One mock API for all component tests. Tests add or override handlers with server.use(...). */
+export const server = setupServer(...defaultHandlers);
+
+/** API calls nothing answered during the current test; the setup fails the test when there are any. */
+export const unhandledRequests: string[] = [];
 
 /** A signed-in user holding one system role, with that role's permissions from the catalog. */
 export function userWithRole(role: SystemRole): CurrentUser {
