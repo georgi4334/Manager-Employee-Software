@@ -11,6 +11,8 @@ export interface ParentOption {
   id: string;
   name: string;
   depth: number;
+  /** The names from the root down to this role, e.g. "Admin › HR › Manager". */
+  path: string;
 }
 
 /**
@@ -20,16 +22,19 @@ export interface ParentOption {
 export function parentOptions(roles: readonly RoleListItem[], selfId?: string): ParentOption[] {
   const blocked = selfId ? descendantIds(roles, selfId).add(selfId) : new Set<string>();
   const out: ParentOption[] = [];
-  const walk = (nodes: RoleNode[], depth: number) => {
+  const walk = (nodes: RoleNode[], ancestors: string[]) => {
     for (const node of nodes) {
       if (blocked.has(node.role.id)) continue;
-      out.push({ id: node.role.id, name: node.role.name, depth });
-      walk(node.children, depth + 1);
+      const names = [...ancestors, node.role.name];
+      out.push({
+        id: node.role.id,
+        name: node.role.name,
+        depth: ancestors.length,
+        path: names.join(' › '),
+      });
+      walk(node.children, names);
     }
   };
-  walk(buildRoleTree(roles), 0);
+  walk(buildRoleTree(roles), []);
   return out;
 }
-
-/** Indents an option of a native select (options cannot hold markup). */
-export const indent = (option: ParentOption) => `${'   '.repeat(option.depth)}${option.name}`;

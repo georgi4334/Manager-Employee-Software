@@ -43,9 +43,8 @@ test('an administrator creates, changes, moves and deletes a custom role', async
   await ada.goto('/roles');
   await ada.getByRole('button', { name: 'Move External contractor' }).click();
   const dialog = ada.getByRole('dialog', { name: 'Move External contractor' });
-  // options are indented by depth, so pick Manager by its value
-  const manager = await dialog.locator('option', { hasText: 'Manager' }).getAttribute('value');
-  await dialog.getByLabel('Sits under').selectOption(manager!);
+  // each option names its place in the tree
+  await dialog.getByLabel('Sits under').selectOption({ label: 'Admin › HR › Manager' });
   await dialog.getByRole('button', { name: 'Move' }).click();
   await expect(dialog).toBeHidden();
   await expect(ada.getByRole('list', { name: 'Roles under Manager' })).toContainText(

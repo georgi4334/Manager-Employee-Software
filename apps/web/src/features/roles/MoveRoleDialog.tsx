@@ -7,7 +7,7 @@ import { Field } from '@/shared/ui/field';
 import { Modal } from '@/shared/ui/modal';
 import { Select } from '@/shared/ui/select';
 import { useMoveRole } from './hooks';
-import { indent, parentOptions } from './tree';
+import { parentOptions } from './tree';
 import { useRoleErrors } from './use-role-errors';
 
 interface MoveProps {
@@ -63,7 +63,7 @@ function MoveForm({
             <option value="">{t('move.top')}</option>
             {options.map((o) => (
               <option key={o.id} value={o.id}>
-                {indent(o)}
+                {o.path}
               </option>
             ))}
           </Select>
