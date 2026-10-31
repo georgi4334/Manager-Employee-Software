@@ -112,5 +112,11 @@
   "day": {
     "records": "Einträge des Tages"
   },
-  "dayOff": "Freier Tag · {{duration}} erfasst"
+  "dayOff": "Freier Tag · {{duration}} erfasst",
+  "ribbon": {
+    "now": "Jetzt {{time}}",
+    "breaks": "Pausen {{duration}}",
+    "targetAt": "{{target}} erreicht um {{time}}",
+    "targetBy": "{{target}} um {{time}}, wenn Sie weiterarbeiten"
+  }
 }

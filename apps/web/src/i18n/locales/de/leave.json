@@ -35,7 +35,9 @@
     "used": "Genommen",
     "pending": "Beantragt",
     "remaining": "Verbleibend",
-    "empty": "Keine Urlaubsart mit Jahresanspruch."
+    "empty": "Keine Urlaubsart mit Jahresanspruch.",
+    "usedCount": "{{value}} genommen",
+    "leftCount": "{{value}} übrig"
   },
   "form": {
     "title": "Urlaub beantragen",

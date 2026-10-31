@@ -250,11 +250,11 @@ describe('the list', () => {
     const row = (title: string) => screen.getByRole('link', { name: title }).closest('li')!;
     expect(row('Goal 1')).toHaveTextContent('Contributes to: Grow the company');
     const fill = (title: string) =>
-      within(row(title)).getByRole('progressbar').firstElementChild as HTMLElement;
-    expect(fill('Goal 1').className).toContain('bg-primary');
-    expect(fill('Goal 2').className).toContain('bg-success');
-    expect(fill('Goal 3').className).toContain('bg-muted-foreground');
-    expect(fill('Goal 4').className).toContain('bg-danger');
+      within(row(title)).getByRole('progressbar').querySelector<HTMLElement>('.capsule-fill')!;
+    expect(fill('Goal 1').dataset.tone).toBe('primary');
+    expect(fill('Goal 2').dataset.tone).toBe('success');
+    expect(fill('Goal 3').dataset.tone).toBe('muted');
+    expect(fill('Goal 4').dataset.tone).toBe('danger');
     expect(row('Goal 2')).toHaveTextContent('Done');
     expect(row('Goal 3')).toHaveTextContent('Cancelled');
     expect(screen.getByRole('link', { name: 'Goal 3' }).className).toContain('line-through');
@@ -268,7 +268,7 @@ describe('the list', () => {
     await screen.findByText('Goal 1');
     const fills = screen
       .getAllByRole('progressbar')
-      .map((bar) => (bar.firstElementChild as HTMLElement).style.width);
+      .map((bar) => bar.querySelector<HTMLElement>('.capsule-fill')!.style.width);
     expect(fills).toEqual(['100%', '0%']);
   });
 

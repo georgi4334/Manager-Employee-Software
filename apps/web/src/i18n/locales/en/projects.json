@@ -65,7 +65,11 @@
     "ended": "Ended {{date}}",
     "elapsed": "{{percent}}% of the time has passed",
     "milestoneCount_one": "{{count}} milestone",
-    "milestoneCount_other": "{{count}} milestones"
+    "milestoneCount_other": "{{count}} milestones",
+    "start": "Start",
+    "end": "End",
+    "late_one": "{{count}} day late",
+    "late_other": "{{count}} days late"
   },
   "milestones": {
     "title": "Milestones",

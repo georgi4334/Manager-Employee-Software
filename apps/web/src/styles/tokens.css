@@ -83,6 +83,11 @@
   --glass-highlight: rgb(255 255 255 / 0.95);
   --glass-shadow: 0 10px 30px -14px rgb(28 25 23 / 0.2), 0 1px 2px rgb(28 25 23 / 0.05);
   --glass-solid: #fbf8f7;
+  /* Glass capsule progress bar. */
+  --capsule-bg: rgb(255 255 255 / 0.55);
+  --capsule-edge: rgb(28 25 23 / 0.1);
+  --capsule-inset: rgb(28 25 23 / 0.07);
+  --capsule-shine: rgb(255 255 255 / 0.75);
 }
 
 [data-theme='dark'] {
@@ -150,6 +155,10 @@
   --glass-highlight: rgb(255 255 255 / 0.09);
   --glass-shadow: 0 12px 32px -14px rgb(0 0 0 / 0.65), 0 1px 2px rgb(0 0 0 / 0.35);
   --glass-solid: #2b211f;
+  --capsule-bg: rgb(255 255 255 / 0.05);
+  --capsule-edge: rgb(255 255 255 / 0.12);
+  --capsule-inset: rgb(0 0 0 / 0.35);
+  --capsule-shine: rgb(255 255 255 / 0.3);
 }
 
 @theme inline {

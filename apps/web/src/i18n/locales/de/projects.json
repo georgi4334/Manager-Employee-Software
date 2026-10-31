@@ -65,7 +65,11 @@
     "ended": "Beendet am {{date}}",
     "elapsed": "{{percent}} % der Zeit sind vergangen",
     "milestoneCount_one": "{{count}} Meilenstein",
-    "milestoneCount_other": "{{count}} Meilensteine"
+    "milestoneCount_other": "{{count}} Meilensteine",
+    "start": "Beginn",
+    "end": "Ende",
+    "late_one": "{{count}} Tag überfällig",
+    "late_other": "{{count}} Tage überfällig"
   },
   "milestones": {
     "title": "Meilensteine",

@@ -35,7 +35,9 @@
     "used": "Used",
     "pending": "Pending",
     "remaining": "Remaining",
-    "empty": "No leave type with a yearly allowance."
+    "empty": "No leave type with a yearly allowance.",
+    "usedCount": "{{value}} used",
+    "leftCount": "{{value}} left"
   },
   "form": {
     "title": "Request leave",

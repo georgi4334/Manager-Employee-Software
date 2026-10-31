@@ -162,7 +162,8 @@
       "manager": "Beurteilungen durch Führungskraft",
       "released": "Freigegeben"
     },
-    "competencyHeading": "Kompetenzen"
+    "competencyHeading": "Kompetenzen",
+    "dates": "Termine"
   },
   "part": {
     "submitted": "Eingereicht am {{date}}",

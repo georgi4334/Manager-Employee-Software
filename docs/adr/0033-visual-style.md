@@ -89,3 +89,26 @@ stylesheet arrives; without it the first frames were an unstyled logo and text i
 `tokens.css`. The app renders only once the translations are loaded (the static screen stays meanwhile), the `Suspense` fallback is
 `Splash`, and the route guards (`RequireAuth`, `PublicOnly`) keep `Splash` on screen while they redirect, so no empty frame appears
 between the boot screen and the first page.
+
+## Update: four progress styles
+
+Plain rounded bars said "how much" but not "against what". Each kind of progress now has one style, chosen by what it measures.
+All are decoration: the numbers, the target and the state are always written next to them, and the shapes are `aria-hidden`
+(or wrapped in a `role="progressbar"` with the value when the old bar had one).
+
+- **Target line** (`TargetBar` in `shared/ui/progress.tsx`): a slim track with a fixed marker for the target; the fill stops at the
+  marker or runs past it **striped** (`.bar-overflow`, in the fill colour), so "over" never relies on colour alone. The track ends a
+  quarter past the target (`targetScale`); bars that are compared share one `scale`. Used for capacity (planned against available,
+  per person and per day), project budgets in time reports and the attendance presence list.
+- **Glass capsule** (`Capsule`): a frosted tube (`.capsule`, tokens `--capsule-*`) with a liquid fill (`.capsule-fill`, highlight on
+  top) and the value inside it when it fits, else right after it. For the one number a card is about: goal and key-result progress,
+  the leave balance (used and left). Solid fill with reduced transparency. Not for long lists.
+- **Milestone track** (`MilestoneTrack` in `shared/ui/milestone-track.tsx`): dated points evenly spaced on a line with a **Today**
+  pin that moves with the days between its two neighbours (`milestonePosition`). Points are done (filled green), late (red ring,
+  with a note), next (orange ring) or upcoming; each states it in words (`common:milestone.*`). Side by side from `sm` for up to six
+  points, otherwise a vertical list (always on phones). Used for the project timeline (start, milestones, end) and review cycle
+  dates (period start/end, self and manager deadlines; a passed deadline with missing parts in an open cycle is late).
+- **Day ribbon** (`features/attendance/DayRibbon.tsx`, pure `dayRibbon`): the day on a clock (07:00–19:00, widened to fit): worked
+  blocks where they happened, dashed breaks, a Now line for an open record and a marker where the target is (or will be) reached.
+  The line under it says the total, the breaks and the target time. Used on Attendance Today and in day cards. The presence list
+  keeps the target line, because presence carries no times.

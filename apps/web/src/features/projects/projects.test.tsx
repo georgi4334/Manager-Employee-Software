@@ -421,6 +421,8 @@ describe('the project page', () => {
     serve({ project: detail({ endDate: null }) });
     await renderApp(`/projects/${P1}`);
     expect(await screen.findByText('This project has no end date yet.')).toBeInTheDocument();
+    // a start alone is no track
+    expect(screen.queryByRole('list', { name: 'Timeline' })).not.toBeInTheDocument();
   });
 });
 

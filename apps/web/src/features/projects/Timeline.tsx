@@ -1,57 +1,74 @@
 import type { ProjectDetail } from '@intime/contracts';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/shared/lib/cn';
 import { formatDay } from '@/shared/lib/format';
+import { MilestoneTrack, type MilestonePoint } from '@/shared/ui/milestone-track';
 import { positionPct } from './timelinePosition';
 
 /**
- * The project span as a bar with today and the milestones marked. The text below says the same in words, so the
- * picture is an addition, not the only way to learn it.
+ * The project from start to end with its milestones and a Today pin (milestone track, ADR 0033). The sentence under
+ * it says how much of the time has passed, so the picture is an addition, not the only way to learn it.
  */
 export function Timeline({ project, today }: { project: ProjectDetail; today: string }) {
   const { t, i18n } = useTranslation('projects');
   const language = i18n.resolvedLanguage ?? 'en';
-  if (!project.endDate) {
-    return <p className="text-sm text-muted-foreground">{t('timeline.noEnd')}</p>;
-  }
   const { startDate, endDate } = project;
-  const elapsed = positionPct(today, startDate, endDate);
-  const summary =
-    today < startDate
+  const points = timelinePoints(project, today, {
+    start: t('timeline.start'),
+    end: t('timeline.end'),
+    late: (days) => t('timeline.late', { count: days }),
+  });
+  const summary = !endDate
+    ? t('timeline.noEnd')
+    : today < startDate
       ? t('timeline.notStarted', { date: formatDay(startDate, language) })
       : today > endDate
         ? t('timeline.ended', { date: formatDay(endDate, language) })
-        : t('timeline.elapsed', { percent: Math.round(elapsed) });
+        : t('timeline.elapsed', { percent: Math.round(positionPct(today, startDate, endDate)) });
 
   return (
-    <div className="space-y-2">
-      <div
-        role="img"
-        aria-label={`${summary}. ${t('timeline.milestoneCount', { count: project.milestones.length })}`}
-        className="relative h-6"
-      >
-        <div className="absolute inset-x-0 top-2.5 h-1.5 rounded-full bg-secondary" />
-        <div
-          className="absolute left-0 top-2.5 h-1.5 rounded-full bg-primary"
-          style={{ width: `${elapsed}%` }}
-        />
-        {project.milestones.map((m) => (
-          <span
-            key={m.id}
-            title={m.title}
-            className={cn(
-              'absolute top-1 size-4 -translate-x-1/2 rotate-45 border-2 border-surface',
-              m.status === 'done' ? 'bg-success' : m.overdueDays > 0 ? 'bg-danger' : 'bg-info',
-            )}
-            style={{ left: `${positionPct(m.dueDate, startDate, endDate)}%` }}
-          />
-        ))}
-      </div>
-      <div className="flex justify-between text-xs text-muted-foreground">
-        <span>{formatDay(startDate, language)}</span>
+    <div className="space-y-3">
+      {points.length > 1 && (
+        <MilestoneTrack points={points} today={today} label={t('timeline.title')} />
+      )}
+      <p className="flex flex-wrap justify-between gap-x-3 text-sm text-muted-foreground">
         <span>{summary}</span>
-        <span>{formatDay(endDate, language)}</span>
-      </div>
+        <span>{t('timeline.milestoneCount', { count: project.milestones.length })}</span>
+      </p>
     </div>
   );
+}
+
+/** Start, the milestones by date and the end (when there is one); the first open future point is "next". */
+export function timelinePoints(
+  project: Pick<ProjectDetail, 'startDate' | 'endDate' | 'milestones'>,
+  today: string,
+  text: { start: string; end: string; late: (days: number) => string },
+): MilestonePoint[] {
+  const milestones = [...project.milestones].sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+  const points: MilestonePoint[] = [
+    {
+      key: 'start',
+      label: text.start,
+      date: project.startDate,
+      state: today >= project.startDate ? 'done' : 'upcoming',
+    },
+    ...milestones.map((m): MilestonePoint => ({
+      key: m.id,
+      label: m.title,
+      date: m.dueDate,
+      state: m.status === 'done' ? 'done' : m.overdueDays > 0 ? 'late' : 'upcoming',
+      ...(m.overdueDays > 0 ? { note: text.late(m.overdueDays) } : {}),
+    })),
+  ];
+  if (project.endDate) {
+    points.push({
+      key: 'end',
+      label: text.end,
+      date: project.endDate,
+      state: today > project.endDate ? 'done' : 'upcoming',
+    });
+  }
+  const next = points.findIndex((p) => p.state === 'upcoming');
+  if (next >= 0) points[next] = { ...points[next]!, state: 'next' };
+  return points;
 }

@@ -1,19 +1,23 @@
-import { WORKDAY_MINUTES, attendanceProgress, type AttendanceDayLevel } from '@intime/contracts';
+import { WORKDAY_MINUTES, type AttendanceDayLevel } from '@intime/contracts';
 import { AlertTriangle, CheckCircle2, Clock, TrendingUp, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/shared/lib/cn';
+import { TargetBar, type BarTone } from '@/shared/ui/progress';
 import { useDuration } from './RecordRow';
 
-const LEVEL_STYLE: Record<AttendanceDayLevel, { bar: string; pill: string; icon: typeof Clock }> = {
+export const LEVEL_STYLE: Record<
+  AttendanceDayLevel,
+  { bar: BarTone; pill: string; icon: typeof Clock }
+> = {
   in_progress: {
-    bar: 'bg-primary',
+    bar: 'primary',
     pill: 'border-primary/40 bg-accent text-accent-foreground',
     icon: Clock,
   },
-  short: { bar: 'bg-danger', pill: 'border-danger/40 text-danger', icon: AlertTriangle },
-  almost: { bar: 'bg-warning', pill: 'border-warning/40 text-warning', icon: TriangleAlert },
-  complete: { bar: 'bg-success', pill: 'border-success/40 text-success', icon: CheckCircle2 },
-  over: { bar: 'bg-danger', pill: 'border-danger/40 text-danger', icon: TrendingUp },
+  short: { bar: 'danger', pill: 'border-danger/40 text-danger', icon: AlertTriangle },
+  almost: { bar: 'warning', pill: 'border-warning/40 text-warning', icon: TriangleAlert },
+  complete: { bar: 'success', pill: 'border-success/40 text-success', icon: CheckCircle2 },
+  over: { bar: 'danger', pill: 'border-danger/40 text-danger', icon: TrendingUp },
 };
 
 /** The day's state in words with an icon; colour is never the only signal. */
@@ -34,8 +38,8 @@ export function LevelPill({ level }: { level: AttendanceDayLevel }) {
 }
 
 /**
- * An 8-hour line filled by the recorded time, one faint tick per hour. Decoration only: the
- * minutes, the target and the level are written next to it.
+ * The day's target as a target line (ADR 0033): the fill stops at the marker or runs past it striped. Decoration
+ * only: the minutes, the target and the level are written under it (`ProgressText`).
  */
 export function ProgressLine({
   minutes,
@@ -49,44 +53,52 @@ export function ProgressLine({
   target?: number;
   className?: string;
 }) {
+  return (
+    <div className={cn('space-y-1', className)}>
+      <TargetBar
+        value={minutes}
+        target={target}
+        tone={LEVEL_STYLE[level].bar}
+        scale={target > 0 ? undefined : WORKDAY_MINUTES}
+      />
+      <ProgressText minutes={minutes} level={level} target={target} />
+    </div>
+  );
+}
+
+/** "5 h 40 min of 8 h" with what is missing or over, in words. */
+export function ProgressText({
+  minutes,
+  level,
+  target,
+  extra,
+}: {
+  minutes: number;
+  level: AttendanceDayLevel;
+  target: number;
+  /** More facts on the same line (breaks, when the target is reached). */
+  extra?: readonly string[];
+}) {
   const { t } = useTranslation('attendance');
   const duration = useDuration();
   const over = minutes - target;
   return (
-    <div className={cn('space-y-1.5', className)}>
-      <div
-        aria-hidden="true"
-        className="relative h-2.5 overflow-hidden rounded-full bg-surface-muted"
-      >
-        <div
-          className={cn(
-            'h-full rounded-full transition-[width] duration-500',
-            LEVEL_STYLE[level].bar,
-          )}
-          style={{ width: `${attendanceProgress(minutes, target) * 100}%` }}
-        />
-        <div className="absolute inset-0 grid grid-cols-8">
-          {Array.from({ length: 7 }, (_, i) => (
-            <span key={i} className="border-r border-surface/70" />
-          ))}
-        </div>
-      </div>
-      <p className="flex flex-wrap justify-between gap-x-3 text-xs text-muted-foreground">
-        <span>
-          {target === 0
-            ? t('dayOff', { duration: duration(minutes) })
-            : t('progress', { done: duration(minutes), target: duration(target) })}
-        </span>
-        {level === 'over' && target > 0 && (
-          <span className="font-medium text-danger">
-            {t('overBy', { duration: duration(over) })}
-          </span>
-        )}
-        {(level === 'short' || level === 'almost') && (
-          <span>{t('missing', { duration: duration(-over) })}</span>
-        )}
-      </p>
-    </div>
+    <p className="flex flex-wrap justify-between gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+      <span>
+        {target === 0
+          ? t('dayOff', { duration: duration(minutes) })
+          : t('progress', { done: duration(minutes), target: duration(target) })}
+      </span>
+      {extra?.map((text) => (
+        <span key={text}>{text}</span>
+      ))}
+      {level === 'over' && target > 0 && (
+        <span className="font-medium text-danger">{t('overBy', { duration: duration(over) })}</span>
+      )}
+      {(level === 'short' || level === 'almost') && (
+        <span>{t('missing', { duration: duration(-over) })}</span>
+      )}
+    </p>
   );
 }
 

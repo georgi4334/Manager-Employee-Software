@@ -112,5 +112,11 @@
   "day": {
     "records": "Записи за деня"
   },
-  "dayOff": "Почивен ден · {{duration}} отчетени"
+  "dayOff": "Почивен ден · {{duration}} отчетени",
+  "ribbon": {
+    "now": "Сега {{time}}",
+    "breaks": "Почивки {{duration}}",
+    "targetAt": "{{target}} достигнати в {{time}}",
+    "targetBy": "{{target}} в {{time}}, ако продължиш"
+  }
 }

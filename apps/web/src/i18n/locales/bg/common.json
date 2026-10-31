@@ -41,5 +41,11 @@
   "hour": "Час",
   "minute": "Минута",
   "datePlaceholder": "ГГГГ-ММ-ДД",
-  "timePlaceholder": "ЧЧ:ММ"
+  "timePlaceholder": "ЧЧ:ММ",
+  "milestone": {
+    "done": "изпълнено",
+    "late": "закъсняло",
+    "next": "следващо",
+    "upcoming": "предстоящо"
+  }
 }

@@ -41,5 +41,11 @@
   "hour": "Stunde",
   "minute": "Minute",
   "datePlaceholder": "JJJJ-MM-TT",
-  "timePlaceholder": "HH:MM"
+  "timePlaceholder": "HH:MM",
+  "milestone": {
+    "done": "erledigt",
+    "late": "verspätet",
+    "next": "als Nächstes",
+    "upcoming": "geplant"
+  }
 }
