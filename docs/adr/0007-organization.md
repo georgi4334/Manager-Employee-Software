@@ -88,3 +88,12 @@ manager, department and teams, and HR can change manager and department there. A
 
 Employment history view, position catalog, matrix (dotted-line) reporting, department-head based permissions,
 org chart export/print, drag-and-drop editing.
+
+## Addendum: the chart as an org chart
+
+The Chart tab draws the reporting lines as an org chart: one card per person (initials, department, title; "More"
+shows direct reports, the size of their branch and the department; "View profile" opens the record), a +/− button
+under each manager opens or closes the branch, and Expand all / Collapse all act on the whole chart. On wider screens
+the direct reports sit side by side below their manager with connecting lines and the chart scrolls sideways inside
+its own frame when it is wide; on phones the same cards are stacked and indented, so the page itself never scrolls
+sideways. The data is unchanged (`GET /org/chart`, `buildChartTree`).

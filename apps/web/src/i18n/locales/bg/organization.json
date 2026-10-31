@@ -16,7 +16,17 @@
     "expand": "Показване на подчинените на {{name}}",
     "collapse": "Скриване на подчинените на {{name}}",
     "reports_one": "{{count}} пряк подчинен",
-    "reports_other": "{{count}} преки подчинени"
+    "reports_other": "{{count}} преки подчинени",
+    "expandAll": "Разгъни всички",
+    "collapseAll": "Свий всички",
+    "label": "Организационна схема",
+    "reportsOf": "Подчинени на {{name}}",
+    "directReports": "Преки подчинени",
+    "branch": "Хора в този клон",
+    "department": "Отдел",
+    "more": "Още",
+    "less": "По-малко",
+    "viewProfile": "Виж профила"
   },
   "departments": {
     "add": "Добавяне на отдел",

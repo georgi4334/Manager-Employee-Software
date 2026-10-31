@@ -16,7 +16,17 @@
     "expand": "Show reports of {{name}}",
     "collapse": "Hide reports of {{name}}",
     "reports_one": "{{count}} direct report",
-    "reports_other": "{{count}} direct reports"
+    "reports_other": "{{count}} direct reports",
+    "expandAll": "Expand all",
+    "collapseAll": "Collapse all",
+    "label": "Organization chart",
+    "reportsOf": "Reports of {{name}}",
+    "directReports": "Direct reports",
+    "branch": "People in this branch",
+    "department": "Department",
+    "more": "More",
+    "less": "Less",
+    "viewProfile": "View profile"
   },
   "departments": {
     "add": "Add department",

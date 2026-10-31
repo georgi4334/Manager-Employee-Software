@@ -81,17 +81,20 @@ function serveOrg(
 const as = (role: 'hr' | 'employee') => server.use(...signedInHandlers(userWithRole(role)));
 
 describe('organization chart', () => {
+  const card = (name: string) => screen.getByRole('article', { name });
+  const noCard = (name: string) => screen.queryByRole('article', { name });
+
   it('shows the reporting tree with titles and departments, deeper levels collapsed', async () => {
     serveOrg();
     await renderApp('/organization');
     expect(await screen.findByRole('heading', { name: 'Organization' })).toBeInTheDocument();
-    expect(await screen.findByText('Ada Boss')).toBeInTheDocument();
-    expect(screen.getByText('CEO')).toBeInTheDocument();
-    expect(screen.getByText('Bob Lead')).toBeInTheDocument();
-    expect(screen.getAllByText('Engineering').length).toBeGreaterThanOrEqual(2); // department shown next to people
-    expect(screen.getByText('Cy Dev')).toBeInTheDocument(); // level 2 is open
-    expect(screen.queryByText('Di Intern')).not.toBeInTheDocument(); // level 3 starts collapsed
+    expect(await screen.findByRole('article', { name: 'Ada Boss' })).toHaveTextContent('CEO');
+    expect(card('Bob Lead')).toHaveTextContent('Engineering'); // department badge
+    expect(card('Cy Dev')).toBeInTheDocument(); // level 2 is open
+    expect(noCard('Di Intern')).not.toBeInTheDocument(); // level 3 starts collapsed
     expect(screen.getByText('1 direct report')).toBeInTheDocument();
+    // Bob's reports are listed under him
+    expect(screen.getByRole('list', { name: 'Reports of Bob Lead' })).toHaveTextContent('Cy Dev');
   });
 
   it('expands and collapses branches and links to the employee', async () => {
@@ -101,21 +104,53 @@ describe('organization chart', () => {
     const toggle = await screen.findByRole('button', { name: 'Show reports of Cy Dev' });
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
     await user.click(toggle);
-    expect(screen.getByText('Di Intern')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Di Intern/ })).toHaveAttribute(
+    expect(card('Di Intern')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'View profile Di Intern' })).toHaveAttribute(
       'href',
       `/employees/${uuid(4)}`,
     );
     await user.click(screen.getByRole('button', { name: 'Hide reports of Cy Dev' }));
-    expect(screen.queryByText('Di Intern')).not.toBeInTheDocument();
+    expect(noCard('Di Intern')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Hide reports of Ada Boss' }));
-    expect(screen.queryByText('Bob Lead')).not.toBeInTheDocument();
+    expect(noCard('Bob Lead')).not.toBeInTheDocument();
+  });
+
+  it('opens and closes every branch at once', async () => {
+    serveOrg();
+    await renderApp('/organization');
+    const user = userEvent.setup();
+    await screen.findByRole('article', { name: 'Ada Boss' });
+    await user.click(screen.getByRole('button', { name: 'Expand all' }));
+    expect(card('Di Intern')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Collapse all' }));
+    expect(noCard('Bob Lead')).not.toBeInTheDocument();
+    expect(card('Ada Boss')).toBeInTheDocument();
+    expect(card('Zed Orphan')).toBeInTheDocument();
+  });
+
+  it('shows more about a person: direct reports, the whole branch and the department', async () => {
+    serveOrg();
+    await renderApp('/organization');
+    const user = userEvent.setup();
+    const ada = await screen.findByRole('article', { name: 'Ada Boss' });
+    const more = within(ada).getByRole('button', { name: 'More Ada Boss' });
+    expect(more).toHaveAttribute('aria-expanded', 'false');
+    await user.click(more);
+    const details = (label: string) => within(ada).getByText(label).nextElementSibling?.textContent;
+    expect(details('Direct reports')).toBe('2');
+    expect(details('People in this branch')).toBe('5'); // Ada, Bob, Cy, Di, Eli
+    expect(details('Department')).toBe('No department');
+    await user.click(within(ada).getByRole('button', { name: 'Less Ada Boss' }));
+    expect(within(ada).queryByText('Direct reports')).not.toBeInTheDocument();
   });
 
   it('shows people whose manager is not listed as top-level entries instead of losing them', async () => {
     serveOrg();
     await renderApp('/organization');
-    expect(await screen.findByText('Zed Orphan')).toBeInTheDocument();
+    expect(await screen.findByRole('article', { name: 'Zed Orphan' })).toBeInTheDocument();
+    expect(screen.getByRole('list', { name: 'Organization chart' })).toContainElement(
+      card('Zed Orphan'),
+    );
   });
 
   it('says so when there is nobody, and offers a retry when loading fails', async () => {
@@ -135,7 +170,7 @@ describe('organization chart', () => {
     expect(await screen.findByText(/Something went wrong on our side/)).toBeInTheDocument();
     fail = false;
     await userEvent.setup().click(screen.getByRole('button', { name: 'Try again' }));
-    expect(await screen.findByText('Ada Boss')).toBeInTheDocument();
+    expect(await screen.findByRole('article', { name: 'Ada Boss' })).toBeInTheDocument();
   });
 
   it('is only for people who may view the organization', async () => {

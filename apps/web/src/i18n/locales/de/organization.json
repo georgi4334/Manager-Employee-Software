@@ -16,7 +16,17 @@
     "expand": "Direkt Unterstellte von {{name}} anzeigen",
     "collapse": "Direkt Unterstellte von {{name}} ausblenden",
     "reports_one": "{{count}} direkt unterstellte Person",
-    "reports_other": "{{count}} direkt unterstellte Personen"
+    "reports_other": "{{count}} direkt unterstellte Personen",
+    "expandAll": "Alle aufklappen",
+    "collapseAll": "Alle zuklappen",
+    "label": "Organigramm",
+    "reportsOf": "Direkt unterstellt bei {{name}}",
+    "directReports": "Direkt unterstellt",
+    "branch": "Personen in diesem Zweig",
+    "department": "Abteilung",
+    "more": "Mehr",
+    "less": "Weniger",
+    "viewProfile": "Profil ansehen"
   },
   "departments": {
     "add": "Abteilung hinzufügen",

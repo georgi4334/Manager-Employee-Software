@@ -86,6 +86,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Scopes are real: `DbOrgRelations` (`common/auth`) answers self / direct_report / subordinate / same_department / other from `employee.manager_id` and `department_id`; anything unknown (no employee record, other workspace) is `other`. Check records with `authz.can/assert(actor, code, { ownerEmployeeId })` (or `ownerUserId`); for lists use `authz.allowedEmployees(...)` (one query). Never join org tables in feature code.
 - All org writes take `OrganizationService.lock` (per-workspace advisory lock) and refuse cycles with `ORG_CYCLE`; DB triggers re-check. Deactivating an employee calls `onEmployeeDeactivated` (reports move up, head/lead/teams cleared) in the same transaction.
 - `org.view`/`org.manage` are workspace-wide (scope `all`) only. Teams group people; they grant no access.
+- Web chart (`features/organization/ChartTab.tsx`): an org chart of cards (initials, department badge, More/Less with direct reports, branch size and department, View profile) with a +/− per branch and Expand/Collapse all; on `md+` reports sit side by side under their manager with connector lines and the chart scrolls inside its frame, on phones the cards stack indented. The first two levels start open.
 
 ## Leave (docs/adr/0008-leave.md)
 
