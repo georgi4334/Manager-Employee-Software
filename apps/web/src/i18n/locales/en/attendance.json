@@ -112,5 +112,11 @@
   "day": {
     "records": "Records of the day"
   },
-  "dayOff": "Day off · {{duration}} recorded"
+  "dayOff": "Day off · {{duration}} recorded",
+  "ribbon": {
+    "now": "Now {{time}}",
+    "breaks": "Breaks {{duration}}",
+    "targetAt": "{{target}} reached at {{time}}",
+    "targetBy": "{{target}} at {{time}} if you keep going"
+  }
 }

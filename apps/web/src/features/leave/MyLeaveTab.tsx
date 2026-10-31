@@ -13,6 +13,7 @@ import { Button } from '@/shared/ui/button';
 import { Card, CardTitle } from '@/shared/ui/card';
 import { Field } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
+import { Capsule } from '@/shared/ui/progress';
 import { Select } from '@/shared/ui/select';
 import { requestFormSchema, toPreview, toRequest, type RequestFormValues } from './forms';
 import {
@@ -121,6 +122,25 @@ function BalanceCards({ currentYear }: { currentYear: number }) {
                 {t('balance.remaining')}
               </span>
             </p>
+            {(() => {
+              const total = balance.entitled + balance.carriedOver + balance.adjustment;
+              if (total <= 0) return null;
+              return (
+                <div aria-hidden="true">
+                  <Capsule
+                    className="max-w-md"
+                    percent={(balance.used / total) * 100}
+                    tone="info"
+                    inside={t('balance.usedCount', { value: n(balance.used) })}
+                    after={
+                      balance.remaining > 0
+                        ? t('balance.leftCount', { value: n(balance.remaining) })
+                        : undefined
+                    }
+                  />
+                </div>
+              );
+            })()}
             <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-5">
               {(
                 [

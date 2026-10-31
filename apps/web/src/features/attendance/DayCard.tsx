@@ -1,7 +1,8 @@
 import type { AttendanceDay } from '@intime/contracts';
 import { useTranslation } from 'react-i18next';
 import { formatDay } from '@/shared/lib/format';
-import { LevelPill, ProgressLine } from './DayProgress';
+import { LevelPill } from './DayProgress';
+import { DayRibbon } from './DayRibbon';
 import { RecordRow, useDuration } from './RecordRow';
 
 const initials = (p: { firstName: string; lastName: string }) =>
@@ -41,7 +42,12 @@ export function DayCard({ day, showEmployee }: { day: AttendanceDay; showEmploye
             <LevelPill level={day.level} />
           </div>
         </div>
-        <ProgressLine minutes={day.minutes} level={day.level} target={day.target} />
+        <DayRibbon
+          records={day.records}
+          minutes={day.minutes}
+          level={day.level}
+          target={day.target}
+        />
         <ul className="divide-y divide-border border-t border-border" aria-label={t('day.records')}>
           {day.records.map((record) => (
             <RecordRow key={record.id} record={record} />

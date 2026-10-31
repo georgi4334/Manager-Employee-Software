@@ -162,7 +162,8 @@
       "manager": "Оценки от ръководител",
       "released": "Публикувани"
     },
-    "competencyHeading": "Компетенции"
+    "competencyHeading": "Компетенции",
+    "dates": "Дати"
   },
   "part": {
     "submitted": "Подадена на {{date}}",

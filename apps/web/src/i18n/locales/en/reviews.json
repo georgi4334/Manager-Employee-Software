@@ -162,7 +162,8 @@
       "manager": "Manager reviews",
       "released": "Released"
     },
-    "competencyHeading": "Competencies"
+    "competencyHeading": "Competencies",
+    "dates": "Dates"
   },
   "part": {
     "submitted": "Submitted {{date}}",

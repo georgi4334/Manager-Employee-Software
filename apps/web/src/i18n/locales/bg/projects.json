@@ -65,7 +65,11 @@
     "ended": "Приключил на {{date}}",
     "elapsed": "Изтекли са {{percent}}% от времето",
     "milestoneCount_one": "{{count}} етап",
-    "milestoneCount_other": "{{count}} етапа"
+    "milestoneCount_other": "{{count}} етапа",
+    "start": "Начало",
+    "end": "Край",
+    "late_one": "{{count}} ден закъснение",
+    "late_other": "{{count}} дни закъснение"
   },
   "milestones": {
     "title": "Етапи",

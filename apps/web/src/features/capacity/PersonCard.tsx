@@ -3,60 +3,30 @@ import { CalendarOff, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/shared/lib/cn';
 import { formatDay } from '@/shared/lib/format';
+import { TargetBar, targetScale, type BarTone } from '@/shared/ui/progress';
 import { Tile, initials } from '@/shared/ui/tiles';
 
 type Level = CapacityPerson['level'];
 type DayStatus = CapacityPerson['days'][number]['status'];
 
 /** The pill and the bar of a level: the same tokens the rest of the app uses for these meanings. */
-const LEVEL_TONE: Record<Level, { pill: string; bar: string }> = {
-  none: { pill: 'border-border text-muted-foreground', bar: 'bg-muted-foreground' },
-  free: { pill: 'border-success text-success', bar: 'bg-success' },
-  busy: { pill: 'border-primary text-primary', bar: 'bg-primary' },
-  full: { pill: 'border-warning text-warning', bar: 'bg-warning' },
-  over: { pill: 'border-danger text-danger', bar: 'bg-danger' },
+const LEVEL_TONE: Record<Level, { pill: string; bar: BarTone }> = {
+  none: { pill: 'border-border text-muted-foreground', bar: 'muted' },
+  free: { pill: 'border-success text-success', bar: 'success' },
+  busy: { pill: 'border-primary text-primary', bar: 'primary' },
+  full: { pill: 'border-warning text-warning', bar: 'warning' },
+  over: { pill: 'border-danger text-danger', bar: 'danger' },
 };
 
-const DAY_TONE: Record<DayStatus, { text: string; bar: string }> = {
-  off: { text: 'text-muted-foreground', bar: 'bg-muted-foreground' },
-  leave: { text: 'text-info', bar: 'bg-info' },
-  partly_leave: { text: 'text-info', bar: 'bg-info' },
-  free: { text: 'text-success', bar: 'bg-success' },
-  busy: { text: 'text-primary', bar: 'bg-primary' },
-  full: { text: 'text-warning', bar: 'bg-warning' },
-  over: { text: 'text-danger', bar: 'bg-danger' },
+const DAY_TONE: Record<DayStatus, { text: string; bar: BarTone }> = {
+  off: { text: 'text-muted-foreground', bar: 'muted' },
+  leave: { text: 'text-info', bar: 'info' },
+  partly_leave: { text: 'text-info', bar: 'info' },
+  free: { text: 'text-success', bar: 'success' },
+  busy: { text: 'text-primary', bar: 'primary' },
+  full: { text: 'text-warning', bar: 'warning' },
+  over: { text: 'text-danger', bar: 'danger' },
 };
-
-const LOGGED_BAR = 'bg-chart-2';
-
-/** A share of a whole as a CSS width, 0–100. */
-const width = (part: number, whole: number) =>
-  `${whole > 0 ? Math.min(100, Math.max(0, (part / whole) * 100)) : 0}%`;
-
-/** A thin track with a fill; decoration only, the numbers are always written next to it. */
-function Meter({
-  value,
-  whole,
-  fill,
-  thin,
-}: {
-  value: number;
-  whole: number;
-  fill: string;
-  thin?: boolean;
-}) {
-  return (
-    <span
-      aria-hidden="true"
-      className={cn('block overflow-hidden rounded-full bg-secondary', thin ? 'h-1.5' : 'h-2.5')}
-    >
-      <span
-        className={cn('block h-full rounded-full', fill)}
-        style={{ width: width(value, whole) }}
-      />
-    </span>
-  );
-}
 
 export function PersonCard({ person }: { person: CapacityPerson }) {
   const { t, i18n } = useTranslation('capacity');
@@ -95,7 +65,7 @@ export function PersonCard({ person }: { person: CapacityPerson }) {
       </div>
 
       {person.availableMinutes > 0 && (
-        <Meter value={person.plannedMinutes} whole={person.availableMinutes} fill={tone.bar} />
+        <TargetBar value={person.plannedMinutes} target={person.availableMinutes} tone={tone.bar} />
       )}
 
       <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -135,7 +105,7 @@ export function PersonCard({ person }: { person: CapacityPerson }) {
                   {t('legend.planned')}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className={cn('size-2.5 rounded-full', LOGGED_BAR)} />
+                  <span className="size-2.5 rounded-full bg-info" />
                   {t('legend.logged')}
                 </span>
               </p>
@@ -158,18 +128,26 @@ export function PersonCard({ person }: { person: CapacityPerson }) {
                     </span>
                     <span className="min-w-0 space-y-1.5">
                       {bars && (
-                        <span className="block space-y-1">
-                          <Meter
+                        <span className="block">
+                          <TargetBar
                             value={d.plannedMinutes}
-                            whole={d.availableMinutes}
-                            fill={day.bar}
+                            target={d.availableMinutes}
+                            tone={day.bar}
+                            scale={targetScale(
+                              Math.max(d.plannedMinutes, d.loggedMinutes),
+                              d.availableMinutes,
+                            )}
                           />
                           {d.loggedMinutes > 0 && (
-                            <Meter
-                              value={d.loggedMinutes}
-                              whole={d.availableMinutes}
-                              fill={LOGGED_BAR}
+                            <TargetBar
                               thin
+                              value={d.loggedMinutes}
+                              target={d.availableMinutes}
+                              tone="info"
+                              scale={targetScale(
+                                Math.max(d.plannedMinutes, d.loggedMinutes),
+                                d.availableMinutes,
+                              )}
                             />
                           )}
                         </span>
@@ -220,9 +198,15 @@ export function PersonCard({ person }: { person: CapacityPerson }) {
                       )}
                     </p>
                     <span className="block space-y-1">
-                      <Meter value={p.plannedMinutes} whole={biggest} fill="bg-primary" />
+                      <TargetBar value={p.plannedMinutes} target={0} scale={biggest} />
                       {p.loggedMinutes > 0 && (
-                        <Meter value={p.loggedMinutes} whole={biggest} fill={LOGGED_BAR} thin />
+                        <TargetBar
+                          thin
+                          value={p.loggedMinutes}
+                          target={0}
+                          scale={biggest}
+                          tone="info"
+                        />
                       )}
                     </span>
                     <span className="block text-sm text-muted-foreground">

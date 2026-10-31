@@ -15,7 +15,8 @@ import { Input } from '@/shared/ui/input';
 import { Select } from '@/shared/ui/select';
 import { formatDay } from '@/shared/lib/format';
 import { useAttendanceStatus, useCheckIn, useCheckOut } from './hooks';
-import { LevelPill, ProgressLine } from './DayProgress';
+import { LevelPill } from './DayProgress';
+import { DayRibbon } from './DayRibbon';
 import { RecordForm } from './RecordForm';
 import { RecordRow, useDuration } from './RecordRow';
 import { useAttendanceErrors } from './use-attendance-errors';
@@ -57,7 +58,7 @@ export function TodayTab() {
         <p className="text-xl font-semibold tabular-nums">
           {t('today.total', { duration: duration(minutes) })}
         </p>
-        <ProgressLine minutes={minutes} level={level} target={target} />
+        <DayRibbon records={records} minutes={minutes} level={level} target={target} />
         {open ? <ClockOut since={open.startTime} mode={open.mode} /> : <ClockIn />}
       </Card>
 

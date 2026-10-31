@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { REVIEW_CYCLE_STATUSES, type ReviewCycle } from '@intime/contracts';
-import { CalendarRange, UserPen, UsersRound, X } from 'lucide-react';
+import { REVIEW_CYCLE_STATUSES, todayIn, type ReviewCycle } from '@intime/contracts';
+import type { TFunction } from 'i18next';
+import { CalendarRange, X } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useMessages } from '@/features/auth/messages';
-import { formatDay } from '@/shared/lib/format';
+import { useCurrentUser } from '@/features/auth/use-auth';
 import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
 import { cn } from '@/shared/lib/cn';
@@ -14,7 +15,8 @@ import { Field } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
 import { competencyFormSchema, type CompetencyFormValues } from './forms';
 import { useAddCompetency, useDeleteCycle, useMoveCycle, useRemoveCompetency } from './hooks';
-import { DateFact, STATUS_STYLE, StatusPill } from './ui';
+import { MilestoneTrack, type MilestonePoint } from '@/shared/ui/milestone-track';
+import { STATUS_STYLE, StatusPill } from './ui';
 import { useReviewErrors } from './use-review-errors';
 
 const STEPS = { draft: 'open', open: 'calibrate', calibration: 'close' } as const;
@@ -75,8 +77,9 @@ export function CycleCard({
   cycle: ReviewCycle;
   onShowReviews: (id: string) => void;
 }) {
-  const { t, i18n } = useTranslation('reviews');
-  const language = i18n.resolvedLanguage ?? 'en';
+  const { t } = useTranslation('reviews');
+  const { data: user } = useCurrentUser();
+  const today = todayIn(user?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone);
   const errors = useReviewErrors();
   const move = useMoveCycle(cycle.id);
   const remove = useDeleteCycle();
@@ -131,20 +134,11 @@ export function CycleCard({
         ))}
       </ol>
 
-      <div className="grid gap-2 sm:grid-cols-3">
-        <DateFact icon={CalendarRange}>
-          {t('detail.period', {
-            from: formatDay(cycle.periodStart, language),
-            to: formatDay(cycle.periodEnd, language),
-          })}
-        </DateFact>
-        <DateFact icon={UserPen}>
-          {t('detail.selfDue', { date: formatDay(cycle.selfDue, language) })}
-        </DateFact>
-        <DateFact icon={UsersRound}>
-          {t('detail.managerDue', { date: formatDay(cycle.managerDue, language) })}
-        </DateFact>
-      </div>
+      <MilestoneTrack
+        points={cyclePoints(cycle, today, t)}
+        today={today}
+        label={t('cycles.dates')}
+      />
 
       {p && (
         <section aria-label={t('cycles.progress')} className="space-y-2">
@@ -254,4 +248,40 @@ function ProgressBar({ label, value, total }: { label: string; value: number; to
       </span>
     </div>
   );
+}
+
+/**
+ * The cycle's dates on a milestone track. A deadline that passed while the cycle was still open and parts are
+ * missing is "late" (only cycle managers see the counts); a closed cycle is done throughout.
+ */
+export function cyclePoints(
+  cycle: ReviewCycle,
+  today: string,
+  t: TFunction<'reviews'>,
+): MilestonePoint[] {
+  const p = cycle.progress;
+  const missing = {
+    selfDue: p !== null && p.selfSubmitted < p.total,
+    managerDue: p !== null && p.managerSubmitted < p.total,
+  };
+  const points = (['periodStart', 'periodEnd', 'selfDue', 'managerDue'] as const)
+    .map((key): MilestonePoint => {
+      const date = cycle[key];
+      const passed = cycle.status === 'closed' || date < today;
+      const late =
+        passed &&
+        cycle.status === 'open' &&
+        (key === 'selfDue' || key === 'managerDue') &&
+        missing[key];
+      return {
+        key,
+        label: t(`cycles.${key}`),
+        date,
+        state: late ? 'late' : passed ? 'done' : 'upcoming',
+      };
+    })
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const next = points.findIndex((point) => point.state === 'upcoming');
+  if (next >= 0) points[next] = { ...points[next]!, state: 'next' };
+  return points;
 }

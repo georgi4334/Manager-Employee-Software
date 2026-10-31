@@ -15,6 +15,7 @@ import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Field } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
+import { TargetBar } from '@/shared/ui/progress';
 import { Select } from '@/shared/ui/select';
 import { useExportHours, useReport } from './hooks';
 import { useTimeErrors } from './use-time-errors';
@@ -179,17 +180,17 @@ function Row({ row }: { row: ReportRow }) {
             aria-valuemax={100}
             aria-valuenow={Math.min(100, usage.percent)}
             aria-valuetext={`${usage.percent}%`}
-            className="h-2 overflow-hidden rounded-full bg-secondary"
           >
-            <div
-              className={
+            <TargetBar
+              value={row.loggedMinutes}
+              target={row.budgetMinutes}
+              tone={
                 usage.level === 'over'
-                  ? 'h-full bg-danger'
+                  ? 'danger'
                   : usage.level === 'warning'
-                    ? 'h-full bg-warning'
-                    : 'h-full bg-primary'
+                    ? 'warning'
+                    : 'primary'
               }
-              style={{ width: `${Math.min(100, usage.percent)}%` }}
             />
           </div>
           <p className="text-sm">
