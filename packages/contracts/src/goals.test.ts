@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  pageAcrossGroups,
   canAlign,
   goalCheckInRequestSchema,
   createGoalRequestSchema,
@@ -197,5 +198,46 @@ describe('check-ins and queries', () => {
     });
     expect(goalQuerySchema.safeParse({ scope: 'region' }).success).toBe(false);
     expect(goalQuerySchema.safeParse({ pageSize: 101 }).success).toBe(false);
+  });
+});
+
+describe('pageAcrossGroups', () => {
+  const groups = [
+    { group: 'company', count: 3 },
+    { group: 'team', count: 0 },
+    { group: 'personal', count: 30 },
+  ] as const;
+
+  it('fills a page from the groups in order', () => {
+    expect(pageAcrossGroups(groups, 1, 25)).toEqual([
+      { group: 'company', skip: 0, take: 3 },
+      { group: 'personal', skip: 0, take: 22 },
+    ]);
+  });
+
+  it('continues a group where the previous page stopped', () => {
+    expect(pageAcrossGroups(groups, 2, 25)).toEqual([{ group: 'personal', skip: 22, take: 8 }]);
+  });
+
+  it('starts a page inside the first group and spills into the next', () => {
+    expect(pageAcrossGroups(groups, 2, 2)).toEqual([
+      { group: 'company', skip: 2, take: 1 },
+      { group: 'personal', skip: 0, take: 1 },
+    ]);
+  });
+
+  it('returns nothing past the end, and nothing for empty groups', () => {
+    expect(pageAcrossGroups(groups, 3, 25)).toEqual([]);
+    expect(pageAcrossGroups([{ group: 'company', count: 0 }], 1, 25)).toEqual([]);
+  });
+
+  it('covers every row exactly once over all pages', () => {
+    const seen: string[] = [];
+    for (let page = 1; page <= 7; page++)
+      for (const part of pageAcrossGroups(groups, page, 5))
+        for (let i = 0; i < part.take; i++) seen.push(`${part.group}:${part.skip + i}`);
+    expect(seen).toHaveLength(33);
+    expect(new Set(seen).size).toBe(33);
+    expect(seen.slice(0, 4)).toEqual(['company:0', 'company:1', 'company:2', 'personal:0']);
   });
 });

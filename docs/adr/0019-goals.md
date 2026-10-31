@@ -86,3 +86,11 @@ the owner (initials) or team, a status pill (draft, active, done, cancelled) and
 percentage in text, and a meta line: scope, due date, key result count and the goal it contributes to. The bar is green when done,
 red when overdue, grey when cancelled (the title is struck through) and orange otherwise. Loading shows card-shaped skeletons and
 an empty list says so with an icon. Only the web page changed: same endpoint, same permissions, nothing new stored.
+
+## Addendum: paging the "all" view
+
+The "all" view lists company goals, then team goals, then personal goals (`GOAL_GROUP_ORDER`); within a group the
+order is unchanged (due date, then newest). The API pages across the groups (`pageAcrossGroups` in contracts:
+counts per scope, then the slice of each group that falls on the page), so a group continues on the next page
+instead of being cut into pieces by the date order, and the response carries `scopeTotals` so the group headings
+show each group's total rather than the count on one page. A single-scope list is unchanged and has no totals.

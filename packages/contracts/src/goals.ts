@@ -237,8 +237,43 @@ export const goalListSchema = z.object({
   total: z.number().int().min(0),
   page: z.number().int().min(1),
   pageSize: z.number().int().min(1),
+  /** With scope "all": how many goals each group has in total, so headings do not count only one page. */
+  scopeTotals: z.record(z.enum(GOAL_SCOPES), z.number().int().min(0)).optional(),
 });
 export type GoalList = z.infer<typeof goalListSchema>;
+
+/** The order of the groups in the "all" view: company first, then team, then personal. */
+export const GOAL_GROUP_ORDER = [
+  'company',
+  'team',
+  'personal',
+] as const satisfies readonly GoalScope[];
+
+/**
+ * Which part of each group falls on a page when the groups are listed one after the other
+ * (all company goals, then all team goals, then all personal ones). Groups without rows on the page are left out.
+ */
+export function pageAcrossGroups<G extends string>(
+  groups: readonly { group: G; count: number }[],
+  page: number,
+  pageSize: number,
+): { group: G; skip: number; take: number }[] {
+  let start = (page - 1) * pageSize;
+  let left = pageSize;
+  const out: { group: G; skip: number; take: number }[] = [];
+  for (const { group, count } of groups) {
+    if (left === 0) break;
+    if (start >= count) {
+      start -= count;
+      continue;
+    }
+    const take = Math.min(count - start, left);
+    out.push({ group, skip: start, take });
+    left -= take;
+    start = 0;
+  }
+  return out;
+}
 
 export const goalTeamsSchema = z.object({
   items: z.array(z.object({ id: z.uuid(), name: z.string() })),

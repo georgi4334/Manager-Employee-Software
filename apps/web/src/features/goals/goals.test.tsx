@@ -206,6 +206,25 @@ describe('the list', () => {
     expect(order[1]).toMatch(/Personal goals/);
   });
 
+  it('counts each group in total, not only the goals on this page', async () => {
+    as('manager');
+    serve([]);
+    server.use(
+      http.get(`${API}/goals`, () =>
+        HttpResponse.json({
+          items: [summary(1, { scope: 'company' }), summary(2)],
+          total: 40,
+          page: 1,
+          pageSize: 25,
+          scopeTotals: { company: 1, team: 0, personal: 39 },
+        }),
+      ),
+    );
+    await renderApp('/goals');
+    expect(await screen.findByRole('heading', { name: /Personal goals/ })).toHaveTextContent('39');
+    expect(screen.getByRole('heading', { name: /Company goals/ })).toHaveTextContent('1');
+  });
+
   it('shows one plain list without group headings when a single scope is chosen', async () => {
     as('manager');
     serve([summary(1, { scope: 'team', team: TEAM }), summary(2, { scope: 'team', team: TEAM })]);

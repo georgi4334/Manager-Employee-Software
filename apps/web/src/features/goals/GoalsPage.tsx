@@ -1,4 +1,4 @@
-import { GOAL_SCOPES, GOAL_STATUSES, type GoalScope } from '@intime/contracts';
+import { GOAL_GROUP_ORDER, GOAL_SCOPES, GOAL_STATUSES, type GoalScope } from '@intime/contracts';
 import { Search, Target } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +19,6 @@ import { TabList } from '@/shared/ui/tabs';
 
 const SCOPE_FILTERS = ['all', ...GOAL_SCOPES] as const;
 /** The widest goals first: what the company wants, then the teams, then each person. */
-const GROUP_ORDER: GoalScope[] = ['company', 'team', 'personal'];
 
 export function GoalsPage() {
   const { t } = useTranslation('goals');
@@ -162,9 +161,9 @@ export function GoalsPage() {
               <p className="text-sm text-muted-foreground">{t('empty')}</p>
             </Card>
           ) : scope === 'all' ? (
-            // Everything at once: grouped by scope so the company goals are not lost between personal ones.
+            // Grouped by scope; the server pages group after group, so a group continues on the next page.
             <div className="space-y-6">
-              {GROUP_ORDER.map((group) => {
+              {GOAL_GROUP_ORDER.map((group) => {
                 const items = data.items.filter((goal) => goal.scope === group);
                 if (items.length === 0) return null;
                 const GroupIcon = SCOPE_STYLE[group].icon;
@@ -180,7 +179,7 @@ export function GoalsPage() {
                       />
                       {t(`groups.${group}`)}
                       <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
-                        {items.length}
+                        {data.scopeTotals?.[group] ?? items.length}
                       </span>
                     </h2>
                     <ul className="space-y-3" aria-labelledby={`goals-${group}`}>
