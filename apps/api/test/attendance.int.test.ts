@@ -639,13 +639,27 @@ describe.skipIf(!urls)('attendance over HTTP (real database)', () => {
   // ---------------------------------------------------------------------------------------------
   describe('presence today', () => {
     it('shows working, done, on leave and not recorded, inside the scope', async () => {
+      // A finished record that lies inside today even just after midnight (workspace time): at most an hour,
+      // from at most three hours ago, never before midnight.
+      let day = todayIn(ZONE);
+      let midnight = zonedToUtc(day, '00:00', ZONE)!.getTime();
+      if (Date.now() - midnight < 3 * 60_000) {
+        await new Promise((resolve) => setTimeout(resolve, midnight + 3 * 60_000 - Date.now()));
+        day = todayIn(ZONE);
+        midnight = zonedToUtc(day, '00:00', ZONE)!.getTime();
+      }
+      const minute = 60_000;
+      const start = Math.ceil(Math.max(midnight, Date.now() - 3 * 3_600_000) / minute) * minute;
+      const doneMinutes = Math.min(60, Math.floor((Date.now() - minute - start) / minute));
       const a = await onboard(acme, 'presa');
       const b = await onboard(acme, 'presb');
       const c = await onboard(acme, 'presc');
       const d = await onboard(acme, 'presd');
       for (const p of [a, b, c, d]) await manage(acme, p.employeeId, mia.employeeId);
       expect((await checkIn(a, { mode: 'remote' })).status).toBe(201);
-      await insertRecord(b.employeeId, hoursAgo(3), hoursAgo(2), { mode: 'field' });
+      await insertRecord(b.employeeId, new Date(start), new Date(start + doneMinutes * minute), {
+        mode: 'field',
+      });
       const leaveType = (
         await system.leaveType.findFirstOrThrow({
           where: { tenantId: acme.tenantId, key: 'annual' },
@@ -658,22 +672,22 @@ describe.skipIf(!urls)('attendance over HTTP (real database)', () => {
             leaveTypeId: leaveType,
             status: 'approved',
             days: 1,
-            startDate: new Date(`${today}T00:00:00Z`),
-            endDate: new Date(`${today}T00:00:00Z`),
+            startDate: new Date(`${day}T00:00:00Z`),
+            endDate: new Date(`${day}T00:00:00Z`),
           },
         });
         await tx.leaveRequestDay.create({
-          data: { requestId: r.id, day: new Date(`${today}T00:00:00Z`), fraction: 1 },
+          data: { requestId: r.id, day: new Date(`${day}T00:00:00Z`), fraction: 1 },
         });
       });
 
       const res = presenceSchema.parse((await mia.agent.get('/api/v1/attendance/today')).body);
-      expect(res.date).toBe(today);
+      expect(res.date).toBe(day);
       const byName = Object.fromEntries(res.items.map((i) => [i.employee.firstName, i]));
       expect(byName.presa).toMatchObject({ state: 'working', mode: 'remote' });
       expect(byName.presa?.since).toMatch(/^\d{2}:\d{2}$/);
       expect(byName.presb).toMatchObject({ state: 'done', mode: 'field', since: null });
-      expect(byName.presb?.minutes).toBe(60);
+      expect(byName.presb?.minutes).toBe(doneMinutes);
       expect(byName.presc).toMatchObject({ state: 'leave', minutes: 0 });
       expect(byName.presd).toMatchObject({ state: 'none', mode: null });
       expect(byName.gus).toBeUndefined(); // not in mia's subtree
@@ -685,7 +699,7 @@ describe.skipIf(!urls)('attendance over HTTP (real database)', () => {
       expect(all.items.some((i) => i.employee.firstName === 'gus')).toBe(true);
       const mineOnly = presenceSchema.parse((await gus.agent.get('/api/v1/attendance/today')).body);
       expect(mineOnly.items.map((i) => i.employee.firstName)).toEqual(['gus']);
-    });
+    }, 240_000);
 
     it('lists working before anything else when a person is both working and on leave, and leaves out inactive people', async () => {
       const person = await onboard(acme, 'presboth');

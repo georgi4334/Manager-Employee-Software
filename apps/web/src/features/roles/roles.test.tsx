@@ -207,7 +207,7 @@ describe('role tree (ADR 0036)', () => {
     const offered = within(select)
       .getAllByRole('option')
       .map((o) => o.textContent?.trim());
-    expect(offered).toEqual(['Top level', 'Admin', 'Payroll clerk', 'Contractor']);
+    expect(offered).toEqual(['Top level', 'Admin', 'Admin › Payroll clerk', 'Contractor']);
     await user.selectOptions(select, 'Contractor');
     await user.click(within(dialog).getByRole('button', { name: 'Move' }));
     await waitFor(() =>

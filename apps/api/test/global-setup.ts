@@ -10,7 +10,10 @@ export default async function setup(): Promise<void> {
   const url = process.env.TEST_DATABASE_URL;
   if (!url) {
     // In CI a missing database must fail loudly instead of silently skipping the integration tests.
-    if (process.env.CI) throw new Error('TEST_DATABASE_URL must be set in CI');
+    // (The live holiday-feed check needs no database.)
+    if (process.env.CI && !process.env.HOLIDAY_FEED_LIVE) {
+      throw new Error('TEST_DATABASE_URL must be set in CI');
+    }
     console.warn('[api tests] TEST_DATABASE_URL not set: database integration tests are skipped.');
     return;
   }

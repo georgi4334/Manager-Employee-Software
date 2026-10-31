@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import {
+  GOAL_GROUP_ORDER,
   MAX_KEY_RESULTS,
   canAlign,
   goalProgress,
   isGoalOverdue,
   keyResultProgress,
+  pageAcrossGroups,
   type CreateGoalRequest,
   type CreateKeyResultRequest,
   type GoalCheckInRequest,
@@ -109,23 +111,64 @@ export class GoalsService {
           })),
         ],
       };
-      const [rows, total] = await Promise.all([
-        tx.goal.findMany({
-          where,
-          select: SELECT,
-          orderBy: [
-            { dueDate: { sort: 'asc', nulls: 'last' } },
-            { createdAt: 'desc' },
-            { id: 'asc' },
-          ],
-          skip: (query.page - 1) * query.pageSize,
-          take: query.pageSize,
-        }),
-        tx.goal.count({ where }),
-      ]);
+      const orderBy: Prisma.GoalOrderByWithRelationInput[] = [
+        { dueDate: { sort: 'asc', nulls: 'last' } },
+        { createdAt: 'desc' },
+        { id: 'asc' },
+      ];
       const today = await workspaceToday(tx, this.context);
-      const items = await Promise.all(rows.map((row) => this.summary(actor, viewer, row, today)));
-      return { items, total, page: query.page, pageSize: query.pageSize };
+      const toItems = (rows: Row[]) =>
+        Promise.all(rows.map((row) => this.summary(actor, viewer, row, today)));
+
+      if (query.scope !== 'all') {
+        const [rows, total] = await Promise.all([
+          tx.goal.findMany({
+            where,
+            select: SELECT,
+            orderBy,
+            skip: (query.page - 1) * query.pageSize,
+            take: query.pageSize,
+          }),
+          tx.goal.count({ where }),
+        ]);
+        return { items: await toItems(rows), total, page: query.page, pageSize: query.pageSize };
+      }
+
+      // "All" lists company, then team, then personal goals, so a group continues on the next page instead of
+      // being cut into pieces by the due-date order.
+      const counted = await tx.goal.groupBy({ by: ['scope'], where, _count: { _all: true } });
+      const scopeTotals = Object.fromEntries(
+        GOAL_GROUP_ORDER.map((group) => [
+          group,
+          counted.find((c) => c.scope === group)?._count._all ?? 0,
+        ]),
+      ) as Record<GoalScope, number>;
+      const parts = pageAcrossGroups(
+        GOAL_GROUP_ORDER.map((group) => ({ group, count: scopeTotals[group] })),
+        query.page,
+        query.pageSize,
+      );
+      const rows = (
+        await Promise.all(
+          parts.map((part) =>
+            tx.goal.findMany({
+              where: { AND: [where, { scope: part.group }] },
+              select: SELECT,
+              orderBy,
+              skip: part.skip,
+              take: part.take,
+            }),
+          ),
+        )
+      ).flat();
+      const total = GOAL_GROUP_ORDER.reduce((sum, group) => sum + scopeTotals[group], 0);
+      return {
+        items: await toItems(rows),
+        total,
+        page: query.page,
+        pageSize: query.pageSize,
+        scopeTotals,
+      };
     });
   }
 

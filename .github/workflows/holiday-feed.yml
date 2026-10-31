@@ -1,0 +1,27 @@
+name: Holiday feed
+
+# The calendar's public holidays come from openholidaysapi.org (docs/adr/0035-public-holidays-feed.md).
+# Normal tests never reach it; this checks the live feed once a week and on demand.
+on:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    env:
+      HOLIDAY_FEED_LIVE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @intime/contracts build
+      - run: pnpm --filter @intime/api exec vitest run --project unit test/holiday-feed.live.test.ts

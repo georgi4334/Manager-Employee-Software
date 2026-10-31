@@ -49,6 +49,13 @@ maintained as open data (`GET /PublicHolidays?countryIsoCode&languageIsoCode&val
 - Header: the previous/next arrows and "Today" are outlined 44px buttons with chevron icons, the title is larger, and the layer
   toggles are pills with their colour dot, so a checked layer is obvious.
 
+## Checking the live feed
+
+Normal tests use a fake client and never reach the network. `apps/api/test/holiday-feed.live.test.ts` calls the
+real feed when `HOLIDAY_FEED_LIVE=1`: Bulgarian and German nationwide days are present, German state days and
+Scottish days are not, every item is a well-formed range. `.github/workflows/holiday-feed.yml` runs it every Monday
+and on demand, so a change in the feed shows up before people see a wrong calendar.
+
 ## Consequences
 
 - One new outbound dependency, free and optional. Failure degrades to offline data.

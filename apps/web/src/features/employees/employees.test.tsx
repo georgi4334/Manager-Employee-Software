@@ -350,6 +350,19 @@ describe('employee page', () => {
 });
 
 describe('employee form', () => {
+  it('asks for no employee record when creating one', async () => {
+    as('hr');
+    const asked: string[] = [];
+    const listen = ({ request }: { request: Request }) => {
+      asked.push(new URL(request.url).pathname);
+    };
+    server.events.on('request:start', listen);
+    await renderApp('/employees/new');
+    expect(await screen.findByRole('button', { name: 'Create employee' })).toBeInTheDocument();
+    server.events.removeListener('request:start', listen);
+    expect(asked.filter((path) => path.startsWith('/api/v1/employees/'))).toEqual([]);
+  });
+
   it('is only for people who may create employees', async () => {
     await renderApp('/employees/new');
     expect(await screen.findByText('No access')).toBeInTheDocument();

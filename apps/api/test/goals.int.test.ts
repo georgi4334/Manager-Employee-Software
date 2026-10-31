@@ -391,6 +391,43 @@ describe.skipIf(!urls)('goals over HTTP (real database)', () => {
   });
 
   // ---------------------------------------------------------------------------------------------
+  describe('the "all" view', () => {
+    it('pages company, then team, then personal goals, with the total of each group', async () => {
+      // due dates that would mix the groups if the list were only sorted by date
+      await made(dan, { title: 'Early personal', dueDate: '2030-01-01' });
+      await made(mia, { scope: 'team', teamId: teamOne, title: 'Mid team', dueDate: '2030-06-01' });
+      await made(acme.admin, { scope: 'company', title: 'Late company', dueDate: '2030-12-31' });
+
+      for (const who of [acme.admin, dan]) {
+        const all = await listOf(who);
+        expect(all.scopeTotals, who.email).toBeDefined();
+        const totals = all.scopeTotals!;
+        expect(totals.company + totals.team + totals.personal).toBe(all.total);
+        // walking small pages gives every goal once, groups in order
+        const seen: { id: string; scope: string }[] = [];
+        for (let page = 1; page <= Math.ceil(all.total / 2); page++) {
+          const part = await listOf(who, { pageSize: 2, page });
+          expect(part.total).toBe(all.total);
+          seen.push(...part.items.map((g) => ({ id: g.id, scope: g.scope })));
+        }
+        expect(seen.map((g) => g.id)).toEqual(all.items.map((g) => g.id));
+        expect(new Set(seen.map((g) => g.id)).size).toBe(all.total);
+        const rank = { company: 0, team: 1, personal: 2 } as const;
+        const ranks = seen.map((g) => rank[g.scope as keyof typeof rank]);
+        expect(ranks).toEqual([...ranks].sort((a, b) => a - b));
+        for (const scope of ['company', 'team', 'personal'] as const) {
+          expect(seen.filter((g) => g.scope === scope)).toHaveLength(totals[scope]);
+        }
+      }
+      // the totals follow visibility: dan does not count team two's goals or other people's personal ones
+      const danTotals = (await listOf(dan)).scopeTotals!;
+      const adminTotals = (await listOf(acme.admin)).scopeTotals!;
+      expect(danTotals.personal).toBeLessThan(adminTotals.personal);
+      // one scope only: no group totals
+      expect((await listOf(acme.admin, { scope: 'company' })).scopeTotals).toBeUndefined();
+    });
+  });
+
   describe('changing goals', () => {
     it('lets the owner and their manager change a goal, and clear optional fields', async () => {
       const g = await made(dan, { dueDate: addDays(today, 30), description: 'x' });
