@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { ReviewCycle } from '@intime/contracts';
+import { REVIEW_CYCLE_STATUSES, type ReviewCycle } from '@intime/contracts';
+import { CalendarRange, UserPen, UsersRound, X } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -7,11 +8,13 @@ import { useMessages } from '@/features/auth/messages';
 import { formatDay } from '@/shared/lib/format';
 import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
-import { Card } from '@/shared/ui/card';
+import { cn } from '@/shared/lib/cn';
+import { Tile } from '@/shared/ui/tiles';
 import { Field } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
 import { competencyFormSchema, type CompetencyFormValues } from './forms';
 import { useAddCompetency, useDeleteCycle, useMoveCycle, useRemoveCompetency } from './hooks';
+import { DateFact, STATUS_STYLE, StatusPill } from './ui';
 import { useReviewErrors } from './use-review-errors';
 
 const STEPS = { draft: 'open', open: 'calibrate', calibration: 'close' } as const;
@@ -83,51 +86,111 @@ export function CycleCard({
   const error = move.error ?? remove.error ?? removeCompetency.error;
   const p = cycle.progress;
 
+  const stage = REVIEW_CYCLE_STATUSES.indexOf(cycle.status);
+
   return (
-    <Card className="space-y-3">
-      <div className="space-y-1">
-        <h2 className="break-words text-base font-semibold">{cycle.name}</h2>
-        <p className="text-sm text-muted-foreground">
-          {t(`status.${cycle.status}`)}
-          {' · '}
+    <article
+      aria-label={cycle.name}
+      className="relative space-y-4 overflow-hidden rounded-xl glass p-4 pl-5 sm:p-5 sm:pl-6"
+    >
+      <span
+        aria-hidden="true"
+        className={cn('absolute inset-y-0 left-0 w-1.5', STATUS_STYLE[cycle.status].edge)}
+      />
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-3">
+          <Tile>
+            <CalendarRange className="size-5" />
+          </Tile>
+          <h2 className="min-w-0 break-words text-base font-semibold">{cycle.name}</h2>
+        </div>
+        <StatusPill status={cycle.status} />
+      </div>
+
+      {/* The four stages; a cycle only moves forward, one step at a time. */}
+      <ol aria-label={t('cycles.stages')} className="grid grid-cols-4 gap-1.5">
+        {REVIEW_CYCLE_STATUSES.map((s, index) => (
+          <li key={s} className="min-w-0 space-y-1">
+            <span
+              aria-hidden="true"
+              className={cn(
+                'block h-1.5 rounded-full',
+                index <= stage ? STATUS_STYLE[cycle.status].edge : 'bg-secondary',
+              )}
+            />
+            <span
+              className={cn(
+                'block truncate text-xs',
+                index === stage ? 'font-semibold text-foreground' : 'text-muted-foreground',
+              )}
+              aria-current={index === stage ? 'step' : undefined}
+            >
+              {t(`status.${s}`)}
+            </span>
+          </li>
+        ))}
+      </ol>
+
+      <div className="grid gap-2 sm:grid-cols-3">
+        <DateFact icon={CalendarRange}>
           {t('detail.period', {
             from: formatDay(cycle.periodStart, language),
             to: formatDay(cycle.periodEnd, language),
           })}
-          {' · '}
-          {t('detail.dues', {
-            self: formatDay(cycle.selfDue, language),
-            manager: formatDay(cycle.managerDue, language),
-          })}
-        </p>
-        {p && (
-          <p className="text-sm" aria-label={t('cycles.progress')}>
-            {t('cycles.progressText', { ...p })}
-          </p>
-        )}
+        </DateFact>
+        <DateFact icon={UserPen}>
+          {t('detail.selfDue', { date: formatDay(cycle.selfDue, language) })}
+        </DateFact>
+        <DateFact icon={UsersRound}>
+          {t('detail.managerDue', { date: formatDay(cycle.managerDue, language) })}
+        </DateFact>
       </div>
 
+      {p && (
+        <section aria-label={t('cycles.progress')} className="space-y-2">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <ProgressBar label={t('cycles.bar.self')} value={p.selfSubmitted} total={p.total} />
+            <ProgressBar
+              label={t('cycles.bar.manager')}
+              value={p.managerSubmitted}
+              total={p.total}
+            />
+            <ProgressBar label={t('cycles.bar.released')} value={p.released} total={p.total} />
+          </div>
+          <p className="text-xs text-muted-foreground">{t('cycles.progressText', { ...p })}</p>
+        </section>
+      )}
+
       {cycle.competencies.length > 0 && (
-        <ul className="space-y-1" aria-label={t('cycles.competencies', { name: cycle.name })}>
-          {cycle.competencies.map((c) => (
-            <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
-              <span className="break-words">
-                {c.name}
-                {c.description && <span className="text-muted-foreground"> — {c.description}</span>}
-              </span>
-              {cycle.status === 'draft' && (
-                <Button
-                  variant="ghost"
-                  aria-label={t('cycles.removeCompetency', { name: c.name })}
-                  disabled={removeCompetency.isPending}
-                  onClick={() => removeCompetency.mutate(c.id)}
-                >
-                  {t('cycles.remove')}
-                </Button>
-              )}
-            </li>
-          ))}
-        </ul>
+        <section className="space-y-2">
+          <h3 className="text-sm font-semibold">{t('cycles.competencyHeading')}</h3>
+          <ul
+            className="flex flex-wrap gap-2"
+            aria-label={t('cycles.competencies', { name: cycle.name })}
+          >
+            {cycle.competencies.map((c) => (
+              <li
+                key={c.id}
+                className="flex max-w-full items-center gap-1 rounded-full border border-border bg-surface py-1 pl-3 pr-1 text-sm"
+                title={c.description ?? undefined}
+              >
+                <span className="min-w-0 break-words">{c.name}</span>
+                {cycle.status === 'draft' && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={t('cycles.removeCompetency', { name: c.name })}
+                    disabled={removeCompetency.isPending}
+                    onClick={() => removeCompetency.mutate(c.id)}
+                  >
+                    <X className="size-4" aria-hidden="true" />
+                  </Button>
+                )}
+                {cycle.status !== 'draft' && <span className="w-2" aria-hidden="true" />}
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
       {cycle.status === 'draft' && <NewCompetency cycleId={cycle.id} />}
 
@@ -172,6 +235,23 @@ export function CycleCard({
             </Button>
           ))}
       </div>
-    </Card>
+    </article>
+  );
+}
+
+function ProgressBar({ label, value, total }: { label: string; value: number; total: number }) {
+  const pct = total === 0 ? 0 : Math.round((value / total) * 100);
+  return (
+    <div className="space-y-1">
+      <div className="flex items-baseline justify-between gap-2 text-xs">
+        <span className="text-muted-foreground">{label}</span>
+        <span className="font-semibold tabular-nums">
+          {value}/{total}
+        </span>
+      </div>
+      <span aria-hidden="true" className="block h-1.5 overflow-hidden rounded-full bg-secondary">
+        <span className="block h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+      </span>
+    </div>
   );
 }

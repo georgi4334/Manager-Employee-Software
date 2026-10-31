@@ -206,7 +206,7 @@ describe('the lists', () => {
     });
     await renderApp('/reviews');
     const rows = within(await screen.findByRole('list', { name: 'My reviews' })).getAllByRole(
-      'listitem',
+      'article',
     );
     expect(rows[0]).toHaveTextContent('H2 2026');
     expect(rows[0]).toHaveTextContent('Self-review overdue');
@@ -214,6 +214,16 @@ describe('the lists', () => {
     expect(rows[1]).toHaveTextContent('Closed');
     expect(rows[1]).toHaveTextContent('Self-review submitted');
     expect(rows[1]).toHaveTextContent('Final rating: 4 of 5');
+    expect(rows[1]).toHaveTextContent('Exceeds expectations');
+    expect(rows[1]).toHaveTextContent('Results released');
+    expect(rows[0]).toHaveTextContent('Not released yet');
+    expect(rows[0]).toHaveTextContent('No final rating yet');
+    // the three steps, in order
+    expect(
+      within(within(rows[0]!).getByRole('list', { name: 'Progress' }))
+        .getAllByRole('listitem')
+        .map((li) => li.textContent),
+    ).toEqual(['1Self-review overdue', '2Manager review not shown yet', '3Not released yet']);
     expect(within(rows[0]!).getByRole('link')).toHaveAttribute('href', `/reviews/${uuid(501)}`);
   });
 
@@ -232,7 +242,7 @@ describe('the lists', () => {
     await waitFor(() => expect(calls.list.at(-1)?.searchParams.get('box')).toBe('all'));
     await user.selectOptions(await screen.findByLabelText('Cycle'), uuid(200));
     await waitFor(() => expect(calls.list.at(-1)?.searchParams.get('cycleId')).toBe(uuid(200)));
-    expect(await screen.findByText('Dan Dev · H2 2026')).toBeInTheDocument();
+    expect(await screen.findByRole('link', { name: 'Dan Dev · H2 2026' })).toBeInTheDocument();
   });
 
   it('says so when there is nothing', async () => {
@@ -356,6 +366,16 @@ describe('reading a review', () => {
       screen.getByText('The manager review is shown here once the results are released.'),
     ).toBeInTheDocument();
     expect(screen.queryByRole('form')).not.toBeInTheDocument();
+    // each part says where it stands; the header says there is no final rating yet
+    expect(screen.getByRole('region', { name: 'Self-review' })).toHaveTextContent(
+      /^Self-review\s*Submitted/,
+    );
+    expect(screen.getByRole('region', { name: 'Manager review' })).toHaveTextContent(
+      'Shown after release',
+    );
+    expect(screen.getByRole('region', { name: 'Maria Mine · H2 2026' })).toHaveTextContent(
+      'No final rating yet',
+    );
   });
 
   it('shows a released review with the manager part and the final rating', async () => {
@@ -379,6 +399,10 @@ describe('reading a review', () => {
     expect(screen.getByText('Final rating: 5 of 5 (Outstanding)')).toBeInTheDocument();
     expect(screen.getByText('Written by Mia Manager')).toBeInTheDocument();
     expect(screen.getByText('Overall rating: 4 of 5')).toBeInTheDocument();
+    const header = screen.getByRole('region', { name: 'Maria Mine · H2 2026' });
+    expect(header).toHaveTextContent('Final rating5/5');
+    expect(header).toHaveTextContent('Results released');
+    expect(screen.getAllByText(/Exceeds expectations/).length).toBeGreaterThan(0); // score words next to the bars
   });
 
   it('tells a manager the self-review is not submitted yet', async () => {

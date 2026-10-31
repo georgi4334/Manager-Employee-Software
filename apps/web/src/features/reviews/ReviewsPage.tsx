@@ -8,6 +8,7 @@ import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Select } from '@/shared/ui/select';
+import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
 import { PAGE_SIZE } from './api';
 import { CyclesTab } from './CyclesTab';
 import { useCycles, useReviews } from './hooks';
@@ -49,7 +50,7 @@ export function ReviewsPage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
+    <div className="mx-auto max-w-5xl space-y-4">
       <h1 className="text-2xl font-semibold">{t('title')}</h1>
       <p className="text-sm text-muted-foreground">{t('intro')}</p>
       {tabs.length > 1 && (
@@ -69,6 +70,7 @@ export function ReviewsPage() {
           <>
             {tab !== 'mine' && (
               <Select
+                className="sm:max-w-xs"
                 aria-label={t('filters.cycle')}
                 value={cycleId}
                 onChange={(e) => {
@@ -84,9 +86,11 @@ export function ReviewsPage() {
               </Select>
             )}
             {query.isPending && (
-              <p role="status" className="text-sm text-muted-foreground">
-                {t('loading')}
-              </p>
+              <SkeletonGroup label={t('loading')} className="grid gap-4 sm:grid-cols-2">
+                {[0, 1, 2, 3].map((n) => (
+                  <Skeleton key={n} className="h-52 rounded-xl" />
+                ))}
+              </SkeletonGroup>
             )}
             {query.isError && (
               <Card className="space-y-3 text-center">
@@ -104,7 +108,7 @@ export function ReviewsPage() {
                   <p className="text-sm text-muted-foreground" aria-live="polite">
                     {t('total', { count: data.total })}
                   </p>
-                  <ul className="space-y-2" aria-label={t(`tabs.${box}`)}>
+                  <ul className="grid gap-4 sm:grid-cols-2" aria-label={t(`tabs.${box}`)}>
                     {data.items.map((r) => (
                       <ReviewCard key={r.id} review={r} showEmployee={box !== 'mine'} />
                     ))}

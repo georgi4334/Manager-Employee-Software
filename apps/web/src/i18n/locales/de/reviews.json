@@ -47,13 +47,21 @@
     "of": "{{name}} · {{cycle}}",
     "self": "Selbstbeurteilung {{state}}",
     "manager": "Beurteilung der Führungskraft {{state}}",
-    "final": "Endbewertung: {{rating}} von 5"
+    "final": "Endbewertung: {{rating}} von 5",
+    "released": "Ergebnisse freigegeben",
+    "notReleased": "Noch nicht freigegeben",
+    "progress": "Fortschritt",
+    "mine": "Ihre Beurteilung",
+    "noFinal": "Noch keine Endbewertung"
   },
   "detail": {
     "title": "{{name}} · {{cycle}}",
     "period": "{{from}} bis {{to}}",
     "dues": "Selbstbeurteilung fällig {{self}}, Beurteilung der Führungskraft fällig {{manager}}",
-    "final": "Endbewertung: {{rating}} von 5 ({{words}})"
+    "final": "Endbewertung: {{rating}} von 5 ({{words}})",
+    "selfDue": "Selbstbeurteilung fällig am {{date}}",
+    "managerDue": "Beurteilung durch Führungskraft fällig am {{date}}",
+    "finalLabel": "Endbewertung"
   },
   "score": {
     "1": "Verbesserungsbedarf",
@@ -68,7 +76,8 @@
     "label": "Kommentar zu {{name}} (optional)"
   },
   "summary": {
-    "label": "Zusammenfassung (optional)"
+    "label": "Zusammenfassung (optional)",
+    "heading": "Zusammenfassung"
   },
   "self": {
     "heading": "Selbstbeurteilung",
@@ -146,6 +155,18 @@
       "close": "Ja, abschließen und Ergebnisse freigeben"
     },
     "delete": "{{name}} löschen",
-    "confirmDelete": "Ja, diesen Entwurf löschen"
+    "confirmDelete": "Ja, diesen Entwurf löschen",
+    "stages": "Phasen",
+    "bar": {
+      "self": "Selbstbeurteilungen",
+      "manager": "Beurteilungen durch Führungskraft",
+      "released": "Freigegeben"
+    },
+    "competencyHeading": "Kompetenzen"
+  },
+  "part": {
+    "submitted": "Eingereicht am {{date}}",
+    "notSubmitted": "Noch nicht eingereicht",
+    "hidden": "Sichtbar nach Freigabe"
   }
 }
