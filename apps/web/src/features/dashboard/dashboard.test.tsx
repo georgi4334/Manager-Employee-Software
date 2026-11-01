@@ -60,6 +60,22 @@ function dashboard(layout: Partial<DashboardLayout>, permissions?: GrantedPermis
 const widgetList = () => screen.getByRole('list', { name: 'Dashboard' });
 
 describe('dashboard', () => {
+  it('lets a card never widen its column: tracks are minmax(0, 1fr) all the way down', async () => {
+    // A long goal title once made a card wider than its cell, so it was clipped at the right edge.
+    dashboard({ widgets: ['goals'] });
+    server.use(
+      http.get(`${API}/goals`, () =>
+        HttpResponse.json({ items: [], total: 0, page: 1, pageSize: 4, scopeTotals: {} }),
+      ),
+    );
+    await renderApp('/');
+    const item = within(await screen.findByRole('list', { name: 'Dashboard' })).getAllByRole(
+      'listitem',
+    )[0]!;
+    expect(item).toHaveClass('min-w-0', 'grid-cols-[minmax(0,1fr)]');
+    expect(item.firstElementChild).toHaveClass('min-w-0', 'grid-cols-[minmax(0,1fr)]');
+  });
+
   it('shows only the widgets the person may use, and no editing without the right', async () => {
     dashboard({ widgets: ['roles', 'notifications', 'organization'] }, {});
     await renderApp('/');

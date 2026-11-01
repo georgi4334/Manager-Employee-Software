@@ -2,7 +2,7 @@ import type { ProjectSummary, TimeEntry, Timesheet, TimeWeek } from '@intime/con
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { afterEach, describe, expect, it, onTestFinished, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest';
 import { initTestI18n } from '@/tests/i18n';
 import {
   API,
@@ -231,6 +231,13 @@ describe('my week', () => {
   });
 
   describe('the billable time chart', () => {
+    // The fixture week is 26 Oct 2026: pin "today" outside it, so which day opens does not depend on the real date.
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date('2026-12-15T10:00:00Z'));
+      return () => void vi.useRealTimers();
+    });
+
     const OPS = uuid(61);
     const chartWeek = () =>
       week({
@@ -255,11 +262,12 @@ describe('my week', () => {
       const card = (await screen.findByRole('heading', { name: 'Billable time' })).closest(
         'div',
       )!.parentElement!;
-      const chart = within(card);
-      expect(chart.getByText('88 % billable')).toBeInTheDocument();
-      expect(chart.getByText('7:00 h')).toBeInTheDocument(); // billable
-      expect(chart.getByText('1:00 h')).toBeInTheDocument(); // not billable
-      expect(chart.getByText('8:00 h')).toBeInTheDocument(); // total
+      expect(within(card).getByText('88 % billable')).toBeInTheDocument();
+      // the three week totals; the opened day below repeats some figures of its own
+      const totals = within(card.querySelector('dl')!);
+      expect(totals.getByText('7:00 h')).toBeInTheDocument(); // billable
+      expect(totals.getByText('1:00 h')).toBeInTheDocument(); // not billable
+      expect(totals.getByText('8:00 h')).toBeInTheDocument(); // total
     });
 
     it('breaks the week down by project, biggest first', async () => {

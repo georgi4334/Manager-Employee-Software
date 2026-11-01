@@ -113,7 +113,8 @@ export function DashboardPage() {
             <li
               key={id}
               className={cn(
-                'grid min-w-0 gap-1',
+                // minmax(0, 1fr): a card's longest unbreakable line must never widen its column
+                'grid min-w-0 grid-cols-[minmax(0,1fr)] gap-1',
                 editing ? 'grid-rows-[auto_1fr]' : 'grid-rows-1',
                 SPAN[widget.size],
                 editing &&
@@ -151,7 +152,7 @@ export function DashboardPage() {
                 </div>
               )}
               {/* While arranging, the widgets are a preview: their links must not navigate away. */}
-              <div className="grid grid-rows-1" inert={editing}>
+              <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-1" inert={editing}>
                 {usable ? (
                   <Component />
                 ) : (
