@@ -56,6 +56,18 @@ async function renderGrid(over: Partial<Parameters<typeof TimeGrid>[0]> = {}) {
 }
 
 describe('TimeGrid', () => {
+  it('keeps the day header, the all-day row and the hours in one scroll container', async () => {
+    // A scrollbar beside only the hours used to make their columns narrower than the header's.
+    const { container } = await renderGrid();
+    const scroller = (el: Element) => el.closest<HTMLElement>('.overflow-y-auto');
+    const header = scroller(screen.getAllByRole('button')[0]!);
+    const hours = scroller(container.querySelector('.relative.border-l')!);
+    const allDay = scroller(screen.getByText('All day'));
+    expect(header).not.toBeNull();
+    expect(hours).toBe(header);
+    expect(allDay).toBe(header);
+  });
+
   it('starts on Monday and tints Saturday and Sunday', async () => {
     await renderGrid();
     const days = screen.getAllByRole('button');

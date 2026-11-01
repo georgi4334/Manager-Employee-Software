@@ -57,81 +57,86 @@ export function TimeGrid({ days, items, today, now, selected, onSelect, onOpen }
 
   return (
     <div className="overflow-hidden rounded-xl glass">
-      <div className="grid border-b border-border" style={columns}>
-        <span />
-        {days.map((date) => {
-          const isToday = date === today;
-          return (
-            <button
-              key={date}
-              type="button"
-              aria-pressed={date === selected}
-              aria-label={`${formatDay(date, language, { dateStyle: 'full' })}${isToday ? ` · ${t('nav.today')}` : ''}`}
-              onClick={() => onSelect(date)}
-              className={cn(
-                'flex min-h-14 flex-col items-center justify-center gap-0.5 py-2 transition-colors hover:bg-secondary',
-                isWeekend(date) && 'bg-surface-muted',
-                date === selected && !isToday && 'shadow-[inset_0_-2px_0_var(--primary)]',
-              )}
-            >
-              <span className="text-xs text-muted-foreground">
-                {formatDay(date, language, { weekday: 'short' })}
-              </span>
-              <span
-                className={cn(
-                  'grid min-w-8 place-items-center rounded-lg px-1.5 text-lg font-semibold leading-8',
-                  isToday && 'bg-primary text-primary-foreground',
-                )}
-              >
-                {Number(date.slice(8))}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div aria-hidden="true">
-        <div className="grid border-b border-border" style={columns}>
-          <span className="self-center px-1 text-right text-[0.6875rem] text-muted-foreground">
-            {t('day.allDay')}
-          </span>
-          {days.map((date) => {
-            const list = allDayOn(items, date);
-            return (
-              <div
-                key={date}
-                className={cn(
-                  'min-h-8 space-y-0.5 border-l border-border p-0.5',
-                  isWeekend(date) && 'bg-surface-muted',
-                )}
-              >
-                {list.slice(0, 2).map((item) => (
-                  <p
-                    key={item.key}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onOpen(item, date);
-                    }}
+      {/* One scroll container for everything, so the day header, the all-day row and the hours share one width
+          (a scrollbar beside only the hours used to shift their columns against the header). */}
+      <div ref={body} className="scrollbar-subtle max-h-[38rem] overflow-y-auto">
+        <div className="sticky top-0 z-20 bg-[var(--glass-solid)]">
+          <div className="grid border-b border-border" style={columns}>
+            <span />
+            {days.map((date) => {
+              const isToday = date === today;
+              return (
+                <button
+                  key={date}
+                  type="button"
+                  aria-pressed={date === selected}
+                  aria-label={`${formatDay(date, language, { dateStyle: 'full' })}${isToday ? ` · ${t('nav.today')}` : ''}`}
+                  onClick={() => onSelect(date)}
+                  className={cn(
+                    'flex min-h-14 flex-col items-center justify-center gap-0.5 py-2 transition-colors hover:bg-secondary',
+                    isWeekend(date) && 'bg-surface-muted',
+                    date === selected && !isToday && 'shadow-[inset_0_-2px_0_var(--primary)]',
+                  )}
+                >
+                  <span className="text-xs text-muted-foreground">
+                    {formatDay(date, language, { weekday: 'short' })}
+                  </span>
+                  <span
                     className={cn(
-                      'cursor-pointer truncate rounded border-l-2 px-1 text-[0.6875rem] text-foreground hover:brightness-95',
-                      KIND_BLOCK[item.kind],
+                      'grid min-w-8 place-items-center rounded-lg px-1.5 text-lg font-semibold leading-8',
+                      isToday && 'bg-primary text-primary-foreground',
                     )}
                   >
-                    {item.who ? `${item.who} · ` : ''}
-                    {item.title}
-                  </p>
-                ))}
-                {list.length > 2 && (
-                  <p className="px-1 text-[0.6875rem] text-muted-foreground">
-                    {t('month.more', { count: list.length - 2 })}
-                  </p>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                    {Number(date.slice(8))}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-        <div ref={body} className="scrollbar-subtle max-h-[34rem] overflow-y-auto">
+          <div aria-hidden="true">
+            <div className="grid border-b border-border" style={columns}>
+              <span className="self-center px-1 text-right text-[0.6875rem] text-muted-foreground">
+                {t('day.allDay')}
+              </span>
+              {days.map((date) => {
+                const list = allDayOn(items, date);
+                return (
+                  <div
+                    key={date}
+                    className={cn(
+                      'min-h-8 space-y-0.5 border-l border-border p-0.5',
+                      isWeekend(date) && 'bg-surface-muted',
+                    )}
+                  >
+                    {list.slice(0, 2).map((item) => (
+                      <p
+                        key={item.key}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onOpen(item, date);
+                        }}
+                        className={cn(
+                          'cursor-pointer truncate rounded border-l-2 px-1 text-[0.6875rem] text-foreground hover:brightness-95',
+                          KIND_BLOCK[item.kind],
+                        )}
+                      >
+                        {item.who ? `${item.who} · ` : ''}
+                        {item.title}
+                      </p>
+                    ))}
+                    {list.length > 2 && (
+                      <p className="px-1 text-[0.6875rem] text-muted-foreground">
+                        {t('month.more', { count: list.length - 2 })}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        <div aria-hidden="true">
           <div className="relative grid" style={{ ...columns, height: 24 * HOUR_PX }}>
             <div className="relative">
               {HOURS.slice(1).map((h) => (
