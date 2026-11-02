@@ -1,0 +1,101 @@
+{
+  "title": "Чака мен",
+  "intro": "Всичко, което чака вашето решение, най-старото първо.",
+  "loading": "Зареждане на това, което ви чака",
+  "retry": "Опитай отново",
+  "empty": "Нищо не ви чака. Браво.",
+  "emptyFilter": "Нищо от този вид не ви чака.",
+  "filter": {
+    "label": "Покажи",
+    "option": "{{name}} {{count}}",
+    "all": "Всички",
+    "leave": "Отпуски",
+    "timesheet": "Отчети за време",
+    "review": "Оценки",
+    "feedback": "Обратна връзка",
+    "invitation": "Покани"
+  },
+  "group": {
+    "leave": "Заявки за отпуск",
+    "timesheet": "Отчети за време",
+    "review": "Оценки",
+    "feedback": "Сигнализирана обратна връзка",
+    "invitation": "Покани"
+  },
+  "open": {
+    "leave": "Отвори Отпуски › Одобрения",
+    "timesheet": "Отвори Време › Одобрения",
+    "review": "Отвори Оценки",
+    "feedback": "Отвори Обратна връзка › Сигнали",
+    "invitation": "Отвори Календар"
+  },
+  "age": {
+    "today": "Днес",
+    "days_one": "{{count}} ден",
+    "days_other": "{{count}} дни"
+  },
+  "late": "Закъсняло",
+  "approve": "Одобри",
+  "reject": "Отхвърли",
+  "select": "Избери {{name}}",
+  "range": "{{from}} – {{to}}",
+  "leave": {
+    "title": "{{name}} · {{type}}",
+    "absent": "Отсъствие",
+    "meta_one": "{{range}} · {{days}} ден",
+    "meta_other": "{{range}} · {{days}} дни",
+    "approve": "Одобри отпуска на {{name}}",
+    "reject": "Отхвърли отпуска на {{name}}"
+  },
+  "timesheet": {
+    "title": "{{name}} · седмица от {{week}}",
+    "meta": "{{hours}} ч записани",
+    "approve": "Одобри седмицата на {{name}}",
+    "reject": "Отхвърли седмицата на {{name}}"
+  },
+  "review": {
+    "self": "Напишете самооценката си",
+    "manager": "Напишете оценката на ръководителя за {{name}}",
+    "write": "Напиши оценка",
+    "writeSelf": "Напишете самооценката си",
+    "writeFor": "Напишете оценката на ръководителя за {{name}}"
+  },
+  "feedback": {
+    "title": "Сигнал чака вашето решение",
+    "meta": "Обратна връзка от {{date}}",
+    "open": "Отвори"
+  },
+  "invitation": {
+    "title": "{{title}} · от {{name}}",
+    "time": "{{date}} · {{from}}–{{to}}",
+    "accept": "Приеми",
+    "maybe": "Може би",
+    "decline": "Откажи",
+    "acceptOf": "Приеми {{title}}",
+    "maybeOf": "Може би за {{title}}",
+    "declineOf": "Откажи {{title}}"
+  },
+  "done": {
+    "approved": "Одобрено за {{name}}",
+    "rejected": "Отхвърлено за {{name}}",
+    "answered": "Отговорът е изпратен"
+  },
+  "bulk": {
+    "label": "Избрани елементи",
+    "selected_one": "{{count}} избран",
+    "selected_other": "{{count}} избрани",
+    "approve": "Одобри {{count}}",
+    "reject": "Отхвърли {{count}}",
+    "clear": "Изчисти",
+    "confirmReject_one": "Да се отхвърли ли {{count}} елемент?",
+    "confirmReject_other": "Да се отхвърлят ли {{count}} елемента?",
+    "confirm": "Да, отхвърли",
+    "cancel": "Отказ",
+    "approved_one": "{{count}} одобрен",
+    "approved_other": "{{count}} одобрени",
+    "rejected_one": "{{count}} отхвърлен",
+    "rejected_other": "{{count}} отхвърлени",
+    "failed_one": "{{count}} не успя:",
+    "failed_other": "{{count}} не успяха:"
+  }
+}

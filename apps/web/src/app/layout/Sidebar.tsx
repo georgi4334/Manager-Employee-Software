@@ -4,6 +4,7 @@ import { Link, NavLink, useLocation } from 'react-router';
 import { cn } from '@/shared/lib/cn';
 import { Logo } from '@/shared/ui/logo';
 import { GROUP_LABEL, groupNavItems, type NavItem } from '../nav';
+import { InboxBadge } from '@/features/inbox/InboxBadge';
 import { useSectionCounts } from '../section-counts';
 import { PAGE_SECTIONS, sectionHref, useVisibleSections, type SectionPage } from '../sections';
 import { useNavItems } from '../useNavItems';
@@ -79,7 +80,8 @@ function Entry({ item }: { item: NavItem }) {
     <li>
       <NavLink to={path} end={path === '/'} className={entryClass}>
         <Icon className="size-5" aria-hidden="true" />
-        {t(labelKey)}
+        <span className="flex-1">{t(labelKey)}</span>
+        {path === '/inbox' && <InboxBadge />}
       </NavLink>
       {open && path in PAGE_SECTIONS && (
         <Sections page={path as SectionPage} label={t('sectionsOf', { page: t(labelKey) })} />

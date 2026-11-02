@@ -41,6 +41,7 @@ import { useCapacity } from '@/features/capacity/hooks';
 import { useEmployees, useOwnEmployee } from '@/features/employees/hooks';
 import { useFeedback } from '@/features/feedback/hooks';
 import { useGoals } from '@/features/goals/hooks';
+import { countByKind, INBOX_KINDS, useInbox } from '@/features/inbox/use-inbox';
 import { useBalances, useLeaveRequests, useLeaveTypes } from '@/features/leave/hooks';
 import { useTypeName } from '@/features/leave/names';
 import { NotificationText } from '@/features/notifications/NotificationText';
@@ -268,6 +269,39 @@ function Card({
     <WidgetCard title={t(`widgets.${id}.title`)} icon={icon} to={to}>
       {children}
     </WidgetCard>
+  );
+}
+
+/** Everything waiting for the user, by kind (docs/adr/0038-waiting-for-me.md). */
+function WaitingCard() {
+  const { t } = useLang();
+  const { t: ti } = useTranslation('inbox');
+  const inbox = useInbox();
+  const counts = countByKind(inbox.items);
+  const kinds = INBOX_KINDS.filter((k) => counts[k] > 0);
+  return (
+    <Card id="waiting" icon={Inbox} to="/inbox">
+      <State
+        query={{
+          isPending: inbox.isPending && inbox.items.length === 0,
+          isError: Boolean(inbox.error),
+        }}
+      >
+        {kinds.length === 0 ? (
+          <Muted>{t('widgets.waiting.empty')}</Muted>
+        ) : (
+          <Rows>
+            {kinds.map((kind) => (
+              <Row
+                key={kind}
+                title={ti(`group.${kind}`)}
+                aside={<Pill tone="accent">{counts[kind]}</Pill>}
+              />
+            ))}
+          </Rows>
+        )}
+      </State>
+    </Card>
   );
 }
 
@@ -987,6 +1021,7 @@ export const WIDGETS: Record<DashboardWidget, WidgetDef> = {
     Component: OrganizationCard,
   },
   notifications: { id: 'notifications', size: 'card', icon: Bell, Component: NotificationsCard },
+  waiting: { id: 'waiting', size: 'card', icon: Inbox, Component: WaitingCard },
 };
 
 export const canUse = (widget: WidgetDef, granted: GrantedPermissions | undefined) =>

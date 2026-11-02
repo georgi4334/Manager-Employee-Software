@@ -38,6 +38,7 @@ import { DashboardPage } from '@/features/dashboard/DashboardPage';
 import { NotFoundPage } from '@/features/not-found/NotFoundPage';
 import { NotificationSettingsPage } from '@/features/notifications/NotificationSettingsPage';
 import { NotificationsPage } from '@/features/notifications/NotificationsPage';
+import { InboxPage } from '@/features/inbox/InboxPage';
 import { ModulePlaceholderPage } from '@/features/placeholder/ModulePlaceholderPage';
 import { NAV_ITEMS } from './nav';
 import { AppShell } from './layout/AppShell';
@@ -62,6 +63,7 @@ const IMPLEMENTED_PATHS = [
   '/assistant',
   '/retention',
   '/roles',
+  '/inbox',
 ];
 
 export const routes: RouteObject[] = [
@@ -208,6 +210,7 @@ export const routes: RouteObject[] = [
           },
           { path: 'profile', element: <MyProfilePage /> },
           { path: 'notifications', element: <NotificationsPage /> },
+          { path: 'inbox', element: <InboxPage /> },
           {
             element: <RequirePermission permission="notification.manage_own_prefs" />,
             children: [{ path: 'notifications/settings', element: <NotificationSettingsPage /> }],

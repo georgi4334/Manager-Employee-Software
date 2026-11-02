@@ -163,6 +163,10 @@
     "notifications": {
       "title": "Latest notifications",
       "empty": "No notifications."
+    },
+    "waiting": {
+      "title": "Waiting for me",
+      "empty": "Nothing is waiting for you."
     }
   }
 }

@@ -302,6 +302,12 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Phones: the bottom bar keeps its four entries; "More" shows the rest as tiles under the same group headings.
 - Tests that query lists, list items or texts by name should scope to `main` (the menu has lists and headings too).
 
+## Waiting for me (docs/adr/0038-waiting-for-me.md)
+
+- Web only, no table or endpoint: `/inbox` reads the existing scoped lists with the user's rights (pending leave with `canApprove`, submitted weeks with `canDecide`, unsubmitted review parts in open cycles, open feedback reports, invitations of the next 60 days with `myResponse = needs_action`, one per event). `buildInbox`/`inboxSources` in `features/inbox/use-inbox.ts` are pure and tested; queries reuse the pages' query keys, so a decision anywhere updates the inbox.
+- Leave and timesheets can be decided in bulk (the same single requests one after another; reject asks first; the inbox rejects without a comment). Reviews, feedback and invitations link to or act on their own page.
+- The menu entry (group `top`, no permission) carries the total (`InboxBadge`; the number is `aria-hidden`, the words follow the label). Phones: Dashboard, Waiting, Leave, Calendar, More (Attendance is under More). Widget `waiting` is in the default dashboard. The badge reads the lists on every page: web tests get neutral defaults for them in `tests/server.ts`; a test that counts requests to these lists must expect the badge's own. A new kind = source + row + `inbox.json` texts.
+
 ## Dashboard (docs/adr/0034-dashboard.md)
 
 - One layout per workspace: `dashboard_layout` (RLS, `widgets text[]`, ≤ 50; no row = `DEFAULT_DASHBOARD`). `GET /dashboard/layout` is `@Authenticated()` (answers `canEdit`); `PUT`/`DELETE` need `admin.tenant.settings` and are audited (`dashboard.updated` with ids, `dashboard.reset`). No personal data: not exported or erased.

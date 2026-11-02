@@ -703,7 +703,8 @@ describe('team', () => {
     expect(within(list).getByText('Eve Test').closest('li')).toHaveTextContent('Absent');
     expect(within(list).getByText('Eve Test').closest('li')).not.toHaveTextContent('Annual leave');
     expect(within(list).getByText('Dan Test').closest('li')).toHaveTextContent('Annual leave');
-    const q = calls.requests.at(-1)!.searchParams;
+    // The menu badge also asks for approvable requests; the team list is the request with a period.
+    const q = calls.requests.filter((u) => u.searchParams.has('from')).at(-1)!.searchParams;
     expect(q.get('from')).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(q.get('to')).toBe(addDays(q.get('from')!, 30));
   });

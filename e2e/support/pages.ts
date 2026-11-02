@@ -1,6 +1,7 @@
 /** Every signed-in page the browser checks visit (accessibility, layout). */
 export const SIGNED_IN = [
   '/',
+  '/inbox',
   '/employees',
   '/employees/new',
   '/organization',
