@@ -33,4 +33,8 @@ A + C was chosen: nothing is hidden, and the menu grows by a few short lines onl
 
 - A new page with tabs adds its sections to `PAGE_SECTIONS` (labels stay in the page's own `tabs.*` keys); a new menu entry
   names its group. Group names need en/de/bg texts in `nav.json` (`group*` keys).
-- Counts next to sections ("Approvals 3") need their own small reads and are left for later.
+- **Counts** next to sections (`useSectionCounts`, `apps/web/src/app/section-counts.ts`): Leave › Approvals (pending requests
+  the user may decide), Time › Approvals (submitted weeks with `canDecide`; the user's own week never counts) and Feedback ›
+  Reported (open reports for moderators). Each count reuses the request and cache of the section's own list, so a decision
+  there updates the menu; only the open page asks. The number is decoration (`aria-hidden`); the link's name says
+  "N waiting for you". Zero shows nothing; more than 99 shows "99+".

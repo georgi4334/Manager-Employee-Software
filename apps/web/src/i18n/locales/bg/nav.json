@@ -25,5 +25,7 @@
   "groupGrowth": "Развитие",
   "groupInsights": "Анализи",
   "groupAdmin": "Администрация",
-  "sectionsOf": "Раздели на {{page}}"
+  "sectionsOf": "Раздели на {{page}}",
+  "waiting_one": "{{count}} чака вас",
+  "waiting_other": "{{count}} чакат вас"
 }

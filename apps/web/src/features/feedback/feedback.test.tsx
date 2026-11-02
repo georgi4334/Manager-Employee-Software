@@ -166,12 +166,14 @@ describe('reading feedback', () => {
     const calls = serve([item(1)]);
     await renderApp('/feedback');
     await screen.findByText('Words 1');
-    expect(calls.list.at(-1)?.searchParams.get('box')).toBe('received');
+    // The menu also asks for the reported box (to count open reports), so look for each box, not the last call.
+    const asked = (box: string) => calls.list.some((url) => url.searchParams.get('box') === box);
+    expect(asked('received')).toBe(true);
     const user = userEvent.setup();
     await user.click(screen.getByRole('button', { name: 'Given' }));
-    await waitFor(() => expect(calls.list.at(-1)?.searchParams.get('box')).toBe('given'));
+    await waitFor(() => expect(asked('given')).toBe(true));
     await user.click(screen.getByRole('button', { name: 'Reported' }));
-    await waitFor(() => expect(calls.list.at(-1)?.searchParams.get('box')).toBe('reported'));
+    await waitFor(() => expect(asked('reported')).toBe(true));
     expect(screen.getByRole('button', { name: 'Reported' })).toHaveAttribute(
       'aria-pressed',
       'true',

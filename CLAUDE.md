@@ -298,7 +298,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 ## Navigation (docs/adr/0037-navigation-groups.md)
 
 - The side menu is grouped (`NAV_GROUPS` / `NavItem.group` in `app/nav.ts`): Dashboard and Assistant without a heading, then My workday, Work, People, Growth, Insights, and Administration set apart at the bottom. Groups without a visible entry are hidden; group names are `group*` keys in `nav.json` (en/de/bg).
-- Page sections (tabs) are defined once in `app/sections.ts` (`PAGE_SECTIONS`: param `tab`/`box`, order, rule per section; `visibleSections`, `useVisibleSections`). Pages build their tab lists from it and the menu lists the same sections under the **open** entry only (more than one, `aria-current` on the current). A new tabbed page adds itself there; view switches and filters are not sections. Counts next to sections are not built yet.
+- Page sections (tabs) are defined once in `app/sections.ts` (`PAGE_SECTIONS`: param `tab`/`box`, order, rule per section; `visibleSections`, `useVisibleSections`). Pages build their tab lists from it and the menu lists the same sections under the **open** entry only (more than one, `aria-current` on the current). A new tabbed page adds itself there; view switches and filters are not sections. Counts (`useSectionCounts` in `app/section-counts.ts`: leave and timesheet approvals, reported feedback) reuse the section list's own query and cache; zero shows nothing.
 - Phones: the bottom bar keeps its four entries; "More" shows the rest as tiles under the same group headings.
 - Tests that query lists, list items or texts by name should scope to `main` (the menu has lists and headings too).
 

@@ -4,6 +4,7 @@ import { Link, NavLink, useLocation } from 'react-router';
 import { cn } from '@/shared/lib/cn';
 import { Logo } from '@/shared/ui/logo';
 import { GROUP_LABEL, groupNavItems, type NavItem } from '../nav';
+import { useSectionCounts } from '../section-counts';
 import { PAGE_SECTIONS, sectionHref, useVisibleSections, type SectionPage } from '../sections';
 import { useNavItems } from '../useNavItems';
 
@@ -90,11 +91,13 @@ function Entry({ item }: { item: NavItem }) {
 /** The sections (tabs) of the open page; only when there is more than one, like the page's own tab list. */
 function Sections({ page, label }: { page: SectionPage; label: string }) {
   const { t } = useTranslation();
+  const { t: tNav } = useTranslation('nav');
   // Section labels live in each page's own namespace (`tabs.<name>`); the key is built from PAGE_SECTIONS.
   const sectionLabel = (ns: string, name: string) =>
     (t as unknown as (key: string) => string)(`${ns}:tabs.${name}`);
   const { pathname, search } = useLocation();
   const names: string[] = useVisibleSections(page);
+  const counts = useSectionCounts(page, names.length < 2 ? [] : names);
   if (names.length < 2) return null;
   const { ns, param } = PAGE_SECTIONS[page];
   const first = names[0]!;
@@ -109,6 +112,8 @@ function Sections({ page, label }: { page: SectionPage; label: string }) {
     >
       {names.map((name) => {
         const on = name === current;
+        const waiting = counts[name];
+        const shown = waiting && waiting.count > 0 ? waiting : null;
         return (
           <li key={name}>
             <Link
@@ -121,7 +126,22 @@ function Sections({ page, label }: { page: SectionPage; label: string }) {
                   : 'text-sidebar-muted hover:bg-sidebar-border/40 hover:text-sidebar-foreground',
               )}
             >
-              {sectionLabel(ns, name)}
+              <span className="flex-1">{sectionLabel(ns, name)}</span>
+              {shown && (
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="min-w-6 rounded-full bg-brand px-1.5 text-center text-xs font-bold leading-5 tabular-nums text-sidebar"
+                  >
+                    {shown.count > 99 ? '99+' : shown.count}
+                    {shown.more && shown.count <= 99 ? '+' : ''}
+                  </span>
+                  <span className="sr-only">
+                    {', '}
+                    {tNav('waiting', { count: shown.count })}
+                  </span>
+                </>
+              )}
             </Link>
           </li>
         );

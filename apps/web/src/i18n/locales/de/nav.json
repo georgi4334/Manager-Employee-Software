@@ -25,5 +25,7 @@
   "groupGrowth": "Entwicklung",
   "groupInsights": "Auswertungen",
   "groupAdmin": "Verwaltung",
-  "sectionsOf": "Bereiche von {{page}}"
+  "sectionsOf": "Bereiche von {{page}}",
+  "waiting_one": "{{count}} wartet auf Sie",
+  "waiting_other": "{{count}} warten auf Sie"
 }
