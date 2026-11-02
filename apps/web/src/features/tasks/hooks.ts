@@ -1,3 +1,4 @@
+import type { TaskStatus } from '@intime/contracts';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createTask, deleteTask, fetchTasks, taskKeys, updateTask, type ListParams } from './api';
 
@@ -32,6 +33,14 @@ export function useUpdateTask(id: string) {
   const refresh = useRefresh();
   return useMutation({
     mutationFn: (body: Parameters<typeof updateTask>[1]) => updateTask(id, body),
+    onSuccess: refresh,
+  });
+}
+/** A status change from the board (drag and drop); the same request as the status select. */
+export function useMoveTask() {
+  const refresh = useRefresh();
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: TaskStatus }) => updateTask(id, { status }),
     onSuccess: refresh,
   });
 }

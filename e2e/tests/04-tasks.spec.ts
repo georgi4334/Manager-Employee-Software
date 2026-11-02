@@ -55,3 +55,28 @@ test('the administrator sees the move on the board', async ({ page }) => {
   await expect(column.getByText('Design the login')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'To do (0)' })).toBeVisible();
 });
+
+test.describe('with a mouse on a wide screen', () => {
+  test.use({ isMobile: false, hasTouch: false, viewport: { width: 1280, height: 900 } });
+
+  test('the administrator drags a card to another column; the status select still works', async ({
+    page,
+  }) => {
+    await signIn(page, ADMIN_EMAIL);
+    await page.goto('/tasks?view=board');
+    const card = page.getByRole('listitem').filter({ hasText: 'Design the login' });
+    const review = page.getByRole('region', { name: /In review/ });
+    await card.dragTo(review);
+    await expect(review.getByText('Design the login')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'In review (1)' })).toBeVisible();
+    await expect(page.getByRole('status').filter({ hasText: 'moved to In review' })).toBeAttached();
+
+    // after a reload the server has it, and the select moves it back
+    await page.reload();
+    await expect(review.getByText('Design the login')).toBeVisible();
+    await card.getByRole('combobox').selectOption('in_progress');
+    await expect(
+      page.getByRole('region', { name: /In progress/ }).getByText('Design the login'),
+    ).toBeVisible();
+  });
+});

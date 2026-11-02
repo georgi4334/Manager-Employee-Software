@@ -46,7 +46,7 @@ its lead**, so tasks never wander outside the project team (`assignee_not_on_pro
 ### 4. Web
 
 "Tasks" in the navigation: **List** and **Board** views of the same data (the board groups by status; moving a card is
-a status select, no drag and drop, so it works on phones and with a keyboard), filters for project, "assigned to me",
+a status select, which works on phones and with a keyboard; see the update below for drag and drop), filters for project, "assigned to me",
 status and type, search by title or reference, a form to create and edit. The project page links to its tasks and shows
 the open count. All strings en/de/bg, 375 px first.
 
@@ -54,7 +54,7 @@ the open count. All strings en/de/bg, 375 px first.
 
 - One new table and one new column on `project` (expand-only).
 - Time tracking (next step) references `task.id`; leave-conflict warnings will also read `task.due_date`.
-- Sub-tasks, comments, attachments, labels and drag and drop are out of scope.
+- Sub-tasks, comments, attachments and labels are out of scope.
 
 ## Update: board and list design
 
@@ -64,3 +64,12 @@ assignee avatar, due/done date and hours, and the status select for people who m
 a stage icon tile, title with tags and milestone, assignee and dates, the status select and icon actions; rows stack on phones.
 Both use the same `TaskCard` (`variant`), the shared `Chip`/initials in `shared/ui/tiles.tsx` and only design tokens. Behaviour,
 permissions and API are unchanged.
+
+## Update (2026-11-02): drag and drop on the board
+
+With a mouse, a card can be dragged to another column of the board; dropping it sends the same `PATCH /tasks/:id`
+(`{ status }`) as the status select, so the server rules (`canMove`, `task.manage`, `done_on`) are unchanged. Only cards the
+caller may move (`canMove`) can be picked up, and only another column accepts them. The status select stays on every
+card: it is the way on phones, with a keyboard and with a screen reader (native HTML drag and drop is mouse-only). While
+the request runs the card is shown in its new column; on an error it goes back and the board shows the error. A polite live
+region says "<key> moved to <status>". No new data, no reordering inside a column (there is no order field).
