@@ -150,7 +150,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Rights: `task.view` scope is about people and projects (`ProjectAccess.visibleWhere(..., 'task.view')` plus tasks assigned to people in scope). Full edit/create/delete needs `task.manage` and either scope `all` or leading the project (`project.manage` covers the lead); the assignee may change only the status (`canMove`). A task the caller cannot see is `404`.
 - The assignee must be an active person staffed on the project or its lead (`assignee_not_on_project`, `unknown_employee`); the milestone must belong to the same project (`milestone_not_in_project`, also a DB trigger). `done_on` is set exactly when the status is `done`.
 - `task.assigned` notifications carry the project id and task key, never the title. Audit entries carry ids and field names only. Deactivating an employee un-assigns their open tasks (`AssignmentsService.onEmployeeDeactivated`); the data export lists assigned tasks.
-- Web: `/tasks` (list and board views, filters in the query string for `project` and `view`), move via the status select (no drag and drop), a task count on the project page. The project picker lists the first page of projects only.
+- Web: `/tasks` (list and board views, filters in the query string for `project` and `view`), move via the status select on every card, and on the board also by dragging a card to another column with the mouse (same `PATCH`, only `canMove` cards, shown in the new column while saving, reverted on error); a task count on the project page. The project picker lists the first page of projects only.
 - e2e: the start script always builds the API through turbo; a stale `dist/` once hid a missing route.
 
 ## Time tracker (docs/adr/0015-time-tracker.md)

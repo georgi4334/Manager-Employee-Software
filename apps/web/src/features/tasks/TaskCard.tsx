@@ -98,8 +98,23 @@ function Dates({ task }: { task: Task }) {
   );
 }
 
+/** Drag and drop on the board (mouse only; the status select stays the way for keyboard, touch and screen readers). */
+export interface CardDrag {
+  dragging: boolean;
+  onStart: (task: Task) => void;
+  onEnd: () => void;
+}
+
 /** A task as a row of the list, or (`variant="board"`) as a card in a column. */
-export function TaskCard({ task, variant = 'list' }: { task: Task; variant?: 'list' | 'board' }) {
+export function TaskCard({
+  task,
+  variant = 'list',
+  drag,
+}: {
+  task: Task;
+  variant?: 'list' | 'board';
+  drag?: CardDrag;
+}) {
   const { t } = useTranslation('tasks');
   const errors = useTaskErrors();
   const [editing, setEditing] = useState(false);
@@ -196,8 +211,27 @@ export function TaskCard({ task, variant = 'list' }: { task: Task; variant?: 'li
   const alert = error && <Alert tone="danger">{errors.apiError(error)}</Alert>;
 
   if (board) {
+    const draggable = Boolean(drag && task.canMove);
     return (
-      <li className="flex flex-col gap-3 rounded-xl glass p-3.5">
+      <li
+        draggable={draggable}
+        data-dragging={drag?.dragging ? 'true' : undefined}
+        onDragStart={
+          draggable
+            ? (e) => {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', task.key);
+                drag!.onStart(task);
+              }
+            : undefined
+        }
+        onDragEnd={draggable ? () => drag!.onEnd() : undefined}
+        className={cn(
+          'flex flex-col gap-3 rounded-xl glass p-3.5 transition-opacity duration-200',
+          draggable && 'cursor-grab active:cursor-grabbing',
+          drag?.dragging && 'opacity-50',
+        )}
+      >
         <div className="flex items-center justify-between gap-2">
           {keyLink}
           {actions}

@@ -80,6 +80,9 @@
     "go": "Aufgaben öffnen"
   },
   "board": {
-    "empty": "Hier ist nichts"
+    "empty": "Hier ist nichts",
+    "hint": "Ziehen Sie eine Karte in eine andere Spalte, um ihren Status zu ändern, oder nutzen Sie die Statusliste der Karte.",
+    "moved": "{{key}} verschoben nach {{status}}",
+    "dropHere": "Hier ablegen"
   }
 }

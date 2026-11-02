@@ -1,5 +1,5 @@
 import type { ProjectDetail, ProjectSummary, Task } from '@intime/contracts';
-import { screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
@@ -355,5 +355,81 @@ describe('on the project page', () => {
     await renderApp(`/projects/${P1}`);
     await screen.findByRole('heading', { name: 'Website' });
     expect(screen.queryByRole('link', { name: 'Open the tasks' })).not.toBeInTheDocument();
+  });
+});
+
+describe('drag and drop on the board', () => {
+  const transfer = () => {
+    const data: Record<string, string> = {};
+    return {
+      effectAllowed: 'none',
+      dropEffect: 'none',
+      setData: (type: string, value: string) => void (data[type] = value),
+      getData: (type: string) => data[type] ?? '',
+    };
+  };
+  const column = async (heading: RegExp) =>
+    (await screen.findByRole('heading', { name: heading })).closest('section')!;
+  const card = (title: string) => screen.getByText(title).closest('li')!;
+  const dragTo = (from: HTMLElement, to: HTMLElement) => {
+    const dataTransfer = transfer();
+    fireEvent.dragStart(from, { dataTransfer });
+    fireEvent.dragEnter(to, { dataTransfer });
+    fireEvent.dragOver(to, { dataTransfer });
+    fireEvent.drop(to, { dataTransfer });
+    fireEvent.dragEnd(from, { dataTransfer });
+  };
+
+  it('moves a card to the column it is dropped on, with the same request as the select', async () => {
+    as('manager');
+    const calls = serve([task(1), task(2, { status: 'in_progress' })]);
+    await renderApp('/tasks?view=board');
+    const done = await column(/^Done/);
+    dragTo(card('Task 1'), done);
+    // the card waits in its new column while the request runs
+    expect(within(done).getByText('Task 1')).toBeInTheDocument();
+    await waitFor(() => expect(calls.patch).toEqual([{ status: 'done' }]));
+    expect(await screen.findByText('WEB-1 moved to Done')).toBeInTheDocument();
+  });
+
+  it('keeps the status select on every movable card', async () => {
+    as('manager');
+    serve([task(1)]);
+    await renderApp('/tasks?view=board');
+    await column(/^To do/);
+    expect(screen.getByLabelText('Status of WEB-1')).toBeInTheDocument();
+    expect(card('Task 1')).toHaveAttribute('draggable', 'true');
+  });
+
+  it('does not let a card be picked up when the person cannot move it', async () => {
+    as('employee');
+    const calls = serve([task(1, { canEdit: false, canMove: false })]);
+    await renderApp('/tasks?view=board');
+    const done = await column(/^Done/);
+    expect(card('Task 1')).toHaveAttribute('draggable', 'false');
+    dragTo(card('Task 1'), done);
+    expect(within(done).queryByText('Task 1')).not.toBeInTheDocument();
+    expect(calls.patch).toEqual([]);
+  });
+
+  it('sends nothing when a card is dropped back on its own column', async () => {
+    as('manager');
+    const calls = serve([task(1)]);
+    await renderApp('/tasks?view=board');
+    dragTo(card('Task 1'), await column(/^To do/));
+    await new Promise((r) => setTimeout(r, 50));
+    expect(calls.patch).toEqual([]);
+  });
+
+  it('puts the card back and shows the error when the move is refused', async () => {
+    as('manager');
+    serve([task(1)]);
+    server.use(http.patch(`${API}/tasks/:id`, () => errorResponse('FORBIDDEN', 403)));
+    await renderApp('/tasks?view=board');
+    const done = await column(/^Done/);
+    dragTo(card('Task 1'), done);
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    await waitFor(() => expect(within(done).queryByText('Task 1')).not.toBeInTheDocument());
+    expect(within(await column(/^To do/)).getByText('Task 1')).toBeInTheDocument();
   });
 });

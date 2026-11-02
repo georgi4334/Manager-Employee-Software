@@ -80,6 +80,9 @@
     "go": "Open the tasks"
   },
   "board": {
-    "empty": "Nothing here"
+    "empty": "Nothing here",
+    "hint": "Drag a card to another column to change its status, or use its status list.",
+    "moved": "{{key}} moved to {{status}}",
+    "dropHere": "Drop here"
   }
 }

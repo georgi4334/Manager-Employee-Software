@@ -1,4 +1,4 @@
-import { TASK_STATUSES, TASK_TYPES, type TaskStatus } from '@intime/contracts';
+import { TASK_STATUSES, TASK_TYPES } from '@intime/contracts';
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,19 +13,13 @@ import { Select } from '@/shared/ui/select';
 import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
 import { PAGE_SIZE, type ListParams } from './api';
 import { useTasks } from './hooks';
+import { Board } from './Board';
 import { TaskCard } from './TaskCard';
 import { TaskForm } from './TaskForm';
 import { useTaskErrors } from './use-task-errors';
 import { TabList, TabContent } from '@/shared/ui/tabs';
 
 type View = 'list' | 'board';
-
-const COLUMN_DOT: Record<TaskStatus, string> = {
-  todo: 'bg-muted-foreground',
-  in_progress: 'bg-info',
-  review: 'bg-warning',
-  done: 'bg-success',
-};
 
 export function TasksPage() {
   const { t } = useTranslation('tasks');
@@ -202,39 +196,7 @@ export function TasksPage() {
                 ))}
               </ul>
             ) : (
-              <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
-                {TASK_STATUSES.map((s) => {
-                  const column = data.items.filter((task) => task.status === s);
-                  return (
-                    <section
-                      key={s}
-                      aria-labelledby={`board-${s}`}
-                      className="space-y-3 rounded-2xl glass p-3"
-                    >
-                      <h2
-                        id={`board-${s}`}
-                        className="flex items-center gap-2 px-1 text-sm font-semibold"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className={`size-2.5 rounded-full ${COLUMN_DOT[s]}`}
-                        />
-                        {t(`status.${s}`)} ({column.length})
-                      </h2>
-                      <ul className="space-y-3" aria-labelledby={`board-${s}`}>
-                        {column.map((task) => (
-                          <TaskCard key={task.id} task={task} variant="board" />
-                        ))}
-                      </ul>
-                      {column.length === 0 && (
-                        <p className="rounded-xl border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
-                          {t('board.empty')}
-                        </p>
-                      )}
-                    </section>
-                  );
-                })}
-              </div>
+              <Board items={data.items} />
             )}
             {pages > 1 && (
               <nav className="flex items-center justify-between gap-2" aria-label={t('pagination')}>
