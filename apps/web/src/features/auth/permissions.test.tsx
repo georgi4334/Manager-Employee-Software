@@ -110,25 +110,26 @@ describe('navigation by permission', () => {
     async (role) => {
       server.use(...signedInHandlers(userWithRole(role)));
       await renderApp('/');
+      // grouped (docs/adr/0037-navigation-groups.md): top, My workday, Work, People, Growth, Insights, Administration
       expect(sidebarLinks()).toEqual([
         'Dashboard',
+        'Assistant',
         'Attendance',
         'Leave',
         'Calendar',
+        'Time',
         'Projects',
         'Tasks',
-        'Time',
         'Capacity',
+        'Employees',
+        'Organization',
         'Goals',
         '1:1 meetings',
         'Feedback',
         'Skills',
         'Reviews',
         ...(role === 'employee' ? [] : ['Analytics']),
-        'Assistant',
-        ...(role === 'hr' || role === 'admin' ? ['Data retention', 'Roles'] : []),
-        'Employees',
-        'Organization',
+        ...(role === 'hr' || role === 'admin' ? ['Roles', 'Data retention'] : []),
       ]);
     },
   );

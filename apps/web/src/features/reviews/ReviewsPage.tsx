@@ -2,8 +2,6 @@ import type { ReviewBox } from '@intime/contracts';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
-import { useCurrentUser } from '@/features/auth/use-auth';
-import { usePermission } from '@/features/auth/permissions';
 import { Alert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
@@ -15,6 +13,7 @@ import { useCycles, useReviews } from './hooks';
 import { ReviewCard } from './ReviewCard';
 import { useReviewErrors } from './use-review-errors';
 import { TabList, TabContent } from '@/shared/ui/tabs';
+import { useVisibleSections } from '@/app/sections';
 
 type Tab = ReviewBox | 'cycles';
 
@@ -22,15 +21,7 @@ export function ReviewsPage() {
   const { t } = useTranslation('reviews');
   const errors = useReviewErrors();
   const [params, setParams] = useSearchParams();
-  const me = useCurrentUser();
-  const scope = me.data?.permissions['review.view'];
-  const manages = usePermission('review.manage_cycles');
-  const tabs: Tab[] = [
-    'mine',
-    ...(scope === 'reports' || scope === 'all' ? (['team'] as const) : []),
-    ...(scope === 'all' ? (['all'] as const) : []),
-    ...(manages ? (['cycles'] as const) : []),
-  ];
+  const tabs: Tab[] = useVisibleSections('/reviews');
   const requested = tabs.find((x) => x === params.get('tab'));
   const tab: Tab = requested ?? 'mine';
   const cycleId = params.get('cycle') ?? '';

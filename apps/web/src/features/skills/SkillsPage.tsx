@@ -6,6 +6,7 @@ import { CatalogTab } from './CatalogTab';
 import { PeopleTab } from './PeopleTab';
 import { RatingEditor } from './RatingEditor';
 import { TabList, TabContent } from '@/shared/ui/tabs';
+import { useVisibleSections } from '@/app/sections';
 
 type Tab = 'mine' | 'people' | 'catalog';
 
@@ -15,7 +16,8 @@ export function SkillsPage() {
   const own = useOwnEmployee();
   const catalog = useCatalog();
   const canManage = catalog.data?.canManage ?? false;
-  const tabs: Tab[] = ['mine', 'people', ...(canManage ? (['catalog'] as const) : [])];
+  // The catalog tab follows the permission (as in the menu); the server's canManage still guards the content.
+  const tabs: Tab[] = useVisibleSections('/skills');
   const requested = tabs.find((x) => x === params.get('tab'));
   const tab: Tab = requested ?? 'mine';
 

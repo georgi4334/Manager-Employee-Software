@@ -15,14 +15,13 @@ import { GiveForm } from './GiveForm';
 import { useFeedback } from './hooks';
 import { useFeedbackErrors } from './use-feedback-errors';
 import { TabList } from '@/shared/ui/tabs';
+import { useVisibleSections } from '@/app/sections';
 
 export function FeedbackPage() {
   const { t } = useTranslation('feedback');
   const errors = useFeedbackErrors();
   const [params, setParams] = useSearchParams();
   const canGive = usePermission('feedback.give');
-  const canReceive = usePermission('feedback.view_received');
-  const canModerate = usePermission('feedback.moderate');
   const me = useCurrentUser();
   // Managers (reports) and HR (all) can also read what was shared with a person's manager.
   const receivedScope = me.data?.permissions['feedback.view_received'];
@@ -33,9 +32,7 @@ export function FeedbackPage() {
   const [page, setPage] = useState(1);
   const [employeeId, setEmployeeId] = useState('');
 
-  const boxes = FEEDBACK_BOXES.filter((b) =>
-    b === 'received' ? canReceive : b === 'given' ? canGive : canModerate,
-  );
+  const boxes: FeedbackBox[] = useVisibleSections('/feedback');
   const requested = FEEDBACK_BOXES.find((b) => b === params.get('box'));
   const box: FeedbackBox =
     requested && boxes.includes(requested) ? requested : (boxes[0] ?? 'received');

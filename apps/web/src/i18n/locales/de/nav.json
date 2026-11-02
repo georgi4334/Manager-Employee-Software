@@ -18,5 +18,12 @@
   "assistant": "Assistent",
   "retention": "Datenaufbewahrung",
   "roles": "Rollen",
-  "menu": "Menü"
+  "menu": "Menü",
+  "groupWorkday": "Mein Arbeitstag",
+  "groupWork": "Arbeit",
+  "groupPeople": "Menschen",
+  "groupGrowth": "Entwicklung",
+  "groupInsights": "Auswertungen",
+  "groupAdmin": "Verwaltung",
+  "sectionsOf": "Bereiche von {{page}}"
 }

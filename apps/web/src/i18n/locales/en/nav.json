@@ -18,5 +18,12 @@
   "assistant": "Assistant",
   "retention": "Data retention",
   "roles": "Roles",
-  "menu": "Menu"
+  "menu": "Menu",
+  "groupWorkday": "My workday",
+  "groupWork": "Work",
+  "groupPeople": "People",
+  "groupGrowth": "Growth",
+  "groupInsights": "Insights",
+  "groupAdmin": "Administration",
+  "sectionsOf": "Sections of {{page}}"
 }

@@ -264,9 +264,9 @@ describe('people', () => {
     as('manager');
     serve();
     await renderApp('/skills?tab=people');
-    const rows = within(await screen.findByRole('list', { name: 'People' })).getAllByRole(
-      'listitem',
-    );
+    const rows = within(
+      await within(screen.getByRole('main')).findByRole('list', { name: 'People' }),
+    ).getAllByRole('listitem');
     expect(rows[0]).toHaveTextContent('Dan Dev');
     expect(rows[0]).toHaveTextContent('React · Advanced (4/5)');
     expect(screen.getByText('1 person')).toBeInTheDocument();

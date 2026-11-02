@@ -6,15 +6,16 @@ import { ChatTab } from './ChatTab';
 import { useAiStatus } from './hooks';
 import { SettingsTab } from './SettingsTab';
 import { TabList, TabContent } from '@/shared/ui/tabs';
+import { useVisibleSections } from '@/app/sections';
 
 type Tab = 'chat' | 'settings';
-const TABS: Tab[] = ['chat', 'settings'];
 
 export function AssistantPage() {
   const { t } = useTranslation('assistant');
   const messages = useMessages();
   const [params, setParams] = useSearchParams();
   const status = useAiStatus();
+  const TABS: Tab[] = useVisibleSections('/assistant');
   const tab: Tab = TABS.find((x) => x === params.get('tab')) ?? 'chat';
   const select = (next: Tab) => {
     const p = new URLSearchParams(params);
