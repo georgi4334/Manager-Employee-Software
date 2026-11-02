@@ -308,6 +308,12 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Leave and timesheets can be decided in bulk (the same single requests one after another; reject asks first; the inbox rejects without a comment). Reviews, feedback and invitations link to or act on their own page.
 - The menu entry (group `top`, no permission) carries the total (`InboxBadge`; the number is `aria-hidden`, the words follow the label). Phones: Dashboard, Waiting, Leave, Calendar, More (Attendance is under More). Widget `waiting` is in the default dashboard. The badge reads the lists on every page: web tests get neutral defaults for them in `tests/server.ts`; a test that counts requests to these lists must expect the badge's own. A new kind = source + row + `inbox.json` texts.
 
+## Command palette (docs/adr/0039-command-palette.md)
+
+- Web only: `CommandPalette` in the header (button "Search", Ctrl+K / ⌘K) opens a dialog with an ARIA combobox over a grouped listbox. Pages and sections come from `visibleNavItems` + `PAGE_SECTIONS`, actions from `PALETTE_ACTIONS` (`features/palette/entries.ts`, permission each, navigate only); `paletteTargets` and `matchScore`/`rank` (accent- and case-insensitive, word starts first) are pure and tested.
+- People, projects and tasks use the existing scoped list endpoints with `q` (5 each, 250 ms after typing, 2+ characters), only with `employee.view_directory` / `project.view` / `task.view`. Nothing is stored (no history). A task opens `/tasks?project=…&q=KEY`; the task page reads `q` from the address (and then shows every status).
+- A new action = entry in `PALETTE_ACTIONS` + `palette.json` `actions.*` (en/de/bg).
+
 ## Dashboard (docs/adr/0034-dashboard.md)
 
 - One layout per workspace: `dashboard_layout` (RLS, `widgets text[]`, ≤ 50; no row = `DEFAULT_DASHBOARD`). `GET /dashboard/layout` is `@Authenticated()` (answers `canEdit`); `PUT`/`DELETE` need `admin.tenant.settings` and are audited (`dashboard.updated` with ids, `dashboard.reset`). No personal data: not exported or erased.

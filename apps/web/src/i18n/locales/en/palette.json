@@ -1,0 +1,38 @@
+{
+  "open": "Search",
+  "shortcut": "Ctrl K",
+  "title": "Search and go",
+  "label": "Search pages, people, projects and tasks",
+  "placeholder": "Search or jump to…",
+  "searching": "Searching…",
+  "empty": "Nothing found.",
+  "failed": "Some results could not be loaded.",
+  "results_one": "{{count}} result",
+  "results_other": "{{count}} results",
+  "section": "{{page}} › {{section}}",
+  "groups": {
+    "actions": "Actions",
+    "pages": "Pages",
+    "people": "People",
+    "projects": "Projects",
+    "tasks": "Tasks"
+  },
+  "kinds": {
+    "actions": "Action",
+    "pages": "Page",
+    "people": "Person",
+    "projects": "Project",
+    "tasks": "Task"
+  },
+  "actions": {
+    "requestLeave": "Request leave",
+    "logTime": "Log time",
+    "checkIn": "Check in or out",
+    "newEvent": "New calendar event",
+    "giveFeedback": "Give feedback",
+    "addEmployee": "Add employee",
+    "newRole": "New role",
+    "myProfile": "My profile",
+    "notificationSettings": "Notification settings"
+  }
+}

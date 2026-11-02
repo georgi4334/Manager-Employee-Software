@@ -1,0 +1,38 @@
+{
+  "open": "Suchen",
+  "shortcut": "Strg K",
+  "title": "Suchen und springen",
+  "label": "Seiten, Personen, Projekte und Aufgaben suchen",
+  "placeholder": "Suchen oder springen zu …",
+  "searching": "Suche läuft …",
+  "empty": "Nichts gefunden.",
+  "failed": "Einige Ergebnisse konnten nicht geladen werden.",
+  "results_one": "{{count}} Ergebnis",
+  "results_other": "{{count}} Ergebnisse",
+  "section": "{{page}} › {{section}}",
+  "groups": {
+    "actions": "Aktionen",
+    "pages": "Seiten",
+    "people": "Personen",
+    "projects": "Projekte",
+    "tasks": "Aufgaben"
+  },
+  "kinds": {
+    "actions": "Aktion",
+    "pages": "Seite",
+    "people": "Person",
+    "projects": "Projekt",
+    "tasks": "Aufgabe"
+  },
+  "actions": {
+    "requestLeave": "Urlaub beantragen",
+    "logTime": "Zeit erfassen",
+    "checkIn": "Ein- oder ausstempeln",
+    "newEvent": "Neuer Kalendertermin",
+    "giveFeedback": "Feedback geben",
+    "addEmployee": "Mitarbeitende hinzufügen",
+    "newRole": "Neue Rolle",
+    "myProfile": "Mein Profil",
+    "notificationSettings": "Benachrichtigungseinstellungen"
+  }
+}

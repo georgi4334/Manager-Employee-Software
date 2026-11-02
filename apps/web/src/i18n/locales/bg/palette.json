@@ -1,0 +1,38 @@
+{
+  "open": "Търсене",
+  "shortcut": "Ctrl K",
+  "title": "Търсене и преход",
+  "label": "Търсене на страници, хора, проекти и задачи",
+  "placeholder": "Търсете или отидете на…",
+  "searching": "Търсене…",
+  "empty": "Нищо не е намерено.",
+  "failed": "Някои резултати не можаха да се заредят.",
+  "results_one": "{{count}} резултат",
+  "results_other": "{{count}} резултата",
+  "section": "{{page}} › {{section}}",
+  "groups": {
+    "actions": "Действия",
+    "pages": "Страници",
+    "people": "Хора",
+    "projects": "Проекти",
+    "tasks": "Задачи"
+  },
+  "kinds": {
+    "actions": "Действие",
+    "pages": "Страница",
+    "people": "Човек",
+    "projects": "Проект",
+    "tasks": "Задача"
+  },
+  "actions": {
+    "requestLeave": "Заявка за отпуск",
+    "logTime": "Отчитане на време",
+    "checkIn": "Отбелязване на идване или тръгване",
+    "newEvent": "Ново събитие в календара",
+    "giveFeedback": "Даване на обратна връзка",
+    "addEmployee": "Добавяне на служител",
+    "newRole": "Нова роля",
+    "myProfile": "Моят профил",
+    "notificationSettings": "Настройки за известия"
+  }
+}
