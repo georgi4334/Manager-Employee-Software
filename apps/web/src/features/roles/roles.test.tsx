@@ -301,7 +301,7 @@ describe('a system role', () => {
     await renderApp(`/roles/${ADMIN_ROLE}`);
     expect(await screen.findByRole('heading', { name: 'Admin' })).toBeInTheDocument();
     expect(screen.getByText(/System role \(fixed\)/)).toBeInTheDocument();
-    expect(screen.getByText('Administration')).toBeInTheDocument();
+    expect(within(screen.getByRole('main')).getByText('Administration')).toBeInTheDocument();
     expect(screen.getByText('Create, change, move and delete custom roles')).toBeInTheDocument();
     expect(screen.getAllByText('Everyone').length).toBeGreaterThan(0);
     // nothing to change
@@ -581,7 +581,7 @@ describe('languages', () => {
     serve();
     await initTestI18n('de');
     const { unmount } = await renderApp(`/roles/${ADMIN_ROLE}`);
-    expect(await screen.findByText('Verwaltung')).toBeInTheDocument();
+    expect(await within(screen.getByRole('main')).findByText('Verwaltung')).toBeInTheDocument();
     expect(
       screen.getByText('Eigene Rollen anlegen, ändern, verschieben und löschen'),
     ).toBeInTheDocument();
@@ -589,7 +589,7 @@ describe('languages', () => {
     unmount();
     await initTestI18n('bg');
     await renderApp(`/roles/${ADMIN_ROLE}`);
-    expect(await screen.findByText('Администрация')).toBeInTheDocument();
+    expect(await within(screen.getByRole('main')).findByText('Администрация')).toBeInTheDocument();
     expect(
       screen.getByText('Създава, променя, премества и изтрива собствени роли'),
     ).toBeInTheDocument();

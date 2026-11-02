@@ -65,7 +65,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Permissions are read fresh from the database on every request; never cache them across requests.
 - Anything that can remove an administrator takes the administrator lock and checks that another active administrator remains (see `UsersService`).
 - Admin actions write `AuditService.record(...)` (ids and role ids only, never emails or secrets). The audit log is append-only.
-- Web: `usePermission`, `<Can>`, `<RequirePermission>` are cosmetic. Add new nav entries with a `permission` in `app/nav.ts`.
+- Web: `usePermission`, `<Can>`, `<RequirePermission>` are cosmetic. Add new nav entries with a `permission` and a `group` in `app/nav.ts`.
 - Test fixtures: `userWithRole('admin')` / `userWithPermissions({...})` in `apps/web/src/tests/server.ts`.
 
 ## Notifications (docs/adr/0004-notifications.md)
@@ -294,6 +294,13 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Progress (ADR 0033): target-based values use `TargetBar` (marker + striped overflow), the one number of a card `Capsule` (glass tube), dated sequences `MilestoneTrack` (evenly spaced, Today pin, vertical on phones), an attendance day `DayRibbon` (clock blocks). All are decoration: values and states are written in text.
 - **Liquid glass**: information containers use the `.glass` class (and `.glass-hover` when interactive) over the tinted `.glass-canvas` content panel, never `border border-border bg-surface shadow-card`. Inputs, alerts, drop-downs and the calendar grids stay solid; reduced transparency and missing `backdrop-filter` fall back to `--glass-solid`.
 - The logo is `LogoMark`/`Logo` (`shared/ui/logo.tsx`); `public/favicon.svg` and the splash copy in `index.html` repeat the drawing, so change all three together. Buttons come only from `Button` (filled variants carry a thin light line inside the edge: `.btn-ring` with `--btn-bg`). Every drop-down (menu, popover, picker, drawer list) uses `.menu-panel` / `.menu-item` (white with an orange wash, raised active item; tokens `--menu-*`); native selects get the same open list through `appearance: base-select` where supported. Sub-pages (details, forms, settings) start with `BackLink` (`shared/ui/back-link.tsx`, outlined pill with an arrow) to their list, never a bare text link. Boot shows `Splash` (the static copy in `index.html` has an inline `<style>` whose colours a test keeps equal to the tokens; redirects and loading keep the splash, never an empty frame); card pages show skeletons (`shared/ui/skeleton.tsx`) inside one `SkeletonGroup` (`role="status"`), never a bare "Loading…" line.
+
+## Navigation (docs/adr/0037-navigation-groups.md)
+
+- The side menu is grouped (`NAV_GROUPS` / `NavItem.group` in `app/nav.ts`): Dashboard and Assistant without a heading, then My workday, Work, People, Growth, Insights, and Administration set apart at the bottom. Groups without a visible entry are hidden; group names are `group*` keys in `nav.json` (en/de/bg).
+- Page sections (tabs) are defined once in `app/sections.ts` (`PAGE_SECTIONS`: param `tab`/`box`, order, rule per section; `visibleSections`, `useVisibleSections`). Pages build their tab lists from it and the menu lists the same sections under the **open** entry only (more than one, `aria-current` on the current). A new tabbed page adds itself there; view switches and filters are not sections. Counts (`useSectionCounts` in `app/section-counts.ts`: leave and timesheet approvals, reported feedback) reuse the section list's own query and cache; zero shows nothing.
+- Phones: the bottom bar keeps its four entries; "More" shows the rest as tiles under the same group headings.
+- Tests that query lists, list items or texts by name should scope to `main` (the menu has lists and headings too).
 
 ## Dashboard (docs/adr/0034-dashboard.md)
 

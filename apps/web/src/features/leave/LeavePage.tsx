@@ -2,12 +2,12 @@ import { todayIn, yearOf } from '@intime/contracts';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router';
 import { useCurrentUser } from '@/features/auth/use-auth';
-import { usePermission } from '@/features/auth/permissions';
 import { ApprovalsTab } from './ApprovalsTab';
 import { MyLeaveTab } from './MyLeaveTab';
 import { SettingsTab } from './SettingsTab';
 import { TeamTab } from './TeamTab';
 import { TabList, TabPanel } from '@/shared/ui/tabs';
+import { useVisibleSections } from '@/app/sections';
 
 type Tab = 'my' | 'approvals' | 'team' | 'settings';
 
@@ -15,17 +15,7 @@ export function LeavePage() {
   const { t } = useTranslation('leave');
   const { data: user } = useCurrentUser();
   const [params, setParams] = useSearchParams();
-  const canRequest = usePermission('leave.request');
-  const canApprove = usePermission('leave.approve');
-  const seesTeam = usePermission('leave.view', 'reports');
-  const canManage = usePermission('leave.manage_types_policies');
-
-  const tabs: Tab[] = [
-    ...(canRequest ? (['my'] as const) : []),
-    ...(canApprove ? (['approvals'] as const) : []),
-    ...(seesTeam ? (['team'] as const) : []),
-    ...(canManage ? (['settings'] as const) : []),
-  ];
+  const tabs: Tab[] = useVisibleSections('/leave');
   const requested = params.get('tab');
   const tab: Tab | undefined = tabs.find((candidate) => candidate === requested) ?? tabs[0];
   // Dates follow the user's own time zone setting when there is one, else the browser's.

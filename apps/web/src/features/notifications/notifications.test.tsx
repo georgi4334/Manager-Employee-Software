@@ -153,7 +153,7 @@ describe('notifications page', () => {
       ]),
     );
     await renderApp('/notifications');
-    const entries = await screen.findAllByRole('listitem');
+    const entries = await within(screen.getByRole('main')).findAllByRole('listitem');
     expect(entries).toHaveLength(2);
 
     const unread = entries[0] as HTMLElement;
@@ -261,9 +261,9 @@ describe('notifications page', () => {
           }),
     );
     await renderApp('/notifications');
-    expect(await screen.findAllByRole('listitem')).toHaveLength(2);
+    expect(await within(screen.getByRole('main')).findAllByRole('listitem')).toHaveLength(2);
     await userEvent.setup().click(screen.getByRole('button', { name: 'Show older' }));
-    expect(await screen.findAllByRole('listitem')).toHaveLength(3);
+    expect(await within(screen.getByRole('main')).findAllByRole('listitem')).toHaveLength(3);
     expect(screen.getByText('Your roles are now: Employee.')).toBeInTheDocument();
     expect(requests.filter((r) => r.path === 'list').map((r) => r.before)).toEqual([null, uuid(2)]);
     expect(screen.queryByRole('button', { name: 'Show older' })).not.toBeInTheDocument();
@@ -396,7 +396,7 @@ describe('every notification type has a text', () => {
       ),
     );
     await renderApp('/notifications');
-    const entries = await screen.findAllByRole('listitem');
+    const entries = await within(screen.getByRole('main')).findAllByRole('listitem');
     expect(entries).toHaveLength(types.length);
     const unknown = (await import(`@/i18n/locales/${language}/notifications.json`)).default.unknown;
     for (const entry of entries) {

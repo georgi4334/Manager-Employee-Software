@@ -4,13 +4,14 @@ import { ChartTab } from './ChartTab';
 import { DepartmentsTab } from './DepartmentsTab';
 import { TeamsTab } from './TeamsTab';
 import { TabList, TabPanel } from '@/shared/ui/tabs';
+import { useVisibleSections } from '@/app/sections';
 
-const TABS = ['chart', 'departments', 'teams'] as const;
-type Tab = (typeof TABS)[number];
+type Tab = 'chart' | 'departments' | 'teams';
 
 export function OrganizationPage() {
   const { t } = useTranslation('organization');
   const [params, setParams] = useSearchParams();
+  const TABS: Tab[] = useVisibleSections('/organization');
   const requested = params.get('tab');
   const tab: Tab = TABS.find((candidate) => candidate === requested) ?? 'chart';
 

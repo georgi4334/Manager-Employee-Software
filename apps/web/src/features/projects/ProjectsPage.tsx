@@ -20,6 +20,7 @@ import { useProjectErrors } from './use-project-errors';
 import { SkeletonGroup, Skeleton } from '@/shared/ui/skeleton';
 import { TabList, TabPanel } from '@/shared/ui/tabs';
 import { Chip, Tile, initials } from '@/shared/ui/tiles';
+import { useVisibleSections } from '@/app/sections';
 
 type Tab = 'projects' | 'clients';
 
@@ -27,8 +28,7 @@ export function ProjectsPage() {
   const { t } = useTranslation('projects');
   const { data: user } = useCurrentUser();
   const [params, setParams] = useSearchParams();
-  const seesClients = usePermission('client.view');
-  const tabs: Tab[] = seesClients ? ['projects', 'clients'] : ['projects'];
+  const tabs: Tab[] = useVisibleSections('/projects');
   const requested = params.get('tab');
   const tab: Tab = tabs.find((candidate) => candidate === requested) ?? 'projects';
 

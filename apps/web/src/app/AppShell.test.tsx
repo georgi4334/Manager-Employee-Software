@@ -1,7 +1,8 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
-import { server, signedInHandlers, userWithRole } from '@/tests/server';
+import { http, HttpResponse } from 'msw';
+import { API, server, signedInHandlers, userWithRole } from '@/tests/server';
 import { initTestI18n } from '@/tests/i18n';
 import { openAccountMenu, renderApp } from '@/tests/utils';
 import navEn from '@/i18n/locales/en/nav.json';
@@ -30,6 +31,138 @@ describe('AppShell navigation', () => {
     );
   });
 
+  it('groups the entries under headings and keeps Administration last', async () => {
+    server.use(...signedInHandlers(userWithRole('admin')));
+    await renderApp('/');
+    const sidebar = screen.getByRole('navigation', { name: 'Main navigation' });
+    const workday = within(sidebar).getByRole('list', { name: 'My workday' });
+    expect(
+      within(workday)
+        .getAllByRole('link')
+        .map((l) => l.textContent),
+    ).toEqual(['Attendance', 'Leave', 'Calendar', 'Time']);
+    const lists = within(sidebar)
+      .getAllByRole('list')
+      .map((l) => l.getAttribute('aria-labelledby') && l.getAttribute('aria-labelledby'));
+    expect(lists.length).toBeGreaterThan(5);
+    const groupNames = within(sidebar)
+      .getAllByRole('list')
+      .filter((l) => l.hasAttribute('aria-labelledby'))
+      .map((l) => document.getElementById(l.getAttribute('aria-labelledby')!)!.textContent);
+    expect(groupNames).toEqual([
+      'My workday',
+      'Work',
+      'People',
+      'Growth',
+      'Insights',
+      'Administration',
+    ]);
+  });
+
+  it('shows the sections of the open page under its entry, and only there', async () => {
+    server.use(
+      ...signedInHandlers(userWithRole('manager')),
+      http.get(`${API}/leave/requests`, () =>
+        HttpResponse.json({ items: [], total: 0, page: 1, pageSize: 100 }),
+      ),
+    );
+    await renderApp('/leave?tab=approvals');
+    const sidebar = screen.getByRole('navigation', { name: 'Main navigation' });
+    const sections = within(sidebar).getByRole('list', { name: 'Sections of Leave' });
+    const links = within(sections).getAllByRole('link');
+    expect(links.map((l) => l.textContent)).toEqual(['My leave', 'Approvals', 'Team']);
+    expect(links[0]).toHaveAttribute('href', '/leave');
+    expect(links[1]).toHaveAttribute('href', '/leave?tab=approvals');
+    expect(links[1]).toHaveAttribute('aria-current', 'page');
+    expect(links[0]).not.toHaveAttribute('aria-current');
+    expect(
+      within(sidebar).queryByRole('list', { name: /Sections of (Time|Attendance)/ }),
+    ).toBeNull();
+    // a section link opens the same tab as the page's own tab list
+    await userEvent.click(links[2]!);
+    expect(await screen.findByRole('tab', { name: 'Team', selected: true })).toBeInTheDocument();
+  });
+
+  it('counts what waits for the user next to a section', async () => {
+    const request = (n: number) => ({ id: `00000000-0000-4000-8000-00000000000${n}` });
+    server.use(
+      ...signedInHandlers(userWithRole('manager')),
+      http.get(`${API}/leave/requests`, () =>
+        HttpResponse.json({ items: [request(1), request(2)], total: 2, page: 1, pageSize: 100 }),
+      ),
+    );
+    await renderApp('/leave');
+    const sections = within(screen.getByRole('navigation', { name: 'Main navigation' })).getByRole(
+      'list',
+      { name: 'Sections of Leave' },
+    );
+    const approvals = await within(sections).findByRole('link', {
+      name: 'Approvals, 2 waiting for you',
+    });
+    expect(approvals).toHaveTextContent('2');
+    // nothing waiting: no number at all
+    expect(within(sections).getByRole('link', { name: 'Team' })).not.toHaveTextContent(/\d/);
+  });
+
+  it("shows no count when nothing waits, and leaves out the user's own week", async () => {
+    const sheet = (n: number, canDecide: boolean) => ({
+      id: `00000000-0000-4000-8000-00000000001${n}`,
+      employee: { id: `e${n}`, firstName: 'A', lastName: String(n) },
+      weekStart: '2026-10-26',
+      status: 'submitted',
+      totalMinutes: 2400,
+      submittedAt: '2026-10-30T10:00:00Z',
+      decidedAt: null,
+      canDecide,
+      canReopen: false,
+    });
+    server.use(
+      ...signedInHandlers(userWithRole('manager')),
+      http.get(`${API}/time/timesheets`, () =>
+        HttpResponse.json({ items: [sheet(1, false)], total: 1 }),
+      ),
+    );
+    await renderApp('/time?tab=approvals');
+    const sections = within(screen.getByRole('navigation', { name: 'Main navigation' })).getByRole(
+      'list',
+      { name: 'Sections of Time' },
+    );
+    // the only submitted week is the user's own, which they cannot decide
+    await waitFor(() =>
+      expect(within(sections).getByRole('link', { name: 'Approvals' })).toBeInTheDocument(),
+    );
+    expect(within(sections).getByRole('link', { name: 'Approvals' })).not.toHaveTextContent(/\d/);
+  });
+
+  it('counts reported feedback for moderators', async () => {
+    server.use(
+      ...signedInHandlers(userWithRole('hr')),
+      http.get(`${API}/feedback`, ({ request }) =>
+        HttpResponse.json({
+          items: [],
+          total: new URL(request.url).searchParams.get('box') === 'reported' ? 3 : 0,
+          page: 1,
+          pageSize: 20,
+        }),
+      ),
+    );
+    await renderApp('/feedback');
+    const sections = within(screen.getByRole('navigation', { name: 'Main navigation' })).getByRole(
+      'list',
+      { name: 'Sections of Feedback' },
+    );
+    expect(
+      await within(sections).findByRole('link', { name: 'Reported, 3 waiting for you' }),
+    ).toHaveAttribute('href', '/feedback?box=reported');
+  });
+
+  it('shows no sections when the page has only one for this person', async () => {
+    // an employee sees Leave with "My leave" only: no tab list, no sub-links
+    await renderApp('/leave');
+    const sidebar = screen.getByRole('navigation', { name: 'Main navigation' });
+    expect(within(sidebar).queryByRole('list', { name: 'Sections of Leave' })).toBeNull();
+  });
+
   it('navigates between modules', async () => {
     await renderApp('/');
     const sidebar = screen.getByRole('navigation', { name: 'Main navigation' });
@@ -51,6 +184,18 @@ describe('mobile navigation', () => {
     const bar = screen.getByRole('navigation', { name: 'Mobile navigation' });
     expect(within(bar).getByRole('link', { name: 'Attendance' })).toBeInTheDocument();
     expect(within(bar).queryByRole('link', { name: 'Employees' })).not.toBeInTheDocument();
+  });
+
+  it('groups the More menu like the sidebar', async () => {
+    server.use(...signedInHandlers(userWithRole('admin')));
+    await renderApp('/');
+    await userEvent.click(screen.getByRole('button', { name: 'More' }));
+    const menu = screen.getByRole('dialog', { name: 'More navigation' });
+    expect(within(menu).getByRole('heading', { name: 'Administration' })).toBeInTheDocument();
+    const work = within(menu).getByRole('region', { name: 'Work' });
+    expect(within(work).getByRole('link', { name: 'Projects' })).toBeInTheDocument();
+    // the bottom bar entries are not repeated
+    expect(within(menu).queryByRole('link', { name: 'Leave' })).toBeNull();
   });
 
   it('opens the More menu, navigates and closes it', async () => {

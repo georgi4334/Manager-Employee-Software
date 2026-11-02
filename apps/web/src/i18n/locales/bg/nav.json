@@ -18,5 +18,14 @@
   "assistant": "Асистент",
   "retention": "Съхранение на данни",
   "roles": "Роли",
-  "menu": "Меню"
+  "menu": "Меню",
+  "groupWorkday": "Моят работен ден",
+  "groupWork": "Работа",
+  "groupPeople": "Хора",
+  "groupGrowth": "Развитие",
+  "groupInsights": "Анализи",
+  "groupAdmin": "Администрация",
+  "sectionsOf": "Раздели на {{page}}",
+  "waiting_one": "{{count}} чака вас",
+  "waiting_other": "{{count}} чакат вас"
 }

@@ -33,16 +33,48 @@ export interface NavItem {
   primary: boolean;
   /** Who sees this entry (any one of the permissions is enough). Everyone, when omitted. */
   permission?: PermissionRequirement;
+  /** The menu group it is listed under (docs/adr/0037-navigation-groups.md). */
+  group: NavGroup;
 }
 
+/** Menu groups in order; `top` has no heading, `admin` sits apart at the bottom. */
+export const NAV_GROUPS = [
+  'top',
+  'workday',
+  'work',
+  'people',
+  'growth',
+  'insights',
+  'admin',
+] as const;
+export type NavGroup = (typeof NAV_GROUPS)[number];
+
+export const GROUP_LABEL: Record<Exclude<NavGroup, 'top'>, keyof typeof navMessages> = {
+  workday: 'groupWorkday',
+  work: 'groupWork',
+  people: 'groupPeople',
+  growth: 'groupGrowth',
+  insights: 'groupInsights',
+  admin: 'groupAdmin',
+};
+
 export const NAV_ITEMS: NavItem[] = [
-  { path: '/', labelKey: 'dashboard', icon: LayoutDashboard, primary: true },
+  { path: '/', labelKey: 'dashboard', icon: LayoutDashboard, primary: true, group: 'top' },
+  {
+    path: '/assistant',
+    labelKey: 'assistant',
+    icon: Sparkles,
+    primary: false,
+    permission: 'ai.use',
+    group: 'top',
+  },
   {
     path: '/attendance',
     labelKey: 'attendance',
     icon: Clock,
     primary: true,
     permission: ['attendance.record', 'attendance.view'],
+    group: 'workday',
   },
   {
     path: '/leave',
@@ -50,6 +82,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: CalendarOff,
     primary: true,
     permission: ['leave.request', 'leave.view'],
+    group: 'workday',
   },
   {
     path: '/calendar',
@@ -57,20 +90,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: CalendarDays,
     primary: true,
     permission: ['calendar.manage_own', 'calendar.view_free_busy'],
-  },
-  {
-    path: '/projects',
-    labelKey: 'projects',
-    icon: Briefcase,
-    primary: false,
-    permission: 'project.view',
-  },
-  {
-    path: '/tasks',
-    labelKey: 'tasks',
-    icon: ListChecks,
-    primary: false,
-    permission: 'task.view',
+    group: 'workday',
   },
   {
     path: '/time',
@@ -78,6 +98,23 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Timer,
     primary: false,
     permission: ['time.log', 'time.view'],
+    group: 'workday',
+  },
+  {
+    path: '/projects',
+    labelKey: 'projects',
+    icon: Briefcase,
+    primary: false,
+    permission: 'project.view',
+    group: 'work',
+  },
+  {
+    path: '/tasks',
+    labelKey: 'tasks',
+    icon: ListChecks,
+    primary: false,
+    permission: 'task.view',
+    group: 'work',
   },
   {
     path: '/capacity',
@@ -85,69 +122,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Gauge,
     primary: false,
     permission: 'capacity.view',
-  },
-  {
-    path: '/goals',
-    labelKey: 'goals',
-    icon: Target,
-    primary: false,
-    permission: 'goal.view',
-  },
-  {
-    path: '/one-on-ones',
-    labelKey: 'oneOnOnes',
-    icon: MessagesSquare,
-    primary: false,
-    permission: 'one_on_one.manage',
-  },
-  {
-    path: '/feedback',
-    labelKey: 'feedback',
-    icon: MessageSquareText,
-    primary: false,
-    permission: ['feedback.give', 'feedback.view_received'],
-  },
-  {
-    path: '/skills',
-    labelKey: 'skills',
-    icon: Award,
-    primary: false,
-    permission: 'skill.view',
-  },
-  {
-    path: '/reviews',
-    labelKey: 'reviews',
-    icon: ClipboardCheck,
-    primary: false,
-    permission: 'review.view',
-  },
-  {
-    path: '/analytics',
-    labelKey: 'analytics',
-    icon: ChartColumn,
-    primary: false,
-    permission: 'analytics.view_team',
-  },
-  {
-    path: '/assistant',
-    labelKey: 'assistant',
-    icon: Sparkles,
-    primary: false,
-    permission: 'ai.use',
-  },
-  {
-    path: '/retention',
-    labelKey: 'retention',
-    icon: Archive,
-    primary: false,
-    permission: 'gdpr.manage_retention',
-  },
-  {
-    path: '/roles',
-    labelKey: 'roles',
-    icon: ShieldCheck,
-    primary: false,
-    permission: 'admin.role.view',
+    group: 'work',
   },
   {
     path: '/employees',
@@ -155,6 +130,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Users,
     primary: false,
     permission: 'employee.view_directory',
+    group: 'people',
   },
   {
     path: '/organization',
@@ -162,6 +138,71 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Network,
     primary: false,
     permission: 'org.view',
+    group: 'people',
+  },
+  {
+    path: '/goals',
+    labelKey: 'goals',
+    icon: Target,
+    primary: false,
+    permission: 'goal.view',
+    group: 'growth',
+  },
+  {
+    path: '/one-on-ones',
+    labelKey: 'oneOnOnes',
+    icon: MessagesSquare,
+    primary: false,
+    permission: 'one_on_one.manage',
+    group: 'growth',
+  },
+  {
+    path: '/feedback',
+    labelKey: 'feedback',
+    icon: MessageSquareText,
+    primary: false,
+    permission: ['feedback.give', 'feedback.view_received'],
+    group: 'growth',
+  },
+  {
+    path: '/skills',
+    labelKey: 'skills',
+    icon: Award,
+    primary: false,
+    permission: 'skill.view',
+    group: 'growth',
+  },
+  {
+    path: '/reviews',
+    labelKey: 'reviews',
+    icon: ClipboardCheck,
+    primary: false,
+    permission: 'review.view',
+    group: 'growth',
+  },
+  {
+    path: '/analytics',
+    labelKey: 'analytics',
+    icon: ChartColumn,
+    primary: false,
+    permission: 'analytics.view_team',
+    group: 'insights',
+  },
+  {
+    path: '/roles',
+    labelKey: 'roles',
+    icon: ShieldCheck,
+    primary: false,
+    permission: 'admin.role.view',
+    group: 'admin',
+  },
+  {
+    path: '/retention',
+    labelKey: 'retention',
+    icon: Archive,
+    primary: false,
+    permission: 'gdpr.manage_retention',
+    group: 'admin',
   },
 ];
 
@@ -170,4 +211,12 @@ export function visibleNavItems(granted: GrantedPermissions | undefined): NavIte
   return NAV_ITEMS.filter(
     (item) => !item.permission || userHasPermission(granted, item.permission),
   );
+}
+
+/** The visible entries by group, in menu order; groups without a visible entry are left out. */
+export function groupNavItems(items: readonly NavItem[]): { group: NavGroup; items: NavItem[] }[] {
+  return NAV_GROUPS.map((group) => ({
+    group,
+    items: items.filter((i) => i.group === group),
+  })).filter((g) => g.items.length > 0);
 }
