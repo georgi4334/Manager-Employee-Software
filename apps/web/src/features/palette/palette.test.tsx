@@ -129,6 +129,18 @@ describe('command palette', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
+  it('does not repeat a page as its own section', async () => {
+    server.use(...signedInHandlers(userWithRole('admin')));
+    serveSearch();
+    await renderApp('/');
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: 'Search' }));
+    await user.type(box(), 'proj');
+    const pages = within(dialog()).getByRole('group', { name: 'Pages' });
+    expect(within(pages).getByRole('option', { name: /Projects › Clients/ })).toBeInTheDocument();
+    expect(within(pages).queryByRole('option', { name: /Projects › Projects/ })).toBeNull();
+  });
+
   it('moves through the options with the arrows and wraps around', async () => {
     await renderApp('/');
     const user = userEvent.setup();

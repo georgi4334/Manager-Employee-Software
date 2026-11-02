@@ -94,20 +94,29 @@ export function useStaticEntries(): PaletteEntry[] {
   const { data: user } = useCurrentUser();
   const { t } = useTranslation(['palette', 'nav']);
   const text = t as unknown as (key: string) => string;
-  return paletteTargets(user?.permissions as GrantedPermissions | undefined).map((target) => {
-    switch (target.kind) {
-      case 'page':
-        return { ...target, label: text(`nav:${target.labelKey}`) };
-      case 'section':
-        return {
-          ...target,
-          label: t('palette:section', {
-            page: text(`nav:${target.labelKey}`),
-            section: text(target.sectionKey),
-          }),
-        };
-      case 'action':
-        return { ...target, label: t(`palette:actions.${target.id}`) };
-    }
-  });
+  const entries = paletteTargets(user?.permissions as GrantedPermissions | undefined).map(
+    (target) => {
+      switch (target.kind) {
+        case 'page':
+          return { ...target, label: text(`nav:${target.labelKey}`) };
+        case 'section':
+          return {
+            ...target,
+            label: t('palette:section', {
+              page: text(`nav:${target.labelKey}`),
+              section: text(target.sectionKey),
+            }),
+          };
+        case 'action':
+          return { ...target, label: t(`palette:actions.${target.id}`) };
+      }
+    },
+  );
+  // A section named like its page ("Projects › Projects") only repeats the page entry.
+  return entries.filter(
+    (entry) =>
+      entry.kind !== 'section' ||
+      !('sectionKey' in entry) ||
+      text(entry.sectionKey) !== text(`nav:${entry.labelKey}`),
+  );
 }

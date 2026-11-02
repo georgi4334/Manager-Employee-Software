@@ -5,6 +5,8 @@ import { ADMIN_EMAIL } from '../support/constants';
 // The command palette (docs/adr/0039-command-palette.md) finds people and tasks created by the earlier specs.
 test('Ctrl+K finds a person and a task and jumps there', async ({ page }) => {
   await signIn(page, ADMIN_EMAIL);
+  // the shortcut listens once the header is there
+  await expect(page.getByRole('button', { name: 'Search' })).toBeVisible();
   await page.keyboard.press('Control+k');
   const dialog = page.getByRole('dialog', { name: 'Search and go' });
   await dialog.getByRole('combobox').fill('eva emp');
