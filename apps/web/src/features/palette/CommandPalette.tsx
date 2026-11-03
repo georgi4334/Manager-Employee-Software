@@ -68,7 +68,7 @@ export function CommandPalette() {
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         aria-keyshortcuts="Control+K Meta+K"
-        className="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:mr-2 md:w-60 md:justify-start md:border lg:w-80 md:border-border md:bg-surface md:px-3.5 md:text-sm"
+        className="flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:mr-2 md:w-60 md:justify-start md:border lg:w-96 md:border-border md:bg-surface md:px-3.5 md:text-sm"
       >
         <Search className="size-5 md:size-4" aria-hidden="true" />
         <span className="sr-only md:not-sr-only">{t('open')}</span>
