@@ -136,6 +136,8 @@ describe.skipIf(!urls)('onboarding and offboarding checklists over HTTP (real da
   });
 
   afterAll(async () => {
+    // The database is shared by all test files: the next one creates "acme" and "globex" again.
+    await system?.tenant.deleteMany();
     await app?.close();
   });
 
