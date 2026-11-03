@@ -22,6 +22,7 @@ import {
   type SelfReviewRequest,
   type UpdateCompetencyRequest,
   type UpdateReviewCycleRequest,
+  type AuditAction,
 } from '@intime/contracts';
 import type { Prisma } from '../../generated/prisma/client.js';
 import type { RequestAuth } from '../../common/auth/auth.types.js';
@@ -784,7 +785,7 @@ export class ReviewsService {
   private record(
     tx: TenantTx,
     actor: RequestAuth,
-    action: string,
+    action: AuditAction,
     entity: string,
     entityId: string,
     fields?: string[],

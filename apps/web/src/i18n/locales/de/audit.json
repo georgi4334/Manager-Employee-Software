@@ -1,0 +1,206 @@
+{
+  "title": "Protokoll",
+  "intro": "Wer was in den Bereichen geändert hat, die Sie betreuen. Einträge enthalten IDs und Feldnamen, nie die Inhalte personenbezogener Daten.",
+  "filters": "Filter",
+  "area": "Bereich",
+  "allAreas": "Alle Bereiche",
+  "from": "Von",
+  "to": "Bis",
+  "invalidRange": "Das Enddatum liegt vor dem Startdatum.",
+  "clearFilters": "Filter zurücksetzen",
+  "recordFilter": "Verlauf eines Datensatzes",
+  "actorFilter": "Änderungen von {{name}}",
+  "showAllRecords": "Alle Datensätze zeigen",
+  "showEveryone": "Alle zeigen",
+  "loading": "Protokoll wird geladen…",
+  "empty": "Für diese Filter wurde nichts protokolliert.",
+  "retry": "Erneut versuchen",
+  "list": "Protokolleinträge",
+  "total_one": "{{count}} Eintrag",
+  "total_other": "{{count}} Einträge",
+  "system": "System",
+  "unknownPerson": "Ein ehemaliger Benutzer",
+  "erasedPerson": "Eine gelöschte Person",
+  "about": "Betrifft {{name}}",
+  "by": "Von",
+  "details": "Gespeicherte Daten",
+  "before": "Vorher",
+  "after": "Nachher",
+  "noDetails": "Sonst wurde nichts gespeichert.",
+  "historyOf": "Verlauf dieses Datensatzes",
+  "byThisPerson": "Mehr von dieser Person",
+  "unknownAction": "Andere Änderung",
+  "pagination": "Protokollseiten",
+  "page": "Seite {{page}} von {{pages}}",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "areas": {
+    "workspace": "Arbeitsbereich",
+    "users": "Benutzer",
+    "roles": "Rollen",
+    "people": "Personen und Organisation",
+    "compensation": "Vergütung",
+    "privacy": "Datenschutz",
+    "leave": "Abwesenheit",
+    "attendance": "Anwesenheit",
+    "time": "Zeit",
+    "projects": "Projekte und Aufgaben",
+    "calendar": "Kalender",
+    "goals": "Ziele",
+    "reviews": "Leistungsbeurteilungen",
+    "feedback": "Feedback",
+    "skills": "Kompetenzen",
+    "checklists": "Checklisten"
+  },
+  "actions": {
+    "tenant": {
+      "created": "Arbeitsbereich angelegt"
+    },
+    "dashboard": {
+      "updated": "Dashboard geändert",
+      "reset": "Dashboard auf Standard zurückgesetzt"
+    },
+    "ai": {
+      "workspace_updated": "Assistent-Einstellungen geändert",
+      "key_set": "Assistent-Schlüssel gespeichert",
+      "key_removed": "Assistent-Schlüssel entfernt"
+    },
+    "user": {
+      "invited": "Benutzer eingeladen",
+      "disabled": "Konto deaktiviert",
+      "enabled": "Konto aktiviert",
+      "roles_changed": "Rollen eines Benutzers geändert",
+      "role_granted": "Rolle vergeben"
+    },
+    "role": {
+      "created": "Rolle angelegt",
+      "updated": "Rolle geändert",
+      "deleted": "Rolle gelöscht",
+      "moved": "Rolle im Baum verschoben"
+    },
+    "employee": {
+      "created": "Mitarbeitende hinzugefügt",
+      "updated": "Mitarbeitendendaten geändert",
+      "invited": "Mitarbeitende zur Anmeldung eingeladen",
+      "deactivated": "Mitarbeitende deaktiviert",
+      "reactivated": "Mitarbeitende reaktiviert",
+      "schedule_set": "Arbeitszeiten festgelegt",
+      "schedule_removed": "Arbeitszeiten entfernt"
+    },
+    "org": {
+      "department_created": "Abteilung angelegt",
+      "department_updated": "Abteilung geändert",
+      "department_deleted": "Abteilung gelöscht",
+      "team_created": "Team angelegt",
+      "team_updated": "Team geändert",
+      "team_deleted": "Team gelöscht",
+      "team_members_changed": "Teammitglieder geändert",
+      "employee_assigned": "Führungskraft oder Abteilung geändert",
+      "employee_offboarded": "Berichtslinie nach Austritt angepasst"
+    },
+    "compensation": {
+      "set": "Vergütung gespeichert",
+      "removed": "Vergütung entfernt"
+    },
+    "privacy": {
+      "exported": "Personenbezogene Daten exportiert",
+      "erased": "Personenbezogene Daten gelöscht",
+      "retention_updated": "Aufbewahrungseinstellungen geändert",
+      "retention_hold_set": "Aufbewahrungssperre gesetzt",
+      "retention_hold_released": "Aufbewahrungssperre aufgehoben"
+    },
+    "leave": {
+      "requested": "Abwesenheit beantragt",
+      "approved": "Abwesenheit genehmigt",
+      "rejected": "Abwesenheit abgelehnt",
+      "cancelled": "Abwesenheit storniert",
+      "balance_adjusted": "Urlaubskonto angepasst",
+      "holiday_created": "Feiertag hinzugefügt",
+      "holiday_deleted": "Feiertag entfernt",
+      "settings_updated": "Abwesenheitseinstellungen geändert",
+      "type_created": "Abwesenheitsart angelegt",
+      "type_updated": "Abwesenheitsart geändert"
+    },
+    "attendance": {
+      "created": "Anwesenheit für jemanden erfasst",
+      "updated": "Anwesenheit korrigiert",
+      "deleted": "Anwesenheit entfernt"
+    },
+    "time": {
+      "exported": "Stunden exportiert"
+    },
+    "timesheet": {
+      "submitted": "Zeitnachweis eingereicht",
+      "approved": "Zeitnachweis genehmigt",
+      "rejected": "Zeitnachweis abgelehnt",
+      "reopened": "Zeitnachweis wieder geöffnet"
+    },
+    "client": {
+      "created": "Kunde angelegt",
+      "updated": "Kunde geändert"
+    },
+    "project": {
+      "created": "Projekt angelegt",
+      "updated": "Projekt geändert"
+    },
+    "assignment": {
+      "created": "Person einem Projekt zugeordnet",
+      "updated": "Projektbesetzung geändert",
+      "deleted": "Person aus einem Projekt entfernt"
+    },
+    "milestone": {
+      "created": "Meilenstein hinzugefügt",
+      "updated": "Meilenstein geändert",
+      "deleted": "Meilenstein entfernt"
+    },
+    "task": {
+      "created": "Aufgabe angelegt",
+      "updated": "Aufgabe geändert",
+      "deleted": "Aufgabe gelöscht"
+    },
+    "calendar": {
+      "event_created": "Team- oder Firmentermin angelegt",
+      "event_updated": "Team- oder Firmentermin geändert",
+      "event_deleted": "Team- oder Firmentermin gelöscht"
+    },
+    "goal": {
+      "created": "Ziel angelegt",
+      "updated": "Ziel geändert",
+      "deleted": "Ziel gelöscht",
+      "key_result_changed": "Schlüsselergebnisse geändert"
+    },
+    "review": {
+      "cycle_created": "Beurteilungsrunde angelegt",
+      "cycle_updated": "Beurteilungsrunde geändert",
+      "cycle_deleted": "Beurteilungsrunde gelöscht",
+      "competency_added": "Kompetenz hinzugefügt",
+      "competency_updated": "Kompetenz geändert",
+      "competency_removed": "Kompetenz entfernt",
+      "cycle_status": "Beurteilungsrunde in die nächste Phase",
+      "cycle_opened": "Beurteilungsrunde eröffnet",
+      "calibrated": "Bewertung kalibriert",
+      "released": "Beurteilungen freigegeben",
+      "reopened": "Beurteilung wieder geöffnet"
+    },
+    "feedback": {
+      "removed": "Gemeldetes Feedback entfernt"
+    },
+    "skill": {
+      "category_created": "Kompetenzkategorie angelegt",
+      "category_updated": "Kompetenzkategorie geändert",
+      "category_deleted": "Kompetenzkategorie gelöscht",
+      "created": "Fähigkeit hinzugefügt",
+      "updated": "Fähigkeit geändert",
+      "deleted": "Fähigkeit gelöscht"
+    },
+    "checklist": {
+      "started": "Checkliste gestartet",
+      "cancelled": "Checkliste abgebrochen"
+    },
+    "checklist_template": {
+      "created": "Checklistenvorlage angelegt",
+      "updated": "Checklistenvorlage geändert",
+      "deleted": "Checklistenvorlage gelöscht"
+    }
+  }
+}

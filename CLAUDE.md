@@ -65,6 +65,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Permissions are read fresh from the database on every request; never cache them across requests.
 - Anything that can remove an administrator takes the administrator lock and checks that another active administrator remains (see `UsersService`).
 - Admin actions write `AuditService.record(...)` (ids and role ids only, never emails or secrets). The audit log is append-only.
+- Audit actions are a catalog (`AUDIT_AREAS` in contracts, docs/adr/0041-audit-log-viewer.md): `record` only takes an `AuditAction`; a new one needs an area and en/de/bg text in `audit.json`. `GET /audit-log` shows a reader only the areas whose own permission they hold at scope `all` (`visibleAuditAreas`); names are looked up at read time, never stored. Web: `/audit-log`.
 - Web: `usePermission`, `<Can>`, `<RequirePermission>` are cosmetic. Add new nav entries with a `permission` and a `group` in `app/nav.ts`.
 - Test fixtures: `userWithRole('admin')` / `userWithPermissions({...})` in `apps/web/src/tests/server.ts`.
 

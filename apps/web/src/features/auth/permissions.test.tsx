@@ -131,7 +131,7 @@ describe('navigation by permission', () => {
         'Skills',
         'Reviews',
         ...(role === 'employee' ? [] : ['Analytics']),
-        ...(role === 'hr' || role === 'admin' ? ['Roles', 'Data retention'] : []),
+        ...(role === 'hr' || role === 'admin' ? ['Roles', 'Data retention', 'Audit log'] : []),
       ]);
     },
   );

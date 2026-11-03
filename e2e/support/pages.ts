@@ -30,6 +30,7 @@ export const SIGNED_IN = [
   '/assistant',
   '/assistant?tab=settings',
   '/retention',
+  '/audit-log',
   '/roles',
   '/roles/new',
   '/goals',

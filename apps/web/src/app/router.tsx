@@ -25,6 +25,7 @@ import { MeetingDetailPage } from '@/features/one-on-ones/MeetingDetailPage';
 import { MeetingsPage } from '@/features/one-on-ones/MeetingsPage';
 import { GoalsPage } from '@/features/goals/GoalsPage';
 import { RetentionPage } from '@/features/retention/RetentionPage';
+import { AuditLogPage } from '@/features/audit/AuditLogPage';
 import { NewRolePage } from '@/features/roles/NewRolePage';
 import { RoleDetailPage } from '@/features/roles/RoleDetailPage';
 import { RolesPage } from '@/features/roles/RolesPage';
@@ -65,6 +66,7 @@ const IMPLEMENTED_PATHS = [
   '/analytics',
   '/assistant',
   '/retention',
+  '/audit-log',
   '/roles',
   '/inbox',
   '/checklists',
@@ -169,6 +171,10 @@ export const routes: RouteObject[] = [
           {
             element: <RequirePermission permission="gdpr.manage_retention" />,
             children: [{ path: 'retention', element: <RetentionPage /> }],
+          },
+          {
+            element: <RequirePermission permission="admin.audit_log.view" />,
+            children: [{ path: 'audit-log', element: <AuditLogPage /> }],
           },
           {
             element: <RequirePermission permission="admin.role.view" />,

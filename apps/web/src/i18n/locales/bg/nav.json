@@ -30,5 +30,6 @@
   "waiting_other": "{{count}} чакат вас",
   "inbox": "Чака мен",
   "inboxShort": "Чака",
-  "checklists": "Чеклисти"
+  "checklists": "Чеклисти",
+  "auditLog": "Одитен дневник"
 }

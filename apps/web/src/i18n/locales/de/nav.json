@@ -30,5 +30,6 @@
   "waiting_other": "{{count}} warten auf Sie",
   "inbox": "Wartet auf mich",
   "inboxShort": "Wartet",
-  "checklists": "Checklisten"
+  "checklists": "Checklisten",
+  "auditLog": "Protokoll"
 }

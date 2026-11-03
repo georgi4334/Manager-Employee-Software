@@ -30,5 +30,6 @@
   "waiting_other": "{{count}} waiting for you",
   "inbox": "Waiting for me",
   "inboxShort": "Waiting",
-  "checklists": "Checklists"
+  "checklists": "Checklists",
+  "auditLog": "Audit log"
 }
