@@ -41,6 +41,7 @@ import { useCapacity } from '@/features/capacity/hooks';
 import { useEmployees, useOwnEmployee } from '@/features/employees/hooks';
 import { useFeedback } from '@/features/feedback/hooks';
 import { useGoals } from '@/features/goals/hooks';
+import { CountUp } from '@/shared/ui/count-up';
 import { countByKind, INBOX_KINDS, useInbox } from '@/features/inbox/use-inbox';
 import { useBalances, useLeaveRequests, useLeaveTypes } from '@/features/leave/hooks';
 import { useTypeName } from '@/features/leave/names';
@@ -295,7 +296,11 @@ function WaitingCard() {
               <Row
                 key={kind}
                 title={ti(`group.${kind}`)}
-                aside={<Pill tone="accent">{counts[kind]}</Pill>}
+                aside={
+                  <Pill tone="accent">
+                    <CountUp value={counts[kind]} />
+                  </Pill>
+                }
               />
             ))}
           </Rows>

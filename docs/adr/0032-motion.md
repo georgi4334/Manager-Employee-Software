@@ -22,6 +22,12 @@ announces itself. It must stay fast on cheap phones, accessible, and testable.
 - **One-shot entrances** are keyframes: `motion-route` (a new page, keyed by pathname so tabs and
   filters of one page do not replay it), `motion-enter` (tab content, alerts, details content),
   `motion-stagger` (menu items), `motion-bell-ring` and `motion-badge-pop` (bell and badge).
+- **Figures count up, bars grow** on the dashboard and analytics: when the page opens (or a figure changes, e.g. a
+  new period) every number in a figure counts from 0 to its value (`useCountUp`/`CountUp`, `shared/lib/count-up.ts`:
+  each run of digits, so `12 h`, `40 %`, `1:30` keep their shape; ease-out cubic over `--dur-count` 1.1 s), and bars,
+  meters and sparklines grow from nothing with `motion-grow-x` / `motion-grow-y` (scale only, `--ease-count`, the same
+  duration; keyed by value so a change replays). Screen readers get the final value only (the moving digits are
+  `aria-hidden`). Without motion the final value shows at once.
 - **Tabs** are `TabList`/`TabPanel` (`shared/ui/tabs.tsx`): a highlight that slides under the
   selected tab; new tab content fades up. Pages must not hand-write tab bars.
 - **Notifications:** `NotificationToast` slides in when the unread count grows while the app is

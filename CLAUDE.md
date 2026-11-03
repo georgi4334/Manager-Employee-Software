@@ -286,6 +286,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Anything that appears and disappears (drawer, sheet, menu, popover, toast) uses `usePresence(open, exitMs)` and a `motion-*` class from `globals.css` with `data-state`, not a bare `{open && …}`. Tabs are `TabList`/`TabPanel` (`shared/ui/tabs.tsx`), never hand-written.
 - Reduced motion is honoured in CSS and in `usePresence`; unit tests run without motion; Playwright specs run with `reducedMotion: 'reduce'` (only `07-motion.spec.ts` turns motion on).
 - The notification toast says how many, never what; it skips the first answer and the inbox page.
+- Dashboard and analytics figures count up (`CountUp` in `StatCard`, `Stat`, `Bars`, `Meter`) and bars/sparklines grow (`motion-grow-x/y`, `--dur-count`) when the page opens or a value changes; screen readers get the final value only.
 
 ## Visual style (docs/adr/0033-visual-style.md)
 
