@@ -15,7 +15,8 @@ export interface PageSections {
     | 'feedback'
     | 'skills'
     | 'reviews'
-    | 'assistant';
+    | 'assistant'
+    | 'checklists';
   /** The query parameter that picks a section; the first visible section is the page without it. */
   param: 'tab' | 'box';
   sections: readonly { name: string; when?: Rule }[];
@@ -93,6 +94,20 @@ export const PAGE_SECTIONS = {
       { name: 'mine' },
       { name: 'people' },
       { name: 'catalog', when: has('skill.manage_catalog') },
+    ],
+  },
+  '/checklists': {
+    ns: 'checklists',
+    param: 'tab',
+    sections: [
+      { name: 'mine' },
+      {
+        name: 'people',
+        when: (g) =>
+          (scopeOf(g, 'checklist.view') !== undefined && scopeOf(g, 'checklist.view') !== 'own') ||
+          has('checklist.manage')(g),
+      },
+      { name: 'templates', when: has('checklist.manage_templates') },
     ],
   },
   '/reviews': {

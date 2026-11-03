@@ -69,6 +69,10 @@ model Tenant {
   reviewCompetencies      ReviewCompetency[]
   reviewsAll              Review[]
   reviewRatings           ReviewRating[]
+  checklistTemplates      ChecklistTemplate[]
+  checklistTemplateItems  ChecklistTemplateItem[]
+  checklists              Checklist[]
+  checklistItems          ChecklistItem[]
 
   @@map("tenant")
 }
@@ -366,36 +370,39 @@ model Employee {
   workSchedules       WorkSchedule[]
   compensations       Compensation[]
 
-  tenant              Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user                User?                @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
-  department          Department?          @relation("EmployeeDepartment", fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
-  manager             Employee?            @relation("Reporting", fields: [tenantId, managerId], references: [tenantId, id], onDelete: NoAction)
-  reports             Employee[]           @relation("Reporting")
-  headedDepartments   Department[]         @relation("DepartmentHead")
-  ledTeams            Team[]               @relation("TeamLead")
-  teamMemberships     TeamMember[]
-  leaveBalances       LeaveBalance[]
-  leaveRequests       LeaveRequest[]
-  leaveApprovals      LeaveApproval[]
-  attendanceRecords   AttendanceRecord[]
-  calendarEvents      CalendarEvent[]
-  ledProjects         Project[]            @relation("ProjectLead")
-  projectAssignments  ProjectAssignment[]
-  tasksAssigned       Task[]
-  timeEntries         TimeEntry[]
-  timesheets          Timesheet[]          @relation("TimesheetOwner")
-  timesheetsDecided   Timesheet[]          @relation("TimesheetDecider")
-  goalsOwned          Goal[]               @relation("GoalOwner")
-  goalUpdates         GoalUpdate[]
-  oneOnOnesAsManager  OneOnOne[]           @relation("OneOnOneManager")
-  oneOnOnesAsEmployee OneOnOne[]           @relation("OneOnOneEmployee")
-  actionItems         OneOnOneActionItem[] @relation("ActionItemOwner")
-  feedbackGiven       Feedback[]           @relation("FeedbackGiven")
-  feedbackReceived    Feedback[]           @relation("FeedbackReceived")
-  skillRatings        EmployeeSkill[]      @relation("SkillOwner")
-  skillsAssessed      EmployeeSkill[]      @relation("SkillAssessor")
-  reviews             Review[]             @relation("ReviewSubject")
-  reviewsAuthored     Review[]             @relation("ReviewAuthor")
+  tenant               Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user                 User?                @relation(fields: [tenantId, userId], references: [tenantId, id], onDelete: NoAction)
+  department           Department?          @relation("EmployeeDepartment", fields: [tenantId, departmentId], references: [tenantId, id], onDelete: NoAction)
+  manager              Employee?            @relation("Reporting", fields: [tenantId, managerId], references: [tenantId, id], onDelete: NoAction)
+  reports              Employee[]           @relation("Reporting")
+  headedDepartments    Department[]         @relation("DepartmentHead")
+  ledTeams             Team[]               @relation("TeamLead")
+  teamMemberships      TeamMember[]
+  leaveBalances        LeaveBalance[]
+  leaveRequests        LeaveRequest[]
+  leaveApprovals       LeaveApproval[]
+  attendanceRecords    AttendanceRecord[]
+  calendarEvents       CalendarEvent[]
+  ledProjects          Project[]            @relation("ProjectLead")
+  projectAssignments   ProjectAssignment[]
+  tasksAssigned        Task[]
+  timeEntries          TimeEntry[]
+  timesheets           Timesheet[]          @relation("TimesheetOwner")
+  timesheetsDecided    Timesheet[]          @relation("TimesheetDecider")
+  goalsOwned           Goal[]               @relation("GoalOwner")
+  goalUpdates          GoalUpdate[]
+  oneOnOnesAsManager   OneOnOne[]           @relation("OneOnOneManager")
+  oneOnOnesAsEmployee  OneOnOne[]           @relation("OneOnOneEmployee")
+  actionItems          OneOnOneActionItem[] @relation("ActionItemOwner")
+  feedbackGiven        Feedback[]           @relation("FeedbackGiven")
+  feedbackReceived     Feedback[]           @relation("FeedbackReceived")
+  skillRatings         EmployeeSkill[]      @relation("SkillOwner")
+  skillsAssessed       EmployeeSkill[]      @relation("SkillAssessor")
+  reviews              Review[]             @relation("ReviewSubject")
+  reviewsAuthored      Review[]             @relation("ReviewAuthor")
+  checklists           Checklist[]          @relation("ChecklistSubject")
+  checklistItemsOwned  ChecklistItem[]      @relation("ChecklistAssignee")
+  checklistItemsTicked ChecklistItem[]      @relation("ChecklistTicker")
 
   @@unique([tenantId, id])
   @@unique([tenantId, userId])
@@ -1448,4 +1455,99 @@ model DashboardLayout {
   @@unique([tenantId])
   @@unique([tenantId, id])
   @@map("dashboard_layout")
+}
+
+/// Onboarding and offboarding checklists (docs/adr/0040-onboarding-checklists.md).
+model ChecklistTemplate {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  tenantId  String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  /// onboarding | offboarding
+  kind      String
+  name      String
+  /// At most one default per kind (partial unique index in the migration).
+  isDefault Boolean  @default(false) @map("is_default")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  items  ChecklistTemplateItem[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, kind])
+  @@map("checklist_template")
+}
+
+model ChecklistTemplateItem {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  tenantId    String   @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  templateId  String   @map("template_id") @db.Uuid
+  title       String
+  description String?
+  /// employee | manager | hr
+  responsible String
+  offsetDays  Int      @map("offset_days")
+  position    Int
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  template ChecklistTemplate @relation(fields: [tenantId, templateId], references: [tenantId, id], onDelete: Cascade)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, templateId, position])
+  @@map("checklist_template_item")
+}
+
+model Checklist {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  tenantId    String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  employeeId  String    @map("employee_id") @db.Uuid
+  /// onboarding | offboarding
+  kind        String
+  /// Copied from the template when the checklist started.
+  name        String
+  anchorDate  DateTime  @map("anchor_date") @db.Date
+  /// open | done | cancelled (one open per person and kind)
+  status      String    @default("open")
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(6)
+  cancelledAt DateTime? @map("cancelled_at") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant   Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee Employee        @relation("ChecklistSubject", fields: [tenantId, employeeId], references: [tenantId, id], onDelete: Cascade)
+  items    ChecklistItem[]
+
+  @@unique([tenantId, id])
+  @@index([tenantId, employeeId])
+  @@index([tenantId, status, createdAt])
+  @@map("checklist")
+}
+
+model ChecklistItem {
+  id                 String    @id @default(uuid(7)) @db.Uuid
+  tenantId           String    @default(dbgenerated("app_current_tenant()")) @map("tenant_id") @db.Uuid
+  checklistId        String    @map("checklist_id") @db.Uuid
+  title              String
+  description        String?
+  /// employee | manager | hr
+  responsible        String
+  /// null = the HR group (holders of checklist.manage at scope all).
+  assigneeEmployeeId String?   @map("assignee_employee_id") @db.Uuid
+  dueDate            DateTime  @map("due_date") @db.Date
+  doneAt             DateTime? @map("done_at") @db.Timestamptz(6)
+  doneByEmployeeId   String?   @map("done_by_employee_id") @db.Uuid
+  position           Int
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  checklist Checklist @relation(fields: [tenantId, checklistId], references: [tenantId, id], onDelete: Cascade)
+  assignee  Employee? @relation("ChecklistAssignee", fields: [tenantId, assigneeEmployeeId], references: [tenantId, id], onDelete: NoAction)
+  doneBy    Employee? @relation("ChecklistTicker", fields: [tenantId, doneByEmployeeId], references: [tenantId, id], onDelete: NoAction)
+
+  @@unique([tenantId, id])
+  @@index([tenantId, checklistId, position])
+  @@index([tenantId, assigneeEmployeeId, doneAt])
+  @@map("checklist_item")
 }

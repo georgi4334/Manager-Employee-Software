@@ -5,6 +5,7 @@ import { NavLink } from 'react-router';
 import { cn } from '@/shared/lib/cn';
 import { usePresence } from '@/shared/lib/motion';
 import { GROUP_LABEL, groupNavItems } from '../nav';
+import { InboxBadge } from '@/features/inbox/InboxBadge';
 import { useNavItems } from '../useNavItems';
 
 export function BottomNav() {
@@ -37,10 +38,20 @@ export function BottomNav() {
       >
         {items
           .filter((item) => item.primary)
-          .map(({ path, labelKey, icon: Icon }) => (
+          .map(({ path, labelKey, shortLabelKey, icon: Icon }) => (
             <NavLink key={path} to={path} end={path === '/'} className={linkClass}>
-              <Icon className="size-5" aria-hidden="true" />
-              <span className="max-w-full truncate px-1">{t(`nav:${labelKey}`)}</span>
+              <span className="relative">
+                <Icon className="size-5" aria-hidden="true" />
+                {path === '/inbox' && (
+                  <span className="absolute -right-3.5 -top-2">
+                    <InboxBadge part="number" />
+                  </span>
+                )}
+              </span>
+              <span className="max-w-full truncate px-1">
+                {t(`nav:${shortLabelKey ?? labelKey}`)}
+              </span>
+              {path === '/inbox' && <InboxBadge part="text" />}
             </NavLink>
           ))}
         {moreItems.length > 0 && (

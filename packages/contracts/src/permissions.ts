@@ -16,6 +16,7 @@ export const PERMISSION_MODULES = [
   'one_on_one',
   'feedback',
   'skills',
+  'checklists',
   'projects',
   'time',
   'capacity',
@@ -38,6 +39,7 @@ export const PERMISSION_MODULE_LABELS: Record<PermissionModule, string> = {
   one_on_one: '1:1 Meetings',
   feedback: 'Feedback',
   skills: 'Skills Matrix',
+  checklists: 'Checklists',
   projects: 'Projects & Tasks',
   time: 'Time Tracker',
   capacity: 'Capacity',
@@ -364,6 +366,30 @@ export const PERMISSIONS = [
     code: 'skill.manage_catalog',
     module: 'skills',
     description: 'Manage the skill catalog',
+    scopes: ALL,
+    grants: g(null, null, 'all', 'all'),
+  }),
+
+  // Onboarding and offboarding checklists (docs/adr/0040-onboarding-checklists.md). Assignees always see and tick
+  // their own items, whatever these grants say.
+  def({
+    code: 'checklist.view',
+    module: 'checklists',
+    description: 'View onboarding and offboarding checklists of people in scope',
+    scopes: PEOPLE,
+    grants: g('own', 'reports', 'all', 'all'),
+  }),
+  def({
+    code: 'checklist.manage',
+    module: 'checklists',
+    description: 'Start, cancel and edit checklists and tick any item (scope all: the HR group)',
+    scopes: PEOPLE,
+    grants: g(null, 'reports', 'all', 'all'),
+  }),
+  def({
+    code: 'checklist.manage_templates',
+    module: 'checklists',
+    description: 'Manage checklist templates',
     scopes: ALL,
     grants: g(null, null, 'all', 'all'),
   }),

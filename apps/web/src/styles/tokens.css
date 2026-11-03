@@ -57,6 +57,9 @@
   --dur-base: 300ms;
   --dur-sheet: 460ms;
   --dur-exit: 280ms;
+  /* Figures and bars of the dashboard and analytics count and grow in together (useCountUp: COUNT_UP_MS). */
+  --dur-count: 1100ms;
+  --ease-count: cubic-bezier(0.33, 1, 0.68, 1);
 
   --radius: 0.875rem;
   --shadow-card: 0 1px 2px rgb(28 25 23 / 0.04);

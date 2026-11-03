@@ -166,6 +166,15 @@
         "settingsTitle": "Event reminders",
         "settingsHelp": "An event of yours or your team starts soon (reminders go out with the hourly check)."
       }
+    },
+    "checklist": {
+      "assigned": {
+        "title": "Checklist items for you",
+        "text_one": "{{count}} checklist item was given to you.",
+        "text_other": "{{count}} checklist items were given to you.",
+        "settingsTitle": "Checklist items given to you",
+        "settingsHelp": "When onboarding or offboarding steps are assigned to you."
+      }
     }
   },
   "unknown": {

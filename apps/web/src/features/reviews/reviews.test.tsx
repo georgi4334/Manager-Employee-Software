@@ -234,7 +234,8 @@ describe('the lists', () => {
     });
     await renderApp('/reviews');
     await screen.findByText('H2 2026');
-    expect(calls.list.at(-1)?.searchParams.get('box')).toBe('mine');
+    // The menu badge (docs/adr/0038-waiting-for-me.md) also reads mine and team, so look for the request, not the last one.
+    expect(calls.list.some((u) => u.searchParams.get('box') === 'mine')).toBe(true);
     const user = userEvent.setup();
     await user.click(screen.getByRole('button', { name: 'Team' }));
     await waitFor(() => expect(calls.list.at(-1)?.searchParams.get('box')).toBe('team'));

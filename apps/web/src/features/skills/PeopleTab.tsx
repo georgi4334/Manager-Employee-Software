@@ -23,13 +23,16 @@ export function PeopleTab() {
   const [minLevel, setMinLevel] = useState('');
   const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<string | null>(null);
+  // Only a changed search goes back to page 1: on opening the page nothing was typed, and a quick
+  // "Next" must not be undone 300 ms later.
   useEffect(() => {
+    if (search === q) return;
     const timer = setTimeout(() => {
       setQ(search);
       setPage(1);
     }, 300);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, q]);
 
   const query = usePeople({ q, categoryId, skillId, minLevel, page });
   const data = query.data;

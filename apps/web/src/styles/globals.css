@@ -186,6 +186,15 @@
     -webkit-backdrop-filter: blur(18px) saturate(1.6);
     backdrop-filter: blur(18px) saturate(1.6);
   }
+  /* The blur makes every glass pane its own layer, so a pop-up inside one (date picker, menu) cannot rise above
+     the next pane. While a pop-up is open, its pane rises instead. */
+  .glass:has(.menu-panel) {
+    /* Above neighbouring panes (auto), below the sticky header (z-10) and the phone bottom bar (z-30). */
+    z-index: 5;
+  }
+  .glass:not(.fixed, .sticky, .absolute):has(.menu-panel) {
+    position: relative;
+  }
   .glass-hover {
     transition: background-color var(--dur-fast) var(--ease-standard);
   }
@@ -381,6 +390,25 @@
   }
 }
 
+/* Bars and charts of the dashboard and analytics grow from nothing to their value (transform only). */
+.motion-grow-x {
+  transform-origin: left center;
+  animation: motion-grow-x var(--dur-count) var(--ease-count) both;
+}
+.motion-grow-y {
+  transform-origin: center bottom;
+  animation: motion-grow-y var(--dur-count) var(--ease-count) both;
+}
+@keyframes motion-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes motion-grow-y {
+  from {
+    transform: scaleY(0);
+  }
+}
 @keyframes motion-enter {
   from {
     opacity: 0;

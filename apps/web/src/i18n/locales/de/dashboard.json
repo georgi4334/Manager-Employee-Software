@@ -163,6 +163,10 @@
     "notifications": {
       "title": "Neueste Benachrichtigungen",
       "empty": "Keine Benachrichtigungen."
+    },
+    "waiting": {
+      "title": "Wartet auf mich",
+      "empty": "Nichts wartet auf Sie."
     }
   }
 }

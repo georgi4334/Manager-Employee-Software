@@ -29,13 +29,16 @@ export function CapacityPage() {
   const [projectId, setProjectId] = useState('');
   const [mostFree, setMostFree] = useState(false);
   const [page, setPage] = useState(1);
+  // Only a changed search goes back to page 1: on opening the page nothing was typed, and a quick
+  // "Next" must not be undone 300 ms later.
   useEffect(() => {
+    if (search === q) return;
     const timer = setTimeout(() => {
       setQ(search);
       setPage(1);
     }, 300);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, q]);
 
   const projects = useProjects({ q: '', status: 'all', clientId: '', page: 1 });
   const query = useCapacity({ from: weekStart, to: addDays(weekStart, 6), projectId, q, page });

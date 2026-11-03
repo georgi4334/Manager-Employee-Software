@@ -100,6 +100,12 @@ export function useNotificationText() {
     if (type === 'review.released') {
       return { title: t('types.review.released.title'), text: t('types.review.released.text') };
     }
+    if (type === 'checklist.assigned') {
+      return {
+        title: t('types.checklist.assigned.title'),
+        text: t('types.checklist.assigned.text', { count: Number(params.count) || 1 }),
+      };
+    }
     if (type === 'feedback.received') {
       return { title: t('types.feedback.received.title'), text: t('types.feedback.received.text') };
     }

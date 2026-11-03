@@ -27,21 +27,39 @@ export function TasksPage() {
   const [params, setParams] = useSearchParams();
   const canCreate = usePermission('task.manage');
   const [creating, setCreating] = useState(false);
-  const [search, setSearch] = useState('');
-  const [q, setQ] = useState('');
+  // A link may carry a search (the command palette opens a task by its key, docs/adr/0039-command-palette.md).
+  const [search, setSearch] = useState(() => params.get('q') ?? '');
+  const [q, setQ] = useState(search);
   const [mine, setMine] = useState(false);
-  const [status, setStatus] = useState<ListParams['status']>('open');
+  const [status, setStatus] = useState<ListParams['status']>(() =>
+    params.get('q') ? 'all' : 'open',
+  );
   const [type, setType] = useState<ListParams['type']>('all');
   const [page, setPage] = useState(1);
+  // A new search in the address (the palette opening a task while this page is open) replaces the current one.
+  const urlQ = params.get('q') ?? '';
+  const [seenQ, setSeenQ] = useState(urlQ);
+  if (urlQ !== seenQ) {
+    setSeenQ(urlQ);
+    if (urlQ) {
+      setSearch(urlQ);
+      setQ(urlQ);
+      setStatus('all');
+      setPage(1);
+    }
+  }
   const projectId = params.get('project') ?? '';
   const view: View = params.get('view') === 'board' ? 'board' : 'list';
+  // Only a changed search goes back to page 1: on opening the page nothing was typed, and a quick
+  // "Next" must not be undone 300 ms later.
   useEffect(() => {
+    if (search === q) return;
     const timer = setTimeout(() => {
       setQ(search);
       setPage(1);
     }, 300);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, q]);
 
   const setParam = (key: string, value: string) => {
     const next = new URLSearchParams(params);

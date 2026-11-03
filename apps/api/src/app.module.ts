@@ -24,6 +24,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module.js';
 import { SkillsModule } from './modules/skills/skills.module.js';
 import { FeedbackModule } from './modules/feedback/feedback.module.js';
 import { OneOnOnesModule } from './modules/one-on-ones/one-on-ones.module.js';
+import { ChecklistsModule } from './modules/checklists/checklists.module.js';
 import { CompensationModule } from './modules/compensation/compensation.module.js';
 import { SchedulesModule } from './modules/schedules/schedules.module.js';
 import { AiModule } from './modules/ai/ai.module.js';
@@ -119,6 +120,7 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     FeedbackModule,
     SkillsModule,
     ReviewsModule,
+    ChecklistsModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: AllExceptionsFilter },

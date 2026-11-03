@@ -4,6 +4,7 @@ import { ProjectsModule } from '../projects/projects.module.js';
 import { GoalsModule } from '../goals/goals.module.js';
 import { LeaveModule } from '../leave/leave.module.js';
 import { OneOnOnesModule } from '../one-on-ones/one-on-ones.module.js';
+import { ChecklistsModule } from '../checklists/checklists.module.js';
 import { TimeModule } from '../time/time.module.js';
 import { OrganizationModule } from '../organization/organization.module.js';
 import { UsersModule } from '../users/users.module.js';
@@ -19,6 +20,7 @@ import { EmployeesService } from './employees.service.js';
     TimeModule,
     GoalsModule,
     OneOnOnesModule,
+    ChecklistsModule,
     LeaveModule,
   ],
   controllers: [EmployeesController],

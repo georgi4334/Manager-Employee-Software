@@ -286,6 +286,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Anything that appears and disappears (drawer, sheet, menu, popover, toast) uses `usePresence(open, exitMs)` and a `motion-*` class from `globals.css` with `data-state`, not a bare `{open && …}`. Tabs are `TabList`/`TabPanel` (`shared/ui/tabs.tsx`), never hand-written.
 - Reduced motion is honoured in CSS and in `usePresence`; unit tests run without motion; Playwright specs run with `reducedMotion: 'reduce'` (only `07-motion.spec.ts` turns motion on).
 - The notification toast says how many, never what; it skips the first answer and the inbox page.
+- Dashboard and analytics figures count up (`CountUp` in `StatCard`, `Stat`, `Bars`, `Meter`) and bars/sparklines grow (`motion-grow-x/y`, `--dur-count`) when the page opens or a value changes; screen readers get the final value only.
 
 ## Visual style (docs/adr/0033-visual-style.md)
 
@@ -301,6 +302,26 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Page sections (tabs) are defined once in `app/sections.ts` (`PAGE_SECTIONS`: param `tab`/`box`, order, rule per section; `visibleSections`, `useVisibleSections`). Pages build their tab lists from it and the menu lists the same sections under the **open** entry only (more than one, `aria-current` on the current). A new tabbed page adds itself there; view switches and filters are not sections. Counts (`useSectionCounts` in `app/section-counts.ts`: leave and timesheet approvals, reported feedback) reuse the section list's own query and cache; zero shows nothing.
 - Phones: the bottom bar keeps its four entries; "More" shows the rest as tiles under the same group headings.
 - Tests that query lists, list items or texts by name should scope to `main` (the menu has lists and headings too).
+
+## Waiting for me (docs/adr/0038-waiting-for-me.md)
+
+- Web only, no table or endpoint: `/inbox` reads the existing scoped lists with the user's rights (pending leave with `canApprove`, submitted weeks with `canDecide`, unsubmitted review parts in open cycles, open feedback reports, invitations of the next 60 days with `myResponse = needs_action`, one per event). `buildInbox`/`inboxSources` in `features/inbox/use-inbox.ts` are pure and tested; queries reuse the pages' query keys, so a decision anywhere updates the inbox.
+- Leave and timesheets can be decided in bulk (the same single requests one after another; reject asks first; the inbox rejects without a comment). Reviews, feedback and invitations link to or act on their own page.
+- The menu entry (group `top`, no permission) carries the total (`InboxBadge`; the number is `aria-hidden`, the words follow the label). Phones: Dashboard, Waiting, Leave, Calendar, More (Attendance is under More). Widget `waiting` is in the default dashboard. The badge reads the lists on every page: web tests get neutral defaults for them in `tests/server.ts`; a test that counts requests to these lists must expect the badge's own. A new kind = source + row + `inbox.json` texts.
+
+## Command palette (docs/adr/0039-command-palette.md)
+
+- Web only: `CommandPalette` in the header (button "Search", Ctrl+K / ⌘K) opens a dialog with an ARIA combobox over a grouped listbox. Pages and sections come from `visibleNavItems` + `PAGE_SECTIONS`, actions from `PALETTE_ACTIONS` (`features/palette/entries.ts`, permission each, navigate only); `paletteTargets` and `matchScore`/`rank` (accent- and case-insensitive, word starts first) are pure and tested.
+- People, projects and tasks use the existing scoped list endpoints with `q` (5 each, 250 ms after typing, 2+ characters), only with `employee.view_directory` / `project.view` / `task.view`. Nothing is stored (no history). A task opens `/tasks?project=…&q=KEY`; the task page reads `q` from the address (and then shows every status).
+- A new action = entry in `PALETTE_ACTIONS` + `palette.json` `actions.*` (en/de/bg).
+
+## Checklists (docs/adr/0040-onboarding-checklists.md)
+
+- `checklist_template`, `checklist_template_item`, `checklist`, `checklist_item` (all RLS, composite foreign keys). A checklist **copies** its template's steps when it starts (template changes never touch running checklists); due date = anchor (hire/termination date, else today) + `offset_days` (`checklistDueDate`); states and progress are computed (`checklistItemState`, `checklistProgress`, `checklistStatusFor`: done when every step is, reopens when one is unticked). One open checklist per person and kind (partial unique index, `CONFLICT` `field: open`); a cancelled one is locked (`field: status`); at most 30 templates / 50 steps (`field: limit`); one default template per kind.
+- `responsible` is resolved once at start: `employee` → the person, `manager` → their active manager, `hr` → nobody = **the HR group** (holders of `checklist.manage` at scope `all`). Hand-picked assignees must be active (`unknown_employee`).
+- Rights go through `authz` on the person the checklist is about: `checklist.view` (own/reports/all), `checklist.manage` (reports/all: start, cancel, edit steps, tick any), `checklist.manage_templates` (HR, Admin). **Assignees always see the checklist of their step and tick it**; everybody else `404`. Reads and ticks are `@Authenticated()` and checked in `ChecklistsService`; templates are readable with `checklist.manage` or `checklist.manage_templates`.
+- `EmployeesService.create` starts the default onboarding and `deactivate` (after setting the termination date) cancels the open onboarding, hands the leaver's open steps on others' checklists to the HR group and starts the default offboarding — same transaction. `checklist.assigned` carries the checklist id and a count only (never titles, names or the kind), never to the actor. Audit: template created/updated/deleted (field names), checklist started/cancelled (ids, kind). Export lists checklists about the person and steps assigned to them elsewhere (without whose); erasure deletes checklists about them and clears them as assignee/ticker.
+- Web: `/checklists` (sections My to-dos / People / Templates via `PAGE_SECTIONS`), `/checklists/:id` (steps by due date, state chips, Capsule, tick/edit/add/cancel), `/checklists/templates/new|:id` (editor with move up/down). "Waiting for me" lists my open steps (kind `checklist`, `/checklists/my-items`, a neutral default in `tests/server.ts`). Menu entry "Checklists" in People.
 
 ## Dashboard (docs/adr/0034-dashboard.md)
 

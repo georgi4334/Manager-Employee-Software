@@ -15,6 +15,7 @@ describe('export document', () => {
     schemaVersion: 1,
     generatedAt: '2026-10-25T08:00:00.000Z',
     account: null,
+    checklists: { about: [], assigned: [] },
     employee: {
       firstName: 'A',
       lastName: 'B',

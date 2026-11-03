@@ -14,8 +14,10 @@ import {
   Archive,
   ShieldCheck,
   ListChecks,
+  ListTodo,
   Timer,
   LayoutDashboard,
+  Inbox,
   Network,
   Users,
   type LucideIcon,
@@ -29,6 +31,8 @@ export interface NavItem {
   /** Key in the `nav` translation namespace. */
   labelKey: keyof typeof navMessages;
   icon: LucideIcon;
+  /** A shorter label for the narrow bottom bar. */
+  shortLabelKey?: keyof typeof navMessages;
   /** Shown in the mobile bottom bar; the rest live under "More". */
   primary: boolean;
   /** Who sees this entry (any one of the permissions is enough). Everyone, when omitted. */
@@ -61,6 +65,14 @@ export const GROUP_LABEL: Record<Exclude<NavGroup, 'top'>, keyof typeof navMessa
 export const NAV_ITEMS: NavItem[] = [
   { path: '/', labelKey: 'dashboard', icon: LayoutDashboard, primary: true, group: 'top' },
   {
+    path: '/inbox',
+    labelKey: 'inbox',
+    shortLabelKey: 'inboxShort',
+    icon: Inbox,
+    primary: true,
+    group: 'top',
+  },
+  {
     path: '/assistant',
     labelKey: 'assistant',
     icon: Sparkles,
@@ -72,7 +84,7 @@ export const NAV_ITEMS: NavItem[] = [
     path: '/attendance',
     labelKey: 'attendance',
     icon: Clock,
-    primary: true,
+    primary: false,
     permission: ['attendance.record', 'attendance.view'],
     group: 'workday',
   },
@@ -138,6 +150,14 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Network,
     primary: false,
     permission: 'org.view',
+    group: 'people',
+  },
+  {
+    path: '/checklists',
+    labelKey: 'checklists',
+    icon: ListTodo,
+    primary: false,
+    permission: ['checklist.view', 'checklist.manage'],
     group: 'people',
   },
   {

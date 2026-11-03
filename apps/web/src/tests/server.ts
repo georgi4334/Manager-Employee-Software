@@ -23,6 +23,13 @@ const defaultHandlers = [
   http.get(`${API}/org/departments`, () => HttpResponse.json([])),
   http.get(`${API}/roles`, () => HttpResponse.json([])),
   http.get(`${API}/tasks`, () => HttpResponse.json(emptyPage)),
+  // The "Waiting for me" badge reads these lists on every page (docs/adr/0038-waiting-for-me.md).
+  http.get(`${API}/leave/requests`, () => HttpResponse.json(emptyPage)),
+  http.get(`${API}/time/timesheets`, () => HttpResponse.json(emptyPage)),
+  http.get(`${API}/reviews`, () => HttpResponse.json(emptyPage)),
+  http.get(`${API}/feedback`, () => HttpResponse.json(emptyPage)),
+  http.get(`${API}/calendar/events`, () => HttpResponse.json({ items: [] })),
+  http.get(`${API}/checklists/my-items`, () => HttpResponse.json({ items: [] })),
   http.get(`${API}/employees`, () => HttpResponse.json(emptyPage)),
   http.get(`${API}/employees/me`, () =>
     HttpResponse.json(errorBody('NOT_FOUND', 404), { status: 404 }),

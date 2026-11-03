@@ -1,0 +1,114 @@
+{
+  "title": "Wartet auf mich",
+  "intro": "Alles, was Ihre Entscheidung braucht, das Älteste zuerst.",
+  "loading": "Lade, was auf Sie wartet",
+  "retry": "Erneut versuchen",
+  "empty": "Nichts wartet auf Sie. Gut gemacht.",
+  "emptyFilter": "Davon wartet nichts auf Sie.",
+  "filter": {
+    "label": "Anzeigen",
+    "option": "{{name}} {{count}}",
+    "all": "Alle",
+    "leave": "Abwesenheit",
+    "timesheet": "Zeitnachweise",
+    "review": "Beurteilungen",
+    "feedback": "Feedback",
+    "invitation": "Einladungen",
+    "checklist": "Checklisten"
+  },
+  "group": {
+    "leave": "Abwesenheitsanträge",
+    "timesheet": "Zeitnachweise",
+    "review": "Beurteilungen",
+    "feedback": "Gemeldetes Feedback",
+    "invitation": "Einladungen",
+    "checklist": "Checklisten-Schritte"
+  },
+  "open": {
+    "leave": "Abwesenheit › Genehmigungen öffnen",
+    "timesheet": "Zeit › Genehmigungen öffnen",
+    "review": "Beurteilungen öffnen",
+    "feedback": "Feedback › Gemeldet öffnen",
+    "invitation": "Kalender öffnen",
+    "checklist": "Checklisten öffnen"
+  },
+  "age": {
+    "today": "Heute",
+    "days_one": "{{count}} Tag",
+    "days_other": "{{count}} Tage"
+  },
+  "late": "Überfällig",
+  "approve": "Genehmigen",
+  "reject": "Ablehnen",
+  "select": "{{name}} auswählen",
+  "range": "{{from}} – {{to}}",
+  "leave": {
+    "title": "{{name}} · {{type}}",
+    "absent": "Abwesenheit",
+    "meta_one": "{{range}} · {{days}} Tag",
+    "meta_other": "{{range}} · {{days}} Tage",
+    "approve": "Abwesenheit von {{name}} genehmigen",
+    "reject": "Abwesenheit von {{name}} ablehnen"
+  },
+  "timesheet": {
+    "title": "{{name}} · Woche ab {{week}}",
+    "meta": "{{hours}} h erfasst",
+    "approve": "Woche von {{name}} genehmigen",
+    "reject": "Woche von {{name}} ablehnen"
+  },
+  "review": {
+    "self": "Ihre Selbstbeurteilung schreiben",
+    "manager": "Beurteilung für {{name}} schreiben",
+    "write": "Beurteilung schreiben",
+    "writeSelf": "Ihre Selbstbeurteilung schreiben",
+    "writeFor": "Beurteilung für {{name}} schreiben"
+  },
+  "feedback": {
+    "title": "Eine Meldung wartet auf Ihre Entscheidung",
+    "meta": "Feedback vom {{date}}",
+    "open": "Öffnen"
+  },
+  "invitation": {
+    "title": "{{title}} · von {{name}}",
+    "time": "{{date}} · {{from}}–{{to}}",
+    "accept": "Zusagen",
+    "maybe": "Vielleicht",
+    "decline": "Absagen",
+    "acceptOf": "{{title}} zusagen",
+    "maybeOf": "Vielleicht für {{title}}",
+    "declineOf": "{{title}} absagen"
+  },
+  "done": {
+    "approved": "Für {{name}} genehmigt",
+    "rejected": "Für {{name}} abgelehnt",
+    "answered": "Antwort gesendet",
+    "ticked": "„{{title}}“ erledigt"
+  },
+  "bulk": {
+    "label": "Ausgewählte Einträge",
+    "selected_one": "{{count}} ausgewählt",
+    "selected_other": "{{count}} ausgewählt",
+    "approve": "{{count}} genehmigen",
+    "reject": "{{count}} ablehnen",
+    "clear": "Auswahl aufheben",
+    "confirmReject_one": "{{count}} Eintrag ablehnen?",
+    "confirmReject_other": "{{count}} Einträge ablehnen?",
+    "confirm": "Ja, ablehnen",
+    "cancel": "Abbrechen",
+    "approved_one": "{{count}} genehmigt",
+    "approved_other": "{{count}} genehmigt",
+    "rejected_one": "{{count}} abgelehnt",
+    "rejected_other": "{{count}} abgelehnt",
+    "failed_one": "{{count}} ging nicht:",
+    "failed_other": "{{count}} gingen nicht:"
+  },
+  "checklist": {
+    "meta": {
+      "onboarding": "Eintritt von {{name}} · fällig am {{date}}",
+      "offboarding": "Austritt von {{name}} · fällig am {{date}}"
+    },
+    "done": "Erledigt",
+    "doneOf": "„{{title}}“ als erledigt markieren",
+    "open": "Öffnen"
+  }
+}

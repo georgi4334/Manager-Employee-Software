@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { cn } from '@/shared/lib/cn';
+import { CountUp } from '@/shared/ui/count-up';
 
 export type Tone = 'primary' | 'info' | 'success' | 'warning';
 
@@ -56,12 +57,18 @@ export function StatCard({ title, icon: Icon, tone, value, note, trend, to }: St
         </span>
         <div className="min-w-0">
           <h2 className="text-sm font-medium">{title}</h2>
-          <p className="text-2xl font-semibold leading-tight">{value}</p>
+          <p className="text-2xl font-semibold leading-tight">
+            <CountUp value={value} />
+          </p>
           {note && <p className="text-xs text-muted-foreground">{note}</p>}
         </div>
       </div>
       {trend && trend.length > 1 && (
-        <Sparkline values={trend} className={cn('mt-auto h-8', style.line)} />
+        <Sparkline
+          key={trend.join(',')}
+          values={trend}
+          className={cn('motion-grow-y mt-auto h-8', style.line)}
+        />
       )}
     </>
   );
@@ -192,10 +199,13 @@ export function Bars({
     <ul className="flex h-40 items-end gap-2">
       {items.map((item) => (
         <li key={item.key} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
-          <span className="text-[0.6875rem] text-muted-foreground">{item.text}</span>
+          <span className="text-[0.6875rem] text-muted-foreground">
+            <CountUp value={item.text} />
+          </span>
           <span
+            key={item.value}
             aria-hidden="true"
-            className="w-full max-w-10 rounded-t-md bg-primary/80"
+            className="motion-grow-y w-full max-w-10 rounded-t-md bg-primary/80"
             style={{ height: `${Math.max((item.value / max) * 100, item.value > 0 ? 4 : 1)}%` }}
           />
           <span className="text-xs font-medium">{item.label}</span>
@@ -211,11 +221,17 @@ export function Meter({ label, percent, text }: { label: string; percent: number
     <li className="space-y-1 py-1.5">
       <div className="flex justify-between gap-2 text-sm">
         <span className="truncate font-medium">{label}</span>
-        <span className="shrink-0 text-muted-foreground">{text}</span>
+        <span className="shrink-0 text-muted-foreground">
+          <CountUp value={text} />
+        </span>
       </div>
       <span aria-hidden="true" className="block h-2 overflow-hidden rounded-full bg-secondary">
         <span
-          className={cn('block h-full rounded-full', percent > 100 ? 'bg-danger' : 'bg-primary')}
+          key={percent}
+          className={cn(
+            'motion-grow-x block h-full rounded-full',
+            percent > 100 ? 'bg-danger' : 'bg-primary',
+          )}
           style={{ width: `${Math.min(percent, 100)}%` }}
         />
       </span>

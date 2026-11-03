@@ -113,6 +113,7 @@ describe('navigation by permission', () => {
       // grouped (docs/adr/0037-navigation-groups.md): top, My workday, Work, People, Growth, Insights, Administration
       expect(sidebarLinks()).toEqual([
         'Dashboard',
+        'Waiting for me',
         'Assistant',
         'Attendance',
         'Leave',
@@ -123,6 +124,7 @@ describe('navigation by permission', () => {
         'Capacity',
         'Employees',
         'Organization',
+        'Checklists',
         'Goals',
         '1:1 meetings',
         'Feedback',
@@ -141,19 +143,19 @@ describe('navigation by permission', () => {
       ),
     );
     await renderApp('/');
-    expect(sidebarLinks()).toEqual(['Dashboard', 'Attendance', 'Calendar']);
+    expect(sidebarLinks()).toEqual(['Dashboard', 'Waiting for me', 'Attendance', 'Calendar']);
   });
 
   it('one of several permissions is enough to see an entry', async () => {
     server.use(...signedInHandlers(userWithPermissions({ 'leave.view': 'own' })));
     await renderApp('/');
-    expect(sidebarLinks()).toEqual(['Dashboard', 'Leave']);
+    expect(sidebarLinks()).toEqual(['Dashboard', 'Waiting for me', 'Leave']);
   });
 
-  it('a user without any permission sees only the dashboard, and no empty "More" menu', async () => {
+  it('a user without any permission sees only the dashboard and the inbox, and no empty "More" menu', async () => {
     server.use(...signedInHandlers(userWithPermissions({})));
     await renderApp('/');
-    expect(sidebarLinks()).toEqual(['Dashboard']);
+    expect(sidebarLinks()).toEqual(['Dashboard', 'Waiting for me']);
     expect(screen.queryByRole('button', { name: 'More' })).not.toBeInTheDocument();
   });
 
@@ -167,14 +169,14 @@ describe('navigation by permission', () => {
       within(bar)
         .getAllByRole('link')
         .map((l) => l.textContent),
-    ).toEqual(['Dashboard', 'Attendance']);
+    ).toEqual(['Dashboard', 'Waiting']);
     await userEvent.setup().click(screen.getByRole('button', { name: 'More' }));
     const more = screen.getByRole('dialog', { name: 'More navigation' });
     expect(
       within(more)
         .getAllByRole('link')
         .map((l) => l.textContent),
-    ).toEqual(['Organization']);
+    ).toEqual(['Attendance', 'Organization']);
   });
 });
 

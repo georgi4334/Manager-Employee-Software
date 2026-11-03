@@ -236,6 +236,19 @@ describe('the list and the board', () => {
   });
 });
 
+describe('a search in the address', () => {
+  it('replaces the search when a link opens a task while the page is open', async () => {
+    as('manager');
+    const calls = serve([task(1)]);
+    const { router } = await renderApp('/tasks');
+    await screen.findByRole('list', { name: 'Tasks' });
+    await router.navigate(`/tasks?project=${uuid(200)}&q=WEB-7`);
+    await waitFor(() => expect(calls.tasks.at(-1)?.searchParams.get('q')).toBe('WEB-7'));
+    expect(calls.tasks.at(-1)?.searchParams.get('status')).toBe('all');
+    expect(screen.getByRole('searchbox', { name: /search/i })).toHaveValue('WEB-7');
+  });
+});
+
 describe('changing tasks', () => {
   it('moves a task with the status select, sending only the status', async () => {
     as('employee');

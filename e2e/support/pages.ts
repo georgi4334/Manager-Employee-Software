@@ -1,6 +1,7 @@
 /** Every signed-in page the browser checks visit (accessibility, layout). */
 export const SIGNED_IN = [
   '/',
+  '/inbox',
   '/employees',
   '/employees/new',
   '/organization',
@@ -43,6 +44,10 @@ export const SIGNED_IN = [
   '/reviews',
   '/reviews?tab=team',
   '/reviews?tab=cycles',
+  '/checklists',
+  '/checklists?tab=people',
+  '/checklists?tab=templates',
+  '/checklists/templates/new',
   '/profile',
   '/does-not-exist',
 ];

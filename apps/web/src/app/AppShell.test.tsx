@@ -182,7 +182,8 @@ describe('mobile navigation', () => {
   it('shows only primary modules in the bottom bar', async () => {
     await renderApp('/');
     const bar = screen.getByRole('navigation', { name: 'Mobile navigation' });
-    expect(within(bar).getByRole('link', { name: 'Attendance' })).toBeInTheDocument();
+    expect(within(bar).getByRole('link', { name: 'Waiting' })).toBeInTheDocument();
+    expect(within(bar).queryByRole('link', { name: 'Attendance' })).not.toBeInTheDocument();
     expect(within(bar).queryByRole('link', { name: 'Employees' })).not.toBeInTheDocument();
   });
 

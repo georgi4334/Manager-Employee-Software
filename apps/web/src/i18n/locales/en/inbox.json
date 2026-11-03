@@ -1,0 +1,114 @@
+{
+  "title": "Waiting for me",
+  "intro": "Everything that needs your decision, oldest first.",
+  "loading": "Loading what is waiting for you",
+  "retry": "Try again",
+  "empty": "Nothing is waiting for you. Well done.",
+  "emptyFilter": "Nothing of this kind is waiting for you.",
+  "filter": {
+    "label": "Show",
+    "option": "{{name}} {{count}}",
+    "all": "All",
+    "leave": "Leave",
+    "timesheet": "Timesheets",
+    "review": "Reviews",
+    "feedback": "Feedback",
+    "invitation": "Invitations",
+    "checklist": "Checklists"
+  },
+  "group": {
+    "leave": "Leave requests",
+    "timesheet": "Timesheets",
+    "review": "Reviews",
+    "feedback": "Reported feedback",
+    "invitation": "Invitations",
+    "checklist": "Checklist steps"
+  },
+  "open": {
+    "leave": "Open Leave › Approvals",
+    "timesheet": "Open Time › Approvals",
+    "review": "Open Reviews",
+    "feedback": "Open Feedback › Reported",
+    "invitation": "Open Calendar",
+    "checklist": "Open Checklists"
+  },
+  "age": {
+    "today": "Today",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days"
+  },
+  "late": "Late",
+  "approve": "Approve",
+  "reject": "Reject",
+  "select": "Select {{name}}",
+  "range": "{{from}} – {{to}}",
+  "leave": {
+    "title": "{{name}} · {{type}}",
+    "absent": "Absence",
+    "meta_one": "{{range}} · {{days}} day",
+    "meta_other": "{{range}} · {{days}} days",
+    "approve": "Approve leave of {{name}}",
+    "reject": "Reject leave of {{name}}"
+  },
+  "timesheet": {
+    "title": "{{name}} · week of {{week}}",
+    "meta": "{{hours}} h logged",
+    "approve": "Approve the week of {{name}}",
+    "reject": "Reject the week of {{name}}"
+  },
+  "review": {
+    "self": "Write your self-review",
+    "manager": "Write the manager review for {{name}}",
+    "write": "Write review",
+    "writeSelf": "Write your self-review",
+    "writeFor": "Write the manager review for {{name}}"
+  },
+  "feedback": {
+    "title": "A report waits for your decision",
+    "meta": "Feedback from {{date}}",
+    "open": "Open"
+  },
+  "invitation": {
+    "title": "{{title}} · from {{name}}",
+    "time": "{{date}} · {{from}}–{{to}}",
+    "accept": "Accept",
+    "maybe": "Maybe",
+    "decline": "Decline",
+    "acceptOf": "Accept {{title}}",
+    "maybeOf": "Maybe for {{title}}",
+    "declineOf": "Decline {{title}}"
+  },
+  "done": {
+    "approved": "Approved for {{name}}",
+    "rejected": "Rejected for {{name}}",
+    "answered": "Answer sent",
+    "ticked": "“{{title}}” done"
+  },
+  "bulk": {
+    "label": "Selected items",
+    "selected_one": "{{count}} selected",
+    "selected_other": "{{count}} selected",
+    "approve": "Approve {{count}}",
+    "reject": "Reject {{count}}",
+    "clear": "Clear",
+    "confirmReject_one": "Reject {{count}} item?",
+    "confirmReject_other": "Reject {{count}} items?",
+    "confirm": "Yes, reject",
+    "cancel": "Cancel",
+    "approved_one": "{{count}} approved",
+    "approved_other": "{{count}} approved",
+    "rejected_one": "{{count}} rejected",
+    "rejected_other": "{{count}} rejected",
+    "failed_one": "{{count}} could not be done:",
+    "failed_other": "{{count}} could not be done:"
+  },
+  "checklist": {
+    "meta": {
+      "onboarding": "Onboarding of {{name}} · due {{date}}",
+      "offboarding": "Offboarding of {{name}} · due {{date}}"
+    },
+    "done": "Mark done",
+    "doneOf": "Mark “{{title}}” as done",
+    "open": "Open"
+  }
+}

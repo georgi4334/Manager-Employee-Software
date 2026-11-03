@@ -2,6 +2,7 @@ import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/shared/lib/cn';
+import { CountUp } from '@/shared/ui/count-up';
 
 /** One area of the figures as a dashboard-style card (docs/adr/0033-visual-style.md). */
 export function Section({
@@ -44,7 +45,9 @@ export function Stat({ label, value, hint }: { label: string; value: string; hin
   return (
     <div className="rounded-lg bg-surface-muted p-3">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="text-xl font-semibold leading-tight">{value}</p>
+      <p className="text-xl font-semibold leading-tight">
+        <CountUp value={value} />
+      </p>
       {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
   );
@@ -70,11 +73,14 @@ export function Bars({ title, bars }: { title: string; bars: Bar[] }) {
           <li key={b.key} className="space-y-1">
             <div className="flex items-baseline justify-between gap-3 text-sm">
               <span className="min-w-0 break-words">{b.label}</span>
-              <span className="shrink-0 font-medium">{b.text}</span>
+              <span className="shrink-0 font-medium">
+                <CountUp value={b.text} />
+              </span>
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-secondary" aria-hidden="true">
               <div
-                className="h-2 rounded-full bg-primary"
+                key={b.value}
+                className="motion-grow-x h-2 rounded-full bg-primary"
                 style={{ width: `${Math.round((b.value / max) * 100)}%` }}
               />
             </div>

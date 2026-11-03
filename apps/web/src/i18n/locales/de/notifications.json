@@ -166,6 +166,15 @@
         "settingsTitle": "Terminerinnerungen",
         "settingsHelp": "Ein Termin von Ihnen oder Ihrem Team beginnt bald (Erinnerungen werden mit der stündlichen Prüfung versendet)."
       }
+    },
+    "checklist": {
+      "assigned": {
+        "title": "Checklisten-Aufgaben für Sie",
+        "text_one": "Ihnen wurde {{count}} Checklisten-Aufgabe zugewiesen.",
+        "text_other": "Ihnen wurden {{count}} Checklisten-Aufgaben zugewiesen.",
+        "settingsTitle": "Ihnen zugewiesene Checklisten-Aufgaben",
+        "settingsHelp": "Wenn Ihnen Schritte beim Ein- oder Austritt zugewiesen werden."
+      }
     }
   },
   "unknown": {

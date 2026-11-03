@@ -157,6 +157,20 @@ export const FEEDBACK_EVENTS = {
   }),
 } as const;
 
+export const CHECKLIST_EVENTS = {
+  /** Items of a checklist were given to you (docs/adr/0040): checklist id and count only. */
+  'checklist.assigned': eventDef({
+    params: z.object({
+      recipientUserId: z.uuid(),
+      checklistId: z.uuid(),
+      count: z.number().int().min(1),
+    }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'checklist.assigned' as const, params },
+    ],
+  }),
+} as const;
+
 export const REVIEW_EVENTS = {
   /** A review cycle opened and there is a review for you: the cycle id only. */
   'review.cycle_opened': eventDef({
@@ -263,6 +277,7 @@ export const EVENT_DEFINITIONS = {
   ...ONE_ON_ONE_EVENTS,
   ...FEEDBACK_EVENTS,
   ...REVIEW_EVENTS,
+  ...CHECKLIST_EVENTS,
 } as const;
 
 export type EventType = keyof typeof EVENT_DEFINITIONS;

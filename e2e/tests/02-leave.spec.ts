@@ -43,6 +43,13 @@ test('a leave request goes from the employee to the approver and back', async ({
 
   const ada = await (await browser.newContext({ viewport: { width: 375, height: 800 } })).newPage();
   await signIn(ada, ADMIN_EMAIL);
+  // "Waiting for me" (docs/adr/0038-waiting-for-me.md): the phone bar links there and the request is listed.
+  await ada
+    .getByRole('navigation', { name: 'Mobile navigation' })
+    .getByRole('link', { name: /Waiting/ })
+    .click();
+  await expect(ada.getByRole('heading', { level: 1, name: 'Waiting for me' })).toBeVisible();
+  await expect(ada.getByRole('button', { name: 'Approve leave of Eva Employee' })).toBeVisible();
   await ada.goto('/leave?tab=approvals');
   await expect(ada.getByText('Eva Employee')).toBeVisible();
   await ada.getByRole('button', { name: 'Approve', exact: true }).click();

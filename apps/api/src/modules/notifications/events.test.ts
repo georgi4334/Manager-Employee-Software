@@ -43,6 +43,7 @@ describe('event catalog', () => {
         action: 'cancelled',
       },
       'feedback.received': { recipientUserId: USER, feedbackId: USER },
+      'checklist.assigned': { recipientUserId: USER, checklistId: USER, count: 2 },
       'review.cycle_opened': { recipientUserId: USER, cycleId: USER },
       'review.released': { recipientUserId: USER, reviewId: USER },
       'one_on_one.changed': {
@@ -349,6 +350,30 @@ describe('one_on_one.changed', () => {
     } else {
       expect(result.success).toBe(false);
     }
+  });
+});
+
+describe('checklist.assigned', () => {
+  const definition = EVENT_DEFINITIONS['checklist.assigned'];
+
+  it('tells the assignee the checklist id and how many items, nothing else', () => {
+    expect(
+      definition.notify(
+        definition.params.parse({ recipientUserId: USER, checklistId: USER, count: 3 }),
+      ),
+    ).toEqual([
+      {
+        recipientUserId: USER,
+        type: 'checklist.assigned',
+        params: { checklistId: USER, count: 3 },
+      },
+    ]);
+  });
+
+  it('refuses no items and extra details', () => {
+    expect(
+      definition.params.safeParse({ recipientUserId: USER, checklistId: USER, count: 0 }).success,
+    ).toBe(false);
   });
 });
 

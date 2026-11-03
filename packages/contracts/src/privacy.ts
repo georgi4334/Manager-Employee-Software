@@ -225,6 +225,19 @@ export const personalDataExportSchema = z.object({
       ),
     }),
   ),
+  /** Onboarding and offboarding checklists about them, and items given to them on others' (ADR 0040). */
+  checklists: z.object({
+    about: z.array(
+      z.object({
+        kind: z.string(),
+        name: z.string(),
+        anchorDate: date,
+        status: z.string(),
+        items: z.array(z.object({ title: z.string(), dueDate: date, done: z.boolean() })),
+      }),
+    ),
+    assigned: z.array(z.object({ title: z.string(), dueDate: date, done: z.boolean() })),
+  }),
   /** Logged time and weekly timesheets (ADR 0015). */
   time: z.object({
     entries: z.array(

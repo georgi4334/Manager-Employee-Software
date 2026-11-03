@@ -525,7 +525,19 @@ describe.skipIf(!urls)('privacy: export and erasure over HTTP (real database)', 
         }),
         aiCredentials: await system.aiCredential.findMany({ where: { tenantId: acme.tenantId } }),
         aiSettings: await system.aiUserSetting.findMany({ where: { tenantId: acme.tenantId } }),
+        checklistItems: await system.checklistItem.findMany({
+          where: {
+            tenantId: acme.tenantId,
+            OR: [{ assigneeEmployeeId: dan.employeeId }, { doneByEmployeeId: dan.employeeId }],
+          },
+        }),
       });
+      // Checklists about Dan go with him (ADR 0040).
+      expect(
+        await system.checklist.count({
+          where: { tenantId: acme.tenantId, employeeId: dan.employeeId },
+        }),
+      ).toBe(0);
       for (const secret of DAN_SECRETS) expect(everything, secret).not.toContain(secret);
       expect(
         await system.aiConversation.count({ where: { tenantId: acme.tenantId, userId: user.id } }),
