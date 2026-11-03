@@ -175,6 +175,15 @@ erDiagram
 | `project_assignment`        | project_id, employee_id, role, allocation_pct (1–100), from_date, to_date (open end) — no overlap per person and project (ADR 0013)      |
 | `project_skill_requirement` | project_id, skill_id, min_level, headcount                                                                                               |
 
+### 6a. Onboarding and offboarding checklists (ADR 0040)
+
+| Table                     | Key columns                                                                                                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `checklist_template`      | kind (`onboarding/offboarding`), name, is_default (at most one per kind)                                                                                           |
+| `checklist_template_item` | template_id, title, description, responsible (`employee/manager/hr`), offset_days (−60…180), position                                                              |
+| `checklist`               | employee_id, kind, name (copied), anchor_date, status (`open/done/cancelled`, one open per person and kind), completed_at, cancelled_at                            |
+| `checklist_item`          | checklist_id, title, description, responsible, assignee_employee_id (null = HR group), due_date, done_at, done_by_employee_id, position (copied from the template) |
+
 ### 6b. Clients, tasks, time tracking
 
 ```mermaid

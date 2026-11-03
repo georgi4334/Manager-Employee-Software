@@ -5,6 +5,7 @@ import {
   type FeedbackItem,
   type GrantedPermissions,
   type LeaveRequest,
+  type MyChecklistItem,
   type ReviewSummary,
   type Timesheet,
 } from '@intime/contracts';
@@ -12,18 +13,27 @@ import { useQuery } from '@tanstack/react-query';
 import { userHasPermission } from '@/features/auth/permissions';
 import { useCurrentUser } from '@/features/auth/use-auth';
 import { calendarKeys, fetchEvents } from '@/features/calendar/api';
+import { checklistKeys, fetchMyItems } from '@/features/checklists/api';
 import { feedbackKeys, fetchFeedback } from '@/features/feedback/api';
 import { fetchRequests, leaveKeys } from '@/features/leave/api';
 import { fetchReviews, reviewKeys } from '@/features/reviews/api';
 import { fetchTimesheets, timeKeys } from '@/features/time/api';
 
-export const INBOX_KINDS = ['leave', 'timesheet', 'review', 'feedback', 'invitation'] as const;
+export const INBOX_KINDS = [
+  'leave',
+  'timesheet',
+  'review',
+  'checklist',
+  'feedback',
+  'invitation',
+] as const;
 export type InboxKind = (typeof INBOX_KINDS)[number];
 
 export type InboxItem =
   | { kind: 'leave'; key: string; request: LeaveRequest }
   | { kind: 'timesheet'; key: string; sheet: Timesheet }
   | { kind: 'review'; key: string; review: ReviewSummary; part: 'self' | 'manager'; late: boolean }
+  | { kind: 'checklist'; key: string; step: MyChecklistItem }
   | { kind: 'feedback'; key: string; item: FeedbackItem }
   | { kind: 'invitation'; key: string; event: CalendarEvent };
 
@@ -53,6 +63,8 @@ export function inboxSources(granted: GrantedPermissions | undefined) {
     reviewTeam: reviewScope === 'reports' || reviewScope === 'all',
     feedback: userHasPermission(granted, 'feedback.moderate'),
     invitation: userHasPermission(granted, 'calendar.manage_own'),
+    /** Assignees tick their steps whatever their grants (ADR 0040): everybody asks. */
+    checklist: true,
   };
 }
 
@@ -64,6 +76,7 @@ export function buildInbox(lists: {
   team?: readonly ReviewSummary[];
   reported?: readonly FeedbackItem[];
   events?: readonly CalendarEvent[];
+  steps?: readonly MyChecklistItem[];
 }): InboxItem[] {
   const leave = [...(lists.leave ?? [])]
     .filter((r) => r.status === 'pending' && r.canApprove)
@@ -93,6 +106,10 @@ export function buildInbox(lists: {
         late: review.managerOverdue === true,
       })),
   ].sort((a, b) => Number(b.kind === 'review' && b.late) - Number(a.kind === 'review' && a.late));
+  const steps = [...(lists.steps ?? [])]
+    .filter((step) => !step.done)
+    .sort(byText((step) => step.dueDate))
+    .map((step): InboxItem => ({ kind: 'checklist', key: `step:${step.id}`, step }));
   const reported = [...(lists.reported ?? [])]
     .filter((f) => f.report === 'open')
     .sort(byText((f) => f.createdAt))
@@ -104,7 +121,7 @@ export function buildInbox(lists: {
     .sort(byText((e) => `${e.occurrenceDate} ${e.startTime ?? ''}`))
     .filter((e) => (seen.has(e.id) ? false : (seen.add(e.id), true)))
     .map((event): InboxItem => ({ kind: 'invitation', key: `event:${event.id}`, event }));
-  return [...leave, ...sheets, ...reviews, ...reported, ...invitations];
+  return [...leave, ...sheets, ...reviews, ...steps, ...reported, ...invitations];
 }
 
 /** Everything waiting for the signed-in user, from the existing scoped lists. */
@@ -153,7 +170,14 @@ export function useInbox() {
     ...opts,
   });
 
-  const queries = [leave, sheets, mine, team, reported, events];
+  const steps = useQuery({
+    queryKey: checklistKeys.mine,
+    queryFn: fetchMyItems,
+    enabled: Boolean(user) && can.checklist,
+    ...opts,
+  });
+
+  const queries = [leave, sheets, mine, team, reported, events, steps];
   const items = buildInbox({
     leave: leave.data?.items,
     sheets: sheets.data?.items,
@@ -161,6 +185,7 @@ export function useInbox() {
     team: team.data?.items,
     reported: reported.data?.items,
     events: events.data?.items,
+    steps: steps.data?.items,
   });
   return {
     items,

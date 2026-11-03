@@ -5,6 +5,7 @@ import {
   Check,
   ClipboardCheck,
   Inbox,
+  ListTodo,
   MessageSquareWarning,
   Timer,
   type LucideIcon,
@@ -15,6 +16,7 @@ import { Link } from 'react-router';
 import { useCurrentUser } from '@/features/auth/use-auth';
 import { useMessages } from '@/features/auth/messages';
 import { useRespond } from '@/features/calendar/hooks';
+import { useTickItem } from '@/features/checklists/hooks';
 import { useDecideRequest } from '@/features/leave/hooks';
 import { useTypeName } from '@/features/leave/names';
 import { useDecideTimesheet } from '@/features/time/hooks';
@@ -32,6 +34,7 @@ const GROUP: Record<InboxKind, { icon: LucideIcon; to: string }> = {
   leave: { icon: CalendarOff, to: '/leave?tab=approvals' },
   timesheet: { icon: Timer, to: '/time?tab=approvals' },
   review: { icon: ClipboardCheck, to: '/reviews' },
+  checklist: { icon: ListTodo, to: '/checklists' },
   feedback: { icon: MessageSquareWarning, to: '/feedback?box=reported' },
   invitation: { icon: CalendarCheck, to: '/calendar?view=agenda' },
 };
@@ -207,6 +210,8 @@ function Row({
       return <SheetRow item={item} selected={selected} onToggle={onToggle} onDone={onDone} />;
     case 'review':
       return <ReviewRow item={item} />;
+    case 'checklist':
+      return <ChecklistRow item={item} onDone={onDone} />;
     case 'feedback':
       return <FeedbackRow item={item} />;
     case 'invitation':
@@ -439,6 +444,55 @@ function ReviewRow({ item }: { item: Extract<InboxItem, { kind: 'review' }> }) {
           </Link>
         </Button>
       }
+    />
+  );
+}
+
+function ChecklistRow({
+  item,
+  onDone,
+}: {
+  item: Extract<InboxItem, { kind: 'checklist' }>;
+  onDone: (text: string) => void;
+}) {
+  const { t, i18n } = useTranslation('inbox');
+  const language = i18n.resolvedLanguage ?? 'en';
+  const messages = useMessages();
+  const tick = useTickItem();
+  const { step } = item;
+  const who = step.checklist.employee;
+  const name = nameOf(who);
+  const today = useToday();
+  return (
+    <Shell
+      who={initials(who.firstName, who.lastName)}
+      title={step.title}
+      meta={t(`checklist.meta.${step.checklist.kind}`, {
+        name,
+        date: formatDay(step.dueDate, language),
+      })}
+      age={step.dueDate < today ? <Age since="" late /> : null}
+      actions={
+        <>
+          <Button
+            disabled={tick.isPending}
+            aria-label={t('checklist.doneOf', { title: step.title })}
+            onClick={() =>
+              tick.mutate(
+                { checklistId: step.checklist.id, itemId: step.id, done: true },
+                { onSuccess: () => onDone(t('done.ticked', { title: step.title })) },
+              )
+            }
+          >
+            <Check className="size-4" aria-hidden="true" />
+            {t('checklist.done')}
+          </Button>
+          <Button asChild variant="secondary">
+            <Link to={`/checklists/${step.checklist.id}`}>{t('checklist.open')}</Link>
+          </Button>
+        </>
+      }
+      error={tick.error && <Alert tone="danger">{messages.apiError(tick.error)}</Alert>}
     />
   );
 }

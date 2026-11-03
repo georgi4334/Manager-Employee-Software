@@ -14,6 +14,7 @@ import {
   Archive,
   ShieldCheck,
   ListChecks,
+  ListTodo,
   Timer,
   LayoutDashboard,
   Inbox,
@@ -149,6 +150,14 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Network,
     primary: false,
     permission: 'org.view',
+    group: 'people',
+  },
+  {
+    path: '/checklists',
+    labelKey: 'checklists',
+    icon: ListTodo,
+    primary: false,
+    permission: ['checklist.view', 'checklist.manage'],
     group: 'people',
   },
   {

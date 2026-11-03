@@ -13,21 +13,24 @@
     "timesheet": "Отчети за време",
     "review": "Оценки",
     "feedback": "Обратна връзка",
-    "invitation": "Покани"
+    "invitation": "Покани",
+    "checklist": "Чеклисти"
   },
   "group": {
     "leave": "Заявки за отпуск",
     "timesheet": "Отчети за време",
     "review": "Оценки",
     "feedback": "Сигнализирана обратна връзка",
-    "invitation": "Покани"
+    "invitation": "Покани",
+    "checklist": "Стъпки от чеклисти"
   },
   "open": {
     "leave": "Отвори Отпуски › Одобрения",
     "timesheet": "Отвори Време › Одобрения",
     "review": "Отвори Оценки",
     "feedback": "Отвори Обратна връзка › Сигнали",
-    "invitation": "Отвори Календар"
+    "invitation": "Отвори Календар",
+    "checklist": "Отвори чеклистите"
   },
   "age": {
     "today": "Днес",
@@ -78,7 +81,8 @@
   "done": {
     "approved": "Одобрено за {{name}}",
     "rejected": "Отхвърлено за {{name}}",
-    "answered": "Отговорът е изпратен"
+    "answered": "Отговорът е изпратен",
+    "ticked": "„{{title}}“ е готово"
   },
   "bulk": {
     "label": "Избрани елементи",
@@ -97,5 +101,14 @@
     "rejected_other": "{{count}} отхвърлени",
     "failed_one": "{{count}} не успя:",
     "failed_other": "{{count}} не успяха:"
+  },
+  "checklist": {
+    "meta": {
+      "onboarding": "Постъпване на {{name}} · срок {{date}}",
+      "offboarding": "Напускане на {{name}} · срок {{date}}"
+    },
+    "done": "Готово",
+    "doneOf": "Отбележи „{{title}}“ като готово",
+    "open": "Отвори"
   }
 }

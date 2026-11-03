@@ -17,6 +17,9 @@ import { GoalDetailPage } from '@/features/goals/GoalDetailPage';
 import { ReviewDetailPage } from '@/features/reviews/ReviewDetailPage';
 import { ReviewsPage } from '@/features/reviews/ReviewsPage';
 import { SkillsPage } from '@/features/skills/SkillsPage';
+import { ChecklistsPage } from '@/features/checklists/ChecklistsPage';
+import { ChecklistDetailPage } from '@/features/checklists/ChecklistDetailPage';
+import { TemplateEditorPage } from '@/features/checklists/TemplateEditorPage';
 import { FeedbackPage } from '@/features/feedback/FeedbackPage';
 import { MeetingDetailPage } from '@/features/one-on-ones/MeetingDetailPage';
 import { MeetingsPage } from '@/features/one-on-ones/MeetingsPage';
@@ -64,6 +67,7 @@ const IMPLEMENTED_PATHS = [
   '/retention',
   '/roles',
   '/inbox',
+  '/checklists',
 ];
 
 export const routes: RouteObject[] = [
@@ -143,6 +147,21 @@ export const routes: RouteObject[] = [
           {
             element: <RequirePermission permission="skill.view" />,
             children: [{ path: 'skills', element: <SkillsPage /> }],
+          },
+          {
+            // Assignees may open a checklist without these grants: the API decides (ADR 0040).
+            element: <RequirePermission permission={['checklist.view', 'checklist.manage']} />,
+            children: [
+              { path: 'checklists', element: <ChecklistsPage /> },
+              { path: 'checklists/:id', element: <ChecklistDetailPage /> },
+            ],
+          },
+          {
+            element: <RequirePermission permission="checklist.manage_templates" />,
+            children: [
+              { path: 'checklists/templates/new', element: <TemplateEditorPage /> },
+              { path: 'checklists/templates/:id', element: <TemplateEditorPage /> },
+            ],
           },
           {
             element: <RequirePermission permission="review.view" />,

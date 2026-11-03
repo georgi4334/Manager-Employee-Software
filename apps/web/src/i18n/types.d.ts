@@ -24,6 +24,7 @@ import type reviews from './locales/en/reviews.json';
 import type roles from './locales/en/roles.json';
 import type inbox from './locales/en/inbox.json';
 import type palette from './locales/en/palette.json';
+import type checklists from './locales/en/checklists.json';
 import type notifications from './locales/en/notifications.json';
 
 declare module 'i18next' {
@@ -56,6 +57,7 @@ declare module 'i18next' {
       roles: typeof roles;
       inbox: typeof inbox;
       palette: typeof palette;
+      checklists: typeof checklists;
     };
   }
 }

@@ -44,6 +44,10 @@ export const SIGNED_IN = [
   '/reviews',
   '/reviews?tab=team',
   '/reviews?tab=cycles',
+  '/checklists',
+  '/checklists?tab=people',
+  '/checklists?tab=templates',
+  '/checklists/templates/new',
   '/profile',
   '/does-not-exist',
 ];

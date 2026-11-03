@@ -124,6 +124,7 @@ describe('navigation by permission', () => {
         'Capacity',
         'Employees',
         'Organization',
+        'Checklists',
         'Goals',
         '1:1 meetings',
         'Feedback',

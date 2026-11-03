@@ -2,6 +2,7 @@ import type {
   CalendarEvent,
   FeedbackItem,
   LeaveRequest,
+  MyChecklistItem,
   ReviewSummary,
   Timesheet,
 } from '@intime/contracts';
@@ -91,5 +92,25 @@ export const event = (n: number, o: Partial<CalendarEvent> = {}): CalendarEvent 
   attendees: [],
   myResponse: 'needs_action',
   reminderMinutes: null,
+  ...o,
+});
+
+export const step = (n: number, o: Partial<MyChecklistItem> = {}): MyChecklistItem => ({
+  id: uuid(600 + n),
+  title: `Step ${n}`,
+  description: null,
+  responsible: 'manager',
+  assignee: DAN,
+  dueDate: '2026-11-06',
+  done: false,
+  doneAt: null,
+  doneBy: null,
+  canTick: true,
+  checklist: {
+    id: uuid(650),
+    kind: 'onboarding',
+    employee: { id: uuid(71), firstName: 'Eva', lastName: 'Martin' },
+  },
+  mine: true,
   ...o,
 });

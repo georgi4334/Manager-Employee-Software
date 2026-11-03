@@ -1,0 +1,128 @@
+{
+  "title": "Checklisten",
+  "intro": "Schritte beim Ein- und Austritt, datiert ab Eintritts- oder Austrittsdatum.",
+  "loading": "Checklisten werden geladen",
+  "retry": "Erneut versuchen",
+  "save": "Speichern",
+  "cancel": "Abbrechen",
+  "tabs": {
+    "label": "Bereiche",
+    "mine": "Meine Aufgaben",
+    "people": "Personen",
+    "templates": "Vorlagen"
+  },
+  "kind": {
+    "onboarding": "Eintritt",
+    "offboarding": "Austritt"
+  },
+  "status": {
+    "open": "Offen",
+    "done": "Erledigt",
+    "cancelled": "Abgebrochen"
+  },
+  "responsible": {
+    "employee": "Die Person",
+    "manager": "Ihre Führungskraft",
+    "hr": "HR"
+  },
+  "state": {
+    "done": "Erledigt",
+    "overdue": "Überfällig",
+    "due_soon": "Bald fällig",
+    "open": "Offen"
+  },
+  "hrGroup": "HR-Gruppe",
+  "due": "Fällig am {{date}}",
+  "progress": "{{done}} von {{total}} erledigt",
+  "overdue_one": "{{count}} überfällig",
+  "overdue_other": "{{count}} überfällig",
+  "anchor": {
+    "onboarding": "Beginnt am {{date}}",
+    "offboarding": "Geht am {{date}}"
+  },
+  "tick": "„{{title}}“ als erledigt markieren",
+  "untick": "„{{title}}“ als offen markieren",
+  "ticked": "„{{title}}“ erledigt",
+  "unticked": "„{{title}}“ ist wieder offen",
+  "mine": {
+    "empty": "Nichts wartet auf Sie.",
+    "of": "{{kind}} von {{name}}",
+    "forHr": "für HR",
+    "open": "Checkliste öffnen"
+  },
+  "filters": {
+    "kind": "Art",
+    "status": "Status",
+    "all": "Alle"
+  },
+  "people": {
+    "empty": "Hier gibt es keine Checklisten.",
+    "start": "Checkliste starten",
+    "person": "Person",
+    "template": "Vorlage",
+    "choose": "Auswählen …",
+    "anchorDate": "Eintritts- oder Austrittsdatum",
+    "anchorHint": "Leer: das Eintritts- oder Austrittsdatum, sonst heute.",
+    "submit": "Starten",
+    "noTemplates": "Es gibt noch keine Vorlagen. HR legt sie unter „Vorlagen“ an."
+  },
+  "detail": {
+    "back": "Checklisten",
+    "notFoundTitle": "Checkliste nicht gefunden",
+    "notFoundText": "Sie existiert nicht oder Sie dürfen sie nicht sehen.",
+    "items": "Schritte",
+    "empty": "Noch keine Schritte.",
+    "doneBy": "Erledigt von {{name}} am {{date}}",
+    "doneOn": "Erledigt am {{date}}",
+    "add": "Schritt hinzufügen",
+    "title": "Titel",
+    "description": "Details (optional)",
+    "responsible": "Wer erledigt es",
+    "dueDate": "Fällig am",
+    "assignee": "Zuständig",
+    "assigneeAuto": "Aus „Wer erledigt es“",
+    "edit": "„{{title}}“ bearbeiten",
+    "remove": "„{{title}}“ entfernen",
+    "cancelChecklist": "Checkliste abbrechen",
+    "confirmCancel": "Diese Checkliste abbrechen? Ihre Schritte können dann nicht mehr abgehakt werden.",
+    "yesCancel": "Ja, abbrechen",
+    "keep": "Behalten",
+    "cancelled": "Diese Checkliste wurde am {{date}} abgebrochen.",
+    "completed": "Alle Schritte sind erledigt."
+  },
+  "templates": {
+    "empty": "Noch keine Vorlagen.",
+    "new": "Neue Vorlage",
+    "default": "Startet automatisch",
+    "defaultHint": "Eine automatische Vorlage startet für jede neue Person (Eintritt) oder jede austretende Person (Austritt). Eine pro Art.",
+    "steps_one": "{{count}} Schritt",
+    "steps_other": "{{count}} Schritte"
+  },
+  "editor": {
+    "newTitle": "Neue Vorlage",
+    "editTitle": "Vorlage bearbeiten",
+    "back": "Vorlagen",
+    "notFound": "Vorlage nicht gefunden",
+    "name": "Name",
+    "kind": "Art",
+    "isDefault": "Automatisch starten",
+    "steps": "Schritte",
+    "stepTitle": "Schritt {{n}}",
+    "addStep": "Schritt hinzufügen",
+    "offset": "Tage ab dem Datum",
+    "offsetHint": "Jeder Schritt ist eine Anzahl Tage nach dem Eintritts- oder Austrittsdatum fällig; negative Zahlen liegen davor.",
+    "moveUp": "„{{title}}“ nach oben",
+    "moveDown": "„{{title}}“ nach unten",
+    "remove": "„{{title}}“ entfernen",
+    "save": "Vorlage speichern",
+    "delete": "Vorlage löschen",
+    "confirmDelete": "Diese Vorlage löschen? Laufende Checklisten behalten ihre Schritte.",
+    "yesDelete": "Ja, löschen"
+  },
+  "rule": {
+    "open": "Diese Person hat bereits eine offene Checkliste dieser Art.",
+    "status": "Diese Checkliste wurde abgebrochen.",
+    "limit": "Das ist das Maximum.",
+    "unknown_employee": "Wählen Sie eine aktive Person."
+  }
+}

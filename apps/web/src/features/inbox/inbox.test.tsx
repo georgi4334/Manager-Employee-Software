@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 import { initTestI18n } from '@/tests/i18n';
-import { event, leave, reported, review, sheet, uuid } from '@/tests/inbox-fixtures';
+import { event, leave, reported, review, sheet, step, uuid } from '@/tests/inbox-fixtures';
 import {
   API,
   errorResponse,
@@ -178,6 +178,30 @@ describe('Waiting for me', () => {
       expect(calls.responses).toEqual([{ id: uuid(501), response: 'tentative' }]),
     );
     expect(await screen.findByText('Answer sent')).toBeInTheDocument();
+  });
+
+  it('marks a checklist step done from the inbox', async () => {
+    serve({});
+    const ticks: unknown[] = [];
+    server.use(
+      http.get(`${API}/checklists/my-items`, () =>
+        HttpResponse.json({ items: [step(1, { title: 'Order a laptop' })] }),
+      ),
+      http.put(`${API}/checklists/:id/items/:itemId/done`, async ({ request, params }) => {
+        ticks.push({ item: params.itemId, ...((await request.json()) as object) });
+        return new HttpResponse(null, { status: 200 });
+      }),
+    );
+    await renderApp('/inbox');
+    const list = await main().findByRole('list', { name: /Checklist steps/ });
+    expect(within(list).getByText('Order a laptop').closest('li')).toHaveTextContent(
+      'Onboarding of Eva Martin',
+    );
+    await userEvent
+      .setup()
+      .click(within(list).getByRole('button', { name: 'Mark “Order a laptop” as done' }));
+    await waitFor(() => expect(ticks).toEqual([{ item: uuid(601), done: true }]));
+    expect(await screen.findByText('“Order a laptop” done')).toBeInTheDocument();
   });
 
   it('approves the selected leave and weeks in one go', async () => {

@@ -1,0 +1,128 @@
+{
+  "title": "Checklists",
+  "intro": "Onboarding and offboarding steps, dated from the start or leaving date.",
+  "loading": "Loading checklists",
+  "retry": "Try again",
+  "save": "Save",
+  "cancel": "Cancel",
+  "tabs": {
+    "label": "Sections",
+    "mine": "My to-dos",
+    "people": "People",
+    "templates": "Templates"
+  },
+  "kind": {
+    "onboarding": "Onboarding",
+    "offboarding": "Offboarding"
+  },
+  "status": {
+    "open": "Open",
+    "done": "Done",
+    "cancelled": "Cancelled"
+  },
+  "responsible": {
+    "employee": "The person",
+    "manager": "Their manager",
+    "hr": "HR"
+  },
+  "state": {
+    "done": "Done",
+    "overdue": "Overdue",
+    "due_soon": "Due soon",
+    "open": "Open"
+  },
+  "hrGroup": "HR group",
+  "due": "Due {{date}}",
+  "progress": "{{done}} of {{total}} done",
+  "overdue_one": "{{count}} overdue",
+  "overdue_other": "{{count}} overdue",
+  "anchor": {
+    "onboarding": "Starts {{date}}",
+    "offboarding": "Leaves {{date}}"
+  },
+  "tick": "Mark “{{title}}” as done",
+  "untick": "Mark “{{title}}” as not done",
+  "ticked": "“{{title}}” done",
+  "unticked": "“{{title}}” is open again",
+  "mine": {
+    "empty": "Nothing is waiting for you.",
+    "of": "{{kind}} of {{name}}",
+    "forHr": "for HR",
+    "open": "Open checklist"
+  },
+  "filters": {
+    "kind": "Kind",
+    "status": "Status",
+    "all": "All"
+  },
+  "people": {
+    "empty": "No checklists here.",
+    "start": "Start a checklist",
+    "person": "Person",
+    "template": "Template",
+    "choose": "Choose…",
+    "anchorDate": "Start or leaving date",
+    "anchorHint": "Empty: the hire or termination date, else today.",
+    "submit": "Start",
+    "noTemplates": "There are no templates yet. HR creates them under Templates."
+  },
+  "detail": {
+    "back": "Checklists",
+    "notFoundTitle": "Checklist not found",
+    "notFoundText": "It does not exist or you may not see it.",
+    "items": "Steps",
+    "empty": "No steps yet.",
+    "doneBy": "Done by {{name}} on {{date}}",
+    "doneOn": "Done on {{date}}",
+    "add": "Add a step",
+    "title": "Title",
+    "description": "Details (optional)",
+    "responsible": "Who does it",
+    "dueDate": "Due date",
+    "assignee": "Assignee",
+    "assigneeAuto": "From “Who does it”",
+    "edit": "Edit “{{title}}”",
+    "remove": "Remove “{{title}}”",
+    "cancelChecklist": "Cancel checklist",
+    "confirmCancel": "Cancel this checklist? Its steps can no longer be ticked.",
+    "yesCancel": "Yes, cancel it",
+    "keep": "Keep it",
+    "cancelled": "This checklist was cancelled on {{date}}.",
+    "completed": "Every step is done."
+  },
+  "templates": {
+    "empty": "No templates yet.",
+    "new": "New template",
+    "default": "Starts automatically",
+    "defaultHint": "An automatic template starts for every new person (onboarding) or every leaver (offboarding). One per kind.",
+    "steps_one": "{{count}} step",
+    "steps_other": "{{count}} steps"
+  },
+  "editor": {
+    "newTitle": "New template",
+    "editTitle": "Edit template",
+    "back": "Templates",
+    "notFound": "Template not found",
+    "name": "Name",
+    "kind": "Kind",
+    "isDefault": "Start automatically",
+    "steps": "Steps",
+    "stepTitle": "Step {{n}}",
+    "addStep": "Add a step",
+    "offset": "Days from the date",
+    "offsetHint": "Each step is due a number of days after the start or leaving date; negative numbers are before it.",
+    "moveUp": "Move “{{title}}” up",
+    "moveDown": "Move “{{title}}” down",
+    "remove": "Remove “{{title}}”",
+    "save": "Save template",
+    "delete": "Delete template",
+    "confirmDelete": "Delete this template? Running checklists keep their steps.",
+    "yesDelete": "Yes, delete"
+  },
+  "rule": {
+    "open": "This person already has an open checklist of this kind.",
+    "status": "This checklist was cancelled.",
+    "limit": "That is the maximum.",
+    "unknown_employee": "Choose an active person."
+  }
+}

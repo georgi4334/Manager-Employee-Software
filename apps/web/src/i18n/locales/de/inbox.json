@@ -13,21 +13,24 @@
     "timesheet": "Zeitnachweise",
     "review": "Beurteilungen",
     "feedback": "Feedback",
-    "invitation": "Einladungen"
+    "invitation": "Einladungen",
+    "checklist": "Checklisten"
   },
   "group": {
     "leave": "Abwesenheitsanträge",
     "timesheet": "Zeitnachweise",
     "review": "Beurteilungen",
     "feedback": "Gemeldetes Feedback",
-    "invitation": "Einladungen"
+    "invitation": "Einladungen",
+    "checklist": "Checklisten-Schritte"
   },
   "open": {
     "leave": "Abwesenheit › Genehmigungen öffnen",
     "timesheet": "Zeit › Genehmigungen öffnen",
     "review": "Beurteilungen öffnen",
     "feedback": "Feedback › Gemeldet öffnen",
-    "invitation": "Kalender öffnen"
+    "invitation": "Kalender öffnen",
+    "checklist": "Checklisten öffnen"
   },
   "age": {
     "today": "Heute",
@@ -78,7 +81,8 @@
   "done": {
     "approved": "Für {{name}} genehmigt",
     "rejected": "Für {{name}} abgelehnt",
-    "answered": "Antwort gesendet"
+    "answered": "Antwort gesendet",
+    "ticked": "„{{title}}“ erledigt"
   },
   "bulk": {
     "label": "Ausgewählte Einträge",
@@ -97,5 +101,14 @@
     "rejected_other": "{{count}} abgelehnt",
     "failed_one": "{{count}} ging nicht:",
     "failed_other": "{{count}} gingen nicht:"
+  },
+  "checklist": {
+    "meta": {
+      "onboarding": "Eintritt von {{name}} · fällig am {{date}}",
+      "offboarding": "Austritt von {{name}} · fällig am {{date}}"
+    },
+    "done": "Erledigt",
+    "doneOf": "„{{title}}“ als erledigt markieren",
+    "open": "Öffnen"
   }
 }

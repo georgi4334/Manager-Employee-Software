@@ -29,5 +29,6 @@
   "waiting_one": "{{count}} чака вас",
   "waiting_other": "{{count}} чакат вас",
   "inbox": "Чака мен",
-  "inboxShort": "Чака"
+  "inboxShort": "Чака",
+  "checklists": "Чеклисти"
 }

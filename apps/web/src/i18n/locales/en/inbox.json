@@ -13,21 +13,24 @@
     "timesheet": "Timesheets",
     "review": "Reviews",
     "feedback": "Feedback",
-    "invitation": "Invitations"
+    "invitation": "Invitations",
+    "checklist": "Checklists"
   },
   "group": {
     "leave": "Leave requests",
     "timesheet": "Timesheets",
     "review": "Reviews",
     "feedback": "Reported feedback",
-    "invitation": "Invitations"
+    "invitation": "Invitations",
+    "checklist": "Checklist steps"
   },
   "open": {
     "leave": "Open Leave › Approvals",
     "timesheet": "Open Time › Approvals",
     "review": "Open Reviews",
     "feedback": "Open Feedback › Reported",
-    "invitation": "Open Calendar"
+    "invitation": "Open Calendar",
+    "checklist": "Open Checklists"
   },
   "age": {
     "today": "Today",
@@ -78,7 +81,8 @@
   "done": {
     "approved": "Approved for {{name}}",
     "rejected": "Rejected for {{name}}",
-    "answered": "Answer sent"
+    "answered": "Answer sent",
+    "ticked": "“{{title}}” done"
   },
   "bulk": {
     "label": "Selected items",
@@ -97,5 +101,14 @@
     "rejected_other": "{{count}} rejected",
     "failed_one": "{{count}} could not be done:",
     "failed_other": "{{count}} could not be done:"
+  },
+  "checklist": {
+    "meta": {
+      "onboarding": "Onboarding of {{name}} · due {{date}}",
+      "offboarding": "Offboarding of {{name}} · due {{date}}"
+    },
+    "done": "Mark done",
+    "doneOf": "Mark “{{title}}” as done",
+    "open": "Open"
   }
 }

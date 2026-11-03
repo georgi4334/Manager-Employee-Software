@@ -29,5 +29,6 @@
   "waiting_one": "{{count}} wartet auf Sie",
   "waiting_other": "{{count}} warten auf Sie",
   "inbox": "Wartet auf mich",
-  "inboxShort": "Wartet"
+  "inboxShort": "Wartet",
+  "checklists": "Checklisten"
 }

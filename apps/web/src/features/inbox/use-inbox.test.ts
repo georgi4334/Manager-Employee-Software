@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { event, leave, reported, review, sheet, uuid } from '@/tests/inbox-fixtures';
+import { event, leave, reported, review, sheet, step, uuid } from '@/tests/inbox-fixtures';
 import { buildInbox, countByKind, inboxSources } from './use-inbox';
 
 describe('inboxSources', () => {
@@ -11,6 +11,7 @@ describe('inboxSources', () => {
       reviewTeam: false,
       feedback: false,
       invitation: false,
+      checklist: true,
     });
     expect(
       inboxSources({
@@ -27,6 +28,7 @@ describe('inboxSources', () => {
       reviewTeam: false,
       feedback: true,
       invitation: true,
+      checklist: true,
     });
   });
 
@@ -87,6 +89,17 @@ describe('buildInbox', () => {
     expect(items[1]).toMatchObject({ part: 'self', late: false });
   });
 
+  it('lists open checklist steps by due date', () => {
+    const items = buildInbox({
+      steps: [
+        step(1, { dueDate: '2026-11-20' }),
+        step(2, { dueDate: '2026-11-03' }),
+        step(3, { done: true }),
+      ],
+    });
+    expect(items.map((i) => i.key)).toEqual([`step:${uuid(602)}`, `step:${uuid(601)}`]);
+  });
+
   it('lists only open reports', () => {
     const items = buildInbox({
       reported: [reported(1), reported(2, { report: 'kept' }), reported(3, { report: 'none' })],
@@ -130,6 +143,7 @@ describe('buildInbox', () => {
       review: 1,
       feedback: 1,
       invitation: 1,
+      checklist: 0,
     });
   });
 });
