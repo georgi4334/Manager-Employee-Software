@@ -3,6 +3,8 @@ import { signIn } from '../support/auth';
 import { ADMIN_EMAIL, EMPLOYEE_EMAIL } from '../support/constants';
 
 // The audit log viewer (docs/adr/0041-audit-log-viewer.md) shows the approval made in the leave spec.
+test.use({ viewport: { width: 1280, height: 800 } });
+
 test('the administrator reads and filters the audit log; an employee cannot', async ({
   page,
   browser,
