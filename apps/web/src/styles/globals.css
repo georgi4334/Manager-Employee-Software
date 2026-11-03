@@ -186,6 +186,14 @@
     -webkit-backdrop-filter: blur(18px) saturate(1.6);
     backdrop-filter: blur(18px) saturate(1.6);
   }
+  /* The blur makes every glass pane its own layer, so a pop-up inside one (date picker, menu) cannot rise above
+     the next pane. While a pop-up is open, its pane rises instead. */
+  .glass:has(.menu-panel) {
+    z-index: 30;
+  }
+  .glass:not(.fixed, .sticky, .absolute):has(.menu-panel) {
+    position: relative;
+  }
   .glass-hover {
     transition: background-color var(--dur-fast) var(--ease-standard);
   }
