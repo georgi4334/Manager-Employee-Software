@@ -47,5 +47,9 @@
     "late": "verspätet",
     "next": "als Nächstes",
     "upcoming": "geplant"
+  },
+  "sidebar": {
+    "collapse": "Menü einklappen",
+    "expand": "Menü ausklappen"
   }
 }

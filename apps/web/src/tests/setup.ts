@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup, configure } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
+import { reloadSidebarState } from '@/shared/stores/sidebar.store';
 import { initTestI18n } from './i18n';
 import { API, server, signedInHandlers, unhandledRequests } from './server';
 
@@ -31,6 +32,7 @@ afterEach(() => {
   cleanup();
   window.localStorage.clear();
   delete document.documentElement.dataset.theme;
+  reloadSidebarState();
   if (missed.length > 0) {
     throw new Error(
       `API calls without a handler (add one to the test or tests/server.ts):\n${missed.join('\n')}`,

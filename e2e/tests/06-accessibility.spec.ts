@@ -111,6 +111,16 @@ for (const variant of variants) {
       await page.getByRole('button', { name: 'Customize' }).click();
       found.push(...(await scan(page, '/ (dashboard edit mode)')));
       await page.getByRole('button', { name: 'Cancel' }).click();
+      // the collapsed side menu (an icon rail) with an entry's tooltip; desktop only
+      if (variant.viewport.width >= 768) {
+        await page.getByRole('button', { name: 'Collapse menu' }).click();
+        await page
+          .getByRole('navigation', { name: 'Main navigation' })
+          .getByRole('link', { name: 'Leave', exact: true })
+          .hover();
+        found.push(...(await scan(page, '/ (side menu collapsed)')));
+        await page.getByRole('button', { name: 'Expand menu' }).click();
+      }
       // forms and panels that only exist after an action
       await settle(page, '/calendar?view=agenda');
       // an event's dialog: details, then the form inside it

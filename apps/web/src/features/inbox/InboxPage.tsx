@@ -625,7 +625,7 @@ function BulkBar({
     <div
       role="region"
       aria-label={t('bulk.label')}
-      className="fixed inset-x-3 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-20 mx-auto max-w-2xl space-y-2 rounded-2xl bg-sidebar p-3 text-sidebar-foreground shadow-card md:bottom-6 md:left-[calc(16rem+1.5rem)] md:right-6"
+      className="fixed inset-x-3 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-20 mx-auto max-w-2xl space-y-2 rounded-2xl bg-sidebar p-3 text-sidebar-foreground shadow-card md:bottom-6 md:left-[calc(var(--sidebar-w,16rem)+1.5rem)] md:right-6"
     >
       {failure && (
         <Alert tone="danger">

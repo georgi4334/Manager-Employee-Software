@@ -302,6 +302,7 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Page sections (tabs) are defined once in `app/sections.ts` (`PAGE_SECTIONS`: param `tab`/`box`, order, rule per section; `visibleSections`, `useVisibleSections`). Pages build their tab lists from it and the menu lists the same sections under the **open** entry only (more than one, `aria-current` on the current). A new tabbed page adds itself there; view switches and filters are not sections. Counts (`useSectionCounts` in `app/section-counts.ts`: leave and timesheet approvals, reported feedback) reuse the section list's own query and cache; zero shows nothing.
 - Phones: the bottom bar keeps its four entries; "More" shows the rest as tiles under the same group headings.
 - Tests that query lists, list items or texts by name should scope to `main` (the menu has lists and headings too).
+- The desktop menu can collapse to an icon rail (docs/adr/0042-collapsible-sidebar.md): `useSidebarStore` (`localStorage` `intime.sidebar`, try/catch), `--sidebar-w` on the shell for anything fixed beside the menu, labels stay as `sr-only` link names plus a hover/focus tooltip (`data-rail-tip`), sections hidden on the rail. Width is never animated.
 
 ## Waiting for me (docs/adr/0038-waiting-for-me.md)
 
