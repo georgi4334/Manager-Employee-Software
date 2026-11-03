@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import type { AuditAction } from '@intime/contracts';
 import type { Prisma } from '../../generated/prisma/client.js';
 import type { TenantTx } from '../../infrastructure/tenancy/tenant-context.js';
 
 export interface AuditEntry {
   /** The signed-in user; null for system actions (CLI, jobs). */
   actorUserId: string | null;
-  /** Dotted verb, e.g. "user.disabled". */
-  action: string;
+  /** Dotted verb from the catalog (`AUDIT_AREAS` in contracts), e.g. "user.disabled". */
+  action: AuditAction;
   entity: string;
   entityId?: string;
   /** Only ids, role keys and statuses: no secrets and no personal data beyond what identifies the record. */

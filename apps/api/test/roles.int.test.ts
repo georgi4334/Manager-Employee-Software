@@ -5,6 +5,7 @@ import {
   mergeGrants,
   systemRoleGrants,
   type SystemRole,
+  type AuditAction,
 } from '@intime/contracts';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service.js';
@@ -432,7 +433,7 @@ describe.skipIf(!urls)('roles, permissions and audit log (real database)', () =>
   });
 
   describe('audit log', () => {
-    const record = (tenantId: string, action = 'user.disabled') =>
+    const record = (tenantId: string, action: AuditAction = 'user.disabled') =>
       asTenant(tenantId, (tx) =>
         audit.record(tx, {
           actorUserId: '0192f5a0-0000-7000-8000-00000000000a',
@@ -468,7 +469,8 @@ describe.skipIf(!urls)('roles, permissions and audit log (real database)', () =>
     it('rejects blank actions', async () => {
       await expect(
         asTenant(tenantA, (tx) =>
-          audit.record(tx, { actorUserId: null, action: ' ', entity: 'user' }),
+          // a blank action only gets past the type by force; the database still refuses it
+          audit.record(tx, { actorUserId: null, action: ' ' as AuditAction, entity: 'user' }),
         ),
       ).rejects.toThrow();
     });

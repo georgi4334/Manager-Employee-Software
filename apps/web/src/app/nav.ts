@@ -12,6 +12,7 @@ import {
   ChartColumn,
   Sparkles,
   Archive,
+  ScrollText,
   ShieldCheck,
   ListChecks,
   ListTodo,
@@ -222,6 +223,14 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Archive,
     primary: false,
     permission: 'gdpr.manage_retention',
+    group: 'admin',
+  },
+  {
+    path: '/audit-log',
+    labelKey: 'auditLog',
+    icon: ScrollText,
+    primary: false,
+    permission: 'admin.audit_log.view',
     group: 'admin',
   },
 ];

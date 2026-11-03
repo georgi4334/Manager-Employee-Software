@@ -8,6 +8,7 @@ import {
   type SkillPeopleQuery,
   type UpdateSkillCategoryRequest,
   type UpdateSkillRequest,
+  type AuditAction,
 } from '@intime/contracts';
 import type { Prisma } from '../../generated/prisma/client.js';
 import type { RequestAuth } from '../../common/auth/auth.types.js';
@@ -376,7 +377,7 @@ export class SkillsService {
   private record(
     tx: TenantTx,
     actor: RequestAuth,
-    action: string,
+    action: AuditAction,
     entity: string,
     entityId: string,
     fields?: string[],

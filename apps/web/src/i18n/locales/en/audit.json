@@ -1,0 +1,206 @@
+{
+  "title": "Audit log",
+  "intro": "Who changed what in the areas you look after. Entries keep ids and field names, never the contents of personal data.",
+  "filters": "Filters",
+  "area": "Area",
+  "allAreas": "All areas",
+  "from": "From",
+  "to": "To",
+  "invalidRange": "The end date is before the start date.",
+  "clearFilters": "Clear filters",
+  "recordFilter": "History of one record",
+  "actorFilter": "Changes by {{name}}",
+  "showAllRecords": "Show all records",
+  "showEveryone": "Show everyone",
+  "loading": "Loading the audit log…",
+  "empty": "Nothing was recorded for these filters.",
+  "retry": "Try again",
+  "list": "Audit entries",
+  "total_one": "{{count}} entry",
+  "total_other": "{{count}} entries",
+  "system": "System",
+  "unknownPerson": "A former user",
+  "erasedPerson": "An erased person",
+  "about": "About {{name}}",
+  "by": "By",
+  "details": "Recorded data",
+  "before": "Before",
+  "after": "After",
+  "noDetails": "Nothing else was recorded.",
+  "historyOf": "History of this record",
+  "byThisPerson": "More by this person",
+  "unknownAction": "Other change",
+  "pagination": "Audit log pages",
+  "page": "Page {{page}} of {{pages}}",
+  "previous": "Previous",
+  "next": "Next",
+  "areas": {
+    "workspace": "Workspace",
+    "users": "Users",
+    "roles": "Roles",
+    "people": "People and organization",
+    "compensation": "Pay",
+    "privacy": "Data protection",
+    "leave": "Leave",
+    "attendance": "Attendance",
+    "time": "Time",
+    "projects": "Projects and tasks",
+    "calendar": "Calendar",
+    "goals": "Goals",
+    "reviews": "Performance reviews",
+    "feedback": "Feedback",
+    "skills": "Skills",
+    "checklists": "Checklists"
+  },
+  "actions": {
+    "tenant": {
+      "created": "Workspace created"
+    },
+    "dashboard": {
+      "updated": "Dashboard changed",
+      "reset": "Dashboard reset to the default"
+    },
+    "ai": {
+      "workspace_updated": "Assistant settings changed",
+      "key_set": "Assistant key saved",
+      "key_removed": "Assistant key removed"
+    },
+    "user": {
+      "invited": "User invited",
+      "disabled": "Account disabled",
+      "enabled": "Account enabled",
+      "roles_changed": "Roles of a user changed",
+      "role_granted": "Role granted"
+    },
+    "role": {
+      "created": "Role created",
+      "updated": "Role changed",
+      "deleted": "Role deleted",
+      "moved": "Role moved in the tree"
+    },
+    "employee": {
+      "created": "Employee added",
+      "updated": "Employee details changed",
+      "invited": "Employee invited to sign in",
+      "deactivated": "Employee deactivated",
+      "reactivated": "Employee reactivated",
+      "schedule_set": "Working hours set",
+      "schedule_removed": "Working hours removed"
+    },
+    "org": {
+      "department_created": "Department created",
+      "department_updated": "Department changed",
+      "department_deleted": "Department deleted",
+      "team_created": "Team created",
+      "team_updated": "Team changed",
+      "team_deleted": "Team deleted",
+      "team_members_changed": "Team members changed",
+      "employee_assigned": "Manager or department changed",
+      "employee_offboarded": "Reporting line updated after leaving"
+    },
+    "compensation": {
+      "set": "Pay record saved",
+      "removed": "Pay record removed"
+    },
+    "privacy": {
+      "exported": "Personal data exported",
+      "erased": "Personal data erased",
+      "retention_updated": "Retention settings changed",
+      "retention_hold_set": "Retention hold set",
+      "retention_hold_released": "Retention hold released"
+    },
+    "leave": {
+      "requested": "Leave requested",
+      "approved": "Leave approved",
+      "rejected": "Leave rejected",
+      "cancelled": "Leave cancelled",
+      "balance_adjusted": "Leave balance adjusted",
+      "holiday_created": "Holiday added",
+      "holiday_deleted": "Holiday removed",
+      "settings_updated": "Leave settings changed",
+      "type_created": "Leave type created",
+      "type_updated": "Leave type changed"
+    },
+    "attendance": {
+      "created": "Attendance added for someone",
+      "updated": "Attendance corrected",
+      "deleted": "Attendance removed"
+    },
+    "time": {
+      "exported": "Hours exported"
+    },
+    "timesheet": {
+      "submitted": "Timesheet submitted",
+      "approved": "Timesheet approved",
+      "rejected": "Timesheet rejected",
+      "reopened": "Timesheet reopened"
+    },
+    "client": {
+      "created": "Client created",
+      "updated": "Client changed"
+    },
+    "project": {
+      "created": "Project created",
+      "updated": "Project changed"
+    },
+    "assignment": {
+      "created": "Person staffed on a project",
+      "updated": "Project staffing changed",
+      "deleted": "Person removed from a project"
+    },
+    "milestone": {
+      "created": "Milestone added",
+      "updated": "Milestone changed",
+      "deleted": "Milestone removed"
+    },
+    "task": {
+      "created": "Task created",
+      "updated": "Task changed",
+      "deleted": "Task deleted"
+    },
+    "calendar": {
+      "event_created": "Team or company event created",
+      "event_updated": "Team or company event changed",
+      "event_deleted": "Team or company event deleted"
+    },
+    "goal": {
+      "created": "Goal created",
+      "updated": "Goal changed",
+      "deleted": "Goal deleted",
+      "key_result_changed": "Key results changed"
+    },
+    "review": {
+      "cycle_created": "Review cycle created",
+      "cycle_updated": "Review cycle changed",
+      "cycle_deleted": "Review cycle deleted",
+      "competency_added": "Competency added",
+      "competency_updated": "Competency changed",
+      "competency_removed": "Competency removed",
+      "cycle_status": "Review cycle moved to the next stage",
+      "cycle_opened": "Review cycle opened",
+      "calibrated": "Rating calibrated",
+      "released": "Reviews released",
+      "reopened": "Review reopened"
+    },
+    "feedback": {
+      "removed": "Reported feedback removed"
+    },
+    "skill": {
+      "category_created": "Skill category created",
+      "category_updated": "Skill category changed",
+      "category_deleted": "Skill category deleted",
+      "created": "Skill added",
+      "updated": "Skill changed",
+      "deleted": "Skill deleted"
+    },
+    "checklist": {
+      "started": "Checklist started",
+      "cancelled": "Checklist cancelled"
+    },
+    "checklist_template": {
+      "created": "Checklist template created",
+      "updated": "Checklist template changed",
+      "deleted": "Checklist template deleted"
+    }
+  }
+}
