@@ -240,6 +240,8 @@ export class ChecklistsService {
 
   cancel(actor: RequestAuth, id: string): Promise<ChecklistDetail> {
     return this.db.tx(async (tx) => {
+      // The same lock as ticking: a last tick and a cancel must not cross (status vs completed_at).
+      await this.lockChecklist(tx, id);
       const row = await this.findVisible(tx, actor, id);
       await this.assertManages(actor, row.employeeId);
       if (row.status !== 'open')
@@ -332,7 +334,7 @@ export class ChecklistsService {
   tick(actor: RequestAuth, id: string, itemId: string, done: boolean): Promise<ChecklistDetail> {
     return this.db.tx(async (tx) => {
       // Lock the checklist so two last ticks agree on its status.
-      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`checklist:${id}`}))`;
+      await this.lockChecklist(tx, id);
       const row = await this.findVisible(tx, actor, id);
       const item = row.items.find((i) => i.id === itemId);
       if (!item) throw notFound('Checklist item');
@@ -606,11 +608,15 @@ export class ChecklistsService {
 
   /** A checklist the caller may edit: visible, managed by them, not cancelled. */
   private async editable(tx: TenantTx, actor: RequestAuth, id: string): Promise<ChecklistRow> {
-    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`checklist:${id}`}))`;
+    await this.lockChecklist(tx, id);
     const row = await this.findVisible(tx, actor, id);
     await this.assertManages(actor, row.employeeId);
     if (row.status === 'cancelled') throw conflict('status', 'The checklist was cancelled');
     return row;
+  }
+
+  private async lockChecklist(tx: TenantTx, id: string): Promise<void> {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`checklist:${id}`}))`;
   }
 
   private async assertManages(actor: RequestAuth, employeeId: string): Promise<void> {

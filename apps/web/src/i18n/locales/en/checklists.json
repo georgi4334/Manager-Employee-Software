@@ -124,5 +124,9 @@
     "status": "This checklist was cancelled.",
     "limit": "That is the maximum.",
     "unknown_employee": "Choose an active person."
-  }
+  },
+  "pagination": "Pages",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page {{page}} of {{pages}}"
 }

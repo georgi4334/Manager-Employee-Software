@@ -36,6 +36,18 @@ export function TasksPage() {
   );
   const [type, setType] = useState<ListParams['type']>('all');
   const [page, setPage] = useState(1);
+  // A new search in the address (the palette opening a task while this page is open) replaces the current one.
+  const urlQ = params.get('q') ?? '';
+  const [seenQ, setSeenQ] = useState(urlQ);
+  if (urlQ !== seenQ) {
+    setSeenQ(urlQ);
+    if (urlQ) {
+      setSearch(urlQ);
+      setQ(urlQ);
+      setStatus('all');
+      setPage(1);
+    }
+  }
   const projectId = params.get('project') ?? '';
   const view: View = params.get('view') === 'board' ? 'board' : 'list';
   useEffect(() => {

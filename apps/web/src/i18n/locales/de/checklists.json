@@ -124,5 +124,9 @@
     "status": "Diese Checkliste wurde abgebrochen.",
     "limit": "Das ist das Maximum.",
     "unknown_employee": "Wählen Sie eine aktive Person."
-  }
+  },
+  "pagination": "Seiten",
+  "previous": "Zurück",
+  "next": "Weiter",
+  "page": "Seite {{page}} von {{pages}}"
 }

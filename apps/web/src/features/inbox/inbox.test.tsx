@@ -204,6 +204,25 @@ describe('Waiting for me', () => {
     expect(await screen.findByText('“Order a laptop” done')).toBeInTheDocument();
   });
 
+  it('acts only on selected items the filter shows', async () => {
+    server.use(...signedInHandlers(userWithRole('admin')));
+    const calls = serve({
+      leave: [leave(1, { employee: EVA })],
+      sheets: [sheet(1, { employee: TOM })],
+    });
+    await renderApp('/inbox');
+    const user = userEvent.setup();
+    await user.click(await main().findByRole('checkbox', { name: 'Select Eva Martin' }));
+    await user.click(main().getByRole('button', { name: 'Timesheets 1' }));
+    // the leave request is hidden now: nothing to decide yet
+    expect(screen.queryByRole('region', { name: 'Selected items' })).toBeNull();
+    await user.click(main().getByRole('checkbox', { name: 'Select Tom Berg' }));
+    const bar = screen.getByRole('region', { name: 'Selected items' });
+    expect(bar).toHaveTextContent('1 selected');
+    await user.click(within(bar).getByRole('button', { name: 'Approve 1' }));
+    await waitFor(() => expect(calls.decisions).toEqual([`sheet:${uuid(201)}:approve`]));
+  });
+
   it('approves the selected leave and weeks in one go', async () => {
     server.use(...signedInHandlers(userWithRole('admin')));
     const calls = serve({

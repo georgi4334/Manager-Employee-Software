@@ -1,5 +1,5 @@
 import type { Employee, ProjectSummary, Task } from '@intime/contracts';
-import { screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
@@ -115,6 +115,12 @@ describe('command palette', () => {
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     await user.keyboard('{Meta>}k{/Meta}');
     expect(dialog()).toBeInTheDocument();
+  });
+
+  it('opens with Ctrl+K on a Cyrillic keyboard layout (the physical K key)', async () => {
+    await renderApp('/');
+    fireEvent.keyDown(document, { key: 'л', code: 'KeyK', ctrlKey: true });
+    expect(await screen.findByRole('dialog', { name: 'Search and go' })).toBeInTheDocument();
   });
 
   it('finds a page section and goes there with Enter', async () => {

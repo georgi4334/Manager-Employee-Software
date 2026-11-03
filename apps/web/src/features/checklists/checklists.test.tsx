@@ -11,7 +11,14 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 import { initTestI18n } from '@/tests/i18n';
-import { API, errorResponse, server, signedInHandlers, userWithRole } from '@/tests/server';
+import {
+  API,
+  errorResponse,
+  server,
+  signedInHandlers,
+  userWithPermissions,
+  userWithRole,
+} from '@/tests/server';
 import { renderApp } from '@/tests/utils';
 
 const uuid = (n: number) => `0192f5a0-0000-7000-8000-${String(n).padStart(12, '0')}`;
@@ -286,6 +293,32 @@ describe('checklists page', () => {
       'href',
       '/checklists/templates/new',
     );
+  });
+});
+
+describe('paging and access', () => {
+  it('pages through more checklists than fit on one page', async () => {
+    server.use(...signedInHandlers(userWithRole('hr')));
+    const calls = serve({ list: [summary()] });
+    server.use(
+      http.get(`${API}/checklists`, ({ request }) => {
+        calls.lists.push(new URL(request.url));
+        return HttpResponse.json({ items: [summary()], total: 30, page: 1, pageSize: 25 });
+      }),
+    );
+    await renderApp('/checklists?tab=people');
+    expect(await main().findByText('Page 1 of 2')).toBeInTheDocument();
+    await userEvent.setup().click(main().getByRole('button', { name: 'Next' }));
+    await waitFor(() => expect(calls.lists.at(-1)?.searchParams.get('page')).toBe('2'));
+  });
+
+  it('lets an assignee without checklist permissions open the checklist of their step', async () => {
+    server.use(...signedInHandlers(userWithPermissions({})));
+    serve({ detail: detail({ canManage: false }) });
+    await renderApp(`/checklists/${uuid(50)}`);
+    expect(
+      await main().findByRole('heading', { level: 1, name: 'Eva Martin' }),
+    ).toBeInTheDocument();
   });
 });
 

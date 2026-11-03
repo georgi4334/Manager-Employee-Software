@@ -189,7 +189,8 @@
   /* The blur makes every glass pane its own layer, so a pop-up inside one (date picker, menu) cannot rise above
      the next pane. While a pop-up is open, its pane rises instead. */
   .glass:has(.menu-panel) {
-    z-index: 30;
+    /* Above neighbouring panes (auto), below the sticky header (z-10) and the phone bottom bar (z-30). */
+    z-index: 5;
   }
   .glass:not(.fixed, .sticky, .absolute):has(.menu-panel) {
     position: relative;

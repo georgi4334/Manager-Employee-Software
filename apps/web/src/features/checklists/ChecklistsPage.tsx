@@ -20,6 +20,7 @@ import { SkeletonCard, SkeletonGroup } from '@/shared/ui/skeleton';
 import { TabContent, TabList } from '@/shared/ui/tabs';
 import { initials } from '@/shared/ui/tiles';
 import { startFormSchema, toStartRequest, type StartFormValues } from './forms';
+import { PAGE_SIZE } from './api';
 import { useChecklists, useMyItems, useStartChecklist, useTemplates, useTickItem } from './hooks';
 import { KindPill, StateChip, StatusPill, TickButton, itemState, useToday } from './ui';
 import { useChecklistErrors } from './use-checklist-errors';
@@ -171,7 +172,9 @@ function PeopleTab() {
   const [kind, setKind] = useState<ChecklistQuery['kind']>('all');
   const [status, setStatus] = useState<ChecklistQuery['status']>('open');
   const [starting, setStarting] = useState(false);
-  const query = useChecklists({ kind, status, page: 1 });
+  const [page, setPage] = useState(1);
+  const query = useChecklists({ kind, status, page });
+  const pages = query.data ? Math.max(1, Math.ceil(query.data.total / PAGE_SIZE)) : 1;
 
   return (
     <div className="space-y-4">
@@ -179,7 +182,14 @@ function PeopleTab() {
         <div className="min-w-40 flex-1 sm:flex-none">
           <Field label={t('filters.kind')}>
             {(p) => (
-              <Select {...p} value={kind} onChange={(e) => setKind(e.target.value as typeof kind)}>
+              <Select
+                {...p}
+                value={kind}
+                onChange={(e) => {
+                  setKind(e.target.value as typeof kind);
+                  setPage(1);
+                }}
+              >
                 <option value="all">{t('filters.all')}</option>
                 <option value="onboarding">{t('kind.onboarding')}</option>
                 <option value="offboarding">{t('kind.offboarding')}</option>
@@ -193,7 +203,10 @@ function PeopleTab() {
               <Select
                 {...p}
                 value={status}
-                onChange={(e) => setStatus(e.target.value as typeof status)}
+                onChange={(e) => {
+                  setStatus(e.target.value as typeof status);
+                  setPage(1);
+                }}
               >
                 <option value="open">{t('status.open')}</option>
                 <option value="done">{t('status.done')}</option>
@@ -263,6 +276,17 @@ function PeopleTab() {
             );
           })}
         </ul>
+      )}
+      {pages > 1 && (
+        <nav className="flex items-center justify-between gap-2" aria-label={t('pagination')}>
+          <Button variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+            {t('previous')}
+          </Button>
+          <span className="text-sm text-muted-foreground">{t('page', { page, pages })}</span>
+          <Button variant="secondary" disabled={page >= pages} onClick={() => setPage(page + 1)}>
+            {t('next')}
+          </Button>
+        </nav>
       )}
     </div>
   );

@@ -36,7 +36,10 @@ const onMac = () =>
   /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
 
 const isShortcut = (event: globalThis.KeyboardEvent) =>
-  (event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'k';
+  (event.ctrlKey || event.metaKey) &&
+  !event.altKey &&
+  // The physical key, so Ctrl+K also works on Cyrillic and other non-Latin layouts.
+  (event.code === 'KeyK' || event.key.toLowerCase() === 'k');
 
 /**
  * The header search (docs/adr/0039-command-palette.md): a button, Ctrl+K / ⌘K, and the dialog with pages, actions,

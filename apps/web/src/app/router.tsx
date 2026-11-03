@@ -148,14 +148,10 @@ export const routes: RouteObject[] = [
             element: <RequirePermission permission="skill.view" />,
             children: [{ path: 'skills', element: <SkillsPage /> }],
           },
-          {
-            // Assignees may open a checklist without these grants: the API decides (ADR 0040).
-            element: <RequirePermission permission={['checklist.view', 'checklist.manage']} />,
-            children: [
-              { path: 'checklists', element: <ChecklistsPage /> },
-              { path: 'checklists/:id', element: <ChecklistDetailPage /> },
-            ],
-          },
+          // No route guard: assignees open their checklist and to-dos whatever their grants; the API decides what they
+          // see (ADR 0040), and an invisible checklist answers 404.
+          { path: 'checklists', element: <ChecklistsPage /> },
+          { path: 'checklists/:id', element: <ChecklistDetailPage /> },
           {
             element: <RequirePermission permission="checklist.manage_templates" />,
             children: [

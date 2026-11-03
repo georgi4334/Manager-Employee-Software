@@ -11,6 +11,7 @@ import {
   UserRound,
   type LucideIcon,
 } from 'lucide-react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { userHasPermission, type PermissionRequirement } from '@/features/auth/permissions';
 import { useCurrentUser } from '@/features/auth/use-auth';
@@ -93,9 +94,11 @@ export interface PaletteEntry {
 export function useStaticEntries(): PaletteEntry[] {
   const { data: user } = useCurrentUser();
   const { t } = useTranslation(['palette', 'nav']);
-  const text = t as unknown as (key: string) => string;
-  const entries = paletteTargets(user?.permissions as GrantedPermissions | undefined).map(
-    (target) => {
+  const permissions = user?.permissions as GrantedPermissions | undefined;
+  // Built once per user and language, not on every keystroke of the palette.
+  return useMemo(() => {
+    const text = t as unknown as (key: string) => string;
+    const entries = paletteTargets(permissions).map((target) => {
       switch (target.kind) {
         case 'page':
           return { ...target, label: text(`nav:${target.labelKey}`) };
@@ -110,13 +113,13 @@ export function useStaticEntries(): PaletteEntry[] {
         case 'action':
           return { ...target, label: t(`palette:actions.${target.id}`) };
       }
-    },
-  );
-  // A section named like its page ("Projects › Projects") only repeats the page entry.
-  return entries.filter(
-    (entry) =>
-      entry.kind !== 'section' ||
-      !('sectionKey' in entry) ||
-      text(entry.sectionKey) !== text(`nav:${entry.labelKey}`),
-  );
+    });
+    // A section named like its page ("Projects › Projects") only repeats the page entry.
+    return entries.filter(
+      (entry) =>
+        entry.kind !== 'section' ||
+        !('sectionKey' in entry) ||
+        text(entry.sectionKey) !== text(`nav:${entry.labelKey}`),
+    );
+  }, [permissions, t]);
 }

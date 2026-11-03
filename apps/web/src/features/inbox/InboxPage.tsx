@@ -59,7 +59,8 @@ export function InboxPage() {
   const [said, setSaid] = useState('');
   const counts = countByKind(inbox.items);
   const shown = inbox.items.filter((i) => filter === 'all' || i.kind === filter);
-  const selectable = inbox.items.filter(
+  // Only what is on screen is decided: a selection hidden by the filter stays put but is not acted on.
+  const selectable = shown.filter(
     (i): i is Selectable => (i.kind === 'leave' || i.kind === 'timesheet') && selected.has(i.key),
   );
 
