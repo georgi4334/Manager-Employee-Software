@@ -67,6 +67,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\na 1:1 meeting with you in ${v.workspace} on InTime was scheduled, moved or cancelled.\n\n` +
         `Open InTime to see it:\n${v.link}`,
     },
+    'checklist.assigned': {
+      subject: (v) => `You have checklist items in ${v.workspace}`,
+      text: (v) =>
+        `Hello,\n\nyou were given items of a checklist in ${v.workspace} on InTime.\n\n` +
+        `Open InTime to see them:\n${v.link}`,
+    },
     'feedback.received': {
       subject: (v) => `You received feedback in ${v.workspace}`,
       text: (v) =>
@@ -184,6 +190,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hallo,\n\nein 1:1-Gespräch mit Ihnen wurde in ${v.workspace} auf InTime angesetzt, verschoben oder abgesagt.\n\n` +
         `Öffnen Sie InTime, um es zu sehen:\n${v.link}`,
     },
+    'checklist.assigned': {
+      subject: (v) => `Sie haben Checklisten-Aufgaben in ${v.workspace}`,
+      text: (v) =>
+        `Hallo,\n\nIhnen wurden in ${v.workspace} auf InTime Aufgaben einer Checkliste zugewiesen.\n\n` +
+        `Öffnen Sie InTime, um sie zu sehen:\n${v.link}`,
+    },
     'feedback.received': {
       subject: (v) => `Sie haben in ${v.workspace} Feedback erhalten`,
       text: (v) =>
@@ -300,6 +312,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       text: (v) =>
         `Здравейте,\n\nсреща 1:1 с вас беше насрочена, преместена или отменена в ${v.workspace} в InTime.\n\n` +
         `Отворете InTime, за да я видите:\n${v.link}`,
+    },
+    'checklist.assigned': {
+      subject: (v) => `Имате задачи от чеклист в ${v.workspace}`,
+      text: (v) =>
+        `Здравейте,\n\nвъзложени са ви задачи от чеклист в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да ги видите:\n${v.link}`,
     },
     'feedback.received': {
       subject: (v) => `Получихте обратна връзка в ${v.workspace}`,

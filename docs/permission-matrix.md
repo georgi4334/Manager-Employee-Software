@@ -56,6 +56,9 @@ This table is **generated** from the permission catalog in `packages/contracts/s
 | **Skills Matrix** | `skill.view` | View skills | own | team | all | all |
 |  | `skill.update` | Update skill levels | own | team | all | all |
 |  | `skill.manage_catalog` | Manage the skill catalog | — | — | all | all |
+| **Checklists** | `checklist.view` | View onboarding and offboarding checklists of people in scope | own | reports | all | all |
+|  | `checklist.manage` | Start, cancel and edit checklists and tick any item (scope all: the HR group) | — | reports | all | all |
+|  | `checklist.manage_templates` | Manage checklist templates | — | — | all | all |
 | **Projects & Tasks** | `project.view` | View projects (own = projects I am assigned to) | own | team | all | all |
 |  | `project.manage` | Manage projects (own = projects I lead) | — | own | all | all |
 |  | `assignment.manage` | Assign people to projects (own = projects I lead) | — | own | all | all |

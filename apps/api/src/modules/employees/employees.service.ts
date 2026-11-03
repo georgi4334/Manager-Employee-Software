@@ -20,6 +20,7 @@ import { AuditService } from '../audit/audit.service.js';
 import { GoalsService } from '../goals/goals.service.js';
 import { LeaveRequestsService } from '../leave/leave-requests.service.js';
 import { OneOnOnesService } from '../one-on-ones/one-on-ones.service.js';
+import { ChecklistsService } from '../checklists/checklists.service.js';
 import { TimeService } from '../time/time.service.js';
 import { AssignmentsService } from '../projects/assignments.service.js';
 import { InvitationService } from '../auth/invitation.service.js';
@@ -82,6 +83,7 @@ export class EmployeesService {
     private readonly time: TimeService,
     private readonly goals: GoalsService,
     private readonly oneOnOnes: OneOnOnesService,
+    private readonly checklists: ChecklistsService,
     private readonly leave: LeaveRequestsService,
     private readonly audit: AuditService,
   ) {}
@@ -155,6 +157,8 @@ export class EmployeesService {
       );
       let userId: string | undefined;
       if (email) userId = await this.inviteAccount(tx, actor, created.id, email);
+      // The default onboarding checklist, if the workspace has one (ADR 0040).
+      await this.checklists.onEmployeeCreated(tx, actor.userId, created.id);
 
       await this.audit.record(tx, {
         actorUserId: actor.userId,
@@ -286,6 +290,8 @@ export class EmployeesService {
         where: { id },
         data: { status: 'inactive', terminationDate: dateIn(terminationDate) },
       });
+      // After the termination date is set: the offboarding checklist counts from it (ADR 0040).
+      await this.checklists.onEmployeeDeactivated(tx, actor.userId, id);
       await this.audit.record(tx, {
         actorUserId: actor.userId,
         action: 'employee.deactivated',

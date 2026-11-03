@@ -38,6 +38,7 @@ const document: PersonalDataExport = {
   generatedAt: '2026-10-25T08:00:00.000Z',
   account: null,
   employee: null,
+  checklists: { about: [], assigned: [] },
   leave: { requests: [], balances: [] },
   projects: { assignments: [], led: [] },
   tasks: [],

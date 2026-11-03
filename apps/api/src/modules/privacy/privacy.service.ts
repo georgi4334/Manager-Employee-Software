@@ -117,6 +117,8 @@ export class PrivacyService {
       feedbackReceived,
       skillRatings,
       reviewRows,
+      checklistsAbout,
+      checklistItemsAssigned,
     ] = employeeId
       ? await Promise.all([
           tx.leaveRequest.findMany({
@@ -208,8 +210,22 @@ export class PrivacyService {
               },
             },
           }),
+          tx.checklist.findMany({
+            where: { employeeId },
+            orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+            include: { items: { orderBy: [{ position: 'asc' }, { id: 'asc' }] } },
+          }),
+          // Not whose checklist: that is about somebody else.
+          tx.checklistItem.findMany({
+            where: {
+              assigneeEmployeeId: employeeId,
+              checklist: { employeeId: { not: employeeId } },
+            },
+            orderBy: [{ dueDate: 'asc' }, { id: 'asc' }],
+            select: { title: true, dueDate: true, doneAt: true },
+          }),
         ])
-      : [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
+      : [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
     const [notifications, preferences, auditEntries] = userId
       ? await Promise.all([
           tx.notification.findMany({
@@ -408,6 +424,24 @@ export class PrivacyService {
           visibility: f.visibility,
           body: f.body,
           createdAt: f.createdAt.toISOString(),
+        })),
+      },
+      checklists: {
+        about: checklistsAbout.map((c) => ({
+          kind: c.kind,
+          name: c.name,
+          anchorDate: day(c.anchorDate)!,
+          status: c.status,
+          items: c.items.map((i) => ({
+            title: i.title,
+            dueDate: day(i.dueDate)!,
+            done: i.doneAt !== null,
+          })),
+        })),
+        assigned: checklistItemsAssigned.map((i) => ({
+          title: i.title,
+          dueDate: day(i.dueDate)!,
+          done: i.doneAt !== null,
         })),
       },
       // Only the person's own private notes: the other participant's stay theirs (ADR 0020).

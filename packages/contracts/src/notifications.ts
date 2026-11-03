@@ -52,6 +52,14 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/one-on-ones',
   }),
+  // Checklists (docs/adr/0040-onboarding-checklists.md): items of a checklist were given to you. Id and count only:
+  // never titles, names or whether somebody joins or leaves.
+  'checklist.assigned': typeDef({
+    params: z.object({ checklistId: z.uuid(), count: z.number().int().min(1) }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/checklists',
+  }),
   // Feedback (docs/adr/0021-feedback.md): somebody gave you feedback. The id only: not who, not what, not which kind.
   'feedback.received': typeDef({
     params: z.object({ feedbackId: z.uuid() }),

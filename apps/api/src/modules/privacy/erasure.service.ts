@@ -80,6 +80,16 @@ export class ErasureService {
       await tx.review.deleteMany({ where: { tenantId, employeeId } });
       // Skill levels are personal data; the catalog is not (ADR 0022).
       await tx.employeeSkill.deleteMany({ where: { tenantId, employeeId } });
+      // Checklists about the person go with them; on other people's checklists they are no longer named (ADR 0040).
+      await tx.checklist.deleteMany({ where: { tenantId, employeeId } });
+      await tx.checklistItem.updateMany({
+        where: { tenantId, assigneeEmployeeId: employeeId },
+        data: { assigneeEmployeeId: null },
+      });
+      await tx.checklistItem.updateMany({
+        where: { tenantId, doneByEmployeeId: employeeId },
+        data: { doneByEmployeeId: null },
+      });
       // Working hours are not a statutory record (ADR 0026).
       await tx.workSchedule.deleteMany({ where: { tenantId, employeeId } });
       // Pay records are not kept by InTime, which holds no payroll (ADR 0030).
