@@ -236,6 +236,10 @@ describe('the list', () => {
     expect(await screen.findByText('Page 2 of 2')).toBeInTheDocument();
     expect(urls.at(-1)!.searchParams.get('page')).toBe('2');
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
+    // the search box's 300 ms wait must not send a quick "Next" back to page 1 (nothing was typed)
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    expect(screen.getByText('Page 2 of 2')).toBeInTheDocument();
+    expect(urls.at(-1)!.searchParams.get('page')).toBe('2');
   });
 
   it('shows the API error with a retry', async () => {

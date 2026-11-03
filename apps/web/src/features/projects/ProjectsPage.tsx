@@ -71,13 +71,16 @@ function ProjectsList({ today }: { today: string }) {
   const [status, setStatus] = useState<ListParams['status']>('all');
   const [clientId, setClientId] = useState('');
   const [page, setPage] = useState(1);
+  // Only a changed search goes back to page 1: on opening the page nothing was typed, and a quick
+  // "Next" must not be undone 300 ms later.
   useEffect(() => {
+    if (search === q) return;
     const timer = setTimeout(() => {
       setQ(search);
       setPage(1);
     }, 300);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, q]);
 
   const clients = useClients(seesClients);
   const query = useProjects({ q, status, clientId, page });

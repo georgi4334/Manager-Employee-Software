@@ -37,13 +37,16 @@ export function GoalsPage() {
   const scopeParam = params.get('scope');
   const scope: ListParams['scope'] = SCOPE_FILTERS.find((s) => s === scopeParam) ?? 'all';
 
+  // Only a changed search goes back to page 1: on opening the page nothing was typed, and a quick
+  // "Next" must not be undone 300 ms later.
   useEffect(() => {
+    if (search === q) return;
     const timer = setTimeout(() => {
       setQ(search);
       setPage(1);
     }, 300);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, q]);
 
   const query = useGoals({ scope, status, q, page });
   const data = query.data;
