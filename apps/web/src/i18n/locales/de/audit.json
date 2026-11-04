@@ -202,5 +202,7 @@
       "updated": "Checklistenvorlage geändert",
       "deleted": "Checklistenvorlage gelöscht"
     }
-  }
+  },
+  "changedFields": "Geänderte Felder",
+  "profileOf": "Profil von {{name}}"
 }

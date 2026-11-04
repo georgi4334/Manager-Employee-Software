@@ -91,14 +91,11 @@ describe('audit log page', () => {
       'Monday, 2 November 2026',
     ]);
     expect(within(main()).getByText('Employee details changed')).toBeInTheDocument();
-    expect(within(main()).getAllByRole('link', { name: 'Ada Admin' })[0]).toHaveAttribute(
-      'href',
-      `/employees/${uuid(11)}`,
-    );
-    expect(within(main()).getByRole('link', { name: 'About Eva Martin' })).toHaveAttribute(
-      'href',
-      `/employees/${EVA}`,
-    );
+    const first = within(main()).getByRole('article', { name: 'Employee details changed' });
+    expect(first).toHaveTextContent('Ada Admin');
+    expect(first).toHaveTextContent('About Eva Martin');
+    expect(first).toHaveTextContent('People and organization');
+    expect(first).toHaveTextContent('09:15');
     // the system and an erased person have no names and no links
     expect(within(main()).getByText('Personal data erased')).toBeInTheDocument();
     expect(within(main()).getByText('System')).toBeInTheDocument();
@@ -106,17 +103,58 @@ describe('audit log page', () => {
     expect(within(main()).getByText('3 entries')).toBeInTheDocument();
   });
 
-  it('shows the recorded data when opened', async () => {
+  it('shows the changed fields, the recorded values and the links when opened', async () => {
     server.use(...signedInHandlers(userWithRole('admin')));
     serve();
     await renderApp('/audit-log');
     const user = userEvent.setup();
-    const [first] = await within(main()).findAllByText('Recorded data');
-    await user.click(first!);
-    const item = first!.closest('li')!;
-    expect(within(item).getByText('After')).toBeVisible();
-    expect(within(item).getByText('fields')).toBeVisible();
-    expect(within(item).getByText('["phone","jobTitle"]')).toBeVisible();
+    const first = await within(main()).findByRole('article', { name: 'Employee details changed' });
+    expect(within(first).getByRole('list', { name: 'Changed fields' })).not.toBeVisible();
+    await user.click(within(first).getByText('Recorded data'));
+    const fields = within(first).getByRole('list', { name: 'Changed fields' });
+    expect(
+      within(fields)
+        .getAllByRole('listitem')
+        .map((i) => i.textContent),
+    ).toEqual(['phone', 'jobTitle']);
+    expect(within(first).getByRole('link', { name: 'Profile of Ada Admin' })).toHaveAttribute(
+      'href',
+      `/employees/${uuid(11)}`,
+    );
+    expect(within(first).getByRole('link', { name: 'Profile of Eva Martin' })).toHaveAttribute(
+      'href',
+      `/employees/${EVA}`,
+    );
+    // a plain value is shown as stored, and an erased person has no profile link
+    const erased = within(main()).getByRole('article', { name: 'Personal data erased' });
+    await user.click(within(erased).getByText('Recorded data'));
+    expect(within(erased).getByText('reason')).toBeVisible();
+    expect(within(erased).getByText('retention')).toBeVisible();
+    expect(within(erased).queryByRole('link', { name: /Profile of/ })).toBeNull();
+  });
+
+  it('shows a value that changed as before and after', async () => {
+    server.use(...signedInHandlers(userWithRole('admin')));
+    serve({
+      items: [
+        entry({
+          id: uuid(5),
+          action: 'user.disabled',
+          area: 'users',
+          entity: 'user',
+          subject: null,
+          before: { status: 'active' },
+          after: { status: 'disabled' },
+        }),
+      ],
+      total: 1,
+    });
+    await renderApp('/audit-log');
+    const user = userEvent.setup();
+    const card = await within(main()).findByRole('article', { name: 'Account disabled' });
+    await user.click(within(card).getByText('Recorded data'));
+    const row = within(card).getByText('status').closest('div')!;
+    expect(row).toHaveTextContent('Before: active→After: disabled');
   });
 
   it('filters by area and days through the address and the API', async () => {
