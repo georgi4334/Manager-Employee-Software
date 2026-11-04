@@ -26,6 +26,7 @@ import type inbox from './locales/en/inbox.json';
 import type palette from './locales/en/palette.json';
 import type checklists from './locales/en/checklists.json';
 import type audit from './locales/en/audit.json';
+import type settings from './locales/en/settings.json';
 import type notifications from './locales/en/notifications.json';
 
 declare module 'i18next' {
@@ -60,6 +61,7 @@ declare module 'i18next' {
       palette: typeof palette;
       checklists: typeof checklists;
       audit: typeof audit;
+      settings: typeof settings;
     };
   }
 }

@@ -31,5 +31,6 @@
   "inbox": "Waiting for me",
   "inboxShort": "Waiting",
   "checklists": "Checklists",
-  "auditLog": "Audit log"
+  "auditLog": "Audit log",
+  "workspace": "Workspace"
 }

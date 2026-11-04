@@ -1,0 +1,32 @@
+{
+  "title": "Workspace",
+  "intro": "The name, time zone, default language and country of this workspace.",
+  "loading": "Loading the workspace settings…",
+  "retry": "Try again",
+  "formLabel": "Workspace settings",
+  "general": "General",
+  "name": "Name",
+  "slug": "Address name",
+  "slugHint": "Used in sign-in links. It cannot be changed.",
+  "timeZone": "Time zone",
+  "timeZoneHint": "Decides what \"today\" is and in which time times are typed, from the next action on. Recorded times keep their moment.",
+  "language": "Default language",
+  "languageHint": "For emails to people who have not chosen a language.",
+  "country": "Default country",
+  "countryHint": "Public holidays for people without a country of their own.",
+  "noCountry": "None",
+  "countries": {
+    "BG": "Bulgaria",
+    "DE": "Germany",
+    "GB": "United Kingdom"
+  },
+  "languages": {
+    "en": "English",
+    "de": "German",
+    "bg": "Bulgarian"
+  },
+  "readOnly": "Only an administrator can change these settings.",
+  "save": "Save changes",
+  "saving": "Saving…",
+  "saved": "Saved. The changes apply from now on."
+}

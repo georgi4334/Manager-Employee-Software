@@ -39,3 +39,4 @@ export * from './retention.js';
 export * from './reviews.js';
 export * from './checklists.js';
 export * from './audit.js';
+export * from './workspace-settings.js';

@@ -31,6 +31,7 @@ export const SIGNED_IN = [
   '/assistant?tab=settings',
   '/retention',
   '/audit-log',
+  '/settings/workspace',
   '/roles',
   '/roles/new',
   '/goals',

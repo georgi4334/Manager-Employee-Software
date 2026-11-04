@@ -325,6 +325,12 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - `EmployeesService.create` starts the default onboarding and `deactivate` (after setting the termination date) cancels the open onboarding, hands the leaver's open steps on others' checklists to the HR group and starts the default offboarding — same transaction. `checklist.assigned` carries the checklist id and a count only (never titles, names or the kind), never to the actor. Audit: template created/updated/deleted (field names), checklist started/cancelled (ids, kind). Export lists checklists about the person and steps assigned to them elsewhere (without whose); erasure deletes checklists about them and clears them as assignee/ticker.
 - Web: `/checklists` (sections My to-dos / People / Templates via `PAGE_SECTIONS`), `/checklists/:id` (steps by due date, state chips, Capsule, tick/edit/add/cancel), `/checklists/templates/new|:id` (editor with move up/down). "Waiting for me" lists my open steps (kind `checklist`, `/checklists/my-items`, a neutral default in `tests/server.ts`). Menu entry "Checklists" in People.
 
+## Workspace settings (docs/adr/0043-workspace-settings.md)
+
+- No migration: name, time zone (`tenant.default_timezone`, `isTimeZone`) and default language (`tenant.default_locale`, en/de/bg) live on the tenant row; the default country is the leave settings' `default_country` (same rule). The slug never changes.
+- `GET /settings/workspace` is `@Authenticated()` (any member; answers `canEdit`); `PUT` needs `admin.tenant.settings` (and scope `all` in `WorkspaceSettingsService`), takes only changed fields, and is audited `workspace.updated` with field names only. The tenant row is addressed by `requireTenantId()` only; RLS (`tenant_self_update`) refuses any other row.
+- A new time zone is the workspace "today" from the next request; stored instants are not rewritten. Web: `/settings/workspace` ("Workspace" in Administration); saving reloads the signed-in user so the name shows at once.
+
 ## Dashboard (docs/adr/0034-dashboard.md)
 
 - One layout per workspace: `dashboard_layout` (RLS, `widgets text[]`, ≤ 50; no row = `DEFAULT_DASHBOARD`). `GET /dashboard/layout` is `@Authenticated()` (answers `canEdit`); `PUT`/`DELETE` need `admin.tenant.settings` and are audited (`dashboard.updated` with ids, `dashboard.reset`). No personal data: not exported or erased.
