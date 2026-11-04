@@ -251,11 +251,16 @@ type Tone = 'added' | 'removed' | 'changed';
 /** What kind of change, from the verb of the action (decoration: the action is always written in words). */
 export function actionTone(action: string): Tone {
   const verb = action.split('.')[1] ?? '';
+  // Whole words of the verb only: "reset" is not "set", "reopened" is not "opened".
   if (
-    /(created|added|invited|started|enabled|reactivated|granted|requested|set$|opened)/.test(verb)
+    /(^|_)(created|added|invited|started|enabled|reactivated|granted|requested|set|opened)$/.test(
+      verb,
+    )
   )
     return 'added';
-  if (/(deleted|removed|erased|disabled|deactivated|cancelled|rejected|offboarded)/.test(verb))
+  if (
+    /(^|_)(deleted|removed|erased|disabled|deactivated|cancelled|rejected|offboarded)$/.test(verb)
+  )
     return 'removed';
   return 'changed';
 }
@@ -300,10 +305,7 @@ function Entries({
     <div className="space-y-6" aria-label={t('list')} role="region">
       {days.map(([date, entries]) => (
         <section key={date} aria-labelledby={`audit-day-${date}`} className="space-y-3">
-          <h2
-            id={`audit-day-${date}`}
-            className="sticky top-0 z-[1] text-sm font-semibold text-muted-foreground"
-          >
+          <h2 id={`audit-day-${date}`} className="text-sm font-semibold text-muted-foreground">
             {formatDay(date, language, { dateStyle: 'full' })}
           </h2>
           {/* A timeline: a thin line down the day, one dot per entry. */}
@@ -470,8 +472,10 @@ function Recorded({ before, after }: { before: unknown; after: unknown }) {
     );
   }
   const fields = [...new Set([...(asStrings(b?.fields) ?? []), ...(asStrings(a?.fields) ?? [])])];
+  // A list of changed field names is shown once, as chips, whichever side holds it.
+  const fieldsAsChips = fields.length > 0;
   const keys = [...new Set([...Object.keys(b ?? {}), ...Object.keys(a ?? {})])].filter(
-    (k) => !(k === 'fields' && asStrings((a ?? b)?.[k])),
+    (k) => !(k === 'fields' && fieldsAsChips),
   );
 
   return (

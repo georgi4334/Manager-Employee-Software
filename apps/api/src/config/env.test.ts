@@ -7,7 +7,12 @@ const valid = {
   WEB_APP_URL: 'https://app.intime.example',
   JWT_ACCESS_SECRET: 'x'.repeat(32),
 };
-const production = { ...valid, NODE_ENV: 'production', MAIL_TRANSPORT: 'disabled' };
+const production = {
+  ...valid,
+  NODE_ENV: 'production',
+  MAIL_TRANSPORT: 'disabled',
+  JWT_ACCESS_SECRET: 'q8V2rT7mZp4Lw9Ks1Xd6Hn3Bc0Jf5GyR2',
+};
 
 describe('parseEnv', () => {
   it('applies defaults for optional values', () => {
@@ -73,6 +78,21 @@ describe('parseEnv', () => {
     expect(() => parseEnv({ ...valid, GOOGLE_CLIENT_ID: 'only-the-id' })).toThrow(
       /GOOGLE_CLIENT_ID/,
     );
+  });
+
+  it('refuses the example secret and repeated patterns in production, but not in development', () => {
+    for (const secret of [
+      'change-me-change-me-change-me-change-me',
+      'CHANGEME-please-0123456789abcdefghij',
+      'x'.repeat(40),
+      'abababababababababababababababab',
+    ]) {
+      expect(() => parseEnv({ ...production, JWT_ACCESS_SECRET: secret })).toThrow(
+        /JWT_ACCESS_SECRET/,
+      );
+      expect(() => parseEnv({ ...valid, JWT_ACCESS_SECRET: secret })).not.toThrow();
+    }
+    expect(() => parseEnv(production)).not.toThrow();
   });
 
   it('refuses mail transports that would leak links or drop mail silently in production', () => {

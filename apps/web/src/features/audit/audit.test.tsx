@@ -16,6 +16,7 @@ import {
   userWithRole,
 } from '@/tests/server';
 import { renderApp } from '@/tests/utils';
+import { actionTone } from './AuditLogPage';
 
 const uuid = (n: number) => `0192f5a0-0000-7000-8000-${String(n).padStart(12, '0')}`;
 const ADMIN_USER = uuid(10);
@@ -79,6 +80,26 @@ function serve(page: Partial<AuditPage> = {}) {
 
 const main = () => screen.getByRole('main');
 
+describe('actionTone', () => {
+  it.each([
+    ['employee.created', 'added'],
+    ['compensation.set', 'added'],
+    ['employee.schedule_set', 'added'],
+    ['review.cycle_opened', 'added'],
+    ['dashboard.reset', 'changed'],
+    ['review.reopened', 'changed'],
+    ['timesheet.reopened', 'changed'],
+    ['user.disabled', 'removed'],
+    ['user.enabled', 'added'],
+    ['employee.reactivated', 'added'],
+    ['employee.deactivated', 'removed'],
+    ['ai.key_removed', 'removed'],
+    ['org.team_members_changed', 'changed'],
+  ])('%s is %s', (action, tone) => {
+    expect(actionTone(action)).toBe(tone);
+  });
+});
+
 describe('audit log page', () => {
   it('lists entries by day with who did what and about whom', async () => {
     server.use(...signedInHandlers(userWithRole('admin')));
@@ -131,6 +152,31 @@ describe('audit log page', () => {
     expect(within(erased).getByText('reason')).toBeVisible();
     expect(within(erased).getByText('retention')).toBeVisible();
     expect(within(erased).queryByRole('link', { name: /Profile of/ })).toBeNull();
+  });
+
+  it('shows changed field names once when only the before side holds them', async () => {
+    server.use(...signedInHandlers(userWithRole('admin')));
+    serve({
+      items: [
+        entry({
+          id: uuid(6),
+          action: 'role.updated',
+          area: 'roles',
+          entity: 'role',
+          subject: null,
+          before: { fields: ['name'] },
+          after: { grants: ['leave.view:all'] },
+        }),
+      ],
+      total: 1,
+    });
+    await renderApp('/audit-log');
+    const user = userEvent.setup();
+    const card = await within(main()).findByRole('article', { name: 'Role changed' });
+    await user.click(within(card).getByText('Recorded data'));
+    expect(within(card).getByRole('list', { name: 'Changed fields' })).toHaveTextContent('name');
+    expect(within(card).queryByText('fields')).toBeNull();
+    expect(within(card).getByText('grants')).toBeVisible();
   });
 
   it('shows a value that changed as before and after', async () => {

@@ -55,9 +55,15 @@ export function WorkingHoursCard({ employee }: { employee: Employee }) {
           <p className="text-sm text-muted-foreground">
             {query.data.isDefault ? t('schedule.default') : t('schedule.set')}
           </p>
-          <ul aria-label={t('schedule.week')} className="grid gap-1 text-sm sm:grid-cols-2">
+          <ul
+            aria-label={t('schedule.week')}
+            className="grid gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2"
+          >
             {query.data.effective.map((minutes, index) => (
-              <li key={index} className="flex justify-between gap-3">
+              <li
+                key={index}
+                className="flex justify-between gap-3 rounded-md bg-surface-muted px-3 py-1.5"
+              >
                 <span>{weekday(index)}</span>
                 <span className={minutes === 0 ? 'text-muted-foreground' : 'font-medium'}>
                   {minutes === 0 ? t('schedule.dayOff') : hours(minutes)}
