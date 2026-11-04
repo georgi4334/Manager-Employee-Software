@@ -45,6 +45,10 @@
       "@prisma/client",
       "esbuild",
       "@swc/core"
-    ]
+    ],
+    "overrides": {
+      "minimatch@<11.0.1": "^11.0.4",
+      "body-parser@<2.4.0": "^2.4.0"
+    }
   }
 }
