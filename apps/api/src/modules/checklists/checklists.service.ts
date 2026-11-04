@@ -312,6 +312,8 @@ export class ChecklistsService {
           responsible: body.responsible,
           dueDate: body.dueDate === undefined ? undefined : dateIn(body.dueDate),
           assigneeEmployeeId: assignee,
+          // A new date or person is reminded again (ADR 0040, follow-ups).
+          ...(changedReminder(item, body.dueDate, assignee) ? { remindedAt: null } : {}),
         },
       });
       if (assignee && assignee !== item.assigneeEmployeeId && !item.doneAt) {
@@ -423,7 +425,7 @@ export class ChecklistsService {
         doneAt: null,
         checklist: { employeeId: { not: employeeId }, status: 'open' },
       },
-      data: { assigneeEmployeeId: null },
+      data: { assigneeEmployeeId: null, remindedAt: null },
     });
     await this.startDefault(tx, actorUserId, employeeId, 'offboarding');
   }
@@ -756,4 +758,15 @@ export class ChecklistsService {
       canManage: manages && open,
     };
   }
+}
+
+/** Whether an item update moves its due date or hands it to someone else. */
+function changedReminder(
+  item: { dueDate: Date; assigneeEmployeeId: string | null },
+  dueDate: string | undefined,
+  assignee: string | null | undefined,
+): boolean {
+  const movedDate = dueDate !== undefined && dateIn(dueDate).getTime() !== item.dueDate.getTime();
+  const newPerson = assignee !== undefined && assignee !== item.assigneeEmployeeId;
+  return movedDate || newPerson;
 }

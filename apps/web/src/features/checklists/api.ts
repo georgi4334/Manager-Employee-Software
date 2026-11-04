@@ -28,6 +28,8 @@ export interface ListParams {
   kind: ChecklistQuery['kind'];
   status: ChecklistQuery['status'];
   page: number;
+  /** Only the checklists about this person (the employee profile). */
+  employeeId?: string;
 }
 
 export const fetchChecklists = (params: ListParams) =>
@@ -37,6 +39,7 @@ export const fetchChecklists = (params: ListParams) =>
       status: params.status,
       page: String(params.page),
       pageSize: String(PAGE_SIZE),
+      ...(params.employeeId ? { employeeId: params.employeeId } : {}),
     })}`,
   );
 export const fetchChecklist = (id: string) => apiRequest<ChecklistDetail>(`/checklists/${id}`);

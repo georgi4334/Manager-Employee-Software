@@ -18,6 +18,7 @@ import { EmploymentSection, LimitedViewNote, PersonalSection } from './EmployeeS
 import { ProfileHeader } from './ProfileHeader';
 import { Skeleton, SkeletonGroup } from '@/shared/ui/skeleton';
 import { TabList, TabPanel } from '@/shared/ui/tabs';
+import { ChecklistsCard } from './ChecklistsCard';
 import { CompensationCard } from './CompensationCard';
 import { WorkingHoursCard } from './WorkingHoursCard';
 import {
@@ -121,6 +122,8 @@ function EmployeeView({ employee }: { employee: Employee }) {
         />
       )}
       {!profile && <LimitedViewNote />}
+      {/* Without the profile there is no Work tab; the API still decides whether checklists may be seen. */}
+      {!profile && <ChecklistsCard employee={employee} />}
       {tab && (
         <TabPanel value={tabs.length > 1 ? tab : ''} idPrefix="employee">
           <div className="space-y-4">
@@ -128,6 +131,7 @@ function EmployeeView({ employee }: { employee: Employee }) {
               <>
                 <EmploymentSection employee={employee} profile={profile} />
                 <WorkingHoursCard employee={employee} />
+                <ChecklistsCard employee={employee} />
               </>
             )}
             {tab === 'personal' && profile && <PersonalSection profile={profile} />}

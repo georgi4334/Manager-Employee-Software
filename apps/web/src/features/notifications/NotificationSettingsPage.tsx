@@ -47,6 +47,8 @@ function useTypeTitle() {
         return t('types.feedback.received.settingsTitle');
       case 'checklist.assigned':
         return t('types.checklist.assigned.settingsTitle');
+      case 'checklist.due':
+        return t('types.checklist.due.settingsTitle');
       case 'review.cycle_opened':
         return t('types.review.cycle_opened.settingsTitle');
       case 'review.released':
@@ -198,6 +200,8 @@ function TypeHeading({ type }: { type: string }) {
           t('types.checklist.assigned.settingsTitle'),
           t('types.checklist.assigned.settingsHelp'),
         ];
+      case 'checklist.due':
+        return [t('types.checklist.due.settingsTitle'), t('types.checklist.due.settingsHelp')];
       case 'one_on_one.changed':
         return [
           t('types.one_on_one.changed.settingsTitle'),

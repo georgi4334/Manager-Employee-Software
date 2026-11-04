@@ -106,6 +106,12 @@ export function useNotificationText() {
         text: t('types.checklist.assigned.text', { count: Number(params.count) || 1 }),
       };
     }
+    if (type === 'checklist.due') {
+      return {
+        title: t('types.checklist.due.title'),
+        text: t('types.checklist.due.text', { date: formatDay(str(params.date), language) }),
+      };
+    }
     if (type === 'feedback.received') {
       return { title: t('types.feedback.received.title'), text: t('types.feedback.received.text') };
     }

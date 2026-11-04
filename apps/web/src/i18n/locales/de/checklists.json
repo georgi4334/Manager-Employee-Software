@@ -128,5 +128,12 @@
   "pagination": "Seiten",
   "previous": "Zurück",
   "next": "Weiter",
-  "page": "Seite {{page}} von {{pages}}"
+  "page": "Seite {{page}} von {{pages}}",
+  "profileCard": {
+    "title": "Checklisten",
+    "intro": "Schritte für Ein- und Austritt dieser Person.",
+    "label": "Checklisten zu {{name}}",
+    "open": "{{name}} öffnen",
+    "loading": "Checklisten werden geladen…"
+  }
 }

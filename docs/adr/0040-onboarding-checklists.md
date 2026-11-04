@@ -82,8 +82,30 @@ items**, whatever their permissions; everybody else gets `404`. Templates are re
 - "Waiting for me" (ADR 0038) gets a sixth kind: my open checklist items, with a "Mark done" button.
 - Menu entry "Checklists" in the People group.
 
+## Follow-ups (2026-11-04)
+
+### Reminders before a step is due
+
+- `checklist_item.reminded_at` (nullable timestamp, migration `20261115090000_checklist_reminders`). A step is due
+  for a reminder when it is not done, its checklist is `open`, it has an assignee, `reminded_at` is null and its due
+  date is **today or tomorrow** in the workspace time zone (`checklistReminderDue` in contracts, pure). Overdue steps
+  are not reminded: the person already sees them as overdue in "Waiting for me".
+- The sweep (`remindChecklists` in `notifications/delivery/checklist-reminders.ts`) runs from `RemindersService`, so
+  from the hourly worker sweep and from `POST /internal/reminders/run`, whose answer gains `checklists`. "Once" is a
+  conditional update that sets `reminded_at` only while it is still null (a second run or server finds it taken).
+- Recipient: the assignee, only with an active employee record and an account. HR-group steps (no assignee) remind
+  nobody; whoever ticked nothing is not chased by anyone else.
+- `checklist.due` (in-app and email on by default) carries the checklist id and the due date only — never titles,
+  names or the kind. A changed due date or assignee clears `reminded_at`, so the new date or person is reminded.
+- Privacy: the column holds no personal data beyond the row it belongs to; export and erasure are unchanged (erasure
+  already deletes or detaches the rows).
+
+### On the employee profile
+
+- A "Checklists" card on the employee profile lists the onboarding and offboarding checklists about that person
+  (`GET /checklists?employeeId=…&status=all`, so the API's `checklist.view` scope decides): kind, status, progress
+  (the shared `Capsule`) and a link to each. It shows nothing when there are none or the call is refused.
+
 ## Consequences
 
-- No reminders before a due date yet (the hourly sweep could add them later, like ADR 0029).
 - No file attachments (they wait for file storage).
-- The employee profile does not show the checklist yet; the People list links to it.

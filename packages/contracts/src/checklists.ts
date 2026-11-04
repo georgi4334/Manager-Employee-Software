@@ -44,6 +44,18 @@ export function checklistItemState(
   return 'open';
 }
 
+/**
+ * Whether an open step should be reminded now (ADR 0040, follow-ups): due today or tomorrow in the workspace's
+ * time zone. Done and overdue steps are never reminded.
+ */
+export function checklistReminderDue(
+  item: { dueDate: DateString; done: boolean },
+  today: DateString,
+): boolean {
+  if (item.done) return false;
+  return item.dueDate === today || item.dueDate === addDays(today, 1);
+}
+
 /** Done items, all items and the share done in whole percent (an empty checklist is 0 %). */
 export function checklistProgress(items: readonly { done: boolean }[]): {
   done: number;

@@ -108,6 +108,17 @@ export const CALENDAR_EVENTS = {
     ],
   }),
   /** An event starts soon (ADR 0029): the event id and the occurrence date only. */
+  /** A checklist step of yours is due today or tomorrow (ADR 0040, follow-ups). */
+  'checklist.due': eventDef({
+    params: z.object({
+      recipientUserId: z.uuid(),
+      checklistId: z.uuid(),
+      date: z.string().regex(DATE),
+    }),
+    notify: ({ recipientUserId, ...params }) => [
+      { recipientUserId, type: 'checklist.due' as const, params },
+    ],
+  }),
   'calendar.reminder': eventDef({
     params: z.object({
       recipientUserId: z.uuid(),

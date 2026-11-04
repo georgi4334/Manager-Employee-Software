@@ -30,6 +30,7 @@ const defaultHandlers = [
   http.get(`${API}/feedback`, () => HttpResponse.json(emptyPage)),
   http.get(`${API}/calendar/events`, () => HttpResponse.json({ items: [] })),
   http.get(`${API}/checklists/my-items`, () => HttpResponse.json({ items: [] })),
+  http.get(`${API}/checklists`, () => HttpResponse.json({ ...emptyPage, pageSize: 25 })),
   http.get(`${API}/employees`, () => HttpResponse.json(emptyPage)),
   http.get(`${API}/employees/me`, () =>
     HttpResponse.json(errorBody('NOT_FOUND', 404), { status: 404 }),

@@ -353,6 +353,7 @@ const SAMPLES: Record<NotificationType, Record<string, unknown>> = {
   'calendar.changed': { eventId: uuid(9), date: '2026-11-02', action: 'updated' },
   'feedback.received': { feedbackId: uuid(9) },
   'checklist.assigned': { checklistId: uuid(9), count: 2 },
+  'checklist.due': { checklistId: uuid(9), date: '2026-11-02' },
   'review.cycle_opened': { cycleId: uuid(9) },
   'review.released': { reviewId: uuid(9) },
   'one_on_one.changed': { meetingId: uuid(9), date: '2026-11-02', action: 'rescheduled' },
