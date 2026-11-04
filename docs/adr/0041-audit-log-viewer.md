@@ -39,6 +39,13 @@ translated action, who did it (a link to their profile) and whom it is about; "R
 before/after as plain text, with "History of this record" and "More by this person" as filters. Phones get the same
 single column.
 
+Card design (2026-11-04): each day is a timeline (a line with one dot per entry; green = something added, red =
+removed, orange = changed, decoration only since the action is in words). A card shows the area's icon, the action
+and area, the actor's initials and name, whom it is about as a chip, and the time with a "Recorded data" toggle in the
+header. Opened, the stored data shows changed field names as chips and one row per key with the value before (struck
+through) and after; the actions are "History of this record", the profiles of the actor and the person, and "More by
+this person".
+
 ## Consequences
 
 - New audited actions need an entry in `AUDIT_AREAS` and texts in `audit.json` (en/de/bg).

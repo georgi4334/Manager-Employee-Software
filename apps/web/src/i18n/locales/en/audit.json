@@ -202,5 +202,7 @@
       "updated": "Checklist template changed",
       "deleted": "Checklist template deleted"
     }
-  }
+  },
+  "changedFields": "Changed fields",
+  "profileOf": "Profile of {{name}}"
 }
