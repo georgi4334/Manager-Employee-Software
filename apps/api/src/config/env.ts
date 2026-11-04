@@ -97,6 +97,14 @@ const envSchema = z
         }
       }
     }
+    // A secret anyone can read (the example file) or guess (one repeated character) would let them forge sign-ins.
+    if (env.NODE_ENV === 'production' && isWeakSecret(env.JWT_ACCESS_SECRET)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['JWT_ACCESS_SECRET'],
+        message: 'must be a random value in production, not the example or a repeated pattern',
+      });
+    }
     // "log" would write one-time sign-in links into production logs.
     if (
       env.NODE_ENV === 'production' &&
@@ -147,4 +155,9 @@ export function parseEnv(raw: NodeJS.ProcessEnv | Record<string, string | undefi
   throw new EnvValidationError(
     result.error.issues.map((issue) => `${issue.path.join('.') || '(root)'}: ${issue.message}`),
   );
+}
+
+/** The placeholder from .env.example, or too few different characters to be random. */
+export function isWeakSecret(secret: string): boolean {
+  return /change-?me/i.test(secret) || new Set(secret).size < 10;
 }
