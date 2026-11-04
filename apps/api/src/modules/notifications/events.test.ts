@@ -36,6 +36,7 @@ describe('event catalog', () => {
         response: 'accepted',
       },
       'calendar.reminder': { recipientUserId: USER, eventId: USER, date: '2026-11-02' },
+      'checklist.due': { recipientUserId: USER, checklistId: USER, date: '2026-11-02' },
       'calendar.changed': {
         recipientUserId: USER,
         eventId: USER,

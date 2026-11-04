@@ -128,5 +128,12 @@
   "pagination": "Pages",
   "previous": "Previous",
   "next": "Next",
-  "page": "Page {{page}} of {{pages}}"
+  "page": "Page {{page}} of {{pages}}",
+  "profileCard": {
+    "title": "Checklists",
+    "intro": "Onboarding and offboarding steps for this person.",
+    "label": "Checklists about {{name}}",
+    "open": "Open {{name}}",
+    "loading": "Loading checklists…"
+  }
 }

@@ -67,6 +67,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hello,\n\na 1:1 meeting with you in ${v.workspace} on InTime was scheduled, moved or cancelled.\n\n` +
         `Open InTime to see it:\n${v.link}`,
     },
+    'checklist.due': {
+      subject: (v) => `A checklist step in ${v.workspace} is due soon`,
+      text: (v) =>
+        `Hello,\n\na checklist step assigned to you in ${v.workspace} on InTime is due soon.\n\n` +
+        `Open InTime to see it:\n${v.link}`,
+    },
     'checklist.assigned': {
       subject: (v) => `You have checklist items in ${v.workspace}`,
       text: (v) =>
@@ -190,6 +196,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
         `Hallo,\n\nein 1:1-Gespräch mit Ihnen wurde in ${v.workspace} auf InTime angesetzt, verschoben oder abgesagt.\n\n` +
         `Öffnen Sie InTime, um es zu sehen:\n${v.link}`,
     },
+    'checklist.due': {
+      subject: (v) => `Eine Checklisten-Aufgabe in ${v.workspace} ist bald fällig`,
+      text: (v) =>
+        `Hallo,\n\neine Ihnen zugewiesene Checklisten-Aufgabe in ${v.workspace} auf InTime ist bald fällig.\n\n` +
+        `Öffnen Sie InTime, um sie zu sehen:\n${v.link}`,
+    },
     'checklist.assigned': {
       subject: (v) => `Sie haben Checklisten-Aufgaben in ${v.workspace}`,
       text: (v) =>
@@ -311,6 +323,12 @@ const TEMPLATES: Record<EmailLocale, Record<NotificationType, Template>> = {
       subject: (v) => `Среща 1:1 в ${v.workspace} беше променена`,
       text: (v) =>
         `Здравейте,\n\nсреща 1:1 с вас беше насрочена, преместена или отменена в ${v.workspace} в InTime.\n\n` +
+        `Отворете InTime, за да я видите:\n${v.link}`,
+    },
+    'checklist.due': {
+      subject: (v) => `Задача от чеклист в ${v.workspace} наближава срока си`,
+      text: (v) =>
+        `Здравейте,\n\nзадача от чеклист, възложена на вас в ${v.workspace} в InTime, наближава срока си.\n\n` +
         `Отворете InTime, за да я видите:\n${v.link}`,
     },
     'checklist.assigned': {

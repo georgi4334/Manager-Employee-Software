@@ -17,6 +17,10 @@ function build(claim: { count: number }, employee = { userId: USER, status: 'act
     tenant: { findUnique: vi.fn(async () => ({ defaultTimezone: 'UTC' })) },
     calendarEvent: { findMany: vi.fn(async () => []) },
     calendarReminder: { createMany: vi.fn(async () => ({ count: 1 })) },
+    checklistItem: {
+      findMany: vi.fn(async () => []),
+      updateMany: vi.fn(async () => ({ count: 1 })),
+    },
   };
   const system = { tenant: { findMany: vi.fn(async () => [{ id: 't1' }, { id: 't2' }]) } };
   const context = { run: vi.fn(<T>(_id: string, fn: () => T) => fn()) };
@@ -46,7 +50,7 @@ describe('RemindersService (claiming)', () => {
   it('sends nothing for a record somebody else claimed first', async () => {
     const { service, tx } = build({ count: 0 });
     const stats = await service.run(NOW);
-    expect(stats).toEqual({ attendance: 0, timers: 0, events: 0 });
+    expect(stats).toEqual({ attendance: 0, timers: 0, events: 0, checklists: 0 });
     expect(tx.outboxEvent.createMany).not.toHaveBeenCalled();
   });
 
@@ -54,7 +58,7 @@ describe('RemindersService (claiming)', () => {
     const { service, tx, context } = build({ count: 1 });
     const stats = await service.run(NOW);
     expect(context.run.mock.calls.map((c) => c[0])).toEqual(['t1', 't2']);
-    expect(stats).toEqual({ attendance: 2, timers: 2, events: 0 });
+    expect(stats).toEqual({ attendance: 2, timers: 2, events: 0, checklists: 0 });
     expect(tx.outboxEvent.createMany).toHaveBeenCalledTimes(4);
     expect(tx.outboxEvent.createMany).toHaveBeenCalledWith({
       data: [
@@ -70,7 +74,7 @@ describe('RemindersService (claiming)', () => {
     ]) {
       const { service, tx } = build({ count: 1 }, employee);
       const stats = await service.run(NOW);
-      expect(stats).toEqual({ attendance: 2, timers: 2, events: 0 });
+      expect(stats).toEqual({ attendance: 2, timers: 2, events: 0, checklists: 0 });
       expect(tx.outboxEvent.createMany).not.toHaveBeenCalled();
     }
   });
@@ -79,7 +83,7 @@ describe('RemindersService (claiming)', () => {
     const { service, tx, db } = build({ count: 1 });
     db.tx.mockRejectedValueOnce(new Error('db down'));
     const stats = await service.run(NOW);
-    expect(stats).toEqual({ attendance: 1, timers: 1, events: 0 });
+    expect(stats).toEqual({ attendance: 1, timers: 1, events: 0, checklists: 0 });
     expect(tx.outboxEvent.createMany).toHaveBeenCalledTimes(2);
   });
 });

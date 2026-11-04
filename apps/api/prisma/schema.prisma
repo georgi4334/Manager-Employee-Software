@@ -1537,6 +1537,8 @@ model ChecklistItem {
   dueDate            DateTime  @map("due_date") @db.Date
   doneAt             DateTime? @map("done_at") @db.Timestamptz(6)
   doneByEmployeeId   String?   @map("done_by_employee_id") @db.Uuid
+  /// Set when the assignee was reminded that the step is due (ADR 0040 follow-ups); cleared on a new date or assignee.
+  remindedAt         DateTime? @map("reminded_at") @db.Timestamptz(6)
   position           Int
   createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)

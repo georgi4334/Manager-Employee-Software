@@ -46,4 +46,14 @@ test('HR builds a template, starts it for a person, and both tick their steps', 
   await expect(
     ada.getByRole('main').getByRole('list', { name: 'People' }).getByText('2 of 2 done'),
   ).toBeVisible();
+
+  // the same checklist on Eva's profile (ADR 0040, follow-ups)
+  await ada.goto('/employees');
+  await ada
+    .locator('main a[href^="/employees/"]')
+    .filter({ hasText: 'Eva Employee' })
+    .first()
+    .click();
+  const card = ada.getByRole('list', { name: 'Checklists about Eva Employee' });
+  await expect(card.getByRole('link', { name: 'Open Welcome' })).toContainText('2 of 2 done');
 });

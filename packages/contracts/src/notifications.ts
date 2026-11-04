@@ -60,6 +60,13 @@ export const NOTIFICATION_TYPES = {
     locked: {},
     link: '/checklists',
   }),
+  // A checklist step of yours is due today or tomorrow (ADR 0040, follow-ups). The checklist and the date only.
+  'checklist.due': typeDef({
+    params: z.object({ checklistId: z.uuid(), date: z.string().regex(DATE) }),
+    defaults: { in_app: true, email: true },
+    locked: {},
+    link: '/checklists',
+  }),
   // Feedback (docs/adr/0021-feedback.md): somebody gave you feedback. The id only: not who, not what, not which kind.
   'feedback.received': typeDef({
     params: z.object({ feedbackId: z.uuid() }),

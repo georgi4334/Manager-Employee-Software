@@ -242,6 +242,7 @@ describe.skipIf(!urls)('reminders over HTTP (real database)', () => {
         attendance: expect.any(Number),
         timers: expect.any(Number),
         events: expect.any(Number),
+        checklists: expect.any(Number),
         erased: 0,
       });
       expect(await notesOf(p)).toHaveLength(1);

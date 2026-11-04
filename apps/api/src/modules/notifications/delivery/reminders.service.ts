@@ -6,6 +6,7 @@ import { TenantDb } from '../../../infrastructure/tenancy/tenant-db.service.js';
 import type { TenantTx } from '../../../infrastructure/tenancy/tenant-context.js';
 import { EVENT_DEFINITIONS } from '../events.js';
 import { remindEvents } from './calendar-reminders.js';
+import { remindChecklists } from './checklist-reminders.js';
 
 const HOUR_MS = 3_600_000;
 /** Per workspace and run; what is left is picked up by the next run. */
@@ -15,6 +16,7 @@ export interface ReminderStats {
   attendance: number;
   timers: number;
   events: number;
+  checklists: number;
 }
 
 /**
@@ -32,7 +34,7 @@ export class RemindersService {
   ) {}
 
   async run(now = new Date()): Promise<ReminderStats> {
-    const stats: ReminderStats = { attendance: 0, timers: 0, events: 0 };
+    const stats: ReminderStats = { attendance: 0, timers: 0, events: 0, checklists: 0 };
     const tenants = await this.system.tenant.findMany({ select: { id: true } });
     for (const { id } of tenants) {
       try {
@@ -40,6 +42,7 @@ export class RemindersService {
         stats.attendance += done.attendance;
         stats.timers += done.timers;
         stats.events += done.events;
+        stats.checklists += done.checklists;
       } catch (error) {
         this.logger.error({ err: error, tenantId: id }, 'Reminders failed for a workspace');
       }
@@ -53,8 +56,8 @@ export class RemindersService {
    */
   private async queue(
     tx: TenantTx,
-    type: 'attendance.reminder' | 'time.timer_reminder' | 'calendar.reminder',
-    params: { recipientUserId: string; date: string; eventId?: string },
+    type: 'attendance.reminder' | 'time.timer_reminder' | 'calendar.reminder' | 'checklist.due',
+    params: { recipientUserId: string; date: string; eventId?: string; checklistId?: string },
   ): Promise<void> {
     const parsed = EVENT_DEFINITIONS[type].params.parse(params);
     await tx.outboxEvent.createMany({ data: [{ type, params: parsed }] });
@@ -120,7 +123,10 @@ export class RemindersService {
       const events = await remindEvents(tx, tenantId, now, (r) =>
         this.queue(tx, 'calendar.reminder', r),
       );
-      return { attendance, timers, events };
+      const checklists = await remindChecklists(tx, tenantId, now, (r) =>
+        this.queue(tx, 'checklist.due', r),
+      );
+      return { attendance, timers, events, checklists };
     });
   }
 }

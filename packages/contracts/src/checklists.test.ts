@@ -4,6 +4,7 @@ import {
   checklistDueDate,
   checklistItemState,
   checklistProgress,
+  checklistReminderDue,
   checklistStatusFor,
   createChecklistItemRequestSchema,
   startChecklistRequestSchema,
@@ -18,6 +19,27 @@ describe('checklistDueDate', () => {
     expect(checklistDueDate('2026-11-02', 0)).toBe('2026-11-02');
     expect(checklistDueDate('2026-11-02', -7)).toBe('2026-10-26');
     expect(checklistDueDate('2026-12-30', 3)).toBe('2027-01-02');
+  });
+});
+
+describe('checklistReminderDue', () => {
+  const today = '2026-11-04';
+  it.each([
+    ['today', '2026-11-04', true],
+    ['tomorrow', '2026-11-05', true],
+    ['in two days', '2026-11-06', false],
+    ['yesterday (overdue)', '2026-11-03', false],
+  ])('an open step due %s: %s', (_label, dueDate, expected) => {
+    expect(checklistReminderDue({ dueDate, done: false }, today)).toBe(expected);
+  });
+
+  it('never reminds a done step', () => {
+    expect(checklistReminderDue({ dueDate: today, done: true }, today)).toBe(false);
+  });
+
+  it('crosses a month and a year end', () => {
+    expect(checklistReminderDue({ dueDate: '2027-01-01', done: false }, '2026-12-31')).toBe(true);
+    expect(checklistReminderDue({ dueDate: '2026-12-01', done: false }, '2026-11-30')).toBe(true);
   });
 });
 
