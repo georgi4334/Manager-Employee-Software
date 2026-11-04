@@ -88,14 +88,18 @@ describe('workspace settings page', () => {
     expect(within(await form()).getByLabelText('Name')).toHaveValue('Acme Europe');
   });
 
-  it('sends nothing when nothing changed', async () => {
+  it('can only be saved once something changed', async () => {
     server.use(...signedInHandlers(userWithRole('admin')));
     const sent = serve();
     await renderApp('/settings/workspace');
-    await userEvent
-      .setup()
-      .click(within(await form()).getByRole('button', { name: 'Save changes' }));
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    const user = userEvent.setup();
+    const f = await form();
+    const save = within(f).getByRole('button', { name: 'Save changes' });
+    expect(save).toBeDisabled();
+    await user.selectOptions(within(f).getByLabelText(/Default language/), 'de');
+    expect(save).toBeEnabled();
+    await user.selectOptions(within(f).getByLabelText(/Default language/), 'en');
+    expect(save).toBeDisabled();
     expect(sent).toEqual([]);
   });
 

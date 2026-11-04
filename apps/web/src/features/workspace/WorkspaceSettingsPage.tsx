@@ -147,7 +147,7 @@ function SettingsForm({
         {save.isError && <Alert tone="danger">{messages.apiError(save.error)}</Alert>}
         {save.isSuccess && <Alert tone="success">{t('saved')}</Alert>}
         {current.canEdit && (
-          <Button type="submit" disabled={disabled}>
+          <Button type="submit" disabled={disabled || !form.formState.isDirty}>
             {save.isPending ? t('saving') : t('save')}
           </Button>
         )}
