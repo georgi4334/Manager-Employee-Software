@@ -13,6 +13,7 @@ import {
   Sparkles,
   Archive,
   ScrollText,
+  Building2,
   ShieldCheck,
   ListChecks,
   ListTodo,
@@ -231,6 +232,14 @@ export const NAV_ITEMS: NavItem[] = [
     icon: ScrollText,
     primary: false,
     permission: 'admin.audit_log.view',
+    group: 'admin',
+  },
+  {
+    path: '/settings/workspace',
+    labelKey: 'workspace',
+    icon: Building2,
+    primary: false,
+    permission: 'admin.tenant.settings',
     group: 'admin',
   },
 ];

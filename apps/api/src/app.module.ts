@@ -34,6 +34,7 @@ import { ProjectsModule } from './modules/projects/projects.module.js';
 import { TimeModule } from './modules/time/time.module.js';
 import { PrivacyModule } from './modules/privacy/privacy.module.js';
 import { DashboardModule } from './modules/dashboard/dashboard.module.js';
+import { WorkspaceModule } from './modules/workspace/workspace.module.js';
 import { LeaveModule } from './modules/leave/leave.module.js';
 import { OrganizationModule } from './modules/organization/organization.module.js';
 import { EmployeesModule } from './modules/employees/employees.module.js';
@@ -108,6 +109,7 @@ const REQUEST_ID_PATTERN = /^[\w-]{8,64}$/;
     CalendarModule,
     PrivacyModule,
     DashboardModule,
+    WorkspaceModule,
     ProjectsModule,
     TimeModule,
     AiModule,

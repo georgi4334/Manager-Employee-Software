@@ -326,6 +326,12 @@ Source of truth: `docs/data-model.md`, `docs/permission-matrix.md`, `docs/roadma
 - Follow-ups (same ADR): `checklist_item.reminded_at`; `remindChecklists` (`notifications/delivery/checklist-reminders.ts`, from `RemindersService`, so hourly and the external hook, which returns `checklists`) reminds the assignee of an open step of an open checklist due **today or tomorrow** (`checklistReminderDue`), once (conditional update), only an active assignee with an account; HR-group and overdue steps remind nobody. `checklist.due` carries the checklist id and date only. A changed due date or assignee clears `reminded_at`. The employee profile shows a `ChecklistsCard` (`GET /checklists?employeeId&status=all`, nothing when empty or refused; a neutral default in `tests/server.ts`).
 - Web: `/checklists` (sections My to-dos / People / Templates via `PAGE_SECTIONS`), `/checklists/:id` (steps by due date, state chips, Capsule, tick/edit/add/cancel), `/checklists/templates/new|:id` (editor with move up/down). "Waiting for me" lists my open steps (kind `checklist`, `/checklists/my-items`, a neutral default in `tests/server.ts`). Menu entry "Checklists" in People.
 
+## Workspace settings (docs/adr/0043-workspace-settings.md)
+
+- No migration: name, time zone (`tenant.default_timezone`, `isTimeZone`) and default language (`tenant.default_locale`, en/de/bg) live on the tenant row; the default country is the leave settings' `default_country` (same rule). The slug never changes.
+- `GET /settings/workspace` is `@Authenticated()` (any member; answers `canEdit`); `PUT` needs `admin.tenant.settings` (and scope `all` in `WorkspaceSettingsService`), takes only changed fields, and is audited `workspace.updated` with field names only. The tenant row is addressed by `requireTenantId()` only; RLS (`tenant_self_update`) refuses any other row.
+- A new time zone is the workspace "today" from the next request; stored instants are not rewritten. Web: `/settings/workspace` ("Workspace" in Administration); saving reloads the signed-in user so the name shows at once.
+
 ## Dashboard (docs/adr/0034-dashboard.md)
 
 - One layout per workspace: `dashboard_layout` (RLS, `widgets text[]`, ≤ 50; no row = `DEFAULT_DASHBOARD`). `GET /dashboard/layout` is `@Authenticated()` (answers `canEdit`); `PUT`/`DELETE` need `admin.tenant.settings` and are audited (`dashboard.updated` with ids, `dashboard.reset`). No personal data: not exported or erased.

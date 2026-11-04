@@ -1,0 +1,32 @@
+{
+  "title": "Arbeitsbereich",
+  "intro": "Name, Zeitzone, Standardsprache und Land dieses Arbeitsbereichs.",
+  "loading": "Einstellungen des Arbeitsbereichs werden geladen…",
+  "retry": "Erneut versuchen",
+  "formLabel": "Einstellungen des Arbeitsbereichs",
+  "general": "Allgemein",
+  "name": "Name",
+  "slug": "Adressname",
+  "slugHint": "Wird in Anmeldelinks verwendet. Er kann nicht geändert werden.",
+  "timeZone": "Zeitzone",
+  "timeZoneHint": "Bestimmt ab der nächsten Aktion, was „heute“ ist und in welcher Zeit Uhrzeiten eingegeben werden. Erfasste Zeiten behalten ihren Zeitpunkt.",
+  "language": "Standardsprache",
+  "languageHint": "Für E-Mails an Personen, die keine Sprache gewählt haben.",
+  "country": "Standardland",
+  "countryHint": "Feiertage für Personen ohne eigenes Land.",
+  "noCountry": "Keines",
+  "countries": {
+    "BG": "Bulgarien",
+    "DE": "Deutschland",
+    "GB": "Vereinigtes Königreich"
+  },
+  "languages": {
+    "en": "Englisch",
+    "de": "Deutsch",
+    "bg": "Bulgarisch"
+  },
+  "readOnly": "Nur eine Administratorin oder ein Administrator kann diese Einstellungen ändern.",
+  "save": "Änderungen speichern",
+  "saving": "Wird gespeichert…",
+  "saved": "Gespeichert. Die Änderungen gelten ab jetzt."
+}

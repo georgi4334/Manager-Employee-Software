@@ -201,6 +201,9 @@
       "created": "Checklistenvorlage angelegt",
       "updated": "Checklistenvorlage geändert",
       "deleted": "Checklistenvorlage gelöscht"
+    },
+    "workspace": {
+      "updated": "Einstellungen des Arbeitsbereichs geändert"
     }
   },
   "changedFields": "Geänderte Felder",

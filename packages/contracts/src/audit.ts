@@ -12,6 +12,7 @@ export const AUDIT_AREAS = {
     permission: 'admin.tenant.settings',
     actions: [
       'tenant.created',
+      'workspace.updated',
       'dashboard.updated',
       'dashboard.reset',
       'ai.workspace_updated',

@@ -201,6 +201,9 @@
       "created": "Checklist template created",
       "updated": "Checklist template changed",
       "deleted": "Checklist template deleted"
+    },
+    "workspace": {
+      "updated": "Workspace settings changed"
     }
   },
   "changedFields": "Changed fields",

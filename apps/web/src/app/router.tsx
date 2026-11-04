@@ -26,6 +26,7 @@ import { MeetingsPage } from '@/features/one-on-ones/MeetingsPage';
 import { GoalsPage } from '@/features/goals/GoalsPage';
 import { RetentionPage } from '@/features/retention/RetentionPage';
 import { AuditLogPage } from '@/features/audit/AuditLogPage';
+import { WorkspaceSettingsPage } from '@/features/workspace/WorkspaceSettingsPage';
 import { NewRolePage } from '@/features/roles/NewRolePage';
 import { RoleDetailPage } from '@/features/roles/RoleDetailPage';
 import { RolesPage } from '@/features/roles/RolesPage';
@@ -67,6 +68,7 @@ const IMPLEMENTED_PATHS = [
   '/assistant',
   '/retention',
   '/audit-log',
+  '/settings/workspace',
   '/roles',
   '/inbox',
   '/checklists',
@@ -175,6 +177,10 @@ export const routes: RouteObject[] = [
           {
             element: <RequirePermission permission="admin.audit_log.view" />,
             children: [{ path: 'audit-log', element: <AuditLogPage /> }],
+          },
+          {
+            element: <RequirePermission permission="admin.tenant.settings" />,
+            children: [{ path: 'settings/workspace', element: <WorkspaceSettingsPage /> }],
           },
           {
             element: <RequirePermission permission="admin.role.view" />,
