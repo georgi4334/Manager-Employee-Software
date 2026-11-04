@@ -55,6 +55,26 @@ describe('TargetBar', () => {
 });
 
 describe('Capsule', () => {
+  it('keeps the extra text inside a nearly full tube instead of spilling past its end', () => {
+    const { container } = render(
+      <Capsule percent={100} inside="100 %" after="2 of 2 done" size="sm" />,
+    );
+    const fill = container.querySelector('.capsule-fill')!;
+    expect(fill).toHaveTextContent('2 of 2 done');
+    expect(fill).toHaveTextContent('100 %');
+    // nothing is left after the fill
+    expect(fill.nextElementSibling).toBeNull();
+  });
+
+  it('keeps the extra text after the fill while there is room', () => {
+    const { container } = render(
+      <Capsule percent={25} inside="25 %" after="1 of 4 done" size="sm" />,
+    );
+    const fill = container.querySelector('.capsule-fill')!;
+    expect(fill).not.toHaveTextContent('1 of 4 done');
+    expect(fill.nextElementSibling).toHaveTextContent('1 of 4 done');
+  });
+
   it('writes the value inside a wide enough fill and the rest after it', () => {
     const { container } = render(<Capsule percent={64} inside="64 %" after="12 left" size="lg" />);
     const fill = container.querySelector<HTMLElement>('.capsule-fill')!;

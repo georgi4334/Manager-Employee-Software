@@ -107,6 +107,8 @@ export function Capsule({
 }) {
   const width = Math.min(100, Math.max(0, percent));
   const fits = width >= (size === 'lg' ? 22 : 28);
+  // A nearly full tube leaves no room after the fill, so the extra text moves into it instead of spilling out.
+  const afterInside = after !== undefined && width > 70;
   const style = { '--bar': BAR[tone].bar, color: BAR[tone].fg } as CSSProperties;
   const height = size === 'lg' ? 'h-10' : size === 'md' ? 'h-8' : 'h-6';
   const text = size === 'lg' ? 'text-sm' : 'text-xs';
@@ -120,13 +122,18 @@ export function Capsule({
         )}
         style={{ ...style, width: `${width}%` }}
       >
+        {afterInside && (
+          <span className={cn('relative mr-auto truncate whitespace-nowrap font-medium', text)}>
+            {after}
+          </span>
+        )}
         {fits && inside !== undefined && (
           <span className={cn('relative whitespace-nowrap font-semibold tabular-nums', text)}>
             {inside}
           </span>
         )}
       </span>
-      {((!fits && inside !== undefined) || after !== undefined) && (
+      {((!fits && inside !== undefined) || (after !== undefined && !afterInside)) && (
         <span
           className={cn(
             'flex min-w-0 items-center gap-2 whitespace-nowrap px-2.5 font-semibold tabular-nums text-foreground',
@@ -134,7 +141,7 @@ export function Capsule({
           )}
         >
           {!fits && <span>{inside}</span>}
-          {after !== undefined && (
+          {after !== undefined && !afterInside && (
             <span className="font-medium text-muted-foreground">{after}</span>
           )}
         </span>
