@@ -13,7 +13,7 @@ test('the administrator renames the workspace; an employee cannot', async ({ pag
     .getByRole('link', { name: 'Workspace' })
     .click();
   const form = page.getByRole('form', { name: 'Workspace settings' });
-  const name = form.getByLabel('Name');
+  const name = form.getByLabel('Name', { exact: true });
   const original = await name.inputValue();
   await name.fill('Acme Europe');
   await form.getByRole('button', { name: 'Save changes' }).click();
@@ -32,7 +32,10 @@ test('the administrator renames the workspace; an employee cannot', async ({ pag
   ).toBe(403);
 
   await page.reload();
-  await page.getByRole('form', { name: 'Workspace settings' }).getByLabel('Name').fill(original);
+  await page
+    .getByRole('form', { name: 'Workspace settings' })
+    .getByLabel('Name', { exact: true })
+    .fill(original);
   await page.getByRole('button', { name: 'Save changes' }).click();
   await expect(page.getByText('Saved. The changes apply from now on.')).toBeVisible();
 });
