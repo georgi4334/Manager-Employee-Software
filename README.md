@@ -22,6 +22,7 @@
 ## Table of contents
 
 - [Description](#description)
+- [What's new](#whats-new)
 - [How to install and run the project](#how-to-install-and-run-the-project)
 - [How to use the project](#how-to-use-the-project)
 - [Roles and permissions](#roles-and-permissions)
@@ -42,15 +43,16 @@ InTime is a web app for running a team of up to a few hundred people: who works 
 
 ### What it does
 
-- **People:** employee directory and profiles, departments, teams and reporting lines with an org chart, per-person working hours, and pay records for HR (records only, nothing is calculated).
-- **Absence and presence:** leave types, policies and balances with request → approval, public holidays for Bulgaria and Germany, self-reported check-in/check-out with corrections, and a "who is in today" view.
+- **People:** employee directory and profiles, departments, teams and reporting lines with an org chart, per-person working hours, pay records for HR (records only, nothing is calculated), and onboarding and offboarding checklists that start by themselves and remind people before a step is due.
+- **Absence and presence:** leave types, policies and balances with request → approval, public holidays for Bulgaria, Germany and England, self-reported check-in/check-out with corrections, and a "who is in today" view.
 - **Calendar:** month, week, day and agenda views with personal, team and company events, repeating events, guests with answers, "find a time" and reminders. Leave and holidays are shown as layers.
 - **Projects and time:** clients, projects with milestones and staffing, tasks (list and board), a timer and weekly timesheets with approval, reports and CSV export, budget versus actual and team capacity.
 - **Growth:** goals with key results (personal, team, company), 1:1 meetings with private notes and action items, named feedback, a skills matrix and performance review cycles with calibration.
-- **Insight:** a dashboard the administrator arranges from 25 widgets, and analytics with counts only (small groups are hidden).
-- **Administration:** invitations, system and custom roles with a permission editor, an append-only audit log, notifications (in-app and email) with preferences, data export and erasure, and automatic retention for Bulgaria.
+- **Your day in one place:** **Waiting for me** collects everything that needs your decision (leave, timesheets, reviews, checklist steps, reported feedback, invitations) with bulk approve and reject, and the search (**Ctrl+K** / **⌘K**) jumps to any page, person, project, task or common action.
+- **Insight:** a dashboard the administrator arranges from 26 widgets, and analytics with counts only (small groups are hidden).
+- **Administration:** invitations, system and custom roles with a permission editor and a role tree, an append-only audit log with a viewer (filters by area, day, record and person; each reader sees only the areas they administer), notifications (in-app and email) with preferences, data export and erasure, and automatic retention for Bulgaria.
 - **AI assistant (optional, bring your own key):** answers questions about your own data and, if you allow it, about people you may already see, using read-only tools that run with your rights.
-- English, German and Bulgarian; light and dark themes; phone layouts; keyboard-friendly and checked for accessibility on every page.
+- English, German and Bulgarian; light and dark themes; phone layouts; a side menu that folds to icons; keyboard-friendly and checked for accessibility on every page.
 
 ### Why these technologies
 
@@ -70,6 +72,31 @@ InTime is a web app for running a team of up to a few hundred people: who works 
 ### What is planned
 
 Everything in the roadmap is built; the next steps are the first deployment on free plans and file storage (avatars). See the [roadmap](#roadmap).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## What's new
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/inbox.webp" alt="Waiting for me with two checklist steps to mark done"><br><sub><b>Waiting for me:</b> every decision in one list, with a count in the menu</sub></td>
+    <td width="50%"><img src="docs/screenshots/palette.webp" alt="The search dialog listing pages, sections and actions for 'le'"><br><sub><b>Search (Ctrl+K):</b> pages, sections, actions, people, projects and tasks</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/checklist.webp" alt="An offboarding checklist with four steps, one done, and a progress bar at 25 %"><br><sub><b>Checklists:</b> onboarding and offboarding steps with due dates and reminders</sub></td>
+    <td width="50%"><img src="docs/screenshots/audit-log.webp" alt="The audit log as a timeline with one entry opened to show its recorded data"><br><sub><b>Audit log:</b> who changed what, as a timeline with the recorded data</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/sidebar-collapsed.webp" alt="The task board with the side menu folded to icons"><br><sub><b>Collapsible menu:</b> more room for boards and calendars</sub></td>
+    <td width="50%"><img src="docs/screenshots/phone.webp" alt="The dashboard and Waiting for me on a phone"><br><sub><b>On a phone:</b> Waiting for me sits in the bottom bar</sub></td>
+  </tr>
+</table>
+
+- **Waiting for me** reads the lists you already have access to: pending leave you may approve, submitted timesheets, review parts to write, reported feedback, checklist steps given to you and event invitations you have not answered. Leave and timesheets can be approved or rejected in bulk.
+- **Search** opens with Ctrl+K / ⌘K or the Search button. It finds pages and their sections, common actions (request leave, log time, new event…) and, after two letters, people, projects and tasks you may see. Nothing you type is stored.
+- **Onboarding and offboarding checklists** copy their steps from a template when a person joins or leaves. Each step is given to the person, their manager or HR, and has a due date counted from the start or leaving date. The person a step is given to is reminded the day before and on the day it is due. The employee profile shows the person's checklists.
+- **Audit log viewer** (Administration → Audit log): entries grouped by day, filters by area, dates, one record or one person. HR sees the HR areas and never the workspace settings. Entries hold ids and field names only, never personal data.
+- **Collapsible side menu:** fold the desktop menu to an icon rail and back; the choice is remembered, and each icon shows its name on hover and keyboard focus.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -127,11 +154,12 @@ A pre-commit hook (Husky + lint-staged) lints and formats staged files, and comm
 ## How to use the project
 
 1. **Set up the company** as the administrator: add departments and teams under **Organization**, invite people under **Employees** and give them a manager and a role. Leave types and policies are under **Leave → Settings**.
-2. **Every day:** check in and out under **Attendance**, request leave under **Leave**, see the team and company **Calendar**, and log hours with the timer under **Time**. The bell shows what needs your attention.
-3. **Managers** approve leave and timesheets, see who is in, plan **Capacity** and staff **Projects**, assign **Tasks**, hold **1:1 meetings** and write reviews.
+2. **Every day:** check in and out under **Attendance**, request leave under **Leave**, see the team and company **Calendar**, and log hours with the timer under **Time**. **Waiting for me** lists what needs your decision, the bell shows notifications, and **Ctrl+K** takes you anywhere.
+3. **Managers** approve leave and timesheets (one by one or in bulk), see who is in, plan **Capacity** and staff **Projects**, assign **Tasks**, hold **1:1 meetings**, write reviews and follow the **Checklists** of new joiners and leavers.
 4. **Growth:** set **Goals** with key results, give **Feedback**, rate **Skills** and take part in **Reviews** when HR opens a cycle.
 5. **Overview:** the **Dashboard** shows the widgets the administrator chose (each person only sees what they may), and **Analytics** shows totals for a period.
-6. **Your data:** under **Profile** you can download everything the app holds about you. HR can export or erase the data of a former employee.
+6. **Administration:** build **Roles**, set **Data retention**, and read the **Audit log** to see who changed what.
+7. **Your data:** under **Profile** you can download everything the app holds about you. HR can export or erase the data of a former employee.
 
 <table>
   <tr>
@@ -144,7 +172,7 @@ A pre-commit hook (Husky + lint-staged) lints and formats staged files, and comm
   </tr>
   <tr>
     <td width="50%"><img src="docs/screenshots/leave.webp" alt="Leave balance and the request form"><br><sub>Leave</sub></td>
-    <td width="50%"><img src="docs/screenshots/phone.webp" alt="Dashboard and calendar on a phone"><br><sub>On a phone</sub></td>
+    <td width="50%"><img src="docs/screenshots/phone.webp" alt="The dashboard and Waiting for me on a phone"><br><sub>On a phone</sub></td>
   </tr>
 </table>
 
@@ -193,7 +221,7 @@ Production values (cookies, proxy hops, email) are described in the [deployment 
 ## Tests
 
 - `pnpm test`: unit tests in every package and API tests against a real database when `TEST_DATABASE_URL` is set (CI always sets it). Every feature has positive and negative cases: wrong role, wrong company, not found, duplicates, boundaries. Every tenant table has an isolation test, every route must declare its protection (a test lists them), and the permission matrix is tested role by role.
-- `pnpm --filter @intime/e2e e2e`: browser tests with Playwright against a fresh database, a real `tenant:create` and the Vite dev server. They cover onboarding, leave, attendance, calendar, projects, tasks, time, reports, capacity, goals, 1:1s, feedback, skills, reviews, analytics, compensation, roles, privacy and retention, the dashboard and motion. Set `E2E_DATABASE_URL` to a Postgres owner URL first.
+- `pnpm --filter @intime/e2e e2e`: browser tests with Playwright against a fresh database, a real `tenant:create` and the Vite dev server. They cover onboarding, leave, attendance, calendar, projects, tasks, time, reports, capacity, goals, 1:1s, feedback, skills, reviews, analytics, compensation, roles, privacy and retention, checklists, the audit log, search, the collapsible menu, the dashboard and motion. Set `E2E_DATABASE_URL` to a Postgres owner URL first.
 - **Accessibility:** `06-accessibility.spec.ts` scans every page with axe (WCAG 2.1 A and AA) on a phone and a desktop, in light and dark.
 
 CI runs the format check, lint, type checks, all tests and the build on every push and pull request, and the browser tests as a separate job.
@@ -206,7 +234,7 @@ Everything runs on free EU plans:
 Browser ──► Cloudflare Pages (web app + /api proxy function) ──► Render, Frankfurt (API)
                                                                    ├──► Neon, Frankfurt (Postgres)
                                                                    └──► Resend (emails)
-GitHub Actions ──► CI, deploy on main, hourly reminder ping
+GitHub Actions ──► CI, deploy on main, hourly reminder ping (attendance, timers, events, checklist steps)
 ```
 
 Releases go only through `.github/workflows/deploy.yml` on `main` after CI. Migrations run before the new code, so every migration stays compatible with the previous release. Step-by-step guide: [`docs/deployment.md`](docs/deployment.md).
@@ -234,7 +262,7 @@ Inside the apps, code is organised by feature: `apps/web/src/features/<feature>`
 | [`docs/permission-matrix.md`](docs/permission-matrix.md) | Every permission with its scopes and default roles (generated) |
 | [`docs/roadmap.md`](docs/roadmap.md)                     | Phases, scope and the definition of done                       |
 | [`docs/deployment.md`](docs/deployment.md)               | Deploying on free plans and operating the live site            |
-| [`docs/adr/`](docs/adr)                                  | 34 decision records, one per feature or design choice          |
+| [`docs/adr/`](docs/adr)                                  | 42 decision records, one per feature or design choice          |
 | [`CLAUDE.md`](CLAUDE.md)                                 | Working rules and conventions for each module                  |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -248,6 +276,7 @@ Inside the apps, code is organised by feature: `apps/web/src/features/<feature>`
 - [x] Performance reviews and analytics
 - [x] AI assistant, repeating events with guests and reminders, working hours, retention for Bulgaria, compensation records, role editor
 - [x] Customizable dashboard, motion, new visual style, logo and splash screen
+- [x] Waiting for me, search (Ctrl+K), onboarding and offboarding checklists with reminders, audit log viewer, collapsible menu
 - [ ] First deployment on free plans
 - [ ] File storage (avatars, attachments)
 - [ ] Retention presets for more countries
